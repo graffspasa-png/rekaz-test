@@ -6,8 +6,9 @@ app.use(express.json());
 
 const PORT = process.env.PORT || 10000;
 
+// ✅ الرابط الصحيح لركاز
 const API = axios.create({
-  baseURL: "https://api.rekaz.io/v1",
+  baseURL: "https://api.rekaz.com/v1",
   headers: {
     "Content-Type": "application/json",
     Authorization: `Bearer ${process.env.REKAZ_API_KEY}`,
@@ -23,11 +24,13 @@ app.get("/rekaz", async (req, res) => {
   const path = req.query.path;
 
   try {
+    // 🟢 جلب الخدمات
     if (path === "products") {
       const response = await API.get("/products");
       return res.json(response.data);
     }
 
+    // 🟢 إنشاء عميل
     if (path === "create-customer") {
       const response = await API.post("/customers", {
         name: "Test User",
