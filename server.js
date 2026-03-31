@@ -1,65 +1,61 @@
-import express from "express";
-import fetch from "node-fetch";
-import dotenv from "dotenv";
-
-dotenv.config();
+const express = require("express");
+const axios = require("axios");
 
 const app = express();
 app.use(express.json());
 
-const BASE_URL = "https://platform.rekaz.io/api/public";
+// 🔐 المتغيرات من Render
+const BASE_URL = "https://api.rekaz.io/v1";
+const TENANT_ID = process.env.REKAZ_TENANT_ID;
+const API_KEY = process.env.REKAZ_API_KEY;
+const SECRET = process.env.REKAZ_SECRET;
+const BRANCH_ID = process.env.REKAZ_BRANCH_ID || 1;
 
-app.all("/rekaz", async (req, res) => {
-  const TENANT_ID = process.env.REKAZ_TENANT_ID;
-  const API_KEY = process.env.REKAZ_API_KEY;
-  const SECRET = process.env.REKAZ_SECRET;
-  const BRANCH_ID = process.env.REKAZ_BRANCH_ID;
+// 🔑 headers
+const headers = {
+  "Content-Type": "application/json",
+  "x-api-key": API_KEY,
+  "x-api-secret": SECRET,
+  "x-tenant-id": TENANT_ID,
+};
 
-  const encoded = Buffer.from(API_KEY + ":" + SECRET).toString("base64");
-
-  const path = req.query.path || "";
-
-  const params = { ...req.query };
-  delete params.path;
-
-  const qs =
-    Object.keys(params).length > 0
-      ? "?" + new URLSearchParams(params).toString()
-      : "";
-
-  const url = BASE_URL + "/" + path + qs;
+// 🎯 endpoint الرئيسي
+app.get("/rekaz", async (req, res) => {
+  const path = req.query.path;
 
   try {
-    const options = {
-      method: req.method,
-      headers: {
-        Authorization: "Basic " + encoded,
-        __tenant: TENANT_ID,
-        "x-branch-id": BRANCH_ID,
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-    };
-
-    if (req.method === "POST" || req.method === "PUT") {
-      options.body = JSON.stringify(req.body);
+    if (path === "products") {
+      const response = await axios.get(`${BASE_URL}/products`, { headers });
+      return res.json(response.data);
     }
 
-    const response = await fetch(url, options);
-    const data = await response.text();
+    if (path === "create-customer") {
+      const response = await axios.post(
+        `${BASE_URL}/customers`,
+        {
+          name: "Test User",
+          phone: "0500000000",
+        },
+        { headers }
+      );
+      return res.json(response.data);
+    }
 
-    res.status(response.status).send(data);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    return res.status(404).json({ error: "Invalid path" });
+  } catch (error) {
+    return res
+      .status(500)
+      .json(error.response?.data || { message: error.message });
   }
 });
 
+// 🔔 Webhook
 app.post("/rekaz-webhook", (req, res) => {
-  console.log("Webhook:", req.body);
+  console.log("Webhook received:", req.body);
   res.sendStatus(200);
 });
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log("Server running on port " + PORT);
+  console.log(`Server running on port ${PORT}`);
 });
