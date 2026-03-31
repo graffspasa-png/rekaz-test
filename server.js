@@ -6,35 +6,39 @@ app.use(express.json());
 
 const PORT = process.env.PORT || 10000;
 
-// ✅ الرابط الصحيح لركاز
+// ✅ إعداد الاتصال الصحيح مع ركاز
 const API = axios.create({
-  baseURL: "https://api.rekaz.com/v1",
+  baseURL: "https://api.rekaz.io/v1",
   headers: {
     "Content-Type": "application/json",
-    Authorization: `Bearer ${process.env.REKAZ_API_KEY}`,
+    "x-api-key": process.env.REKAZ_API_KEY,
+    "x-api-secret": process.env.REKAZ_SECRET,
+    "x-tenant-id": process.env.REKAZ_TENANT_ID
   },
-  timeout: 10000,
+  timeout: 10000
 });
 
+// 🟢 اختبار السيرفر
 app.get("/", (req, res) => {
   res.send("Server is working ✅");
 });
 
+// 🟢 الاتصال مع ركاز
 app.get("/rekaz", async (req, res) => {
   const path = req.query.path;
 
   try {
-    // 🟢 جلب الخدمات
+    // 🔹 جلب الخدمات
     if (path === "products") {
       const response = await API.get("/products");
       return res.json(response.data);
     }
 
-    // 🟢 إنشاء عميل
+    // 🔹 إنشاء عميل
     if (path === "create-customer") {
       const response = await API.post("/customers", {
         name: "Test User",
-        phone: "0500000000",
+        phone: "0500000000"
       });
 
       return res.json(response.data);
@@ -45,7 +49,7 @@ app.get("/rekaz", async (req, res) => {
   } catch (error) {
     return res.status(500).json({
       message: error.message,
-      data: error.response?.data,
+      data: error.response?.data
     });
   }
 });
