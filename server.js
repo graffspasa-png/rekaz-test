@@ -8,13 +8,16 @@ const PORT = process.env.PORT || 10000;
 const API_KEY = process.env.REKAZ_API_KEY;
 const TENANT_ID = process.env.REKAZ_TENANT_ID;
 
-// ✅ تحويل API KEY إلى Base64 (مهم جدًا)
-const AUTH = Buffer.from(`${API_KEY}:`).toString("base64");
+// ⚠️ مهم: لا تسوي Base64
+const AUTH = API_KEY;
 
-// ✅ الرابط الصحيح من التوثيق
+// ✅ الرابط الصحيح
 const BASE_URL = "https://platform.rekaz.io/api/public";
 
-// اختبار السيرفر
+
+// ============================
+// 🟢 اختبار السيرفر
+// ============================
 app.get("/", (req, res) => {
   res.send("Server is working ✅");
 });
@@ -78,6 +81,44 @@ app.get("/customers", async (req, res) => {
 });
 
 
+// ============================
+// 🔄 Endpoint مرن (اختياري)
+// ============================
+app.get("/rekaz", async (req, res) => {
+  const path = req.query.path;
+
+  if (!path) {
+    return res.status(400).json({ error: "Missing path" });
+  }
+
+  try {
+    const response = await fetch(`${BASE_URL}${path}`, {
+      method: "GET",
+      headers: {
+        Authorization: `Basic ${AUTH}`,
+        "__tenant": TENANT_ID,
+        "Content-Type": "application/json"
+      }
+    });
+
+    const text = await response.text();
+
+    if (!text) {
+      return res.status(500).json({ error: "Empty response from Rekaz" });
+    }
+
+    const data = JSON.parse(text);
+    res.json(data);
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
+// ============================
+// 🚀 تشغيل السيرفر
+// ============================
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
