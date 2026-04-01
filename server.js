@@ -3,31 +3,30 @@ const fetch = require("node-fetch");
 require("dotenv").config();
 
 const app = express();
+app.use(express.json());
+
 const PORT = process.env.PORT || 10000;
 
-// القيم من Render
-const API_KEY = process.env.REKAZ_API_KEY;
-const TENANT_ID = process.env.REKAZ_TENANT_ID;
+// الرابط الصحيح لركاز
+const BASE_URL = "https://merchant.rekaz.io";
 
-// الرابط الصحيح
-const BASE_URL = "https://api.rekaz.com";
-
+// الصفحة الرئيسية
 app.get("/", (req, res) => {
   res.send("Server is working ✅");
 });
 
+// API
 app.get("/rekaz", async (req, res) => {
   const path = req.query.path;
 
   try {
-
-    // ✅ المنتجات
+    // 🔥 products
     if (path === "products") {
       const response = await fetch(`${BASE_URL}/api/public/products`, {
         method: "GET",
         headers: {
-          "Authorization": `Basic ${API_KEY}`,
-          "__tenant": TENANT_ID,
+          "Authorization": `Basic ${process.env.REKAZ_API_KEY}`,
+          "__tenant": process.env.REKAZ_TENANT_ID,
           "Content-Type": "application/json"
         }
       });
@@ -36,13 +35,13 @@ app.get("/rekaz", async (req, res) => {
       return res.json(data);
     }
 
-    // ✅ إنشاء عميل (لو احتجناه لاحقًا)
+    // 🔥 create customer
     if (path === "create-customer") {
       const response = await fetch(`${BASE_URL}/api/public/customers`, {
         method: "POST",
         headers: {
-          "Authorization": `Basic ${API_KEY}`,
-          "__tenant": TENANT_ID,
+          "Authorization": `Basic ${process.env.REKAZ_API_KEY}`,
+          "__tenant": process.env.REKAZ_TENANT_ID,
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
