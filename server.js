@@ -17,7 +17,7 @@ app.use((req, res, next) => {
 
 const BASE_URL = "https://platform.rekaz.io/api/public";
 const headers = {
-  "Authorization": `Basic ${process.env.REKAZ_API_KEY}`,
+  "Authorization": `Basic ${process.env.REKAZ_AUTH}`,
   "__tenant": process.env.REKAZ_TENANT_ID,
   "Content-Type": "application/json"
 };
