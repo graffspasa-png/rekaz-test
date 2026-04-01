@@ -4,112 +4,182 @@ import fetch from "node-fetch";
 const app = express();
 const PORT = process.env.PORT || 10000;
 
-// 🔐 بيانات Rekaz
+app.use(express.json());
+
+// 🔐 Rekaz
 const AUTH = process.env.REKAZ_AUTH;
 const TENANT_ID = process.env.REKAZ_TENANT_ID;
 
-// 🔗 API
 const BASE_URL = "https://platform.rekaz.io/api/public";
 
 // الصفحة الرئيسية
 app.get("/", (req, res) => {
-  res.send("Server is working ✅");
+  res.send("Booking System Ready ✅");
 });
 
-// 📦 API المنتجات (JSON)
+
+// 📦 جلب المنتجات
 app.get("/products", async (req, res) => {
+  const r = await fetch(`${BASE_URL}/products`, {
+    headers: {
+      Authorization: AUTH,
+      "__tenant": TENANT_ID
+    }
+  });
+
+  const data = await r.json();
+  res.json(data);
+});
+
+
+// 👤 إنشاء عميل
+app.post("/create-customer", async (req, res) => {
   try {
-    const response = await fetch(`${BASE_URL}/products`, {
+    const body = {
+      name: req.body.name,
+      mobileNumber: req.body.mobile,
+      email: "",
+      type: 1,
+      branchId: req.body.branchId
+    };
+
+    const r = await fetch(`${BASE_URL}/customers`, {
+      method: "POST",
       headers: {
         Authorization: AUTH,
-        "__tenant": TENANT_ID
-      }
+        "__tenant": TENANT_ID,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(body)
     });
 
-    const text = await response.text();
+    const text = await r.text();
+    res.send(text);
 
-    if (!text) {
-      return res.json({ error: "Empty response from Rekaz" });
-    }
-
-    const data = JSON.parse(text);
-    res.json(data);
-
-  } catch (error) {
-    res.json({ error: error.message });
+  } catch (e) {
+    res.send(e.message);
   }
 });
 
-// 👥 API العملاء (JSON)
-app.get("/customers", async (req, res) => {
+
+// 📅 جلب المواعيد
+app.get("/slots", async (req, res) => {
+  const { priceId } = req.query;
+
+  const url = `${BASE_URL}/reservations/slots?StartDate=2025-04-01T10:00:00&EndDate=2025-04-05T22:00:00&PriceId=${priceId}&MinQuantity=1`;
+
+  const r = await fetch(url, {
+    headers: {
+      Authorization: AUTH,
+      "__tenant": TENANT_ID
+    }
+  });
+
+  const data = await r.json();
+  res.json(data);
+});
+
+
+// 🧾 إنشاء حجز
+app.post("/create-booking", async (req, res) => {
   try {
-    const response = await fetch(`${BASE_URL}/customers`, {
+    const body = {
+      customerDetails: {
+        name: req.body.name,
+        mobileNumber: req.body.mobile,
+        email: "",
+        type: 1,
+        companyName: ""
+      },
+      branchId: req.body.branchId,
+      items: [
+        {
+          quantity: 1,
+          priceId: req.body.priceId,
+          from: req.body.from,
+          to: req.body.to,
+          providerIds: [],
+          customFields: {},
+          discount: {
+            type: "percentage",
+            value: 0
+          }
+        }
+      ]
+    };
+
+    const r = await fetch(`${BASE_URL}/reservations/bulk`, {
+      method: "POST",
       headers: {
         Authorization: AUTH,
-        "__tenant": TENANT_ID
-      }
+        "__tenant": TENANT_ID,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(body)
     });
 
-    const text = await response.text();
+    const text = await r.text();
+    res.send(text);
 
-    if (!text) {
-      return res.json({ error: "Empty response from Rekaz" });
-    }
-
-    const data = JSON.parse(text);
-    res.json(data);
-
-  } catch (error) {
-    res.json({ error: error.message });
+  } catch (e) {
+    res.send(e.message);
   }
 });
 
-// 🌐 عرض المنتجات بشكل جميل (HTML)
-app.get("/products-view", async (req, res) => {
-  try {
-    const response = await fetch(`${BASE_URL}/products`, {
-      headers: {
-        Authorization: AUTH,
-        "__tenant": TENANT_ID
-      }
-    });
 
-    const data = await response.json();
+// 🌐 صفحة حجز كاملة
+app.get("/book", async (req, res) => {
 
-    let html = `
-      <html>
-      <head>
-        <title>Products</title>
-        <style>
-          body { font-family: Arial; padding: 20px; }
-          .card { border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; border-radius: 10px; }
-        </style>
-      </head>
-      <body>
-      <h1>Products</h1>
-    `;
+  const r = await fetch(`${BASE_URL}/products`, {
+    headers: {
+      Authorization: AUTH,
+      "__tenant": TENANT_ID
+    }
+  });
 
-    const products = data.items || data;
+  const data = await r.json();
+  const products = data.items || data;
 
-    products.forEach(p => {
-      html += `
-        <div class="card">
-          <h3>${p.name}</h3>
-          <p>💰 السعر: ${p.amount} ريال</p>
-          <p>⏱ المدة: ${p.duration || 0} دقيقة</p>
-        </div>
-      `;
-    });
+  let html = `
+  <html>
+  <body>
+  <h1>احجز الآن</h1>
 
-    html += "</body></html>";
+  <form method="POST" action="/create-booking">
+    <input name="name" placeholder="اسمك" required/><br><br>
+    <input name="mobile" placeholder="رقمك" required/><br><br>
 
-    res.send(html);
+    <select name="priceId">
+  `;
 
-  } catch (error) {
-    res.send(error.message);
-  }
+  products.forEach(p => {
+    if (p.pricing && p.pricing.length > 0) {
+      p.pricing.forEach(price => {
+        html += `<option value="${price.id}">
+          ${p.name} - ${price.amount} ريال
+        </option>`;
+      });
+    }
+  });
+
+  html += `
+    </select><br><br>
+
+    <input name="branchId" placeholder="branchId" required/><br><br>
+
+    <input name="from" placeholder="2025-04-01T10:00:00Z" required/><br><br>
+    <input name="to" placeholder="2025-04-01T11:00:00Z" required/><br><br>
+
+    <button type="submit">احجز</button>
+  </form>
+
+  </body>
+  </html>
+  `;
+
+  res.send(html);
 });
 
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log("Server running 🚀");
 });
