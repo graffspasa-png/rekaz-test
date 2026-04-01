@@ -6,7 +6,7 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 
-// ── CORS ──
+// CORS
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
@@ -25,8 +25,9 @@ const headers = {
 app.get("/products", async (req, res) => {
   try {
     const r = await fetch(`${BASE_URL}/products`, { headers });
-    const data = await r.json();
-    res.json(data);
+    const text = await r.text();
+    if (!text) return res.status(500).json({ error: "Empty response from Rekaz" });
+    try { res.json(JSON.parse(text)); } catch { res.json({ raw: text }); }
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -36,8 +37,8 @@ app.get("/slots", async (req, res) => {
   try {
     const query = new URLSearchParams(req.query).toString();
     const r = await fetch(`${BASE_URL}/reservations/slots?${query}`, { headers });
-    const data = await r.json();
-    res.json(data);
+    const text = await r.text();
+    res.send(text);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -51,8 +52,8 @@ app.post("/book", async (req, res) => {
       headers,
       body: JSON.stringify({ customerDetails, branchId, items })
     });
-    const data = await r.json();
-    res.status(r.status).json(data);
+    const text = await r.text();
+    res.send(text);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
