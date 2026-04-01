@@ -1,32 +1,32 @@
-const express = require("express");
-const fetch = require("node-fetch");
-require("dotenv").config();
+import express from "express";
+import fetch from "node-fetch";
 
 const app = express();
-app.use(express.json());
-
 const PORT = process.env.PORT || 10000;
 
-// الرابط الصحيح لركاز
-const BASE_URL = "https://merchant.rekaz.io";
+// بياناتك من Render
+const API_KEY = process.env.REKAZ_API_KEY;
+const TENANT_ID = process.env.REKAZ_TENANT_ID;
 
-// الصفحة الرئيسية
+// ✅ الرابط الصحيح 100%
+const BASE_URL = "https://platform.rekaz.io/api/public";
+
 app.get("/", (req, res) => {
   res.send("Server is working ✅");
 });
 
-// API
 app.get("/rekaz", async (req, res) => {
   const path = req.query.path;
 
   try {
-    // 🔥 products
+
+    // ================= PRODUCTS =================
     if (path === "products") {
-      const response = await fetch(`${BASE_URL}/api/public/products`, {
+      const response = await fetch(`${BASE_URL}/products`, {
         method: "GET",
         headers: {
-          "Authorization": `Basic ${process.env.REKAZ_API_KEY}`,
-          "__tenant": process.env.REKAZ_TENANT_ID,
+          "Authorization": `Basic ${API_KEY}`,
+          "__tenant": TENANT_ID,
           "Content-Type": "application/json"
         }
       });
@@ -35,19 +35,15 @@ app.get("/rekaz", async (req, res) => {
       return res.json(data);
     }
 
-    // 🔥 create customer
-    if (path === "create-customer") {
-      const response = await fetch(`${BASE_URL}/api/public/customers`, {
-        method: "POST",
+    // ================= CUSTOMERS =================
+    if (path === "customers") {
+      const response = await fetch(`${BASE_URL}/customers`, {
+        method: "GET",
         headers: {
-          "Authorization": `Basic ${process.env.REKAZ_API_KEY}`,
-          "__tenant": process.env.REKAZ_TENANT_ID,
+          "Authorization": `Basic ${API_KEY}`,
+          "__tenant": TENANT_ID,
           "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          name: "عميل تجريبي",
-          phone: "0500000000"
-        })
+        }
       });
 
       const data = await response.json();
