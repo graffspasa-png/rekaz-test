@@ -4,10 +4,11 @@ import fetch from "node-fetch";
 const app = express();
 const PORT = process.env.PORT || 10000;
 
-const API_KEY = process.env.REKAZ_API_KEY;
-const TENANT_ID = process.env.REKAZ_TENANT_ID;
+// ❗ استخدم Base64 مباشرة (انسخه من Rekaz)
+const AUTH = process.env.REKAZ_AUTH;
 
-const AUTH = Buffer.from(`${API_KEY}:`).toString("base64");
+// Tenant
+const TENANT_ID = process.env.REKAZ_TENANT_ID;
 
 const BASE_URL = "https://platform.rekaz.io/api/public";
 
@@ -26,12 +27,8 @@ app.get("/products", async (req, res) => {
       }
     });
 
-    const text = await response.text();
-
-    return res.status(response.status).send({
-      status: response.status,
-      body: text
-    });
+    const data = await response.json();
+    res.json(data);
 
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -49,12 +46,8 @@ app.get("/customers", async (req, res) => {
       }
     });
 
-    const text = await response.text();
-
-    return res.status(response.status).send({
-      status: response.status,
-      body: text
-    });
+    const data = await response.json();
+    res.json(data);
 
   } catch (error) {
     res.status(500).json({ error: error.message });
