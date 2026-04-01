@@ -2,64 +2,31 @@ import express from "express";
 import fetch from "node-fetch";
 
 const app = express();
+const PORT = process.env.PORT || 10000;
 
-// ⚠️ حط بياناتك هنا
-const AUTH = "Basic PUT_YOUR_BASE64_HERE";
-const TENANT = "3a1d7f2c-2ad3-ce53-aad1-80f155af75c8";
+// 🔴 مهم: انسخ Base64 من Rekaz وضعه في Render
+const AUTH = process.env.REKAZ_AUTH;
 
-// ✅ Base URL الصحيح
+// 🔴 Tenant ID
+const TENANT_ID = process.env.REKAZ_TENANT_ID;
+
+// 🔗 API URL
 const BASE_URL = "https://platform.rekaz.io/api/public";
 
+// اختبار السيرفر
 app.get("/", (req, res) => {
   res.send("Server is working ✅");
 });
 
-// 🟢 PRODUCTS
+// 📦 المنتجات
 app.get("/products", async (req, res) => {
   try {
     const response = await fetch(`${BASE_URL}/products`, {
       method: "GET",
       headers: {
         Authorization: AUTH,
-        __tenant: TENANT,
-        "Content-Type": "application/json",
-      },
-    });
-
-    const text = await response.text(); // ⬅️ مهم جدا
-
-    if (!text) {
-      return res.json({ error: "Empty response from Rekaz" });
-    }
-
-    // 🟢 نحاول نحول JSON
-    let data;
-    try {
-      data = JSON.parse(text);
-    } catch (e) {
-      console.error("❌ JSON BROKEN:", text.slice(0, 200));
-      return res.json({
-        error: "Invalid JSON from Rekaz",
-        preview: text.slice(0, 200),
-      });
-    }
-
-    res.json(data);
-  } catch (error) {
-    res.json({ error: error.message });
-  }
-});
-
-// 🟢 CUSTOMERS
-app.get("/customers", async (req, res) => {
-  try {
-    const response = await fetch(`${BASE_URL}/customers`, {
-      method: "GET",
-      headers: {
-        Authorization: AUTH,
-        __tenant: TENANT,
-        "Content-Type": "application/json",
-      },
+        "__tenant": TENANT_ID
+      }
     });
 
     const text = await response.text();
@@ -68,25 +35,47 @@ app.get("/customers", async (req, res) => {
       return res.json({ error: "Empty response from Rekaz" });
     }
 
-    let data;
     try {
-      data = JSON.parse(text);
-    } catch (e) {
-      console.error("❌ JSON BROKEN:", text.slice(0, 200));
-      return res.json({
-        error: "Invalid JSON from Rekaz",
-        preview: text.slice(0, 200),
-      });
+      const data = JSON.parse(text);
+      res.json(data);
+    } catch {
+      res.json({ error: "Invalid JSON", raw: text });
     }
 
-    res.json(data);
   } catch (error) {
     res.json({ error: error.message });
   }
 });
 
-// تشغيل السيرفر
-const PORT = process.env.PORT || 3000;
+// 👥 العملاء
+app.get("/customers", async (req, res) => {
+  try {
+    const response = await fetch(`${BASE_URL}/customers`, {
+      method: "GET",
+      headers: {
+        Authorization: AUTH,
+        "__tenant": TENANT_ID
+      }
+    });
+
+    const text = await response.text();
+
+    if (!text) {
+      return res.json({ error: "Empty response from Rekaz" });
+    }
+
+    try {
+      const data = JSON.parse(text);
+      res.json(data);
+    } catch {
+      res.json({ error: "Invalid JSON", raw: text });
+    }
+
+  } catch (error) {
+    res.json({ error: error.message });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
