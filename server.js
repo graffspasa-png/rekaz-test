@@ -4,12 +4,13 @@ import fetch from "node-fetch";
 const app = express();
 const PORT = process.env.PORT || 10000;
 
-// 🔑 القيم من Render
+// 🔑 بيانات Render
 const API_KEY = process.env.REKAZ_API_KEY;
 const TENANT_ID = process.env.REKAZ_TENANT_ID;
 
-// ⚠️ مهم: لا تسوي Base64
-const AUTH = API_KEY;
+// 🔥 جرب الطريقتين (Rekaz يختلف حسب الحساب)
+const AUTH_RAW = API_KEY;
+const AUTH_BASE64 = Buffer.from(`${API_KEY}:`).toString("base64");
 
 // ✅ الرابط الصحيح
 const BASE_URL = "https://platform.rekaz.io/api/public";
@@ -24,27 +25,65 @@ app.get("/", (req, res) => {
 
 
 // ============================
-// 📦 المنتجات
+// 🔥 دالة ذكية تحاول الطريقتين
 // ============================
-app.get("/products", async (req, res) => {
-  try {
-    const response = await fetch(`${BASE_URL}/products`, {
+async function fetchRekaz(endpoint) {
+  // المحاولة الأولى (بدون تشفير)
+  let response = await fetch(`${BASE_URL}${endpoint}`, {
+    method: "GET",
+    headers: {
+      Authorization: `Basic ${AUTH_RAW}`,
+      "__tenant": TENANT_ID,
+      "Content-Type": "application/json"
+    }
+  });
+
+  let text = await response.text();
+
+  // إذا فاضي أو خطأ → نجرب Base64
+  if (!text || response.status !== 200) {
+    response = await fetch(`${BASE_URL}${endpoint}`, {
       method: "GET",
       headers: {
-        Authorization: `Basic ${AUTH}`,
+        Authorization: `Basic ${AUTH_BASE64}`,
         "__tenant": TENANT_ID,
         "Content-Type": "application/json"
       }
     });
 
-    const text = await response.text();
+    text = await response.text();
+  }
 
-    if (!text) {
-      return res.status(500).json({ error: "Empty response from Rekaz" });
+  return {
+    status: response.status,
+    body: text
+  };
+}
+
+
+// ============================
+// 📦 المنتجات
+// ============================
+app.get("/products", async (req, res) => {
+  try {
+    const result = await fetchRekaz("/products");
+
+    if (!result.body) {
+      return res.status(500).json({
+        error: "Empty response from Rekaz",
+        hint: "Check API KEY or TENANT ID"
+      });
     }
 
-    const data = JSON.parse(text);
-    res.json(data);
+    try {
+      const data = JSON.parse(result.body);
+      return res.status(result.status).json(data);
+    } catch {
+      return res.status(result.status).json({
+        error: "Response is not JSON",
+        raw: result.body
+      });
+    }
 
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -57,23 +96,24 @@ app.get("/products", async (req, res) => {
 // ============================
 app.get("/customers", async (req, res) => {
   try {
-    const response = await fetch(`${BASE_URL}/customers`, {
-      method: "GET",
-      headers: {
-        Authorization: `Basic ${AUTH}`,
-        "__tenant": TENANT_ID,
-        "Content-Type": "application/json"
-      }
-    });
+    const result = await fetchRekaz("/customers");
 
-    const text = await response.text();
-
-    if (!text) {
-      return res.status(500).json({ error: "Empty response from Rekaz" });
+    if (!result.body) {
+      return res.status(500).json({
+        error: "Empty response from Rekaz",
+        hint: "Check API KEY or TENANT ID"
+      });
     }
 
-    const data = JSON.parse(text);
-    res.json(data);
+    try {
+      const data = JSON.parse(result.body);
+      return res.status(result.status).json(data);
+    } catch {
+      return res.status(result.status).json({
+        error: "Response is not JSON",
+        raw: result.body
+      });
+    }
 
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -82,7 +122,7 @@ app.get("/customers", async (req, res) => {
 
 
 // ============================
-// 🔄 Endpoint مرن (اختياري)
+// 🔄 Endpoint مرن
 // ============================
 app.get("/rekaz", async (req, res) => {
   const path = req.query.path;
@@ -92,23 +132,23 @@ app.get("/rekaz", async (req, res) => {
   }
 
   try {
-    const response = await fetch(`${BASE_URL}${path}`, {
-      method: "GET",
-      headers: {
-        Authorization: `Basic ${AUTH}`,
-        "__tenant": TENANT_ID,
-        "Content-Type": "application/json"
-      }
-    });
+    const result = await fetchRekaz(path);
 
-    const text = await response.text();
-
-    if (!text) {
-      return res.status(500).json({ error: "Empty response from Rekaz" });
+    if (!result.body) {
+      return res.status(500).json({
+        error: "Empty response from Rekaz"
+      });
     }
 
-    const data = JSON.parse(text);
-    res.json(data);
+    try {
+      const data = JSON.parse(result.body);
+      return res.status(result.status).json(data);
+    } catch {
+      return res.status(result.status).json({
+        error: "Response is not JSON",
+        raw: result.body
+      });
+    }
 
   } catch (error) {
     res.status(500).json({ error: error.message });
