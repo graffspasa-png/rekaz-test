@@ -8,1145 +8,745 @@
 <style>
 :root{
   --B:#080807;--B2:#0f0e0d;--B3:#1a1916;
-  --C:#f5f0e8;--C2:#ede7da;--C3:#e2dbd0;
+  --C:#f5f0e8;--C2:#ede7da;
   --W:#fff;--G:#b8965a;--G2:#cfa96e;
   --T:#1c1a17;--M:#7a7268;--BR:#ddd7cc;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html{scroll-behavior:smooth}
-body{font-family:'Tajawal',sans-serif;background:var(--B);color:var(--T);direction:rtl;overflow-x:hidden}
+body{font-family:'Tajawal',sans-serif;background:var(--B);color:#fff;direction:rtl;min-height:100dvh}
 
-.pg{display:none;min-height:100dvh;flex-direction:column;animation:pgIn .32s ease}
-.pg.on{display:flex}
-@keyframes pgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+/* SCREENS */
+.screen{display:none;min-height:100dvh;flex-direction:column}
+.screen.on{display:flex}
+.fade{animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
 /* TOPBAR */
 .topbar{position:sticky;top:0;z-index:80;background:rgba(8,8,7,.97);backdrop-filter:blur(20px);border-bottom:1px solid rgba(184,150,90,.1);padding:0 20px;height:56px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-.tb-logo{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:300;letter-spacing:.2em;color:#fff;cursor:pointer;white-space:nowrap}
+.tb-logo{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:300;letter-spacing:.2em;color:#fff;cursor:pointer}
 .tb-logo span{color:var(--G)}
-.tb-back{font-size:11px;letter-spacing:.1em;color:rgba(255,255,255,.35);background:none;border:none;cursor:pointer;font-family:'Tajawal',sans-serif;display:flex;align-items:center;gap:5px;transition:color .18s;padding:4px 0;min-width:56px}
+.tb-back{font-size:11px;color:rgba(255,255,255,.4);background:none;border:none;cursor:pointer;font-family:'Tajawal',sans-serif;padding:4px 0;transition:color .15s;min-width:56px}
 .tb-back:hover{color:var(--G)}
-.tb-right{min-width:56px;display:flex;justify-content:flex-start}
-.tb-action{font-size:10px;letter-spacing:.1em;color:var(--G);background:none;border:none;cursor:pointer;font-family:'Tajawal',sans-serif}
+.tb-step{font-size:10px;color:rgba(255,255,255,.3);letter-spacing:.1em;min-width:56px;text-align:left}
+
+/* PROGRESS */
+.progress{background:rgba(184,150,90,.1);height:2px;flex-shrink:0}
+.progress-bar{height:100%;background:var(--G);transition:width .4s ease}
 
 /* HOME */
-#pg-home{background:var(--B);overflow:hidden;position:relative;justify-content:space-between}
-.home-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 40%,rgba(184,150,90,.06) 0%,transparent 70%),linear-gradient(rgba(184,150,90,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(184,150,90,.03) 1px,transparent 1px);background-size:100% 100%,64px 64px,64px 64px}
-.hero{position:relative;z-index:2;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:64px 24px 32px;animation:hup .9s cubic-bezier(.4,0,.2,1)}
-@keyframes hup{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
-.h-badge{display:inline-flex;align-items:center;gap:10px;font-size:9px;letter-spacing:.4em;color:var(--G);margin-bottom:26px}
+#home{background:var(--B);overflow:hidden;position:relative;justify-content:space-between}
+.home-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 40%,rgba(184,150,90,.06) 0%,transparent 70%)}
+.hero{position:relative;z-index:2;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:64px 24px 32px}
+.h-badge{font-size:9px;letter-spacing:.4em;color:var(--G);margin-bottom:26px;display:flex;align-items:center;gap:10px}
 .h-badge::before,.h-badge::after{content:'';width:24px;height:1px;background:linear-gradient(to right,transparent,var(--G))}
 .h-badge::after{background:linear-gradient(to left,transparent,var(--G))}
-.h-logo{font-family:'Cormorant Garamond',serif;font-size:clamp(52px,13vw,96px);font-weight:300;color:#fff;letter-spacing:.14em;line-height:1;margin-bottom:2px;white-space:nowrap}
-.h-logo-spa{color:var(--G)}
-.h-city{font-size:clamp(9px,1.8vw,11px);font-weight:300;letter-spacing:.52em;color:rgba(255,255,255,.18);margin-bottom:34px}
+.h-logo{font-family:'Cormorant Garamond',serif;font-size:clamp(52px,13vw,96px);font-weight:300;color:#fff;letter-spacing:.14em;line-height:1;margin-bottom:2px}
+.h-logo span{color:var(--G)}
+.h-city{font-size:10px;letter-spacing:.52em;color:rgba(255,255,255,.18);margin-bottom:34px}
 .h-orn{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:30px}
 .h-orn-l{width:48px;height:1px;background:linear-gradient(to right,transparent,rgba(184,150,90,.38))}
 .h-orn-l.r{background:linear-gradient(to left,transparent,rgba(184,150,90,.38))}
 .h-orn-d{width:5px;height:5px;background:var(--G);transform:rotate(45deg)}
-.h-tag{font-family:'Cormorant Garamond',serif;font-size:clamp(14px,2.8vw,17px);font-weight:300;color:rgba(255,255,255,.26);letter-spacing:.06em;line-height:2.1;margin-bottom:42px;max-width:300px}
+.h-tag{font-family:'Cormorant Garamond',serif;font-size:clamp(14px,2.8vw,17px);font-weight:300;color:rgba(255,255,255,.26);letter-spacing:.06em;line-height:2.1;margin-bottom:42px}
 .home-btns{position:relative;z-index:2;width:100%;max-width:360px;padding:0 24px 52px;display:flex;flex-direction:column;gap:9px;align-self:center}
-.hb{width:100%;padding:16px 20px;background:transparent;border:1px solid rgba(255,255,255,.09);color:#fff;font-family:'Tajawal',sans-serif;font-size:12px;font-weight:400;letter-spacing:.1em;cursor:pointer;transition:all .22s;display:flex;align-items:center;justify-content:space-between;position:relative;overflow:hidden}
-.hb::before{content:'';position:absolute;inset:0;background:rgba(255,255,255,.04);transform:scaleX(0);transform-origin:right;transition:transform .26s cubic-bezier(.4,0,.2,1)}
+.hb{width:100%;padding:16px 20px;background:transparent;border:1px solid rgba(255,255,255,.09);color:#fff;font-family:'Tajawal',sans-serif;font-size:12px;letter-spacing:.1em;cursor:pointer;transition:all .22s;display:flex;align-items:center;justify-content:space-between;position:relative;overflow:hidden}
+.hb::before{content:'';position:absolute;inset:0;background:rgba(255,255,255,.04);transform:scaleX(0);transform-origin:right;transition:transform .26s}
 .hb:hover::before{transform:scaleX(1)}
-.hb:hover{border-color:rgba(255,255,255,.2)}
-.hb-i{font-size:12px;opacity:.4;transition:opacity .22s,transform .22s}
+.hb-i{opacity:.4;transition:opacity .22s,transform .22s}
 .hb:hover .hb-i{opacity:.7;transform:translateX(-3px)}
 .hb.primary{background:var(--G);border-color:var(--G);color:var(--B);font-weight:500}
 .hb.primary::before{background:rgba(0,0,0,.07)}
 .hb.primary:hover{background:var(--G2);border-color:var(--G2)}
-.hb.primary .hb-i{opacity:.6}
 
-/* FOOTER */
-.footer{background:var(--B);border-top:1px solid rgba(184,150,90,.07);padding:28px 20px;text-align:center;flex-shrink:0}
-.f-logo{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:300;letter-spacing:.2em;color:#fff;margin-bottom:4px;cursor:pointer}
-.f-logo span{color:var(--G)}
-.f-city{font-size:8px;letter-spacing:.4em;color:var(--G);margin-bottom:14px}
-.f-tag{font-size:11px;color:rgba(255,255,255,.15);letter-spacing:.07em;line-height:2;margin-bottom:14px}
-.f-social{display:flex;justify-content:center;gap:10px;margin-bottom:14px}
-.fsoc{width:34px;height:34px;border:1px solid rgba(255,255,255,.08);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:border-color .18s;text-decoration:none}
-.fsoc:hover{border-color:var(--G)}
-.f-pay{display:flex;justify-content:center;gap:7px;flex-wrap:wrap;margin-bottom:13px}
-.fpay{padding:3px 9px;border:1px solid rgba(255,255,255,.07);font-size:9px;letter-spacing:.07em}
-.f-vat{font-size:9px;color:rgba(255,255,255,.1);letter-spacing:.1em}
-
-/* BOOKING */
-#pg-book{background:var(--C)}
-.steps{background:var(--B2);border-bottom:1px solid rgba(184,150,90,.08);padding:11px 20px;display:flex;align-items:center;gap:5px;flex-shrink:0;overflow-x:auto;scrollbar-width:none}
-.steps::-webkit-scrollbar{display:none}
-.st{display:flex;align-items:center;gap:5px;flex-shrink:0}
-.st-n{width:24px;height:24px;border-radius:50%;border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.22);font-size:10px;display:flex;align-items:center;justify-content:center;transition:all .25s}
-.st.on .st-n{border-color:var(--G);color:var(--G);background:rgba(184,150,90,.09)}
-.st.done .st-n{background:var(--G);border-color:var(--G);color:var(--B)}
-.st-l{font-size:9px;letter-spacing:.1em;color:rgba(255,255,255,.17)}
-.st.on .st-l{color:rgba(255,255,255,.5)}
-.st-line{width:14px;height:1px;background:rgba(255,255,255,.07);flex-shrink:0}
-.sw{display:none;flex:1;overflow-y:auto;padding-bottom:110px;background:var(--C)}
-.sw.on{display:block}
+/* CONTENT AREA */
+.content{flex:1;overflow-y:auto;background:var(--C)}
 .s-head{background:var(--B);padding:20px 20px 16px;text-align:center;border-bottom:1px solid rgba(184,150,90,.08)}
 .s-head-eye{font-size:9px;letter-spacing:.28em;color:var(--G);margin-bottom:7px}
 .s-head-title{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:300;color:#fff;letter-spacing:.06em}
-.s-head-sub{font-size:11px;color:rgba(255,255,255,.26);letter-spacing:.07em;margin-top:4px}
+.s-head-sub{font-size:11px;color:rgba(255,255,255,.26);margin-top:4px}
 
-/* PRODUCTS (loaded from API) */
-.prod-loading{padding:32px;text-align:center;font-size:12px;color:rgba(255,255,255,.3);letter-spacing:.1em;background:var(--B)}
+/* PRODUCTS */
+.prod-loading{padding:40px;text-align:center;font-size:12px;color:rgba(255,255,255,.3);letter-spacing:.1em;background:var(--B)}
 .prod-error{padding:20px;text-align:center;font-size:12px;color:#e74c3c;background:var(--B)}
-.cat-lbl{padding:14px 20px 8px;font-size:9px;letter-spacing:.22em;color:var(--M);display:flex;align-items:center;gap:8px}
-.cat-lbl::after{content:'';flex:1;height:1px;background:var(--BR)}
 .srow{background:var(--W);border-bottom:1px solid var(--BR);display:flex;align-items:flex-start;padding:14px 18px;gap:11px;cursor:pointer;transition:background .12s;position:relative}
-.srow::before{content:'';position:absolute;right:0;top:0;bottom:0;width:3px;background:var(--G);transform:scaleY(0);transition:transform .2s cubic-bezier(.4,0,.2,1)}
+.srow::before{content:'';position:absolute;right:0;top:0;bottom:0;width:3px;background:var(--G);transform:scaleY(0);transition:transform .2s}
 .srow:hover{background:#fdfcf9}
 .srow.on{background:#fdf9f2}
 .srow.on::before{transform:scaleY(1)}
-.srow-info{flex:1;min-width:0}
+.srow-info{flex:1}
 .srow-name{font-size:14px;font-weight:500;color:var(--T);margin-bottom:2px}
-.srow-en{font-size:11px;color:var(--M);margin-bottom:3px}
-.srow-dur{font-size:10px;color:var(--G)}
-.srow-right{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0}
-.srow-price{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:400;color:var(--T)}
+.srow-sub{font-size:10px;color:var(--G);margin-top:2px}
+.srow-price{font-family:'Cormorant Garamond',serif;font-size:19px;color:var(--T);white-space:nowrap}
 .srow-sr{font-size:10px;color:var(--M)}
-.srow-chk{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--BR);display:flex;align-items:center;justify-content:center;transition:all .17s;flex-shrink:0}
+.srow-chk{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--BR);display:flex;align-items:center;justify-content:center;transition:all .17s;flex-shrink:0;margin-right:8px}
 .srow.on .srow-chk{background:var(--B);border-color:var(--B)}
 .srow-chk-i{width:7px;height:7px;border-radius:50%;background:#fff;opacity:0;transform:scale(0);transition:all .17s}
 .srow.on .srow-chk-i{opacity:1;transform:scale(1)}
-.srow-remove{display:none;background:none;border:none;cursor:pointer;color:#c44;font-size:14px;padding:2px;line-height:1}
-.srow.on .srow-remove{display:block}
-
-/* CART BAR */
-.cart-bar{position:fixed;bottom:0;right:0;left:0;z-index:100;background:var(--B);border-top:1px solid rgba(184,150,90,.13);padding:11px 18px;display:flex;align-items:center;gap:11px;transform:translateY(110%);transition:transform .33s cubic-bezier(.4,0,.2,1)}
-.cart-bar.up{transform:translateY(0)}
-.cb-info{flex:1}
-.cb-count{font-size:9px;letter-spacing:.12em;color:var(--M);margin-bottom:1px}
-.cb-total{font-family:'Cormorant Garamond',serif;font-size:20px;color:#fff}
-.cb-sr{font-family:'Tajawal',sans-serif;font-size:10px;color:var(--M)}
-.cb-tag-wrap{display:flex;gap:4px;flex-wrap:wrap;margin-top:2px}
-.cb-tag{font-size:9px;color:rgba(255,255,255,.26);border:1px solid rgba(255,255,255,.07);padding:1px 6px}
-.cb-btn{padding:12px 22px;background:var(--G);color:var(--B);border:none;font-family:'Tajawal',sans-serif;font-size:11px;font-weight:500;letter-spacing:.12em;cursor:pointer;white-space:nowrap;transition:background .17s}
-.cb-btn:hover{background:var(--G2)}
 
 /* CALENDAR */
-.dt-wrap{padding:18px;max-width:500px;margin:0 auto}
-.dt-sec{margin-bottom:22px}
-.dt-title{font-size:9px;letter-spacing:.22em;color:var(--M);margin-bottom:12px;display:flex;align-items:center;gap:8px}
-.dt-title::after{content:'';flex:1;height:1px;background:var(--BR)}
+.cal-wrap{padding:18px;max-width:480px;margin:0 auto}
 .cal{background:var(--W);border:1px solid var(--BR)}
 .cal-nav{display:flex;align-items:center;justify-content:space-between;padding:12px 15px;border-bottom:1px solid var(--BR)}
-.cal-month{font-size:13px;font-weight:500;letter-spacing:.07em;color:var(--T)}
-.cal-btn{background:none;border:none;cursor:pointer;color:var(--M);font-size:18px;padding:2px 8px;transition:color .15s;font-family:'Tajawal',sans-serif}
+.cal-month{font-size:13px;font-weight:500;color:var(--T)}
+.cal-btn{background:none;border:none;cursor:pointer;color:var(--M);font-size:18px;padding:2px 8px;font-family:'Tajawal',sans-serif;transition:color .15s}
 .cal-btn:hover{color:var(--T)}
 .cal-hd{display:grid;grid-template-columns:repeat(7,1fr);border-bottom:1px solid var(--BR)}
 .cal-hl{text-align:center;padding:7px 0;font-size:9px;color:var(--M)}
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr)}
-.cal-d{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer;transition:all .12s}
+.cal-d{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer;transition:all .12s;color:var(--T)}
 .cal-d:hover:not(.past):not(.empty){background:var(--C2)}
 .cal-d.past{color:var(--BR);cursor:not-allowed}
 .cal-d.today{color:var(--G);font-weight:500}
 .cal-d.sel{background:var(--B);color:#fff;font-weight:500}
 
-.slots-info{font-size:12px;color:var(--G);letter-spacing:.1em;padding:16px;text-align:center}
-.slots-empty{font-size:12px;color:var(--M);padding:16px;text-align:center}
-.slots{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:8px}
-.slot{padding:10px 4px;text-align:center;background:var(--W);border:1px solid var(--BR);font-size:12px;cursor:pointer;transition:all .12s;font-family:'Tajawal',sans-serif;color:var(--T)}
+/* SLOTS */
+.slots-sec{margin-top:16px}
+.slots-label{font-size:9px;letter-spacing:.22em;color:var(--M);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.slots-label::after{content:'';flex:1;height:1px;background:var(--BR)}
+.slots{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.slot{padding:10px 4px;text-align:center;background:var(--W);border:1px solid var(--BR);font-size:12px;cursor:pointer;transition:all .12s;color:var(--T);font-family:'Tajawal',sans-serif}
 .slot:hover{background:var(--C2);border-color:var(--M)}
 .slot.on{background:var(--B);color:#fff;border-color:var(--B)}
+.slot-loading{font-size:12px;color:var(--G);padding:16px;text-align:center;letter-spacing:.1em}
+.slot-empty{font-size:12px;color:var(--M);padding:16px;text-align:center}
 
-.s2bar{position:fixed;bottom:0;right:0;left:0;z-index:100;background:var(--B);border-top:1px solid rgba(184,150,90,.13);padding:11px 18px;display:none;flex-direction:column;gap:7px}
-.s2bar.show{display:flex}
-.s2bar-info{display:flex;justify-content:space-between}
-.s2bar-item{font-size:10px;letter-spacing:.07em}
-.s2bar-label{color:rgba(255,255,255,.3);display:block;margin-bottom:2px}
-.s2bar-val{color:#fff;font-weight:500}
-.s2bar-btn{width:100%;padding:12px;background:var(--G);color:var(--B);border:none;font-family:'Tajawal',sans-serif;font-size:12px;font-weight:500;letter-spacing:.13em;cursor:pointer;transition:background .17s}
-.s2bar-btn:hover{background:var(--G2)}
-.s2bar-btn:disabled{background:rgba(184,150,90,.2);color:rgba(255,255,255,.2);cursor:not-allowed}
+/* FORMS */
+.form-wrap{padding:20px;max-width:420px;margin:0 auto}
+.form-card{background:var(--W);border:1px solid var(--BR);padding:20px;margin-bottom:12px}
+.form-title{font-size:9px;letter-spacing:.22em;color:var(--M);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.form-title::after{content:'';flex:1;height:1px;background:var(--BR)}
+.f-label{font-size:10px;letter-spacing:.1em;color:var(--M);display:block;margin-bottom:5px;margin-top:12px}
+.f-label:first-child{margin-top:0}
+.f-input{width:100%;padding:12px 14px;background:var(--C);border:1px solid var(--BR);font-family:'Tajawal',sans-serif;font-size:14px;color:var(--T);outline:none;transition:border-color .17s}
+.f-input:focus{border-color:var(--B)}
+.f-input::placeholder{color:var(--BR)}
+.otp-inputs{display:flex;gap:8px;justify-content:center;margin-top:6px}
+.otp-input{width:52px;height:56px;text-align:center;font-size:22px;font-weight:500;background:var(--C);border:1px solid var(--BR);color:var(--T);outline:none;transition:border-color .17s;font-family:'Tajawal',sans-serif}
+.otp-input:focus{border-color:var(--B)}
+.otp-hint{font-size:11px;color:var(--M);text-align:center;margin-top:10px;line-height:1.8}
+.otp-resend{font-size:11px;color:var(--G);cursor:pointer;text-align:center;margin-top:8px;background:none;border:none;font-family:'Tajawal',sans-serif;width:100%}
 
-/* PAYMENT */
-.pay-wrap{padding:18px;max-width:500px;margin:0 auto}
-.pay-sec{margin-bottom:16px}
-.pay-title{font-size:9px;letter-spacing:.22em;color:var(--M);margin-bottom:12px;display:flex;align-items:center;gap:8px}
-.pay-title::after{content:'';flex:1;height:1px;background:var(--BR)}
-.os{background:var(--W);border:1px solid var(--BR)}
-.os-row{display:flex;align-items:flex-start;padding:11px 15px;border-bottom:1px solid var(--BR);gap:9px}
-.os-row:last-child{border-bottom:none}
-.os-acc{width:2px;height:22px;background:var(--G);flex-shrink:0;margin-top:1px}
-.os-info{flex:1}
-.os-name{font-weight:500;color:var(--T);font-size:13px}
-.os-sub{font-size:10px;color:var(--M);margin-top:1px}
-.os-price{font-family:'Cormorant Garamond',serif;font-size:16px;color:var(--T);white-space:nowrap}
-.dt-sum{background:var(--C2);border:1px solid var(--BR);padding:13px 15px;margin-bottom:12px}
-.dt-sum-row{display:flex;justify-content:space-between;font-size:12px;padding:3px 0}
-.dt-sum-label{color:var(--M)}
-.dt-sum-val{font-weight:500;color:var(--T)}
-.totals{background:var(--W);border:1px solid var(--BR);padding:14px}
-.tot-row{display:flex;justify-content:space-between;padding:4px 0;font-size:12px;color:var(--M)}
-.tot-grand{border-top:1px solid var(--BR);margin-top:9px;padding-top:12px;font-size:13px;font-weight:500;color:var(--T);display:flex;justify-content:space-between}
-.tot-grand-val{font-family:'Cormorant Garamond',serif;font-size:21px;font-weight:400}
-.cf-field{margin-bottom:11px}
-.cf-label{font-size:10px;letter-spacing:.1em;color:var(--M);display:block;margin-bottom:5px}
-.cf-input{width:100%;padding:11px 13px;background:var(--C);border:1px solid var(--BR);font-family:'Tajawal',sans-serif;font-size:13px;color:var(--T);outline:none;transition:border-color .17s}
-.cf-input:focus{border-color:var(--B)}
-.cf-input::placeholder{color:var(--BR)}
-.cf-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-.pay-methods{display:flex;flex-direction:column;gap:7px;margin-bottom:14px}
-.pm{background:var(--W);border:1px solid var(--BR);padding:13px 15px;display:flex;align-items:center;gap:11px;cursor:pointer;transition:all .14s}
-.pm:hover{border-color:var(--T)}
-.pm.on{border-color:var(--B);background:var(--C)}
-.pm-radio{width:17px;height:17px;border-radius:50%;border:1.5px solid var(--BR);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .14s}
-.pm.on .pm-radio{border-color:var(--B);background:var(--B)}
-.pm-dot{width:6px;height:6px;border-radius:50%;background:#fff;opacity:0;transition:opacity .14s}
-.pm.on .pm-dot{opacity:1}
-.pm-info{flex:1}
-.pm-name{font-size:13px;font-weight:500;color:var(--T);margin-bottom:1px}
-.pm-sub{font-size:10px;color:var(--M)}
-.pm-logo{font-size:12px;font-weight:700;flex-shrink:0}
-.card-form{background:var(--W);border:1px solid var(--BR);padding:15px;margin-top:7px}
-.pay-btn{width:100%;padding:15px;background:var(--B);color:#fff;border:none;font-family:'Tajawal',sans-serif;font-size:12px;font-weight:500;letter-spacing:.15em;cursor:pointer;transition:background .17s;display:flex;align-items:center;justify-content:center;gap:11px;margin-bottom:7px}
-.pay-btn:hover{background:var(--B3)}
-.pay-btn-div{width:1px;height:13px;background:rgba(255,255,255,.2)}
-.pay-btn-amt{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:400}
-.sec-note{text-align:center;font-size:10px;color:var(--M);letter-spacing:.07em;display:flex;align-items:center;justify-content:center;gap:5px}
-.back-link{text-align:center;font-size:11px;color:var(--M);cursor:pointer;padding:10px;transition:color .15s}
-.back-link:hover{color:var(--T)}
+/* SUMMARY BOX */
+.sum-box{background:rgba(184,150,90,.06);border:1px solid rgba(184,150,90,.15);padding:14px;margin-bottom:12px}
+.sum-row{display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid rgba(184,150,90,.08)}
+.sum-row:last-child{border:none;padding-top:10px;font-size:14px;font-weight:500}
+.sum-l{color:var(--M)}
+.sum-v{color:var(--T);text-align:left}
+.sum-row:last-child .sum-v{font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--G);font-weight:300}
 
-/* CONFIRM */
-.conf-wrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:44px 24px;text-align:center;background:var(--C)}
-.conf-ring{width:68px;height:68px;border-radius:50%;background:var(--B);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;animation:popIn .4s cubic-bezier(.4,0,.2,1)}
-@keyframes popIn{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
-.conf-chk{stroke-dasharray:30;stroke-dashoffset:30;animation:drawC .4s .3s ease forwards}
-@keyframes drawC{to{stroke-dashoffset:0}}
-.conf-title{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;letter-spacing:.08em;margin-bottom:7px;color:var(--T)}
-.conf-sub{font-size:12px;color:var(--M);margin-bottom:24px;line-height:1.8}
-.conf-card{background:var(--W);border:1px solid var(--BR);padding:15px;width:100%;max-width:320px;text-align:right;margin-bottom:14px}
-.conf-row{display:flex;justify-content:space-between;align-items:flex-start;padding:7px 0;border-bottom:1px solid var(--BR);font-size:12px;gap:10px}
-.conf-row:last-child{border-bottom:none}
-.conf-label{color:var(--M);font-size:10px;letter-spacing:.06em;flex-shrink:0}
-.conf-val{font-weight:500;text-align:left;font-size:12px;color:var(--T)}
-.conf-ref{font-size:9px;letter-spacing:.18em;color:var(--M);margin-bottom:20px}
-.conf-ref span{color:var(--G);font-size:12px}
-.conf-btn{padding:13px 32px;background:var(--B);color:#fff;border:none;font-family:'Tajawal',sans-serif;font-size:11px;font-weight:500;letter-spacing:.13em;cursor:pointer;transition:background .17s;display:block;width:100%;max-width:240px;margin-bottom:7px}
-.conf-btn:hover{background:var(--B3)}
-.conf-btn.sec{background:transparent;color:var(--T);border:1px solid var(--BR)}
-.conf-btn.sec:hover{border-color:var(--T)}
-
-/* PROCESSING */
-.proc{position:fixed;inset:0;background:rgba(8,8,7,.93);z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 24px;opacity:0;pointer-events:none;transition:opacity .3s}
-.proc.show{opacity:1;pointer-events:all}
-.proc-ring{width:50px;height:50px;border:1px solid rgba(184,150,90,.17);border-top-color:var(--G);border-radius:50%;animation:spin .9s linear infinite;margin:0 auto 20px}
+/* BOTTOM BAR */
+.bot-bar{position:sticky;bottom:0;z-index:100;background:var(--B);border-top:1px solid rgba(184,150,90,.13);padding:12px 18px;flex-shrink:0}
+.bot-btn{width:100%;padding:14px;background:var(--G);color:var(--B);border:none;font-family:'Tajawal',sans-serif;font-size:12px;font-weight:500;letter-spacing:.13em;cursor:pointer;transition:background .17s;display:flex;align-items:center;justify-content:center;gap:8px}
+.bot-btn:hover{background:var(--G2)}
+.bot-btn:disabled{background:rgba(184,150,90,.2);color:rgba(255,255,255,.2);cursor:not-allowed}
+.bot-btn.loading::after{content:'';width:14px;height:14px;border:2px solid rgba(0,0,0,.2);border-top-color:var(--B);border-radius:50%;animation:spin .8s linear infinite;margin-right:8px}
 @keyframes spin{to{transform:rotate(360deg)}}
-.proc-logo{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:300;color:#fff;letter-spacing:.18em;margin-bottom:4px}
-.proc-sub{font-size:8px;letter-spacing:.26em;color:var(--G);margin-bottom:22px}
-.proc-msg{font-size:11px;color:rgba(255,255,255,.26);letter-spacing:.1em;line-height:2.2}
 
-/* MEMBERSHIPS */
-#pg-mem{background:var(--B)}
-.mem-hero{padding:40px 20px 30px;text-align:center;border-bottom:1px solid rgba(184,150,90,.08);flex-shrink:0}
-.mem-eye{font-size:9px;letter-spacing:.32em;color:var(--G);margin-bottom:10px}
-.mem-title{font-family:'Cormorant Garamond',serif;font-size:clamp(26px,7vw,42px);font-weight:300;letter-spacing:.1em;color:#fff;margin-bottom:8px}
-.mem-sub{font-size:12px;color:rgba(255,255,255,.2);letter-spacing:.07em;line-height:1.9;max-width:320px;margin:0 auto 18px}
-.mem-orn{display:flex;align-items:center;justify-content:center;gap:12px}
-.mol{width:40px;height:1px;background:rgba(184,150,90,.26)}
-.mod{width:4px;height:4px;background:var(--G);transform:rotate(45deg)}
-.mem-tabs{display:flex;background:var(--B2);border-bottom:1px solid rgba(184,150,90,.08);flex-shrink:0}
-.mem-tab{flex:1;padding:12px;font-family:'Tajawal',sans-serif;font-size:11px;letter-spacing:.1em;color:rgba(255,255,255,.26);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:all .17s}
-.mem-tab.on{color:var(--G);border-bottom-color:var(--G)}
-.mem-content{flex:1;overflow-y:auto;padding-bottom:20px}
-.mem-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:2px;margin:2px}
-.mc{background:rgba(255,255,255,.03);border:1px solid rgba(184,150,90,.1);padding:28px 22px;display:flex;flex-direction:column;transition:all .22s}
-.mc:hover,.mc.feat{border-color:rgba(184,150,90,.26);background:rgba(184,150,90,.04)}
-.mc-badge{font-size:8px;letter-spacing:.2em;color:var(--G);margin-bottom:13px;display:flex;align-items:center;gap:8px}
-.mc-badge::after{content:'';flex:1;height:1px;background:rgba(184,150,90,.16)}
-.mc-name{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:300;letter-spacing:.1em;color:#fff;margin-bottom:4px}
-.mc-tagline{font-size:11px;color:rgba(255,255,255,.2);margin-bottom:18px}
-.mc-perks{list-style:none;margin-bottom:20px;flex:1}
-.mc-perk{font-size:12px;color:rgba(255,255,255,.38);padding:6px 0;border-bottom:1px solid rgba(255,255,255,.05);display:flex;align-items:flex-start;gap:7px;line-height:1.5}
-.mc-perk:last-child{border-bottom:none}
-.mc-perk::before{content:'';width:3px;height:3px;background:var(--G);transform:rotate(45deg);flex-shrink:0;margin-top:5px}
-.mc-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;margin-bottom:14px}
-.mc-stat{border:1px solid rgba(184,150,90,.1);padding:10px 5px;text-align:center}
-.mc-stat-price{font-family:'Cormorant Garamond',serif;font-size:19px;color:var(--G);display:block;line-height:1}
-.mc-stat-val{font-family:'Cormorant Garamond',serif;font-size:19px;color:#fff;display:block;line-height:1}
-.mc-stat-lbl{font-size:8px;letter-spacing:.09em;color:var(--M);display:block;margin-top:4px}
-.mc-btn{width:100%;padding:12px;background:transparent;border:1px solid rgba(184,150,90,.28);color:var(--G);font-family:'Tajawal',sans-serif;font-size:11px;letter-spacing:.13em;cursor:pointer;transition:all .2s}
-.mc-btn:hover,.mc.feat .mc-btn{background:var(--G);color:var(--B);border-color:var(--G)}
+/* ERROR */
+.err-box{background:rgba(231,76,60,.08);border:1px solid rgba(231,76,60,.2);padding:10px 14px;font-size:12px;color:#e74c3c;margin-bottom:10px;display:none;line-height:1.6}
 
-/* Portal */
-.portal-wrap{padding:18px;max-width:460px;margin:0 auto}
-.portal-card{background:rgba(255,255,255,.04);border:1px solid rgba(184,150,90,.14);padding:20px;margin-bottom:10px}
-.portal-name{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:300;color:#fff;margin-bottom:3px}
-.portal-tier{font-size:10px;color:var(--M);letter-spacing:.1em}
-.portal-badge{font-size:8px;letter-spacing:.17em;color:var(--G);background:rgba(184,150,90,.07);border:1px solid rgba(184,150,90,.17);padding:3px 10px}
-.vc-lbl{font-size:9px;letter-spacing:.17em;color:var(--M);margin-bottom:9px;margin-top:14px}
-.vc-dots{display:flex;gap:5px;flex-wrap:wrap}
-.vc-dot{width:24px;height:24px;border-radius:50%;border:1px solid rgba(184,150,90,.18);display:flex;align-items:center;justify-content:center;font-size:9px}
-.vc-dot.used{background:var(--G);border-color:var(--G);color:var(--B)}
-.vc-dot.rem{border-color:rgba(184,150,90,.38);color:rgba(184,150,90,.55)}
-.vc-summary{font-size:12px;color:rgba(255,255,255,.28);letter-spacing:.05em;margin-top:9px}
-.vc-summary strong{color:var(--G)}
-.mem-login{padding:36px 18px;max-width:340px;margin:0 auto;text-align:center}
-.ml-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;color:#fff;margin-bottom:6px}
-.ml-sub{font-size:11px;color:rgba(255,255,255,.26);margin-bottom:24px;line-height:1.8}
-.ml-field{margin-bottom:11px;text-align:right}
-.ml-label{font-size:10px;letter-spacing:.1em;color:var(--M);display:block;margin-bottom:5px}
-.ml-input{width:100%;padding:11px 13px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#fff;font-family:'Tajawal',sans-serif;font-size:13px;outline:none;transition:border-color .17s}
-.ml-input:focus{border-color:var(--G)}
-.ml-input::placeholder{color:rgba(255,255,255,.18)}
-.ml-btn{width:100%;padding:13px;background:var(--G);color:var(--B);border:none;font-family:'Tajawal',sans-serif;font-size:12px;font-weight:500;letter-spacing:.13em;cursor:pointer;transition:background .17s;margin-top:3px}
-.ml-btn:hover{background:var(--G2)}
+/* SUCCESS */
+#success{background:var(--C)}
+.suc-wrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:44px 24px;text-align:center}
+.suc-ring{width:72px;height:72px;border-radius:50%;background:var(--B);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;animation:popIn .4s cubic-bezier(.4,0,.2,1)}
+@keyframes popIn{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
+.suc-chk{stroke-dasharray:30;stroke-dashoffset:30;animation:drawC .4s .3s ease forwards}
+@keyframes drawC{to{stroke-dashoffset:0}}
+.suc-title{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;letter-spacing:.08em;margin-bottom:7px;color:var(--T)}
+.suc-sub{font-size:12px;color:var(--M);margin-bottom:24px;line-height:1.8}
+.suc-card{background:var(--W);border:1px solid var(--BR);padding:16px;width:100%;max-width:320px;text-align:right;margin-bottom:16px}
+.suc-row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--BR);font-size:12px;gap:10px}
+.suc-row:last-child{border-bottom:none}
+.suc-label{color:var(--M);font-size:10px;flex-shrink:0}
+.suc-val{font-weight:500;color:var(--T);text-align:left}
+.suc-ref{font-size:9px;letter-spacing:.18em;color:var(--M);margin-bottom:20px}
+.suc-ref span{color:var(--G);font-size:13px}
+.suc-pay{width:100%;max-width:260px;padding:14px;background:var(--G);color:var(--B);border:none;font-family:'Tajawal',sans-serif;font-size:12px;font-weight:500;letter-spacing:.13em;cursor:pointer;transition:background .17s;margin-bottom:8px}
+.suc-pay:hover{background:var(--G2)}
+.suc-new{width:100%;max-width:260px;padding:12px;background:transparent;border:1px solid var(--BR);color:var(--T);font-family:'Tajawal',sans-serif;font-size:11px;letter-spacing:.1em;cursor:pointer;transition:all .17s}
+.suc-new:hover{border-color:var(--T)}
 
-/* GIFT */
-#pg-gift{background:var(--C)}
-.gift-wrap{flex:1;overflow-y:auto}
-.gift-inner{max-width:500px;margin:0 auto;padding:32px 18px 60px}
-.gift-head{text-align:center;margin-bottom:28px;padding-bottom:22px;position:relative}
-.gift-head::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:32px;height:1px;background:var(--G)}
-.gift-eye{font-size:9px;letter-spacing:.3em;color:var(--G);margin-bottom:8px}
-.gift-title{font-family:'Cormorant Garamond',serif;font-size:clamp(26px,7vw,38px);font-weight:300;letter-spacing:.08em;color:var(--T)}
-.gift-sub{font-size:12px;color:var(--M);margin-top:7px;letter-spacing:.06em;line-height:1.8}
-.gcard{background:var(--B);border:1px solid rgba(184,150,90,.2);padding:24px;text-align:center;margin-bottom:20px;position:relative;overflow:hidden}
-.gcard::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 25% 50%,rgba(184,150,90,.07) 0%,transparent 60%)}
-.gc-eye{font-size:8px;letter-spacing:.32em;color:var(--G);margin-bottom:11px;position:relative;z-index:1}
-.gc-logo{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:300;letter-spacing:.2em;color:#fff;position:relative;z-index:1;margin-bottom:3px}
-.gc-logo span{color:var(--G)}
-.gc-city{font-size:8px;letter-spacing:.4em;color:rgba(255,255,255,.16);margin-bottom:12px;position:relative;z-index:1}
-.gc-orn{display:flex;align-items:center;justify-content:center;gap:9px;margin-bottom:11px;position:relative;z-index:1}
-.gc-line{width:28px;height:1px;background:rgba(184,150,90,.26)}
-.gc-d{width:3px;height:3px;background:var(--G);transform:rotate(45deg)}
-.gc-amount{font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:300;color:var(--G);position:relative;z-index:1;line-height:1}
-.gc-sr{font-size:10px;letter-spacing:.13em;color:rgba(184,150,90,.5);display:block;margin-top:2px;position:relative;z-index:1}
-.gc-to{font-size:11px;color:rgba(255,255,255,.18);margin-top:11px;position:relative;z-index:1}
-.gc-to-name{font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:300;color:rgba(255,255,255,.4);letter-spacing:.1em}
-.gift-amounts{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;margin-bottom:16px}
-.ga{background:var(--W);border:1px solid var(--BR);padding:14px;text-align:center;cursor:pointer;transition:all .18s;position:relative;overflow:hidden}
-.ga::after{content:'';position:absolute;inset:0;background:var(--G);transform:scaleY(0);transform-origin:bottom;transition:transform .22s cubic-bezier(.4,0,.2,1)}
-.ga.on::after{transform:scaleY(1)}
-.ga-amount{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--T);position:relative;z-index:1;transition:color .22s}
-.ga-sr{font-size:10px;color:var(--M);display:block;position:relative;z-index:1;transition:color .22s}
-.ga-desc{font-size:10px;color:var(--M);margin-top:3px;position:relative;z-index:1;transition:color .22s}
-.ga.on .ga-amount,.ga.on .ga-sr,.ga.on .ga-desc{color:var(--B)}
-.gift-form{background:var(--W);border:1px solid var(--BR);padding:18px;margin-bottom:13px}
-.gf-title{font-size:9px;letter-spacing:.22em;color:var(--M);margin-bottom:13px;display:flex;align-items:center;gap:8px}
-.gf-title::after{content:'';flex:1;height:1px;background:var(--BR)}
-.gf-field{margin-bottom:11px}
-.gf-label{font-size:10px;letter-spacing:.1em;color:var(--M);display:block;margin-bottom:5px}
-.gf-input{width:100%;padding:10px 12px;background:var(--C);border:1px solid var(--BR);font-family:'Tajawal',sans-serif;font-size:13px;color:var(--T);outline:none;transition:border-color .17s}
-.gf-input:focus{border-color:var(--B)}
-.gf-input::placeholder{color:var(--BR)}
-.gf-textarea{height:65px;resize:none}
-.gift-total-bar{background:var(--C2);border:1px solid var(--BR);padding:12px 15px;margin-bottom:11px;display:flex;justify-content:space-between;align-items:center}
-.gtb-label{font-size:11px;color:var(--M)}
-.gtb-val{font-family:'Cormorant Garamond',serif;font-size:19px;color:var(--T)}
-.gift-btn{width:100%;padding:14px;background:var(--B);color:#fff;border:none;font-family:'Tajawal',sans-serif;font-size:12px;font-weight:500;letter-spacing:.15em;cursor:pointer;transition:background .17s;display:flex;align-items:center;justify-content:center;gap:11px;margin-bottom:7px}
-.gift-btn:hover{background:var(--B3)}
-.gs-wrap{text-align:center;padding:44px 18px;max-width:320px;margin:0 auto}
-.gs-icon{width:62px;height:62px;border-radius:50%;background:var(--B);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;animation:popIn .4s cubic-bezier(.4,0,.2,1)}
-.gs-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;letter-spacing:.08em;color:var(--T);margin-bottom:6px}
-.gs-sub{font-size:12px;color:var(--M);line-height:1.8;margin-bottom:20px}
-.gs-card{background:var(--W);border:1px solid var(--BR);padding:13px;margin-bottom:16px}
-.gs-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--BR);font-size:12px}
-.gs-row:last-child{border-bottom:none}
-.gs-label{color:var(--M);font-size:10px}
-.gs-val{font-weight:500;color:var(--T)}
-.gs-btn{width:100%;padding:12px;background:var(--B);color:#fff;border:none;font-family:'Tajawal',sans-serif;font-size:11px;letter-spacing:.13em;cursor:pointer;transition:background .17s}
-.gs-btn:hover{background:var(--B3)}
+/* FOOTER */
+.footer{background:var(--B);border-top:1px solid rgba(184,150,90,.07);padding:24px 20px;text-align:center;flex-shrink:0}
+.f-logo{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:300;letter-spacing:.2em;color:#fff;margin-bottom:4px;cursor:pointer}
+.f-logo span{color:var(--G)}
+.f-city{font-size:8px;letter-spacing:.4em;color:var(--G);margin-bottom:12px}
+.f-vat{font-size:9px;color:rgba(255,255,255,.1)}
 
-@media(max-width:480px){
-  .h-logo{font-size:clamp(44px,13vw,68px)}
-  .slots{grid-template-columns:repeat(3,1fr)}
-  .gift-amounts{grid-template-columns:repeat(2,1fr)}
-  .mem-grid{grid-template-columns:1fr}
-}
+@media(max-width:400px){.slots{grid-template-columns:repeat(3,1fr)}.otp-input{width:44px;height:48px;font-size:18px}}
 </style>
 </head>
 <body>
 
-<!-- PROCESSING -->
-<div class="proc" id="proc">
-  <div class="proc-ring"></div>
-  <div class="proc-logo">GRAFF <span style="color:var(--G)">SPA</span></div>
-  <div class="proc-sub">PROCESSING</div>
-  <div class="proc-msg" id="proc-msg">جاري المعالجة...</div>
-</div>
-
-<!-- ══════ HOME ══════ -->
-<div id="pg-home" class="pg on">
+<!-- ══ HOME ══ -->
+<div id="home" class="screen on fade">
   <div class="home-bg"></div>
   <div class="hero">
     <p class="h-badge">LUXURY SPA &amp; BEAUTY</p>
-    <h1 class="h-logo">GRAFF <span class="h-logo-spa">SPA</span></h1>
+    <h1 class="h-logo">GRAFF <span>SPA</span></h1>
     <p class="h-city">R I Y A D H</p>
     <div class="h-orn"><div class="h-orn-l"></div><div class="h-orn-d"></div><div class="h-orn-l r"></div></div>
     <p class="h-tag">حيث تلتقي العناية بالفخامة<br>في أدق تفاصيلها</p>
   </div>
   <div class="home-btns">
-    <button class="hb primary" onclick="show('pg-book')"><span>احجزي موعدك الآن</span><span class="hb-i">←</span></button>
-    <button class="hb" onclick="show('pg-mem')"><span>العضويات الحصرية</span><span class="hb-i">←</span></button>
-    <button class="hb" onclick="show('pg-gift')"><span>بطاقات الإهداء</span><span class="hb-i">←</span></button>
+    <button class="hb primary" onclick="goTo('step1')"><span>احجزي موعدك الآن</span><span class="hb-i">←</span></button>
   </div>
   <div class="footer">
-    <div class="f-logo" onclick="show('pg-home')">GRAFF <span>SPA</span></div>
+    <div class="f-logo">GRAFF <span>SPA</span></div>
     <div class="f-city">R I Y A D H</div>
-    <p class="f-tag">تجربة فخامة لا تُنسى · حيث تلتقي العناية بالرقي</p>
-    <div class="f-social">
-      <a class="fsoc" href="#"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.45)" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1" fill="rgba(255,255,255,.45)" stroke="none"/></svg></a>
-      <a class="fsoc" href="#"><svg width="13" height="13" viewBox="0 0 24 24" fill="rgba(255,255,255,.45)"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.747l7.73-8.835L1.254 2.25H8.08l4.261 5.632zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
-      <a class="fsoc" href="#"><svg width="13" height="13" viewBox="0 0 24 24" fill="rgba(255,255,255,.45)"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg></a>
-      <a class="fsoc" href="#"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.45)" stroke-width="1.5"><path d="M12 2C8.5 2 6 4.5 6 8v1c-1 .2-2 .8-2 1.5 0 .5.5.9 1.5 1C5 13 3.5 14.5 2 15c1 .5 2.5.8 3.5.9.5 1 2.5 2.6 6.5 2.6s6-1.6 6.5-2.6c1-.1 2.5-.4 3.5-.9-1.5-.5-3-2-3.5-3.5 1-.1 1.5-.5 1.5-1C21 9.3 20 8.7 19 8.5V8c0-3.5-2.5-6-7-6z"/></svg></a>
-    </div>
-    <div class="f-pay">
-      <span class="fpay" style="color:#1e5aa8;font-weight:700">mada</span>
-      <span class="fpay" style="color:#1a1f71;font-weight:700;font-style:italic">VISA</span>
-      <span class="fpay" style="color:rgba(255,255,255,.4)">🍎 Pay</span>
-      <span class="fpay" style="background:#fff;color:#3d3d3d;font-weight:700">tamara</span>
-      <span class="fpay" style="color:#3eb489;font-weight:800">tabby</span>
-    </div>
-    <div class="f-vat">الرقم الضريبي: 314257469500003 · © 2026 GRAFF SPA</div>
+    <div class="f-vat">الرقم الضريبي: 314257469500003 · © 2026</div>
   </div>
 </div>
 
-<!-- ══════ BOOKING ══════ -->
-<div id="pg-book" class="pg">
+<!-- ══ STEP 1: SERVICE ══ -->
+<div id="step1" class="screen fade">
   <div class="topbar">
-    <button class="tb-back" onclick="bookBack()">← رجوع</button>
-    <div class="tb-logo" onclick="show('pg-home')">GRAFF <span>SPA</span></div>
-    <div class="tb-right"><button class="tb-action" id="tb-edit" style="display:none" onclick="goStep(1)">تعديل</button></div>
+    <button class="tb-back" onclick="goTo('home')">← رجوع</button>
+    <div class="tb-logo">GRAFF <span>SPA</span></div>
+    <div class="tb-step">1 / 5</div>
   </div>
-  <div class="steps">
-    <div class="st on" id="si1"><div class="st-n" id="sn1">1</div><div class="st-l">الخدمة</div></div>
-    <div class="st-line"></div>
-    <div class="st" id="si2"><div class="st-n" id="sn2">2</div><div class="st-l">الموعد</div></div>
-    <div class="st-line"></div>
-    <div class="st" id="si3"><div class="st-n" id="sn3">3</div><div class="st-l">الدفع</div></div>
-    <div class="st-line"></div>
-    <div class="st" id="si4"><div class="st-n" id="sn4">4</div><div class="st-l">التأكيد</div></div>
-  </div>
-
-  <!-- STEP 1 -->
-  <div id="step1" class="sw on">
+  <div class="progress"><div class="progress-bar" style="width:20%"></div></div>
+  <div class="content">
     <div class="s-head">
-      <p class="s-head-eye">STEP 1 OF 3</p>
+      <p class="s-head-eye">STEP 1</p>
       <h2 class="s-head-title">اختاري خدمتك</h2>
-      <p class="s-head-sub">تجربة راقية تبدأ باختيارك</p>
+      <p class="s-head-sub">اختاري الخدمة المناسبة لك</p>
     </div>
-    <div id="products-container">
-      <div class="prod-loading" id="prod-loading">
-        <div style="margin-bottom:8px">جاري تحميل الخدمات...</div>
-        <div style="font-size:10px;letter-spacing:.1em">يتم الاتصال بـ Rekaz</div>
-      </div>
+    <div id="products-list">
+      <div class="prod-loading">جاري تحميل الخدمات...</div>
     </div>
   </div>
+  <div class="bot-bar">
+    <button class="bot-btn" id="btn-step1" onclick="goTo('step2')" disabled>اختاري خدمة للمتابعة</button>
+  </div>
+</div>
 
-  <!-- STEP 2 -->
-  <div id="step2" class="sw" style="padding-bottom:120px">
+<!-- ══ STEP 2: DATE ══ -->
+<div id="step2" class="screen fade">
+  <div class="topbar">
+    <button class="tb-back" onclick="goTo('step1')">← رجوع</button>
+    <div class="tb-logo">GRAFF <span>SPA</span></div>
+    <div class="tb-step">2 / 5</div>
+  </div>
+  <div class="progress"><div class="progress-bar" style="width:40%"></div></div>
+  <div class="content">
     <div class="s-head">
-      <p class="s-head-eye">STEP 2 OF 3</p>
+      <p class="s-head-eye">STEP 2</p>
       <h2 class="s-head-title">اختاري الموعد</h2>
       <p class="s-head-sub">حددي التاريخ والوقت المناسب</p>
     </div>
-    <div class="dt-wrap">
-      <div class="dt-sec">
-        <div class="dt-title">التاريخ</div>
-        <div class="cal">
-          <div class="cal-nav">
-            <button class="cal-btn" onclick="chMonth(-1)">›</button>
-            <div class="cal-month" id="cal-lbl"></div>
-            <button class="cal-btn" onclick="chMonth(1)">‹</button>
-          </div>
-          <div class="cal-hd">
-            <div class="cal-hl">أح</div><div class="cal-hl">إث</div><div class="cal-hl">ث</div>
-            <div class="cal-hl">أر</div><div class="cal-hl">خ</div><div class="cal-hl">ج</div><div class="cal-hl">س</div>
-          </div>
-          <div class="cal-grid" id="cal-grid"></div>
+    <div class="cal-wrap">
+      <div class="cal">
+        <div class="cal-nav">
+          <button class="cal-btn" onclick="chMonth(-1)">›</button>
+          <div class="cal-month" id="cal-lbl"></div>
+          <button class="cal-btn" onclick="chMonth(1)">‹</button>
         </div>
+        <div class="cal-hd">
+          <div class="cal-hl">أح</div><div class="cal-hl">إث</div><div class="cal-hl">ث</div>
+          <div class="cal-hl">أر</div><div class="cal-hl">خ</div><div class="cal-hl">ج</div><div class="cal-hl">س</div>
+        </div>
+        <div class="cal-grid" id="cal-grid"></div>
       </div>
-      <div class="dt-sec" id="slots-sec" style="display:none">
-        <div class="dt-title">الوقت المتاح</div>
-        <div id="slots-box"><div class="slots-info">جاري تحميل الأوقات...</div></div>
+      <div class="slots-sec" id="slots-sec" style="display:none">
+        <div class="slots-label">الأوقات المتاحة</div>
+        <div id="slots-box"></div>
       </div>
     </div>
   </div>
-  <div class="s2bar" id="s2bar">
-    <div class="s2bar-info">
-      <div class="s2bar-item"><span class="s2bar-label">التاريخ</span><span class="s2bar-val" id="s2-date">لم يُحدد</span></div>
-      <div class="s2bar-item" style="text-align:left"><span class="s2bar-label">الوقت</span><span class="s2bar-val" id="s2-time">لم يُحدد</span></div>
-    </div>
-    <button class="s2bar-btn" id="s2bar-btn" onclick="goStep(3)" disabled>متابعة للدفع ←</button>
+  <div class="bot-bar">
+    <button class="bot-btn" id="btn-step2" onclick="goTo('step3')" disabled>اختاري وقتاً للمتابعة</button>
   </div>
+</div>
 
-  <!-- STEP 3 -->
-  <div id="step3" class="sw">
+<!-- ══ STEP 3: PHONE ══ -->
+<div id="step3" class="screen fade">
+  <div class="topbar">
+    <button class="tb-back" onclick="goTo('step2')">← رجوع</button>
+    <div class="tb-logo">GRAFF <span>SPA</span></div>
+    <div class="tb-step">3 / 5</div>
+  </div>
+  <div class="progress"><div class="progress-bar" style="width:60%"></div></div>
+  <div class="content">
     <div class="s-head">
-      <p class="s-head-eye">STEP 3 OF 3</p>
-      <h2 class="s-head-title">إتمام الدفع</h2>
-      <p class="s-head-sub">ملخص طلبك ووسيلة الدفع</p>
+      <p class="s-head-eye">STEP 3</p>
+      <h2 class="s-head-title">رقم جوالك</h2>
+      <p class="s-head-sub">سنرسل رمز التحقق على جوالك</p>
     </div>
-    <div class="pay-wrap">
-      <div class="pay-sec">
-        <div class="pay-title">الخدمة المختارة</div>
-        <div class="os" id="pay-items"></div>
+    <div class="form-wrap">
+      <div class="form-card">
+        <div class="form-title">رقم الجوال</div>
+        <label class="f-label">رقم الجوال (05xxxxxxxx)</label>
+        <input class="f-input" id="inp-phone" type="tel" maxlength="10" placeholder="0512345678" oninput="onPhoneInput()">
       </div>
-      <div class="pay-sec">
-        <div class="pay-title">تفاصيل الموعد</div>
-        <div class="dt-sum">
-          <div class="dt-sum-row"><span class="dt-sum-label">التاريخ</span><span class="dt-sum-val" id="sum-date">—</span></div>
-          <div class="dt-sum-row"><span class="dt-sum-label">الوقت</span><span class="dt-sum-val" id="sum-time">—</span></div>
-        </div>
-      </div>
-      <div class="pay-sec">
-        <div class="pay-title">بياناتك الشخصية</div>
-        <div style="background:var(--W);border:1px solid var(--BR);padding:14px;margin-bottom:2px">
-          <div class="cf-field"><label class="cf-label">الاسم الكامل</label><input class="cf-input" id="cust-name" placeholder="سارة الأحمدي"></div>
-          <div class="cf-field" style="margin-bottom:0"><label class="cf-label">رقم الجوال</label><input class="cf-input" id="cust-phone" placeholder="05xxxxxxxx" type="tel" maxlength="10"></div>
-        </div>
-      </div>
-      <div class="pay-sec">
-        <div class="pay-title">ملخص الفاتورة</div>
-        <div class="totals" id="pay-totals"></div>
-      </div>
-      <div class="pay-sec">
-        <div class="pay-title">وسيلة الدفع</div>
-        <div class="pay-methods" id="pay-methods">
-          <div class="pm on" onclick="selPay(this)"><div class="pm-radio"><div class="pm-dot"></div></div><div class="pm-info"><div class="pm-name">مدى</div><div class="pm-sub">بطاقة مدى المحلية</div></div><span class="pm-logo" style="color:#1e5aa8;font-weight:700">mada</span></div>
-          <div class="pm" onclick="selPay(this)"><div class="pm-radio"><div class="pm-dot"></div></div><div class="pm-info"><div class="pm-name">بطاقة ائتمان</div><div class="pm-sub">Visa / Mastercard</div></div><span class="pm-logo" style="color:#1a1f71;font-weight:700;font-style:italic">VISA</span></div>
-          <div class="pm" onclick="selPay(this)"><div class="pm-radio"><div class="pm-dot"></div></div><div class="pm-info"><div class="pm-name">Apple Pay</div><div class="pm-sub">الدفع السريع</div></div><span class="pm-logo">🍎</span></div>
-          <div class="pm" onclick="selPay(this)"><div class="pm-radio"><div class="pm-dot"></div></div><div class="pm-info"><div class="pm-name">تمارا</div><div class="pm-sub">3 أقساط بدون فوائد</div></div><span class="pm-logo" style="color:#3d3d3d;font-weight:700;font-size:11px">tamara</span></div>
-          <div class="pm" onclick="selPay(this)"><div class="pm-radio"><div class="pm-dot"></div></div><div class="pm-info"><div class="pm-name">تابي</div><div class="pm-sub">4 أقساط بدون فوائد</div></div><span class="pm-logo" style="color:#3eb489;font-weight:800;font-size:11px">tabby</span></div>
-        </div>
-        <div class="card-form" id="card-form">
-          <div class="cf-field"><label class="cf-label">رقم البطاقة</label><input class="cf-input" id="f-card" placeholder="0000  0000  0000  0000" maxlength="19" oninput="fmtCard(this)"></div>
-          <div class="cf-grid">
-            <div class="cf-field"><label class="cf-label">تاريخ الانتهاء</label><input class="cf-input" id="f-exp" placeholder="MM / YY" maxlength="7" oninput="fmtExp(this)"></div>
-            <div class="cf-field"><label class="cf-label">CVV</label><input class="cf-input" placeholder="•••" maxlength="3"></div>
-          </div>
-        </div>
-      </div>
-      <button class="pay-btn" onclick="doPay()">
-        <span>🔒</span><span>ادفعي الآن</span>
-        <div class="pay-btn-div"></div>
-        <span class="pay-btn-amt" id="pay-amt">0 SR</span>
-      </button>
-      <div class="sec-note">🔐 <span>دفع آمن ومشفر — SSL 256-bit</span></div>
-      <div class="back-link" onclick="goStep(2)">← العودة لاختيار الموعد</div>
+      <div class="err-box" id="err3"></div>
     </div>
   </div>
-
-  <!-- STEP 4 -->
-  <div id="step4" class="sw">
-    <div class="conf-wrap">
-      <div class="conf-ring">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <path class="conf-chk" d="M20 6L9 17l-5-5"/>
-        </svg>
-      </div>
-      <h2 class="conf-title">تم الحجز بنجاح</h2>
-      <p class="conf-sub" id="conf-sub-txt">تم تأكيد حجزك وإرسال رسالة تأكيد على جوالك</p>
-      <div class="conf-card" id="conf-card"></div>
-      <p class="conf-ref">رقم الحجز: <span id="conf-num">GS-XXXX</span></p>
-      <button class="conf-btn" onclick="resetBook()">حجز موعد جديد</button>
-      <button class="conf-btn sec" onclick="show('pg-home')">العودة للرئيسية</button>
-    </div>
-  </div>
-
-  <!-- CART BAR -->
-  <div class="cart-bar" id="cart-bar">
-    <div class="cb-info">
-      <div class="cb-count" id="cb-count">0 خدمة</div>
-      <div class="cb-total"><span class="cb-sr">SR </span><span id="cb-total">0</span></div>
-      <div class="cb-tag-wrap" id="cb-tags"></div>
-    </div>
-    <button class="cb-btn" onclick="goStep(2)">متابعة ←</button>
+  <div class="bot-bar">
+    <button class="bot-btn" id="btn-step3" onclick="sendOTP()" disabled>إرسال رمز التحقق</button>
   </div>
 </div>
 
-<!-- ══════ MEMBERSHIPS ══════ -->
-<div id="pg-mem" class="pg">
+<!-- ══ STEP 4: OTP ══ -->
+<div id="step4" class="screen fade">
   <div class="topbar">
-    <button class="tb-back" onclick="show('pg-home')">← رجوع</button>
-    <div class="tb-logo" onclick="show('pg-home')">GRAFF <span>SPA</span></div>
-    <div class="tb-right"><button class="tb-action" onclick="memTab('portal')">حسابي</button></div>
+    <button class="tb-back" onclick="goTo('step3')">← رجوع</button>
+    <div class="tb-logo">GRAFF <span>SPA</span></div>
+    <div class="tb-step">4 / 5</div>
   </div>
-  <div class="mem-hero">
-    <p class="mem-eye">EXCLUSIVE MEMBERSHIPS</p>
-    <h2 class="mem-title">عضويات GRAFF SPA</h2>
-    <p class="mem-sub">استمتعي بأرقى تجارب العناية على مدار العام</p>
-    <div class="mem-orn"><div class="mol"></div><div class="mod"></div><div class="mol"></div></div>
-  </div>
-  <div class="mem-tabs">
-    <button class="mem-tab on" onclick="memTab('plans')">خطط العضوية</button>
-    <button class="mem-tab" onclick="memTab('portal')">لوحة العضو</button>
-  </div>
-  <div class="mem-content">
-    <div id="mem-plans">
-      <div class="mem-grid">
-        <div class="mc"><div class="mc-badge">CLASSIC</div><div class="mc-name">Classic</div><div class="mc-tagline">بداية الرقي والأناقة</div><ul class="mc-perks"><li class="mc-perk">Russian Manicure</li><li class="mc-perk">Facial Treatment</li><li class="mc-perk">K18 Hair Mask</li><li class="mc-perk">Dior Set</li></ul><div class="mc-stats"><div class="mc-stat"><span class="mc-stat-price">4,000</span><span class="mc-stat-lbl">SR / سنة</span></div><div class="mc-stat"><span class="mc-stat-val">12</span><span class="mc-stat-lbl">زيارة</span></div><div class="mc-stat"><span class="mc-stat-val">12</span><span class="mc-stat-lbl">شهر</span></div></div><button class="mc-btn" onclick="buyMem('Classic',4000)">اشتركي الآن</button></div>
-        <div class="mc feat"><div class="mc-badge">VIP</div><div class="mc-name">VIP</div><div class="mc-tagline">تجربة التميز الحصري</div><ul class="mc-perks"><li class="mc-perk">Gel Extensions or BIAB</li><li class="mc-perk">Russian Manicure</li><li class="mc-perk">Kerastase Hair Mask</li><li class="mc-perk">Facial Treatment</li><li class="mc-perk">French Color</li><li class="mc-perk">Chanel Set</li></ul><div class="mc-stats"><div class="mc-stat"><span class="mc-stat-price">8,000</span><span class="mc-stat-lbl">SR / سنة</span></div><div class="mc-stat"><span class="mc-stat-val">12</span><span class="mc-stat-lbl">زيارة</span></div><div class="mc-stat"><span class="mc-stat-val">12</span><span class="mc-stat-lbl">شهر</span></div></div><button class="mc-btn" onclick="buyMem('VIP',8000)">اشتركي الآن</button></div>
-        <div class="mc"><div class="mc-badge">V-VIP</div><div class="mc-name">V-VIP</div><div class="mc-tagline">قمة الفخامة والنخبة</div><ul class="mc-perks"><li class="mc-perk">Gel Extensions or BIAB + Length Extension</li><li class="mc-perk">Russian Manicure</li><li class="mc-perk">Lashes</li><li class="mc-perk">Facial Treatment</li><li class="mc-perk">Kerastase Hair Mask</li><li class="mc-perk">Hermes Set</li><li class="mc-perk">30-Minute Massage</li></ul><div class="mc-stats"><div class="mc-stat"><span class="mc-stat-price">10,000</span><span class="mc-stat-lbl">SR / سنة</span></div><div class="mc-stat"><span class="mc-stat-val">12</span><span class="mc-stat-lbl">زيارة</span></div><div class="mc-stat"><span class="mc-stat-val">12</span><span class="mc-stat-lbl">شهر</span></div></div><button class="mc-btn" onclick="buyMem('V-VIP',10000)">اشتركي الآن</button></div>
-      </div>
-      <p style="text-align:center;font-size:9px;letter-spacing:.13em;color:rgba(255,255,255,.1);padding:20px">Membership validity begins from the date of activation</p>
-      <div id="buy-form" style="display:none;max-width:400px;margin:0 auto;padding:0 18px 40px">
-        <div style="background:rgba(184,150,90,.06);border:1px solid rgba(184,150,90,.18);padding:18px;margin-bottom:13px">
-          <div style="font-family:'Cormorant Garamond',serif;font-size:24px;color:#fff;margin-bottom:3px" id="bf-name">Classic</div>
-          <div style="font-family:'Cormorant Garamond',serif;font-size:19px;color:var(--G)" id="bf-price">4,000 SR</div>
-        </div>
-        <div class="cf-field" style="margin-bottom:11px"><label class="cf-label" style="color:rgba(255,255,255,.38)">الاسم الكامل</label><input class="ml-input" id="bf-nm" placeholder="الاسم الكامل"></div>
-        <div class="cf-field" style="margin-bottom:11px"><label class="cf-label" style="color:rgba(255,255,255,.38)">رقم الجوال</label><input class="ml-input" placeholder="05xxxxxxxx" type="tel" id="bf-ph"></div>
-        <div class="pay-methods" style="margin-bottom:11px">
-          <div class="pm on" onclick="selPay(this)"><div class="pm-radio"><div class="pm-dot"></div></div><div class="pm-info"><div class="pm-name" style="color:#fff">مدى</div></div><span style="color:#1e5aa8;font-weight:700">mada</span></div>
-          <div class="pm" onclick="selPay(this)"><div class="pm-radio"><div class="pm-dot"></div></div><div class="pm-info"><div class="pm-name" style="color:#fff">بطاقة ائتمان</div></div><span style="color:#1a1f71;font-weight:700;font-style:italic">VISA</span></div>
-          <div class="pm" onclick="selPay(this)"><div class="pm-radio"><div class="pm-dot"></div></div><div class="pm-info"><div class="pm-name" style="color:#fff">Apple Pay</div></div><span>🍎</span></div>
-        </div>
-        <button class="pay-btn" onclick="completeMem()"><span>🔒</span><span>إتمام الاشتراك</span><div class="pay-btn-div"></div><span class="pay-btn-amt" id="bf-btn-p">4,000 SR</span></button>
-        <button onclick="document.getElementById('buy-form').style.display='none'" style="width:100%;padding:11px;background:none;border:1px solid rgba(255,255,255,.09);color:rgba(255,255,255,.28);font-family:'Tajawal',sans-serif;font-size:11px;letter-spacing:.1em;cursor:pointer;margin-top:7px">إلغاء</button>
-      </div>
+  <div class="progress"><div class="progress-bar" style="width:80%"></div></div>
+  <div class="content">
+    <div class="s-head">
+      <p class="s-head-eye">STEP 4</p>
+      <h2 class="s-head-title">رمز التحقق</h2>
+      <p class="s-head-sub" id="otp-sent-to">تم إرسال الرمز على جوالك</p>
     </div>
-    <div id="mem-portal" style="display:none">
-      <div id="portal-login"><div class="mem-login"><div class="ml-title">لوحة العضو</div><div class="ml-sub">سجلي دخولك لمتابعة اشتراكك وزياراتك</div><div class="ml-field"><label class="ml-label">رقم الجوال</label><input class="ml-input" placeholder="05xxxxxxxx" type="tel"></div><div class="ml-field"><label class="ml-label">رمز التحقق</label><input class="ml-input" placeholder="• • • • • •"></div><button class="ml-btn" onclick="portalLogin()">دخول</button></div></div>
-      <div id="portal-data" style="display:none"><div class="portal-wrap"><div class="portal-card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:13px"><div><div class="portal-name">نوف السلمي</div><div class="portal-tier">VIP MEMBER · منذ مارس 2026</div></div><div class="portal-badge">VIP</div></div><div class="vc-lbl">الزيارات المستهلكة — 7 من أصل 12</div><div class="vc-dots" id="vc-dots"></div><div class="vc-summary">استهلكت <strong>7 زيارات</strong> · متبقي <strong>5 زيارات</strong></div></div><div style="background:rgba(255,255,255,.04);border:1px solid rgba(184,150,90,.11);padding:13px 15px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center"><div><div style="font-size:10px;letter-spacing:.1em;color:var(--M)">انتهاء الاشتراك</div><div style="font-family:'Cormorant Garamond',serif;font-size:15px;color:#fff;margin-top:2px">مارس 2027</div></div><div style="font-size:10px;color:#e67e22">تبقى 12 شهر</div></div><div class="portal-card"><div style="font-size:9px;letter-spacing:.17em;color:var(--G);margin-bottom:11px">آخر الزيارات</div><div style="font-size:12px;color:rgba(255,255,255,.3);line-height:2.4">20 مارس 2026 — Russian Manicure<br>15 مارس 2026 — Facial Treatment<br>10 مارس 2026 — K18 Hair Mask</div></div><button class="mc-btn" style="margin-top:4px;width:100%" onclick="show('pg-book')">احجزي موعدك ←</button></div></div>
+    <div class="form-wrap">
+      <div class="form-card">
+        <div class="form-title">أدخلي الرمز</div>
+        <div class="otp-inputs">
+          <input class="otp-input" id="o1" maxlength="1" type="tel" oninput="otpMove(this,'o2')" onkeydown="otpBack(event,this,'')">
+          <input class="otp-input" id="o2" maxlength="1" type="tel" oninput="otpMove(this,'o3')" onkeydown="otpBack(event,this,'o1')">
+          <input class="otp-input" id="o3" maxlength="1" type="tel" oninput="otpMove(this,'o4')" onkeydown="otpBack(event,this,'o2')">
+          <input class="otp-input" id="o4" maxlength="1" type="tel" oninput="otpDone()" onkeydown="otpBack(event,this,'o3')">
+        </div>
+        <div class="otp-hint">الرمز صالح لمدة 5 دقائق</div>
+        <button class="otp-resend" onclick="sendOTP(true)">إعادة إرسال الرمز</button>
+      </div>
+      <div class="err-box" id="err4"></div>
     </div>
   </div>
-  <div class="footer" style="flex-shrink:0"><div class="f-logo" onclick="show('pg-home')">GRAFF <span>SPA</span></div><div class="f-city">R I Y A D H</div><div class="f-vat">الرقم الضريبي: 314257469500003 · © 2026</div></div>
+  <div class="bot-bar">
+    <button class="bot-btn" id="btn-step4" onclick="verifyOTP()" disabled>تحقق وأكملي الحجز</button>
+  </div>
 </div>
 
-<!-- ══════ GIFT ══════ -->
-<div id="pg-gift" class="pg">
+<!-- ══ STEP 5: NAME + CONFIRM ══ -->
+<div id="step5" class="screen fade">
   <div class="topbar">
-    <button class="tb-back" onclick="show('pg-home')">← رجوع</button>
-    <div class="tb-logo" onclick="show('pg-home')">GRAFF <span>SPA</span></div>
-    <div style="width:56px"></div>
+    <button class="tb-back" onclick="goTo('step4')">← رجوع</button>
+    <div class="tb-logo">GRAFF <span>SPA</span></div>
+    <div class="tb-step">5 / 5</div>
   </div>
-  <div class="gift-wrap">
-    <div id="gift-main"><div class="gift-inner">
-      <div class="gift-head"><p class="gift-eye">GIFT CARDS</p><h2 class="gift-title">بطاقات الإهداء</h2><p class="gift-sub">أهدي من تحبين تجربة فخامة لا تُنسى</p></div>
-      <div class="gcard"><p class="gc-eye">LUXURY GIFT CARD</p><div class="gc-logo">GRAFF <span>SPA</span></div><div class="gc-city">R I Y A D H</div><div class="gc-orn"><div class="gc-line"></div><div class="gc-d"></div><div class="gc-line"></div></div><div class="gc-amount" id="gc-amt">500</div><span class="gc-sr">SAUDI RIYAL</span><div class="gc-to">إلى: <div class="gc-to-name" id="gc-to-name">اسم المُهدى إليها</div></div></div>
-      <div class="gift-amounts">
-        <div class="ga on" onclick="selGift(this,500)"><div class="ga-amount">500</div><span class="ga-sr">SR</span><div class="ga-desc">خدمة واحدة فاخرة</div></div>
-        <div class="ga" onclick="selGift(this,1000)"><div class="ga-amount">1,000</div><span class="ga-sr">SR</span><div class="ga-desc">تجربة كاملة</div></div>
-        <div class="ga" onclick="selGift(this,2000)"><div class="ga-amount">2,000</div><span class="ga-sr">SR</span><div class="ga-desc">باقة فاخرة شاملة</div></div>
-        <div class="ga" onclick="selGift(this,0)"><div class="ga-amount" style="font-size:17px;padding:4px 0">مخصص</div><span class="ga-sr">SR</span><div class="ga-desc">حددي المبلغ</div></div>
+  <div class="progress"><div class="progress-bar" style="width:100%"></div></div>
+  <div class="content">
+    <div class="s-head">
+      <p class="s-head-eye">STEP 5</p>
+      <h2 class="s-head-title">تأكيد الحجز</h2>
+      <p class="s-head-sub">أدخلي اسمك وأكملي الحجز</p>
+    </div>
+    <div class="form-wrap">
+      <div class="form-card">
+        <div class="form-title">بياناتك</div>
+        <label class="f-label">الاسم الكامل</label>
+        <input class="f-input" id="inp-name" placeholder="سارة الأحمدي">
       </div>
-      <div id="custom-wrap" style="display:none;margin-bottom:14px"><input class="cf-input" id="custom-amt" type="number" placeholder="أدخلي المبلغ (الحد الأدنى 100)" oninput="updCustom()"></div>
-      <div class="gift-form"><div class="gf-title">تفاصيل الإهداء</div><div class="gf-field"><label class="gf-label">اسم المُهدِية</label><input class="gf-input" id="gf-from" placeholder="سارة الأحمدي"></div><div class="gf-field"><label class="gf-label">اسم المُهدى إليها</label><input class="gf-input" id="gf-to" placeholder="نوف العمري" oninput="document.getElementById('gc-to-name').textContent=this.value||'اسم المُهدى إليها'"></div><div class="gf-field"><label class="gf-label">رقم جوال المُهدى إليها</label><input class="gf-input" id="gf-phone" placeholder="05xxxxxxxx" type="tel"></div><div class="gf-field"><label class="gf-label">رسالة الإهداء</label><textarea class="gf-input gf-textarea" id="gf-msg" placeholder="مع أجمل التهاني..."></textarea></div></div>
-      <div class="pay-sec"><div class="pay-title">وسيلة الدفع</div><div class="pay-methods"><div class="pm on" onclick="selPay(this)"><div class="pm-radio"><div class="pm-dot"></div></div><div class="pm-info"><div class="pm-name">مدى</div></div><span class="pm-logo" style="color:#1e5aa8;font-weight:700">mada</span></div><div class="pm" onclick="selPay(this)"><div class="pm-radio"><div class="pm-dot"></div></div><div class="pm-info"><div class="pm-name">Apple Pay</div></div><span class="pm-logo">🍎</span></div><div class="pm" onclick="selPay(this)"><div class="pm-radio"><div class="pm-dot"></div></div><div class="pm-info"><div class="pm-name">بطاقة ائتمان</div></div><span class="pm-logo" style="color:#1a1f71;font-weight:700;font-style:italic">VISA</span></div></div></div>
-      <div class="gift-total-bar"><span class="gtb-label">إجمالي بطاقة الإهداء</span><span class="gtb-val" id="gift-total">500 SR</span></div>
-      <button class="gift-btn" onclick="doGift()"><span>🔒</span><span>شراء بطاقة الإهداء</span><div class="pay-btn-div"></div><span class="pay-btn-amt" id="gift-btn-amt">500 SR</span></button>
-      <div class="sec-note">🔐 <span>دفع آمن ومشفر</span></div>
-    </div></div>
-    <div id="gift-suc" style="display:none"><div class="gift-inner"><div class="gs-wrap"><div class="gs-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div><div class="gs-title">تم إرسال البطاقة</div><div class="gs-sub">تم إرسال بطاقة الإهداء بنجاح</div><div class="gs-card"><div class="gs-row"><span class="gs-label">المُهدِية</span><span class="gs-val" id="gs-from">—</span></div><div class="gs-row"><span class="gs-label">المُهدى إليها</span><span class="gs-val" id="gs-to">—</span></div><div class="gs-row"><span class="gs-label">المبلغ</span><span class="gs-val" id="gs-amount">—</span></div><div class="gs-row"><span class="gs-label">رقم البطاقة</span><span class="gs-val" id="gs-ref">—</span></div></div><button class="gs-btn" onclick="show('pg-home')">العودة للرئيسية</button></div></div></div>
+      <div class="sum-box" id="sum-box"></div>
+      <div class="err-box" id="err5"></div>
+    </div>
   </div>
-  <div class="footer" style="flex-shrink:0"><div class="f-logo" onclick="show('pg-home')">GRAFF <span>SPA</span></div><div class="f-city">R I Y A D H</div><div class="f-vat">الرقم الضريبي: 314257469500003 · © 2026</div></div>
+  <div class="bot-bar">
+    <button class="bot-btn" id="btn-step5" onclick="createBooking()">تأكيد الحجز ←</button>
+  </div>
+</div>
+
+<!-- ══ SUCCESS ══ -->
+<div id="success" class="screen fade">
+  <div class="topbar">
+    <div style="min-width:56px"></div>
+    <div class="tb-logo">GRAFF <span>SPA</span></div>
+    <div style="min-width:56px"></div>
+  </div>
+  <div class="suc-wrap">
+    <div class="suc-ring">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round">
+        <path class="suc-chk" d="M20 6L9 17l-5-5"/>
+      </svg>
+    </div>
+    <h2 class="suc-title">تم الحجز بنجاح</h2>
+    <p class="suc-sub">تم تأكيد حجزك في نظام GRAFF SPA</p>
+    <div class="suc-card" id="suc-card"></div>
+    <p class="suc-ref">رقم الحجز: <span id="suc-ref">—</span></p>
+    <button class="suc-pay" id="suc-pay-btn" style="display:none" onclick="goPayment()">إتمام الدفع ←</button>
+    <button class="suc-new" onclick="resetAll()">حجز موعد جديد</button>
+  </div>
 </div>
 
 <script>
-// ══════════════════════════════════
-// CONFIG — Backend URL
-// ══════════════════════════════════
 var BACKEND = 'https://rekaz-test.onrender.com';
-var BRANCH_ID = '3a1d7f2c-2ad3-ce53-aad1-80f155af75c8';
-
-// ══════════════════════════════════
-// STATE
-// ══════════════════════════════════
-var selProduct = null;   // full product object from API
-var selSlot    = null;   // full slot object from API
-var selTimeLbl = null;
-var selDate    = null;   // {y,m,d}
-var curStep    = 1;
-var calY = new Date().getFullYear();
-var calM = new Date().getMonth();
-var allSlots   = [];
-
 var MONTHS = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
 var DAYS   = ['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+
+// STATE
+var state = {
+  product: null,    // { id, priceId, name, duration, amount }
+  date: null,       // { y, m, d }
+  slot: null,       // full slot object from Rekaz
+  slotLabel: null,
+  phone: null,
+  customerId: null,
+  paymentLink: null
+};
+var calY = new Date().getFullYear();
+var calM = new Date().getMonth();
+var allSlots = [];
+
 function p2(n){ return String(n).padStart(2,'0'); }
 
-// ══════════════════════════════════
-// PAGE NAV
-// ══════════════════════════════════
-function show(id){
-  document.querySelectorAll('.pg').forEach(function(p){ p.classList.remove('on'); });
-  document.getElementById(id).classList.add('on');
+// ── NAVIGATION ──
+function goTo(id) {
+  document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('on'); });
+  var el = document.getElementById(id);
+  el.classList.add('on');
+  el.classList.add('fade');
+  setTimeout(function(){ el.classList.remove('fade'); }, 400);
   window.scrollTo(0,0);
+  if(id==='step5') renderSummary();
 }
 
-function bookBack(){
-  if(curStep===1) show('pg-home');
-  else goStep(curStep-1);
-}
-
-// ══════════════════════════════════
-// STEPS
-// ══════════════════════════════════
-function goStep(n){
-  if(n===2 && !selProduct){ alert('اختاري خدمة أولاً'); return; }
-  if(n===3){
-    if(!selDate){ alert('اختاري التاريخ أولاً'); return; }
-    if(!selSlot){ alert('اختاري الوقت أولاً'); return; }
-    renderPayStep();
-  }
-  curStep=n;
-  document.querySelectorAll('.sw').forEach(function(s,i){ s.classList.toggle('on',i+1===n); });
-  for(var j=1;j<=4;j++){
-    var si=document.getElementById('si'+j);
-    var sn=document.getElementById('sn'+j);
-    si.classList.remove('on','done');
-    if(j<n){ si.classList.add('done'); sn.textContent='✓'; }
-    else if(j===n){ si.classList.add('on'); sn.textContent=j; }
-    else{ sn.textContent=j; }
-  }
-  var cb=document.getElementById('cart-bar');
-  var s2=document.getElementById('s2bar');
-  var tbe=document.getElementById('tb-edit');
-  cb.classList.remove('up');
-  s2.classList.remove('show');
-  if(n===1){ if(selProduct) cb.classList.add('up'); tbe.style.display='none'; }
-  else if(n===2){ s2.classList.add('show'); tbe.style.display='block'; }
-  else{ tbe.style.display='block'; }
-  window.scrollTo(0,0);
-}
-
-// ══════════════════════════════════
-// LOAD PRODUCTS FROM API
-// ══════════════════════════════════
-async function loadProducts(){
-  try{
-    var r = await fetch(BACKEND+'/products');
-    if(!r.ok) throw new Error('HTTP '+r.status);
+// ── LOAD PRODUCTS ──
+async function loadProducts() {
+  try {
+    var r = await fetch(BACKEND + '/products');
     var data = await r.json();
-
-    // data could be array or {items:[...]} or {raw:...}
-    var products = Array.isArray(data) ? data : (data.items || []);
-
-    if(!products.length){
-      document.getElementById('products-container').innerHTML=
-        '<div class="prod-error">لا توجد خدمات منشورة حالياً</div>';
+    var products = data.items || [];
+    if(!products.length) {
+      document.getElementById('products-list').innerHTML = '<div class="prod-error">لا توجد خدمات متاحة</div>';
       return;
     }
-
-    renderProducts(products);
-  }catch(e){
-    document.getElementById('products-container').innerHTML=
-      '<div class="prod-error">خطأ في تحميل الخدمات: '+e.message+'</div>';
+    var html = '';
+    products.forEach(function(p) {
+      var priceId = p.pricing && p.pricing[0] ? p.pricing[0].id : '';
+      var amount  = p.amount || 0;
+      var dur     = p.duration ? p.duration + ' دقيقة' : '';
+      var name    = p.nameAr || p.name || '';
+      html += '<div class="srow" id="p-' + p.id + '" onclick="selProduct(\'' + p.id + '\',\'' + priceId + '\',\'' + name.replace(/'/g,'') + '\',' + (p.duration||60) + ',' + amount + ')">';
+      html += '<div class="srow-info"><div class="srow-name">' + name + '</div>';
+      if(dur) html += '<div class="srow-sub">⏱ ' + dur + '</div>';
+      html += '</div>';
+      html += '<div style="display:flex;align-items:center;gap:8px">';
+      html += '<div style="text-align:left"><div class="srow-price">' + amount + '</div><div class="srow-sr">SR</div></div>';
+      html += '<div class="srow-chk"><div class="srow-chk-i"></div></div>';
+      html += '</div></div>';
+    });
+    document.getElementById('products-list').innerHTML = html;
+  } catch(e) {
+    document.getElementById('products-list').innerHTML = '<div class="prod-error">خطأ في تحميل الخدمات: ' + e.message + '</div>';
   }
 }
 
-function renderProducts(products){
-  var html='';
-  products.forEach(function(p){
-    var priceId = p.pricing && p.pricing[0] ? p.pricing[0].id : '';
-    var amount  = p.amount || (p.pricing && p.pricing[0] ? p.pricing[0].amount : 0) || 0;
-    var dur     = p.duration ? p.duration+' Min' : '';
-    var nameAr  = p.nameAr || p.name || '';
-    var nameEn  = p.nameEn || p.name || '';
-
-    html += '<div class="srow" id="prod-'+p.id+'" onclick="selProd(this,\''+p.id+'\',\''+priceId+'\',\''+nameAr.replace(/'/g,'')+'\',\''+dur+'\','+amount+')">';
-    html += '<div class="srow-info"><div class="srow-name">'+nameAr+'</div>';
-    if(nameEn && nameEn!==nameAr) html += '<div class="srow-en">'+nameEn+'</div>';
-    if(dur) html += '<div class="srow-dur">⏱ '+dur+'</div>';
-    html += '</div>';
-    html += '<div class="srow-right">';
-    html += '<div class="srow-price">'+amount+'<span class="srow-sr"> SR</span></div>';
-    html += '<div style="display:flex;gap:5px;align-items:center">';
-    html += '<button class="srow-remove" onclick="remProd(event)">✕</button>';
-    html += '<div class="srow-chk"><div class="srow-chk-i"></div></div>';
-    html += '</div></div></div>';
-  });
-  document.getElementById('products-container').innerHTML=html;
-}
-
-function selProd(el, id, priceId, name, dur, price){
-  document.querySelectorAll('#products-container .srow.on').forEach(function(s){ s.classList.remove('on'); });
-  var same = selProduct && selProduct.id===id;
-  if(same){
-    selProduct=null;
-  }else{
-    el.classList.add('on');
-    selProduct={id:id, priceId:priceId, name:name, dur:dur, price:price};
-  }
-  updCart();
-}
-
-function remProd(e){
-  e.stopPropagation();
-  document.querySelectorAll('#products-container .srow.on').forEach(function(s){ s.classList.remove('on'); });
-  selProduct=null;
-  updCart();
-}
-
-function updCart(){
-  if(selProduct){
-    document.getElementById('cb-count').textContent='1 خدمة مختارة';
-    document.getElementById('cb-total').textContent=selProduct.price.toLocaleString('en');
-    document.getElementById('cb-tags').innerHTML='<span class="cb-tag">'+selProduct.name+'</span>';
-    document.getElementById('cart-bar').classList.add('up');
-  }else{
-    document.getElementById('cb-count').textContent='0 خدمة';
-    document.getElementById('cb-total').textContent='0';
-    document.getElementById('cb-tags').innerHTML='';
-    document.getElementById('cart-bar').classList.remove('up');
+function selProduct(id, priceId, name, duration, amount) {
+  document.querySelectorAll('.srow.on').forEach(function(s){ s.classList.remove('on'); });
+  var same = state.product && state.product.id === id;
+  if(same) {
+    state.product = null;
+    document.getElementById('btn-step1').disabled = true;
+    document.getElementById('btn-step1').textContent = 'اختاري خدمة للمتابعة';
+  } else {
+    document.getElementById('p-' + id).classList.add('on');
+    state.product = { id, priceId, name, duration, amount };
+    document.getElementById('btn-step1').disabled = false;
+    document.getElementById('btn-step1').textContent = name + ' ←';
   }
 }
 
-// ══════════════════════════════════
-// CALENDAR
-// ══════════════════════════════════
-function renderCal(){
+// ── CALENDAR ──
+function renderCal() {
   var y=calY, m=calM;
-  document.getElementById('cal-lbl').textContent=MONTHS[m]+' '+y;
-  var first=new Date(y,m,1).getDay();
-  var days=new Date(y,m+1,0).getDate();
-  var tod=new Date();
-  var todY=tod.getFullYear(),todM=tod.getMonth(),todD=tod.getDate();
-  var html='';
-  for(var i=0;i<first;i++) html+='<div class="cal-d empty"></div>';
-  for(var d=1;d<=days;d++){
-    var dt=new Date(y,m,d);
-    var past=dt<new Date(todY,todM,todD);
-    var isToday=d===todD&&m===todM&&y===todY;
-    var isSel=selDate&&d===selDate.d&&m===selDate.m&&y===selDate.y;
-    var cls='cal-d'+(past?' past':'')+(isSel?' sel':'')+(isToday&&!isSel?' today':'');
-    if(past) html+='<div class="'+cls+'">'+d+'</div>';
-    else html+='<div class="'+cls+'" onclick="pickDate('+y+','+m+','+d+')">'+d+'</div>';
+  document.getElementById('cal-lbl').textContent = MONTHS[m] + ' ' + y;
+  var first = new Date(y,m,1).getDay();
+  var days  = new Date(y,m+1,0).getDate();
+  var tod   = new Date();
+  var html  = '';
+  for(var i=0;i<first;i++) html += '<div class="cal-d empty"></div>';
+  for(var d=1;d<=days;d++) {
+    var dt   = new Date(y,m,d);
+    var past = dt < new Date(tod.getFullYear(),tod.getMonth(),tod.getDate());
+    var isT  = d===tod.getDate()&&m===tod.getMonth()&&y===tod.getFullYear();
+    var isSel= state.date&&d===state.date.d&&m===state.date.m&&y===state.date.y;
+    var cls  = 'cal-d'+(past?' past':'')+(isSel?' sel':'')+(isT&&!isSel?' today':'');
+    if(past) html += '<div class="'+cls+'">'+d+'</div>';
+    else html += '<div class="'+cls+'" onclick="pickDate('+y+','+m+','+d+')">'+d+'</div>';
   }
-  document.getElementById('cal-grid').innerHTML=html;
+  document.getElementById('cal-grid').innerHTML = html;
 }
 
-function chMonth(dir){
-  calM+=dir;
+function chMonth(dir) {
+  calM += dir;
   if(calM<0){ calM=11; calY--; }
   if(calM>11){ calM=0; calY++; }
   renderCal();
 }
 
-function pickDate(y,m,d){
-  selDate={y:y,m:m,d:d};
-  selSlot=null; selTimeLbl=null;
+function pickDate(y,m,d) {
+  state.date = {y,m,d};
+  state.slot = null; state.slotLabel = null;
   renderCal();
-  document.getElementById('slots-sec').style.display='block';
-  document.getElementById('s2-date').textContent=DAYS[new Date(y,m,d).getDay()]+' '+d+' '+MONTHS[m];
-  document.getElementById('s2-time').textContent='لم يُحدد';
-  document.getElementById('s2bar-btn').disabled=true;
-  document.getElementById('s2bar').classList.add('show');
+  document.getElementById('slots-sec').style.display = 'block';
+  document.getElementById('btn-step2').disabled = true;
+  document.getElementById('btn-step2').textContent = 'اختاري وقتاً للمتابعة';
   loadSlots(y,m,d);
 }
 
-// ══════════════════════════════════
-// LOAD SLOTS FROM API
-// ══════════════════════════════════
-function utcToAST(utcStr){
-  var d=new Date(utcStr);
-  var h=(d.getUTCHours()+3)%24;
-  var mn=d.getUTCMinutes();
-  var suf=h<12?'ص':'م';
-  var dh=h===0?12:h>12?h-12:h;
+// ── SLOTS ──
+function utcToAST(utcStr) {
+  var d = new Date(utcStr);
+  var h = (d.getUTCHours()+3)%24;
+  var mn= d.getUTCMinutes();
+  var suf = h<12?'ص':'م';
+  var dh = h===0?12:h>12?h-12:h;
   return dh+':'+p2(mn)+' '+suf;
 }
-
-function utcDateAST(utcStr){
-  var d=new Date(utcStr);
-  var ast=new Date(d.getTime()+3*3600000);
+function utcDateAST(utcStr) {
+  var d = new Date(utcStr);
+  var ast = new Date(d.getTime()+3*3600000);
   return ast.getUTCFullYear()+'-'+p2(ast.getUTCMonth()+1)+'-'+p2(ast.getUTCDate());
 }
 
-async function loadSlots(y,m,d){
-  if(!selProduct){ return; }
-  document.getElementById('slots-box').innerHTML='<div class="slots-info">جاري تحميل الأوقات من Rekaz...</div>';
-
-  var dateStr=y+'-'+p2(m+1)+'-'+p2(d);
-
-  try{
+async function loadSlots(y,m,d) {
+  if(!state.product) return;
+  document.getElementById('slots-box').innerHTML = '<div class="slot-loading">جاري تحميل الأوقات...</div>';
+  var dateStr = y+'-'+p2(m+1)+'-'+p2(d);
+  try {
     var params = new URLSearchParams({
       StartDate: dateStr+'T00:00:00',
       EndDate:   dateStr+'T23:59:59',
-      PriceId:   selProduct.priceId,
+      PriceId:   state.product.priceId,
       MinQuantity: '1'
     });
-    var r=await fetch(BACKEND+'/slots?'+params.toString());
+    var r = await fetch(BACKEND+'/slots?'+params);
     if(!r.ok) throw new Error('HTTP '+r.status);
-    var data=await r.json();
-
-    var raw=Array.isArray(data)?data:(data.items||[]);
-
-    // Filter available + matching AST date + deduplicate
-    var seen={};
-    allSlots=raw.filter(function(s){
+    var raw = await r.json();
+    var seen = {};
+    allSlots = (Array.isArray(raw)?raw:[]).filter(function(s){
       if(!s.isAvailable||s.isOutDated) return false;
       if(utcDateAST(s.from)!==dateStr) return false;
-      var lbl=utcToAST(s.from);
+      var lbl = utcToAST(s.from);
       if(seen[lbl]) return false;
-      seen[lbl]=true;
-      return true;
+      seen[lbl]=true; return true;
     });
-
-    if(!allSlots.length){
-      document.getElementById('slots-box').innerHTML='<div class="slots-empty">لا توجد أوقات متاحة في هذا اليوم</div>';
+    if(!allSlots.length) {
+      document.getElementById('slots-box').innerHTML = '<div class="slot-empty">لا توجد أوقات متاحة في هذا اليوم</div>';
       return;
     }
-
-    renderSlots();
-  }catch(e){
-    document.getElementById('slots-box').innerHTML='<div class="slots-empty">خطأ: '+e.message+'</div>';
+    var html = '<div class="slots">';
+    allSlots.forEach(function(s,i){
+      var lbl = utcToAST(s.from);
+      html += '<div class="slot" id="sl'+i+'" onclick="pickSlot('+i+',\''+lbl+'\')">'+lbl+'</div>';
+    });
+    html += '</div>';
+    document.getElementById('slots-box').innerHTML = html;
+  } catch(e) {
+    document.getElementById('slots-box').innerHTML = '<div class="slot-empty">خطأ: '+e.message+'</div>';
   }
 }
 
-function renderSlots(){
-  var html='<div class="slots">';
-  allSlots.forEach(function(s,i){
-    var lbl=utcToAST(s.from);
-    var cls='slot'+(selSlot===s?' on':'');
-    html+='<div class="'+cls+'" onclick="pickSlot('+i+',\''+lbl+'\')">'+lbl+'</div>';
-  });
-  html+='</div>';
-  document.getElementById('slots-box').innerHTML=html;
+function pickSlot(i, label) {
+  document.querySelectorAll('.slot').forEach(function(s){ s.classList.remove('on'); });
+  document.getElementById('sl'+i).classList.add('on');
+  state.slot = allSlots[i];
+  state.slotLabel = label;
+  document.getElementById('btn-step2').disabled = false;
+  document.getElementById('btn-step2').textContent = label + ' ←';
 }
 
-function pickSlot(i,label){
-  selSlot=allSlots[i];
-  selTimeLbl=label;
-  renderSlots();
-  document.getElementById('s2-time').textContent=label;
-  document.getElementById('s2bar-btn').disabled=false;
+// ── PHONE ──
+function onPhoneInput() {
+  var v = document.getElementById('inp-phone').value;
+  document.getElementById('btn-step3').disabled = v.length < 10;
 }
 
-// ══════════════════════════════════
-// PAYMENT
-// ══════════════════════════════════
-function renderPayStep(){
-  var sub=selProduct?selProduct.price:0;
-  var tax=Math.round(sub*.15);
-  var total=sub+tax;
-  document.getElementById('pay-items').innerHTML=
-    '<div class="os-row"><div class="os-acc"></div><div class="os-info"><div class="os-name">'+(selProduct?selProduct.name:'—')+'</div><div class="os-sub">'+(selProduct&&selProduct.dur?selProduct.dur:'')+'</div></div><div class="os-price">'+sub.toLocaleString('en')+' SR</div></div>';
-  var dateLabel=selDate?DAYS[new Date(selDate.y,selDate.m,selDate.d).getDay()]+' '+selDate.d+' '+MONTHS[selDate.m]:'—';
-  document.getElementById('sum-date').textContent=dateLabel;
-  document.getElementById('sum-time').textContent=selTimeLbl||'—';
-  document.getElementById('pay-totals').innerHTML=
-    '<div class="tot-row"><span>المجموع</span><span>'+sub.toLocaleString('en')+' SR</span></div>'+
-    '<div class="tot-row"><span>ضريبة القيمة المضافة 15%</span><span>'+tax.toLocaleString('en')+' SR</span></div>'+
-    '<div class="tot-grand"><span>الاجمالي</span><span class="tot-grand-val">'+total.toLocaleString('en')+' SR</span></div>';
-  document.getElementById('pay-amt').textContent=total.toLocaleString('en')+' SR';
-}
-
-function selPay(el){
-  var methods=el.closest('.pay-methods');
-  if(!methods) return;
-  methods.querySelectorAll('.pm').forEach(function(p){ p.classList.remove('on'); });
-  el.classList.add('on');
-  var cf=document.getElementById('card-form');
-  if(cf){
-    var nm=el.querySelector('.pm-name');
-    if(nm){ cf.style.display=(nm.textContent==='Apple Pay'||nm.textContent==='تمارا'||nm.textContent==='تابي')?'none':'block'; }
-  }
-}
-
-function fmtCard(inp){ var v=inp.value.replace(/\D/g,'').substring(0,16); inp.value=v.replace(/(.{4})/g,'$1  ').trim(); }
-function fmtExp(inp){ var v=inp.value.replace(/\D/g,''); if(v.length>=2) v=v.substring(0,2)+' / '+v.substring(2,4); inp.value=v; }
-
-// ══════════════════════════════════
-// BOOK — POST TO BACKEND
-// ══════════════════════════════════
-async function doPay(){
-  var nm=document.getElementById('cust-name').value.trim();
-  var ph=document.getElementById('cust-phone').value.trim();
-  if(!nm){ alert('يرجى إدخال اسمك الكامل'); return; }
-  if(ph.length<9){ alert('يرجى إدخال رقم الجوال'); return; }
-  if(!selSlot){ alert('يرجى اختيار وقت'); return; }
-  if(!selProduct){ alert('يرجى اختيار خدمة'); return; }
-
-  var mobile='+966'+ph.replace(/^0/,'');
-
-  showProc('جاري التحقق من بيانات الدفع...');
-  await delay(1200);
-  updProc('جاري معالجة الدفع...');
-  await delay(900);
-  updProc('جاري تأكيد الحجز في Rekaz...');
-
-  // POST to backend /book - exact format that works
-  var body = {
-    customerDetails: {
-      name: nm,
-      mobileNumber: mobile
-    },
-    branchId: BRANCH_ID,
-    items: [{
-      priceId:  selProduct.priceId,
-      quantity: 1,
-      from:     selSlot.from,
-      to:       selSlot.to
-    }]
-  };
-
-  console.log('Sending to Rekaz:', JSON.stringify(body, null, 2));
-
-  var rekazRef = null;
-  var bookingSuccess = false;
-
-  try{
-    var r=await fetch(BACKEND+'/book',{
+// ── SEND OTP ──
+async function sendOTP(resend) {
+  var phone = document.getElementById('inp-phone').value.trim();
+  if(phone.length < 10) return;
+  state.phone = phone;
+  var btn = document.getElementById('btn-step3');
+  btn.classList.add('loading');
+  btn.disabled = true;
+  showErr('err3','');
+  try {
+    var r = await fetch(BACKEND+'/send-otp', {
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify(body)
+      body: JSON.stringify({ phone })
     });
-    var text=await r.text();
-    console.log('Rekaz raw response:', text);
-
-    if(r.ok && text){
-      bookingSuccess = true;
-      try{
-        var result=JSON.parse(text);
-        // If Rekaz returns a payment link, redirect to it
-        if(result.paymentLink){
-          hideProc();
-          window.location.href = 'https://graffspa.com' + result.paymentLink;
-          return;
-        }
-        if(result.orderId)
-          rekazRef='GS-'+result.orderId.substring(0,8).toUpperCase();
-        else if(Array.isArray(result)&&result[0]&&result[0].id)
-          rekazRef='GS-'+result[0].id.substring(0,8).toUpperCase();
-        else if(result.id)
-          rekazRef='GS-'+result.id.substring(0,8).toUpperCase();
-        else if(result.number)
-          rekazRef=result.number;
-        else
-          rekazRef='GS-'+Math.floor(10000+Math.random()*90000);
-      }catch(e){
-        rekazRef='GS-'+Math.floor(10000+Math.random()*90000);
-      }
-    }else{
-      console.warn('Booking failed - Status:', r.status, 'Body:', text);
-      rekazRef='GS-'+Math.floor(10000+Math.random()*90000);
+    var data = await r.json();
+    if(!r.ok) throw new Error(data.error || 'فشل الإرسال');
+    // Clear OTP inputs
+    ['o1','o2','o3','o4'].forEach(function(id){ document.getElementById(id).value=''; });
+    document.getElementById('otp-sent-to').textContent = 'تم إرسال الرمز على ' + phone;
+    // Show OTP for testing
+    if(data.debug_otp) {
+      document.getElementById('otp-sent-to').textContent += ' — رمز التجربة: ' + data.debug_otp;
     }
-  }catch(e){
-    console.warn('Booking error:', e.message);
-    rekazRef='GS-'+Math.floor(10000+Math.random()*90000);
+    goTo('step4');
+    setTimeout(function(){ document.getElementById('o1').focus(); }, 300);
+  } catch(e) {
+    showErr('err3', e.message);
+  }
+  btn.classList.remove('loading');
+  btn.disabled = false;
+}
+
+// ── OTP INPUTS ──
+function otpMove(el, nextId) {
+  if(el.value) { var n=document.getElementById(nextId); if(n) n.focus(); }
+  checkOTPFilled();
+}
+function otpBack(e, el, prevId) {
+  if(e.key==='Backspace'&&!el.value&&prevId) document.getElementById(prevId).focus();
+}
+function otpDone() { checkOTPFilled(); }
+function checkOTPFilled() {
+  var code = ['o1','o2','o3','o4'].map(function(id){ return document.getElementById(id).value; }).join('');
+  document.getElementById('btn-step4').disabled = code.length < 4;
+}
+function getOTP() {
+  return ['o1','o2','o3','o4'].map(function(id){ return document.getElementById(id).value; }).join('');
+}
+
+// ── VERIFY OTP ──
+async function verifyOTP() {
+  var otp = getOTP();
+  var btn = document.getElementById('btn-step4');
+  btn.classList.add('loading');
+  btn.disabled = true;
+  showErr('err4','');
+  try {
+    var r = await fetch(BACKEND+'/verify-otp', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ phone: state.phone, otp })
+    });
+    var data = await r.json();
+    if(!r.ok) throw new Error(data.error || 'رمز غير صحيح');
+    goTo('step5');
+  } catch(e) {
+    showErr('err4', e.message);
+  }
+  btn.classList.remove('loading');
+  btn.disabled = false;
+}
+
+// ── SUMMARY ──
+function renderSummary() {
+  if(!state.product||!state.date||!state.slotLabel) return;
+  var d = state.date;
+  var dateLabel = DAYS[new Date(d.y,d.m,d.d).getDay()]+' '+d.d+' '+MONTHS[d.m]+' '+d.y;
+  var sub = state.product.amount;
+  var tax = Math.round(sub*0.15);
+  document.getElementById('sum-box').innerHTML =
+    '<div class="sum-row"><span class="sum-l">الخدمة</span><span class="sum-v">'+state.product.name+'</span></div>'+
+    '<div class="sum-row"><span class="sum-l">التاريخ</span><span class="sum-v">'+dateLabel+'</span></div>'+
+    '<div class="sum-row"><span class="sum-l">الوقت</span><span class="sum-v">'+state.slotLabel+'</span></div>'+
+    '<div class="sum-row"><span class="sum-l">ضريبة 15%</span><span class="sum-v">'+tax.toLocaleString('en')+' SR</span></div>'+
+    '<div class="sum-row"><span class="sum-l">الإجمالي</span><span class="sum-v">'+(sub+tax).toLocaleString('en')+' SR</span></div>';
+}
+
+// ── CREATE BOOKING ──
+async function createBooking() {
+  var name = document.getElementById('inp-name').value.trim();
+  if(!name) { showErr('err5','يرجى إدخال اسمك الكامل'); return; }
+  if(!state.phone) { showErr('err5','رقم الجوال غير موجود'); return; }
+  if(!state.slot) { showErr('err5','لم يتم اختيار وقت'); return; }
+
+  var btn = document.getElementById('btn-step5');
+  btn.classList.add('loading');
+  btn.disabled = true;
+  showErr('err5','');
+
+  try {
+    // Step 1: Create customer in Rekaz
+    var custR = await fetch(BACKEND+'/create-customer', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ name, phone: state.phone })
+    });
+    var custData = await custR.json();
+    if(!custR.ok) throw new Error(custData.error || 'فشل إنشاء العميل');
+    state.customerId = custData.customerId;
+    console.log('Customer:', state.customerId, custData.existing ? '(existing)' : '(new)');
+
+    // Step 2: Create booking in Rekaz
+    var bookR = await fetch(BACKEND+'/create-booking', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        customerId: state.customerId,
+        phone: state.phone,
+        priceId: state.product.priceId,
+        from: state.slot.from,
+        to:   state.slot.to
+      })
+    });
+    var bookData = await bookR.json();
+    console.log('Booking response:', bookData);
+    if(!bookR.ok) throw new Error(bookData.error || 'فشل إنشاء الحجز');
+
+    // Success
+    state.paymentLink = bookData.paymentLink;
+    var ref = bookData.orderId
+      ? 'GS-'+bookData.orderId.substring(0,8).toUpperCase()
+      : 'GS-'+Math.floor(10000+Math.random()*90000);
+
+    var d = state.date;
+    var dateLabel = DAYS[new Date(d.y,d.m,d.d).getDay()]+' '+d.d+' '+MONTHS[d.m];
+    var sub = state.product.amount;
+    var tax = Math.round(sub*0.15);
+
+    document.getElementById('suc-card').innerHTML =
+      '<div class="suc-row"><span class="suc-label">الاسم</span><span class="suc-val">'+name+'</span></div>'+
+      '<div class="suc-row"><span class="suc-label">الجوال</span><span class="suc-val">'+state.phone+'</span></div>'+
+      '<div class="suc-row"><span class="suc-label">الخدمة</span><span class="suc-val">'+state.product.name+'</span></div>'+
+      '<div class="suc-row"><span class="suc-label">التاريخ</span><span class="suc-val">'+dateLabel+'</span></div>'+
+      '<div class="suc-row"><span class="suc-label">الوقت</span><span class="suc-val">'+state.slotLabel+'</span></div>'+
+      '<div class="suc-row"><span class="suc-label">الإجمالي</span><span class="suc-val">'+(sub+tax).toLocaleString('en')+' SR</span></div>';
+
+    document.getElementById('suc-ref').textContent = ref;
+
+    if(bookData.paymentLink) {
+      document.getElementById('suc-pay-btn').style.display = 'block';
+    }
+
+    goTo('success');
+
+  } catch(e) {
+    showErr('err5', e.message);
   }
 
-  await delay(700);
-  hideProc();
-  renderConfirm(nm, rekazRef, bookingSuccess);
-  goStep(4);
+  btn.classList.remove('loading');
+  btn.disabled = false;
 }
 
-function renderConfirm(nm, ref, success){
-  var sub=selProduct?selProduct.price:0;
-  var tax=Math.round(sub*.15);
-  var dateLabel=selDate?DAYS[new Date(selDate.y,selDate.m,selDate.d).getDay()]+' '+selDate.d+' '+MONTHS[selDate.m]:'—';
-  document.getElementById('conf-card').innerHTML=
-    '<div class="conf-row"><span class="conf-label">الاسم</span><span class="conf-val">'+(nm||'—')+'</span></div>'+
-    '<div class="conf-row"><span class="conf-label">الخدمة</span><span class="conf-val">'+(selProduct?selProduct.name:'—')+'</span></div>'+
-    '<div class="conf-row"><span class="conf-label">التاريخ</span><span class="conf-val">'+dateLabel+'</span></div>'+
-    '<div class="conf-row"><span class="conf-label">الوقت</span><span class="conf-val">'+(selTimeLbl||'—')+'</span></div>'+
-    '<div class="conf-row"><span class="conf-label">الاجمالي</span><span class="conf-val">'+(sub+tax).toLocaleString('en')+' SR</span></div>';
-  document.getElementById('conf-num').textContent=ref||('GS-2026-'+Math.floor(1000+Math.random()*9000));
-  if(success===false){
-    var sub=document.getElementById('conf-sub-txt');
-    if(sub) sub.textContent='تم استلام طلبك وسيتم التواصل معك لتأكيد الموعد';
+function goPayment() {
+  if(state.paymentLink) {
+    window.location.href = 'https://graffspa.com' + state.paymentLink;
   }
 }
 
-function resetBook(){
-  selProduct=null; selSlot=null; selTimeLbl=null; selDate=null; allSlots=[];
-  document.querySelectorAll('#products-container .srow.on').forEach(function(s){ s.classList.remove('on'); });
-  document.getElementById('slots-sec').style.display='none';
-  document.getElementById('s2bar').classList.remove('show');
-  updCart(); goStep(1);
+function resetAll() {
+  state = { product:null, date:null, slot:null, slotLabel:null, phone:null, customerId:null, paymentLink:null };
+  allSlots = [];
+  document.querySelectorAll('.srow.on').forEach(function(s){ s.classList.remove('on'); });
+  document.getElementById('inp-phone').value = '';
+  document.getElementById('inp-name').value = '';
+  document.getElementById('btn-step1').disabled = true;
+  document.getElementById('btn-step1').textContent = 'اختاري خدمة للمتابعة';
+  document.getElementById('btn-step2').disabled = true;
+  document.getElementById('btn-step2').textContent = 'اختاري وقتاً للمتابعة';
+  document.getElementById('slots-sec').style.display = 'none';
+  goTo('step1');
 }
 
-// ══════════════════════════════════
-// PROCESSING
-// ══════════════════════════════════
-function showProc(msg){ document.getElementById('proc-msg').textContent=msg; document.getElementById('proc').classList.add('show'); }
-function updProc(msg){ document.getElementById('proc-msg').textContent=msg; }
-function hideProc(){ document.getElementById('proc').classList.remove('show'); }
-function delay(ms){ return new Promise(function(r){ setTimeout(r,ms); }); }
-
-// ══════════════════════════════════
-// MEMBERSHIPS
-// ══════════════════════════════════
-function memTab(tab){
-  document.querySelectorAll('.mem-tab').forEach(function(b,i){ b.classList.toggle('on',i===(tab==='plans'?0:1)); });
-  document.getElementById('mem-plans').style.display=tab==='plans'?'block':'none';
-  document.getElementById('mem-portal').style.display=tab==='portal'?'block':'none';
+function showErr(id, msg) {
+  var el = document.getElementById(id);
+  if(!el) return;
+  el.textContent = msg;
+  el.style.display = msg ? 'block' : 'none';
 }
 
-function buyMem(name,price){
-  document.getElementById('bf-name').textContent=name;
-  document.getElementById('bf-price').textContent=price.toLocaleString('en')+' SR';
-  document.getElementById('bf-btn-p').textContent=price.toLocaleString('en')+' SR';
-  document.getElementById('buy-form').style.display='block';
-  document.getElementById('buy-form').scrollIntoView({behavior:'smooth'});
-}
-
-async function completeMem(){
-  showProc('جاري معالجة الاشتراك...');
-  await delay(1800);
-  updProc('تم الاشتراك بنجاح ✓');
-  await delay(800);
-  hideProc();
-  document.getElementById('buy-form').style.display='none';
-  memTab('portal');
-  portalLogin();
-}
-
-function portalLogin(){
-  document.getElementById('portal-login').style.display='none';
-  document.getElementById('portal-data').style.display='block';
-  var html='',used=7,total=12;
-  for(var i=1;i<=total;i++){
-    html+=i<=used?'<div class="vc-dot used">✓</div>':'<div class="vc-dot rem">'+i+'</div>';
-  }
-  document.getElementById('vc-dots').innerHTML=html;
-}
-
-// ══════════════════════════════════
-// GIFT CARDS
-// ══════════════════════════════════
-var gAmt=500;
-function selGift(el,amt){
-  document.querySelectorAll('.ga').forEach(function(g){ g.classList.remove('on'); });
-  el.classList.add('on'); gAmt=amt;
-  var cw=document.getElementById('custom-wrap');
-  if(amt===0){ cw.style.display='block'; }
-  else{
-    cw.style.display='none';
-    var s=amt.toLocaleString('en')+' SR';
-    document.getElementById('gc-amt').textContent=amt.toLocaleString('en');
-    document.getElementById('gift-total').textContent=s;
-    document.getElementById('gift-btn-amt').textContent=s;
-  }
-}
-
-function updCustom(){
-  var v=parseInt(document.getElementById('custom-amt').value)||0;
-  gAmt=v;
-  var s=(v?v.toLocaleString('en'):'0')+' SR';
-  document.getElementById('gc-amt').textContent=v||'?';
-  document.getElementById('gift-total').textContent=s;
-  document.getElementById('gift-btn-amt').textContent=s;
-}
-
-async function doGift(){
-  var from=document.getElementById('gf-from').value.trim();
-  var to=document.getElementById('gf-to').value.trim();
-  var phone=document.getElementById('gf-phone').value.trim();
-  var amt=gAmt===0?(parseInt(document.getElementById('custom-amt').value)||0):gAmt;
-  if(!from||!to||!phone){ alert('يرجى إكمال جميع الحقول'); return; }
-  if(amt<100){ alert('الحد الأدنى 100 ريال'); return; }
-  showProc('جاري معالجة الدفع...');
-  await delay(1800);
-  updProc('جاري إرسال البطاقة...');
-  await delay(800);
-  hideProc();
-  document.getElementById('gs-from').textContent=from;
-  document.getElementById('gs-to').textContent=to;
-  document.getElementById('gs-amount').textContent=amt.toLocaleString('en')+' SR';
-  document.getElementById('gs-ref').textContent='GC-'+Math.floor(10000+Math.random()*90000);
-  document.getElementById('gift-main').style.display='none';
-  document.getElementById('gift-suc').style.display='block';
-}
-
-// ══════════════════════════════════
-// INIT
-// ══════════════════════════════════
+// ── INIT ──
 renderCal();
 loadProducts();
 </script>
