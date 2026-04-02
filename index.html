@@ -7,240 +7,330 @@
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500&family=Cormorant+Garamond:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 :root{
-  --B:#080807;--B2:#0f0e0d;--B3:#1a1916;
-  --C:#f5f0e8;--C2:#ede7da;
-  --W:#fff;--G:#b8965a;--G2:#cfa96e;
+  --B:#080807;--B2:#0f0e0d;--B3:#161513;
+  --C:#f5f0e8;--C2:#ede7da;--C3:#e2dbd0;
+  --W:#ffffff;--G:#b8965a;--G2:#cfa96e;--G3:#8a7044;
   --T:#1c1a17;--M:#7a7268;--BR:#ddd7cc;
+  --shadow: 0 4px 24px rgba(0,0,0,.08);
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{font-family:'Tajawal',sans-serif;background:var(--B);color:#fff;direction:rtl;min-height:100dvh}
+html{scroll-behavior:smooth}
+body{font-family:'Tajawal',sans-serif;background:var(--B);color:#fff;direction:rtl;min-height:100dvh;overflow-x:hidden}
 
-/* SCREENS */
-.screen{display:none;min-height:100dvh;flex-direction:column}
-.screen.on{display:flex}
-.fade{animation:fadeIn .3s ease}
-@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+/* ═══ SCREENS ═══ */
+.sc{display:none;min-height:100dvh;flex-direction:column;animation:scIn .3s ease}
+.sc.on{display:flex}
+@keyframes scIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 
-/* TOPBAR */
-.topbar{position:sticky;top:0;z-index:80;background:rgba(8,8,7,.97);backdrop-filter:blur(20px);border-bottom:1px solid rgba(184,150,90,.1);padding:0 20px;height:56px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-.tb-logo{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:300;letter-spacing:.2em;color:#fff;cursor:pointer}
-.tb-logo span{color:var(--G)}
-.tb-back{font-size:11px;color:rgba(255,255,255,.4);background:none;border:none;cursor:pointer;font-family:'Tajawal',sans-serif;padding:4px 0;transition:color .15s;min-width:56px}
+/* ═══ TOPBAR ═══ */
+.topbar{position:sticky;top:0;z-index:90;background:rgba(8,8,7,.96);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid rgba(184,150,90,.1);height:56px;padding:0 18px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.tb-logo{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:300;letter-spacing:.22em;color:#fff;cursor:pointer;white-space:nowrap}
+.tb-logo em{color:var(--G);font-style:normal}
+.tb-back{background:none;border:none;color:rgba(255,255,255,.4);font-family:'Tajawal',sans-serif;font-size:11px;cursor:pointer;padding:6px 0;transition:color .15s;min-width:52px;display:flex;align-items:center;gap:4px}
 .tb-back:hover{color:var(--G)}
-.tb-step{font-size:10px;color:rgba(255,255,255,.3);letter-spacing:.1em;min-width:56px;text-align:left}
+.tb-right{min-width:52px;text-align:left;font-size:10px;color:rgba(255,255,255,.25);letter-spacing:.1em}
 
-/* PROGRESS */
-.progress{background:rgba(184,150,90,.1);height:2px;flex-shrink:0}
-.progress-bar{height:100%;background:var(--G);transition:width .4s ease}
+/* ═══ PROGRESS ═══ */
+.prog{height:2px;background:rgba(184,150,90,.1);flex-shrink:0}
+.prog-bar{height:100%;background:linear-gradient(to left,var(--G2),var(--G));transition:width .5s cubic-bezier(.4,0,.2,1)}
 
-/* HOME */
+/* ═══ HOME ═══ */
 #home{background:var(--B);overflow:hidden;position:relative;justify-content:space-between}
-.home-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 40%,rgba(184,150,90,.06) 0%,transparent 70%)}
-.hero{position:relative;z-index:2;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:64px 24px 32px}
-.h-badge{font-size:9px;letter-spacing:.4em;color:var(--G);margin-bottom:26px;display:flex;align-items:center;gap:10px}
-.h-badge::before,.h-badge::after{content:'';width:24px;height:1px;background:linear-gradient(to right,transparent,var(--G))}
+.home-bg{position:absolute;inset:0;background:radial-gradient(ellipse 90% 70% at 50% 35%,rgba(184,150,90,.07) 0%,transparent 65%),linear-gradient(rgba(184,150,90,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(184,150,90,.025) 1px,transparent 1px);background-size:100% 100%,72px 72px,72px 72px}
+.hero{position:relative;z-index:2;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:80px 24px 40px}
+.h-badge{display:inline-flex;align-items:center;gap:12px;font-size:8px;letter-spacing:.45em;color:var(--G);margin-bottom:28px;opacity:.9}
+.h-badge::before,.h-badge::after{content:'';width:28px;height:1px;background:linear-gradient(to right,transparent,var(--G))}
 .h-badge::after{background:linear-gradient(to left,transparent,var(--G))}
-.h-logo{font-family:'Cormorant Garamond',serif;font-size:clamp(52px,13vw,96px);font-weight:300;color:#fff;letter-spacing:.14em;line-height:1;margin-bottom:2px}
-.h-logo span{color:var(--G)}
-.h-city{font-size:10px;letter-spacing:.52em;color:rgba(255,255,255,.18);margin-bottom:34px}
-.h-orn{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:30px}
-.h-orn-l{width:48px;height:1px;background:linear-gradient(to right,transparent,rgba(184,150,90,.38))}
-.h-orn-l.r{background:linear-gradient(to left,transparent,rgba(184,150,90,.38))}
-.h-orn-d{width:5px;height:5px;background:var(--G);transform:rotate(45deg)}
-.h-tag{font-family:'Cormorant Garamond',serif;font-size:clamp(14px,2.8vw,17px);font-weight:300;color:rgba(255,255,255,.26);letter-spacing:.06em;line-height:2.1;margin-bottom:42px}
-.home-btns{position:relative;z-index:2;width:100%;max-width:360px;padding:0 24px 52px;display:flex;flex-direction:column;gap:9px;align-self:center}
-.hb{width:100%;padding:16px 20px;background:transparent;border:1px solid rgba(255,255,255,.09);color:#fff;font-family:'Tajawal',sans-serif;font-size:12px;letter-spacing:.1em;cursor:pointer;transition:all .22s;display:flex;align-items:center;justify-content:space-between;position:relative;overflow:hidden}
-.hb::before{content:'';position:absolute;inset:0;background:rgba(255,255,255,.04);transform:scaleX(0);transform-origin:right;transition:transform .26s}
-.hb:hover::before{transform:scaleX(1)}
-.hb-i{opacity:.4;transition:opacity .22s,transform .22s}
-.hb:hover .hb-i{opacity:.7;transform:translateX(-3px)}
-.hb.primary{background:var(--G);border-color:var(--G);color:var(--B);font-weight:500}
-.hb.primary::before{background:rgba(0,0,0,.07)}
-.hb.primary:hover{background:var(--G2);border-color:var(--G2)}
+.h-logo{font-family:'Cormorant Garamond',serif;font-size:clamp(56px,14vw,104px);font-weight:300;color:#fff;letter-spacing:.12em;line-height:.95;margin-bottom:3px}
+.h-logo em{color:var(--G);font-style:normal}
+.h-city{font-size:9px;font-weight:300;letter-spacing:.55em;color:rgba(255,255,255,.16);margin-bottom:36px}
+.h-orn{display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:32px}
+.h-line{width:52px;height:1px;background:linear-gradient(to right,transparent,rgba(184,150,90,.35))}
+.h-line.r{background:linear-gradient(to left,transparent,rgba(184,150,90,.35))}
+.h-dia{width:5px;height:5px;background:var(--G);transform:rotate(45deg)}
+.h-tag{font-family:'Cormorant Garamond',serif;font-size:clamp(14px,3vw,18px);font-weight:300;color:rgba(255,255,255,.24);letter-spacing:.06em;line-height:2.1;margin-bottom:44px}
+.home-btns{position:relative;z-index:2;width:100%;max-width:380px;align-self:center;padding:0 24px 56px;display:flex;flex-direction:column;gap:9px}
+.hb{width:100%;padding:16px 22px;background:transparent;border:1px solid rgba(255,255,255,.09);color:#fff;font-family:'Tajawal',sans-serif;font-size:12px;letter-spacing:.1em;cursor:pointer;transition:all .22s;display:flex;align-items:center;justify-content:space-between;position:relative;overflow:hidden}
+.hb::before{content:'';position:absolute;inset:0;background:rgba(255,255,255,.04);transform:scaleX(0);transform-origin:right;transition:transform .28s cubic-bezier(.4,0,.2,1)}
+.hb:hover::before,.hb:focus::before{transform:scaleX(1)}
+.hb:hover{border-color:rgba(255,255,255,.18)}
+.hb-icon{font-size:11px;opacity:.35;transition:all .22s}
+.hb:hover .hb-icon{opacity:.65;transform:translateX(-3px)}
+.hb.gold{background:var(--G);border-color:var(--G);color:var(--B);font-weight:500}
+.hb.gold::before{background:rgba(0,0,0,.07)}
+.hb.gold:hover{background:var(--G2);border-color:var(--G2)}
+.hb.gold .hb-icon{opacity:.7}
 
-/* CONTENT AREA */
-.content{flex:1;overflow-y:auto;background:var(--C)}
-.s-head{background:var(--B);padding:20px 20px 16px;text-align:center;border-bottom:1px solid rgba(184,150,90,.08)}
-.s-head-eye{font-size:9px;letter-spacing:.28em;color:var(--G);margin-bottom:7px}
-.s-head-title{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:300;color:#fff;letter-spacing:.06em}
-.s-head-sub{font-size:11px;color:rgba(255,255,255,.26);margin-top:4px}
+/* ═══ FOOTER ═══ */
+.foot{background:var(--B);border-top:1px solid rgba(184,150,90,.08);padding:28px 20px;text-align:center;flex-shrink:0}
+.foot-logo{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:300;letter-spacing:.22em;color:#fff;margin-bottom:3px}
+.foot-logo em{color:var(--G);font-style:normal}
+.foot-city{font-size:8px;letter-spacing:.4em;color:var(--G);margin-bottom:14px}
+.foot-pay{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.fpay{padding:3px 10px;border:1px solid rgba(255,255,255,.07);font-size:9px}
+.foot-vat{font-size:9px;color:rgba(255,255,255,.1);letter-spacing:.08em}
+.foot-social{display:flex;justify-content:center;gap:10px;margin-bottom:14px}
+.fsoc{width:34px;height:34px;border:1px solid rgba(255,255,255,.08);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:border-color .18s;text-decoration:none}
+.fsoc:hover{border-color:var(--G)}
 
-/* PRODUCTS */
-.prod-loading{padding:40px;text-align:center;font-size:12px;color:rgba(255,255,255,.3);letter-spacing:.1em;background:var(--B)}
-.prod-error{padding:20px;text-align:center;font-size:12px;color:#e74c3c;background:var(--B)}
-.srow{background:var(--W);border-bottom:1px solid var(--BR);display:flex;align-items:flex-start;padding:14px 18px;gap:11px;cursor:pointer;transition:background .12s;position:relative}
-.srow::before{content:'';position:absolute;right:0;top:0;bottom:0;width:3px;background:var(--G);transform:scaleY(0);transition:transform .2s}
-.srow:hover{background:#fdfcf9}
-.srow.on{background:#fdf9f2}
-.srow.on::before{transform:scaleY(1)}
-.srow-info{flex:1}
-.srow-name{font-size:14px;font-weight:500;color:var(--T);margin-bottom:2px}
-.srow-sub{font-size:10px;color:var(--G);margin-top:2px}
-.srow-price{font-family:'Cormorant Garamond',serif;font-size:19px;color:var(--T);white-space:nowrap}
-.srow-sr{font-size:10px;color:var(--M)}
-.srow-chk{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--BR);display:flex;align-items:center;justify-content:center;transition:all .17s;flex-shrink:0;margin-right:8px}
-.srow.on .srow-chk{background:var(--B);border-color:var(--B)}
-.srow-chk-i{width:7px;height:7px;border-radius:50%;background:#fff;opacity:0;transform:scale(0);transition:all .17s}
-.srow.on .srow-chk-i{opacity:1;transform:scale(1)}
+/* ═══ SERVICES SCREEN ═══ */
+#services{background:var(--C)}
+.svc-head{background:var(--B);padding:18px 20px 0;flex-shrink:0}
+.svc-head-txt{text-align:center;padding-bottom:16px}
+.svc-eye{font-size:8px;letter-spacing:.3em;color:var(--G);margin-bottom:6px}
+.svc-title{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:300;color:#fff;letter-spacing:.07em}
+.svc-sub{font-size:11px;color:rgba(255,255,255,.24);margin-top:4px}
 
-/* CALENDAR */
-.cal-wrap{padding:18px;max-width:480px;margin:0 auto}
+/* TABS */
+.tabs{display:flex;border-bottom:1px solid rgba(184,150,90,.1);overflow-x:auto;scrollbar-width:none;padding:0 4px;gap:0}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex-shrink:0;padding:13px 16px;font-family:'Tajawal',sans-serif;font-size:11px;letter-spacing:.08em;color:rgba(255,255,255,.3);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:all .18s;white-space:nowrap;position:relative}
+.tab.on{color:var(--G);border-bottom-color:var(--G)}
+.tab-badge{position:absolute;top:9px;right:9px;background:var(--G);color:var(--B);font-size:8px;width:14px;height:14px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:600;opacity:0;transition:opacity .15s}
+.tab-badge.show{opacity:1}
+
+/* CONTENT */
+.svc-content{flex:1;overflow-y:auto;padding-bottom:100px}
+.cat-section{display:none}
+.cat-section.on{display:block}
+
+/* GROUP LABEL */
+.grp-label{padding:14px 18px 8px;font-size:8px;letter-spacing:.24em;color:var(--M);display:flex;align-items:center;gap:8px}
+.grp-label::after{content:'';flex:1;height:1px;background:var(--BR)}
+
+/* SERVICE CARD */
+.scard{background:var(--W);border-bottom:1px solid var(--BR);cursor:pointer;transition:background .12s;position:relative;overflow:hidden}
+.scard::after{content:'';position:absolute;right:0;top:0;bottom:0;width:3px;background:var(--G);transform:scaleY(0);transition:transform .22s cubic-bezier(.4,0,.2,1)}
+.scard:hover{background:#fdfcf9}
+.scard.sel{background:#fdf8f0}
+.scard.sel::after{transform:scaleY(1)}
+.scard-main{display:flex;align-items:flex-start;padding:14px 16px;gap:12px}
+.scard-info{flex:1;min-width:0}
+.scard-name{font-size:14px;font-weight:500;color:var(--T);margin-bottom:2px;line-height:1.35}
+.scard-desc{font-size:11px;color:var(--M);line-height:1.6;margin-top:4px;display:none}
+.scard.expanded .scard-desc{display:block}
+.scard-dur{font-size:10px;color:var(--G);margin-top:3px;display:flex;align-items:center;gap:4px}
+.scard-dur::before{content:'⏱';font-size:9px}
+.scard-right{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0}
+.scard-price{font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--T);line-height:1}
+.scard-sr{font-size:9px;color:var(--M)}
+.scard-row2{display:flex;align-items:center;gap:7px}
+.scard-chk{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--BR);display:flex;align-items:center;justify-content:center;transition:all .18s;flex-shrink:0}
+.scard.sel .scard-chk{background:var(--B);border-color:var(--B)}
+.scard-chk-i{width:8px;height:8px;border-radius:50%;background:#fff;opacity:0;transform:scale(0);transition:all .18s}
+.scard.sel .scard-chk-i{opacity:1;transform:scale(1)}
+.scard-variants-btn{font-size:9px;color:var(--M);background:var(--C2);border:none;padding:3px 8px;cursor:pointer;font-family:'Tajawal',sans-serif;transition:all .14s;display:flex;align-items:center;gap:4px;border-radius:2px}
+.scard-variants-btn.open{background:var(--G);color:var(--B)}
+.scard-variants-btn svg{transition:transform .2s}
+.scard-variants-btn.open svg{transform:rotate(180deg)}
+
+/* VARIANTS */
+.variants{display:none;background:var(--C);border-bottom:1px solid var(--BR)}
+.variants.open{display:block}
+.vrow{display:flex;align-items:center;padding:11px 16px 11px 22px;border-bottom:1px solid rgba(221,215,204,.4);cursor:pointer;transition:background .12s;gap:8px}
+.vrow:last-child{border-bottom:none}
+.vrow:hover{background:var(--C2)}
+.vrow.sel{background:rgba(184,150,90,.07)}
+.vrow-dot{width:4px;height:4px;background:rgba(184,150,90,.4);border-radius:50%;flex-shrink:0}
+.vrow.sel .vrow-dot{background:var(--G)}
+.vrow-name{flex:1;font-size:13px;color:var(--T)}
+.vrow-dur{font-size:10px;color:var(--M);white-space:nowrap}
+.vrow-price{font-family:'Cormorant Garamond',serif;font-size:16px;color:var(--T);white-space:nowrap;margin:0 8px}
+.vrow-chk{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--BR);display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0}
+.vrow.sel .vrow-chk{background:var(--B);border-color:var(--B)}
+.vrow-chk-i{width:6px;height:6px;border-radius:50%;background:#fff;opacity:0;transition:opacity .15s}
+.vrow.sel .vrow-chk-i{opacity:1}
+
+/* CART BAR */
+.cart-bar{position:fixed;bottom:0;right:0;left:0;z-index:100;background:var(--B);border-top:1px solid rgba(184,150,90,.15);padding:12px 16px;display:flex;align-items:center;gap:12px;transform:translateY(110%);transition:transform .35s cubic-bezier(.4,0,.2,1)}
+.cart-bar.up{transform:translateY(0)}
+.cart-info{flex:1}
+.cart-count{font-size:9px;letter-spacing:.1em;color:var(--M);margin-bottom:1px}
+.cart-total{font-family:'Cormorant Garamond',serif;font-size:22px;color:#fff}
+.cart-total-sr{font-family:'Tajawal',sans-serif;font-size:10px;color:var(--M)}
+.cart-tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:3px}
+.cart-tag{font-size:9px;color:rgba(255,255,255,.3);border:1px solid rgba(255,255,255,.08);padding:1px 7px;border-radius:1px;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cart-btn{padding:13px 24px;background:var(--G);color:var(--B);border:none;font-family:'Tajawal',sans-serif;font-size:11px;font-weight:500;letter-spacing:.12em;cursor:pointer;transition:background .17s;white-space:nowrap;flex-shrink:0}
+.cart-btn:hover{background:var(--G2)}
+
+/* ═══ DATE/TIME ═══ */
+#datetime{background:var(--C)}
+.dt-content{flex:1;overflow-y:auto;padding:18px 18px 110px;max-width:500px;margin:0 auto;width:100%}
+.dt-sec{margin-bottom:24px}
+.dt-label{font-size:8px;letter-spacing:.24em;color:var(--M);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.dt-label::after{content:'';flex:1;height:1px;background:var(--BR)}
 .cal{background:var(--W);border:1px solid var(--BR)}
-.cal-nav{display:flex;align-items:center;justify-content:space-between;padding:12px 15px;border-bottom:1px solid var(--BR)}
-.cal-month{font-size:13px;font-weight:500;color:var(--T)}
-.cal-btn{background:none;border:none;cursor:pointer;color:var(--M);font-size:18px;padding:2px 8px;font-family:'Tajawal',sans-serif;transition:color .15s}
+.cal-nav{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--BR)}
+.cal-month{font-size:13px;font-weight:500;color:var(--T);letter-spacing:.05em}
+.cal-btn{background:none;border:none;cursor:pointer;color:var(--M);font-size:20px;padding:0 8px;font-family:'Tajawal',sans-serif;line-height:1;transition:color .14s}
 .cal-btn:hover{color:var(--T)}
 .cal-hd{display:grid;grid-template-columns:repeat(7,1fr);border-bottom:1px solid var(--BR)}
-.cal-hl{text-align:center;padding:7px 0;font-size:9px;color:var(--M)}
+.cal-hl{text-align:center;padding:7px 0;font-size:9px;color:var(--M);letter-spacing:.04em}
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr)}
-.cal-d{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer;transition:all .12s;color:var(--T)}
-.cal-d:hover:not(.past):not(.empty){background:var(--C2)}
-.cal-d.past{color:var(--BR);cursor:not-allowed}
+.cal-d{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer;transition:all .12s;color:var(--T);border-radius:0}
+.cal-d:hover:not(.past){background:var(--C2)}
+.cal-d.past{color:var(--BR);cursor:not-allowed;pointer-events:none}
 .cal-d.today{color:var(--G);font-weight:500}
 .cal-d.sel{background:var(--B);color:#fff;font-weight:500}
-
-/* SLOTS */
-.slots-sec{margin-top:16px}
-.slots-label{font-size:9px;letter-spacing:.22em;color:var(--M);margin-bottom:10px;display:flex;align-items:center;gap:8px}
-.slots-label::after{content:'';flex:1;height:1px;background:var(--BR)}
+.slot-loading{font-size:12px;color:var(--G);padding:18px;text-align:center;letter-spacing:.1em}
+.slot-empty{font-size:12px;color:var(--M);padding:18px;text-align:center;line-height:2}
 .slots{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
-.slot{padding:10px 4px;text-align:center;background:var(--W);border:1px solid var(--BR);font-size:12px;cursor:pointer;transition:all .12s;color:var(--T);font-family:'Tajawal',sans-serif}
+.slot{padding:11px 4px;text-align:center;background:var(--W);border:1px solid var(--BR);font-size:12px;cursor:pointer;transition:all .12s;color:var(--T);font-family:'Tajawal',sans-serif}
 .slot:hover{background:var(--C2);border-color:var(--M)}
 .slot.on{background:var(--B);color:#fff;border-color:var(--B)}
-.slot-loading{font-size:12px;color:var(--G);padding:16px;text-align:center;letter-spacing:.1em}
-.slot-empty{font-size:12px;color:var(--M);padding:16px;text-align:center}
+.dt-bot{position:fixed;bottom:0;right:0;left:0;z-index:100;background:var(--B);border-top:1px solid rgba(184,150,90,.13);padding:12px 16px;flex-shrink:0}
+.dt-bot-info{display:flex;justify-content:space-between;margin-bottom:8px}
+.dt-bot-item{font-size:10px}
+.dt-bot-lbl{color:rgba(255,255,255,.3);display:block;margin-bottom:2px;letter-spacing:.06em}
+.dt-bot-val{color:#fff;font-weight:500}
 
-/* FORMS */
-.form-wrap{padding:20px;max-width:420px;margin:0 auto}
-.form-card{background:var(--W);border:1px solid var(--BR);padding:20px;margin-bottom:12px}
-.form-title{font-size:9px;letter-spacing:.22em;color:var(--M);margin-bottom:14px;display:flex;align-items:center;gap:8px}
-.form-title::after{content:'';flex:1;height:1px;background:var(--BR)}
-.f-label{font-size:10px;letter-spacing:.1em;color:var(--M);display:block;margin-bottom:5px;margin-top:12px}
-.f-label:first-child{margin-top:0}
-.f-input{width:100%;padding:12px 14px;background:var(--C);border:1px solid var(--BR);font-family:'Tajawal',sans-serif;font-size:14px;color:var(--T);outline:none;transition:border-color .17s}
-.f-input:focus{border-color:var(--B)}
-.f-input::placeholder{color:var(--BR)}
-.otp-inputs{display:flex;gap:8px;justify-content:center;margin-top:6px}
-.otp-input{width:52px;height:56px;text-align:center;font-size:22px;font-weight:500;background:var(--C);border:1px solid var(--BR);color:var(--T);outline:none;transition:border-color .17s;font-family:'Tajawal',sans-serif}
-.otp-input:focus{border-color:var(--B)}
-.otp-hint{font-size:11px;color:var(--M);text-align:center;margin-top:10px;line-height:1.8}
-.otp-resend{font-size:11px;color:var(--G);cursor:pointer;text-align:center;margin-top:8px;background:none;border:none;font-family:'Tajawal',sans-serif;width:100%}
-
-/* SUMMARY BOX */
-.sum-box{background:rgba(184,150,90,.06);border:1px solid rgba(184,150,90,.15);padding:14px;margin-bottom:12px}
-.sum-row{display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid rgba(184,150,90,.08)}
-.sum-row:last-child{border:none;padding-top:10px;font-size:14px;font-weight:500}
-.sum-l{color:var(--M)}
-.sum-v{color:var(--T);text-align:left}
-.sum-row:last-child .sum-v{font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--G);font-weight:300}
-
-/* BOTTOM BAR */
-.bot-bar{position:sticky;bottom:0;z-index:100;background:var(--B);border-top:1px solid rgba(184,150,90,.13);padding:12px 18px;flex-shrink:0}
-.bot-btn{width:100%;padding:14px;background:var(--G);color:var(--B);border:none;font-family:'Tajawal',sans-serif;font-size:12px;font-weight:500;letter-spacing:.13em;cursor:pointer;transition:background .17s;display:flex;align-items:center;justify-content:center;gap:8px}
+/* ═══ BOT BAR ═══ */
+.bot-bar{position:sticky;bottom:0;z-index:100;background:var(--B);border-top:1px solid rgba(184,150,90,.13);padding:12px 16px;flex-shrink:0}
+.bot-btn{width:100%;padding:14px;background:var(--G);color:var(--B);border:none;font-family:'Tajawal',sans-serif;font-size:12px;font-weight:500;letter-spacing:.14em;cursor:pointer;transition:all .17s;display:flex;align-items:center;justify-content:center;gap:8px}
 .bot-btn:hover{background:var(--G2)}
-.bot-btn:disabled{background:rgba(184,150,90,.2);color:rgba(255,255,255,.2);cursor:not-allowed}
-.bot-btn.loading::after{content:'';width:14px;height:14px;border:2px solid rgba(0,0,0,.2);border-top-color:var(--B);border-radius:50%;animation:spin .8s linear infinite;margin-right:8px}
+.bot-btn:disabled{background:rgba(184,150,90,.18);color:rgba(255,255,255,.2);cursor:not-allowed}
+.bot-btn.ld{pointer-events:none}
+.bot-btn.ld::after{content:'';width:14px;height:14px;border:2px solid rgba(0,0,0,.2);border-top-color:rgba(0,0,0,.7);border-radius:50%;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* ERROR */
-.err-box{background:rgba(231,76,60,.08);border:1px solid rgba(231,76,60,.2);padding:10px 14px;font-size:12px;color:#e74c3c;margin-bottom:10px;display:none;line-height:1.6}
+/* ═══ FORMS ═══ */
+#phone-step,#otp-step,#confirm-step{background:var(--C)}
+.form-content{flex:1;overflow-y:auto;padding:20px 18px 20px;max-width:440px;margin:0 auto;width:100%}
+.form-card{background:var(--W);border:1px solid var(--BR);padding:20px;margin-bottom:12px}
+.form-ttl{font-size:8px;letter-spacing:.22em;color:var(--M);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.form-ttl::after{content:'';flex:1;height:1px;background:var(--BR)}
+.f-lbl{font-size:10px;letter-spacing:.1em;color:var(--M);display:block;margin-bottom:5px;margin-top:12px}
+.f-lbl:first-child{margin-top:0}
+.f-inp{width:100%;padding:12px 14px;background:var(--C);border:1px solid var(--BR);font-family:'Tajawal',sans-serif;font-size:14px;color:var(--T);outline:none;transition:border-color .17s}
+.f-inp:focus{border-color:var(--B)}
+.f-inp::placeholder{color:var(--BR)}
+.otp-row{display:flex;gap:10px;justify-content:center;margin-top:8px}
+.otp-d{width:54px;height:58px;text-align:center;font-size:24px;font-weight:500;background:var(--C);border:1px solid var(--BR);color:var(--T);outline:none;transition:border-color .17s;font-family:'Tajawal',sans-serif}
+.otp-d:focus{border-color:var(--B)}
+.otp-hint{font-size:11px;color:var(--M);text-align:center;margin-top:12px;line-height:1.9}
+.otp-resend{display:block;font-size:11px;color:var(--G);background:none;border:none;font-family:'Tajawal',sans-serif;cursor:pointer;margin:10px auto 0;text-align:center;padding:4px}
 
-/* SUCCESS */
-#success{background:var(--C)}
-.suc-wrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:44px 24px;text-align:center}
-.suc-ring{width:72px;height:72px;border-radius:50%;background:var(--B);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;animation:popIn .4s cubic-bezier(.4,0,.2,1)}
-@keyframes popIn{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
-.suc-chk{stroke-dasharray:30;stroke-dashoffset:30;animation:drawC .4s .3s ease forwards}
+/* SUMMARY */
+.sum-box{background:rgba(184,150,90,.06);border:1px solid rgba(184,150,90,.16);padding:14px;margin-bottom:12px}
+.sum-row{display:flex;justify-content:space-between;font-size:12px;padding:5px 0;border-bottom:1px solid rgba(184,150,90,.08)}
+.sum-row:last-child{border:none;padding-top:10px;font-size:14px;font-weight:500}
+.sum-l{color:var(--M)}
+.sum-v{color:var(--T);text-align:left;font-size:12px}
+.sum-row:last-child .sum-v{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;color:var(--G)}
+
+/* ERR */
+.err{background:rgba(231,76,60,.07);border:1px solid rgba(231,76,60,.2);padding:10px 14px;font-size:12px;color:#e74c3c;margin-bottom:10px;display:none;line-height:1.6}
+
+/* ═══ SUCCESS ═══ */
+#success-sc{background:var(--C)}
+.suc-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:44px 22px;text-align:center}
+.suc-ring{width:74px;height:74px;border-radius:50%;background:var(--B);display:flex;align-items:center;justify-content:center;margin:0 auto 22px;animation:popIn .42s cubic-bezier(.4,0,.2,1)}
+@keyframes popIn{from{transform:scale(.35);opacity:0}to{transform:scale(1);opacity:1}}
+.suc-chk{stroke-dasharray:32;stroke-dashoffset:32;animation:drawC .45s .35s ease forwards}
 @keyframes drawC{to{stroke-dashoffset:0}}
-.suc-title{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;letter-spacing:.08em;margin-bottom:7px;color:var(--T)}
-.suc-sub{font-size:12px;color:var(--M);margin-bottom:24px;line-height:1.8}
+.suc-title{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:300;letter-spacing:.08em;margin-bottom:7px;color:var(--T)}
+.suc-sub{font-size:12px;color:var(--M);margin-bottom:24px;line-height:1.9}
 .suc-card{background:var(--W);border:1px solid var(--BR);padding:16px;width:100%;max-width:320px;text-align:right;margin-bottom:16px}
 .suc-row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--BR);font-size:12px;gap:10px}
-.suc-row:last-child{border-bottom:none}
-.suc-label{color:var(--M);font-size:10px;flex-shrink:0}
+.suc-row:last-child{border:none}
+.suc-lbl{color:var(--M);font-size:10px;letter-spacing:.05em;flex-shrink:0}
 .suc-val{font-weight:500;color:var(--T);text-align:left}
-.suc-ref{font-size:9px;letter-spacing:.18em;color:var(--M);margin-bottom:20px}
+.suc-ref{font-size:9px;letter-spacing:.18em;color:var(--M);margin-bottom:22px}
 .suc-ref span{color:var(--G);font-size:13px}
-.suc-pay{width:100%;max-width:260px;padding:14px;background:var(--G);color:var(--B);border:none;font-family:'Tajawal',sans-serif;font-size:12px;font-weight:500;letter-spacing:.13em;cursor:pointer;transition:background .17s;margin-bottom:8px}
-.suc-pay:hover{background:var(--G2)}
-.suc-new{width:100%;max-width:260px;padding:12px;background:transparent;border:1px solid var(--BR);color:var(--T);font-family:'Tajawal',sans-serif;font-size:11px;letter-spacing:.1em;cursor:pointer;transition:all .17s}
+.suc-pay-btn{width:100%;max-width:280px;padding:14px;background:var(--G);color:var(--B);border:none;font-family:'Tajawal',sans-serif;font-size:12px;font-weight:500;letter-spacing:.13em;cursor:pointer;transition:background .17s;margin-bottom:8px;display:none}
+.suc-pay-btn:hover{background:var(--G2)}
+.suc-new{width:100%;max-width:280px;padding:12px;background:transparent;border:1px solid var(--BR);color:var(--T);font-family:'Tajawal',sans-serif;font-size:11px;letter-spacing:.1em;cursor:pointer;transition:all .17s}
 .suc-new:hover{border-color:var(--T)}
 
-/* FOOTER */
-.footer{background:var(--B);border-top:1px solid rgba(184,150,90,.07);padding:24px 20px;text-align:center;flex-shrink:0}
-.f-logo{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:300;letter-spacing:.2em;color:#fff;margin-bottom:4px;cursor:pointer}
-.f-logo span{color:var(--G)}
-.f-city{font-size:8px;letter-spacing:.4em;color:var(--G);margin-bottom:12px}
-.f-vat{font-size:9px;color:rgba(255,255,255,.1)}
-
-@media(max-width:400px){.slots{grid-template-columns:repeat(3,1fr)}.otp-input{width:44px;height:48px;font-size:18px}}
+@media(max-width:390px){
+  .h-logo{font-size:clamp(48px,13vw,80px)}
+  .slots{grid-template-columns:repeat(3,1fr)}
+  .otp-d{width:46px;height:52px;font-size:20px}
+}
 </style>
 </head>
 <body>
 
-<!-- ══ HOME ══ -->
-<div id="home" class="screen on fade">
+<!-- ══════════════ HOME ══════════════ -->
+<div id="home" class="sc on">
   <div class="home-bg"></div>
   <div class="hero">
     <p class="h-badge">LUXURY SPA &amp; BEAUTY</p>
-    <h1 class="h-logo">GRAFF <span>SPA</span></h1>
+    <h1 class="h-logo">GRAFF <em>SPA</em></h1>
     <p class="h-city">R I Y A D H</p>
-    <div class="h-orn"><div class="h-orn-l"></div><div class="h-orn-d"></div><div class="h-orn-l r"></div></div>
+    <div class="h-orn"><div class="h-line"></div><div class="h-dia"></div><div class="h-line r"></div></div>
     <p class="h-tag">حيث تلتقي العناية بالفخامة<br>في أدق تفاصيلها</p>
   </div>
   <div class="home-btns">
-    <button class="hb primary" onclick="goTo('step1')"><span>احجزي موعدك الآن</span><span class="hb-i">←</span></button>
+    <button class="hb gold" onclick="go('services')"><span>احجزي موعدك الآن</span><span class="hb-icon">←</span></button>
+    <button class="hb" onclick="go('services')"><span>استعراض خدماتنا</span><span class="hb-icon">←</span></button>
   </div>
-  <div class="footer">
-    <div class="f-logo">GRAFF <span>SPA</span></div>
-    <div class="f-city">R I Y A D H</div>
-    <div class="f-vat">الرقم الضريبي: 314257469500003 · © 2026</div>
+  <div class="foot">
+    <div class="foot-logo">GRAFF <em>SPA</em></div>
+    <div class="foot-city">R I Y A D H</div>
+    <div class="foot-social">
+      <a class="fsoc" href="#"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1" fill="rgba(255,255,255,.4)" stroke="none"/></svg></a>
+      <a class="fsoc" href="#"><svg width="13" height="13" viewBox="0 0 24 24" fill="rgba(255,255,255,.4)"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.747l7.73-8.835L1.254 2.25H8.08l4.261 5.632zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+      <a class="fsoc" href="#"><svg width="13" height="13" viewBox="0 0 24 24" fill="rgba(255,255,255,.4)"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg></a>
+    </div>
+    <div class="foot-pay">
+      <span class="fpay" style="color:#1e5aa8;font-weight:700">mada</span>
+      <span class="fpay" style="color:#1a1f71;font-weight:700;font-style:italic">VISA</span>
+      <span class="fpay">🍎 Pay</span>
+      <span class="fpay" style="background:#fff;color:#3d3d3d;font-weight:700">tamara</span>
+      <span class="fpay" style="color:#3eb489;font-weight:800">tabby</span>
+    </div>
+    <div class="foot-vat">الرقم الضريبي: 314257469500003 · © 2026 GRAFF SPA</div>
   </div>
 </div>
 
-<!-- ══ STEP 1: SERVICE ══ -->
-<div id="step1" class="screen fade">
+<!-- ══════════════ SERVICES ══════════════ -->
+<div id="services" class="sc">
   <div class="topbar">
-    <button class="tb-back" onclick="goTo('home')">← رجوع</button>
-    <div class="tb-logo">GRAFF <span>SPA</span></div>
-    <div class="tb-step">1 / 5</div>
+    <button class="tb-back" onclick="go('home')">← رجوع</button>
+    <div class="tb-logo">GRAFF <em>SPA</em></div>
+    <div class="tb-right">1 / 4</div>
   </div>
-  <div class="progress"><div class="progress-bar" style="width:20%"></div></div>
-  <div class="content">
-    <div class="s-head">
-      <p class="s-head-eye">STEP 1</p>
-      <h2 class="s-head-title">اختاري خدمتك</h2>
-      <p class="s-head-sub">اختاري الخدمة المناسبة لك</p>
+  <div class="prog"><div class="prog-bar" style="width:25%"></div></div>
+  <div class="svc-head">
+    <div class="svc-head-txt">
+      <p class="svc-eye">اختاري خدمتك</p>
+      <h2 class="svc-title">خدمات GRAFF SPA</h2>
+      <p class="svc-sub">كل خدماتنا من Rekaz مباشرة · محدّثة تلقائياً</p>
     </div>
-    <div id="products-list">
-      <div class="prod-loading">جاري تحميل الخدمات...</div>
+    <div class="tabs" id="tabs-bar">
+      <div class="tab-loading" style="padding:12px 18px;font-size:11px;color:rgba(255,255,255,.3);letter-spacing:.1em">جاري التحميل...</div>
     </div>
   </div>
-  <div class="bot-bar">
-    <button class="bot-btn" id="btn-step1" onclick="goTo('step2')" disabled>اختاري خدمة للمتابعة</button>
+  <div class="svc-content" id="svc-content">
+    <!-- Dynamic content -->
+  </div>
+  <div class="cart-bar" id="cart-bar">
+    <div class="cart-info">
+      <div class="cart-count" id="cart-count">0 خدمة</div>
+      <div class="cart-total"><span class="cart-total-sr">SR </span><span id="cart-total">0</span></div>
+      <div class="cart-tags" id="cart-tags"></div>
+    </div>
+    <button class="cart-btn" onclick="go('datetime')">متابعة ←</button>
   </div>
 </div>
 
-<!-- ══ STEP 2: DATE ══ -->
-<div id="step2" class="screen fade">
+<!-- ══════════════ DATE/TIME ══════════════ -->
+<div id="datetime" class="sc">
   <div class="topbar">
-    <button class="tb-back" onclick="goTo('step1')">← رجوع</button>
-    <div class="tb-logo">GRAFF <span>SPA</span></div>
-    <div class="tb-step">2 / 5</div>
+    <button class="tb-back" onclick="go('services')">← رجوع</button>
+    <div class="tb-logo">GRAFF <em>SPA</em></div>
+    <div class="tb-right">2 / 4</div>
   </div>
-  <div class="progress"><div class="progress-bar" style="width:40%"></div></div>
-  <div class="content">
-    <div class="s-head">
-      <p class="s-head-eye">STEP 2</p>
-      <h2 class="s-head-title">اختاري الموعد</h2>
-      <p class="s-head-sub">حددي التاريخ والوقت المناسب</p>
-    </div>
-    <div class="cal-wrap">
+  <div class="prog"><div class="prog-bar" style="width:50%"></div></div>
+  <div class="dt-content">
+    <div class="dt-sec">
+      <div class="dt-label">اختاري التاريخ</div>
       <div class="cal">
         <div class="cal-nav">
-          <button class="cal-btn" onclick="chMonth(-1)">›</button>
+          <button class="cal-btn" onclick="chM(-1)">›</button>
           <div class="cal-month" id="cal-lbl"></div>
-          <button class="cal-btn" onclick="chMonth(1)">‹</button>
+          <button class="cal-btn" onclick="chM(1)">‹</button>
         </div>
         <div class="cal-hd">
           <div class="cal-hl">أح</div><div class="cal-hl">إث</div><div class="cal-hl">ث</div>
@@ -248,140 +338,146 @@ body{font-family:'Tajawal',sans-serif;background:var(--B);color:#fff;direction:r
         </div>
         <div class="cal-grid" id="cal-grid"></div>
       </div>
-      <div class="slots-sec" id="slots-sec" style="display:none">
-        <div class="slots-label">الأوقات المتاحة</div>
-        <div id="slots-box"></div>
-      </div>
+    </div>
+    <div class="dt-sec" id="slots-sec" style="display:none">
+      <div class="dt-label">الأوقات المتاحة</div>
+      <div id="slots-box"></div>
     </div>
   </div>
-  <div class="bot-bar">
-    <button class="bot-btn" id="btn-step2" onclick="goTo('step3')" disabled>اختاري وقتاً للمتابعة</button>
+  <div class="dt-bot" id="dt-bot" style="display:none">
+    <div class="dt-bot-info">
+      <div class="dt-bot-item"><span class="dt-bot-lbl">التاريخ</span><span class="dt-bot-val" id="sel-date-lbl">—</span></div>
+      <div class="dt-bot-item" style="text-align:left"><span class="dt-bot-lbl">الوقت</span><span class="dt-bot-val" id="sel-time-lbl">—</span></div>
+    </div>
+    <button class="bot-btn" id="btn-dt" onclick="go('phone-step')" disabled>اختاري وقتاً للمتابعة</button>
   </div>
 </div>
 
-<!-- ══ STEP 3: PHONE ══ -->
-<div id="step3" class="screen fade">
+<!-- ══════════════ PHONE ══════════════ -->
+<div id="phone-step" class="sc">
   <div class="topbar">
-    <button class="tb-back" onclick="goTo('step2')">← رجوع</button>
-    <div class="tb-logo">GRAFF <span>SPA</span></div>
-    <div class="tb-step">3 / 5</div>
+    <button class="tb-back" onclick="go('datetime')">← رجوع</button>
+    <div class="tb-logo">GRAFF <em>SPA</em></div>
+    <div class="tb-right">3 / 4</div>
   </div>
-  <div class="progress"><div class="progress-bar" style="width:60%"></div></div>
-  <div class="content">
-    <div class="s-head">
-      <p class="s-head-eye">STEP 3</p>
-      <h2 class="s-head-title">رقم جوالك</h2>
-      <p class="s-head-sub">سنرسل رمز التحقق على جوالك</p>
+  <div class="prog"><div class="prog-bar" style="width:75%"></div></div>
+  <div class="form-content">
+    <div style="text-align:center;padding:20px 0 4px">
+      <p style="font-size:8px;letter-spacing:.3em;color:var(--G);margin-bottom:7px">STEP 3</p>
+      <h2 style="font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:300;color:var(--T);letter-spacing:.07em">التحقق من جوالك</h2>
+      <p style="font-size:11px;color:var(--M);margin-top:4px">سنرسل رمز تحقق للتأكيد</p>
     </div>
-    <div class="form-wrap">
-      <div class="form-card">
-        <div class="form-title">رقم الجوال</div>
-        <label class="f-label">رقم الجوال (05xxxxxxxx)</label>
-        <input class="f-input" id="inp-phone" type="tel" maxlength="10" placeholder="0512345678" oninput="onPhoneInput()">
-      </div>
-      <div class="err-box" id="err3"></div>
+    <div style="height:16px"></div>
+    <div class="form-card">
+      <div class="form-ttl">رقم الجوال</div>
+      <label class="f-lbl">أدخلي رقم جوالك</label>
+      <input class="f-inp" id="inp-phone" type="tel" maxlength="10" placeholder="05xxxxxxxx" oninput="onPhoneIn()">
     </div>
+    <div class="err" id="err-phone"></div>
   </div>
   <div class="bot-bar">
-    <button class="bot-btn" id="btn-step3" onclick="sendOTP()" disabled>إرسال رمز التحقق</button>
+    <button class="bot-btn" id="btn-phone" onclick="sendOTP()" disabled>إرسال رمز التحقق ←</button>
   </div>
 </div>
 
-<!-- ══ STEP 4: OTP ══ -->
-<div id="step4" class="screen fade">
+<!-- ══════════════ OTP ══════════════ -->
+<div id="otp-step" class="sc">
   <div class="topbar">
-    <button class="tb-back" onclick="goTo('step3')">← رجوع</button>
-    <div class="tb-logo">GRAFF <span>SPA</span></div>
-    <div class="tb-step">4 / 5</div>
+    <button class="tb-back" onclick="go('phone-step')">← رجوع</button>
+    <div class="tb-logo">GRAFF <em>SPA</em></div>
+    <div class="tb-right">3 / 4</div>
   </div>
-  <div class="progress"><div class="progress-bar" style="width:80%"></div></div>
-  <div class="content">
-    <div class="s-head">
-      <p class="s-head-eye">STEP 4</p>
-      <h2 class="s-head-title">رمز التحقق</h2>
-      <p class="s-head-sub" id="otp-sent-to">تم إرسال الرمز على جوالك</p>
+  <div class="prog"><div class="prog-bar" style="width:75%"></div></div>
+  <div class="form-content">
+    <div style="text-align:center;padding:20px 0 4px">
+      <p style="font-size:8px;letter-spacing:.3em;color:var(--G);margin-bottom:7px">STEP 3</p>
+      <h2 style="font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:300;color:var(--T);letter-spacing:.07em">رمز التحقق</h2>
+      <p style="font-size:11px;color:var(--M);margin-top:4px" id="otp-hint-txt">تم إرسال الرمز على جوالك</p>
     </div>
-    <div class="form-wrap">
-      <div class="form-card">
-        <div class="form-title">أدخلي الرمز</div>
-        <div class="otp-inputs">
-          <input class="otp-input" id="o1" maxlength="1" type="tel" oninput="otpMove(this,'o2')" onkeydown="otpBack(event,this,'')">
-          <input class="otp-input" id="o2" maxlength="1" type="tel" oninput="otpMove(this,'o3')" onkeydown="otpBack(event,this,'o1')">
-          <input class="otp-input" id="o3" maxlength="1" type="tel" oninput="otpMove(this,'o4')" onkeydown="otpBack(event,this,'o2')">
-          <input class="otp-input" id="o4" maxlength="1" type="tel" oninput="otpDone()" onkeydown="otpBack(event,this,'o3')">
-        </div>
-        <div class="otp-hint">الرمز صالح لمدة 5 دقائق</div>
-        <button class="otp-resend" onclick="sendOTP(true)">إعادة إرسال الرمز</button>
+    <div style="height:16px"></div>
+    <div class="form-card">
+      <div class="form-ttl">أدخلي الرمز المكون من 4 أرقام</div>
+      <div class="otp-row">
+        <input class="otp-d" id="o1" maxlength="1" type="tel" oninput="om(this,'o2')" onkeydown="ob(event,this,'')">
+        <input class="otp-d" id="o2" maxlength="1" type="tel" oninput="om(this,'o3')" onkeydown="ob(event,this,'o1')">
+        <input class="otp-d" id="o3" maxlength="1" type="tel" oninput="om(this,'o4')" onkeydown="ob(event,this,'o2')">
+        <input class="otp-d" id="o4" maxlength="1" type="tel" oninput="ochk()" onkeydown="ob(event,this,'o3')">
       </div>
-      <div class="err-box" id="err4"></div>
+      <div class="otp-hint">الرمز صالح لمدة 5 دقائق</div>
+      <button class="otp-resend" onclick="sendOTP(true)">⟳ إعادة الإرسال</button>
     </div>
+    <div class="err" id="err-otp"></div>
   </div>
   <div class="bot-bar">
-    <button class="bot-btn" id="btn-step4" onclick="verifyOTP()" disabled>تحقق وأكملي الحجز</button>
+    <button class="bot-btn" id="btn-otp" onclick="verifyOTP()" disabled>تحقق وأكملي ←</button>
   </div>
 </div>
 
-<!-- ══ STEP 5: NAME + CONFIRM ══ -->
-<div id="step5" class="screen fade">
+<!-- ══════════════ CONFIRM ══════════════ -->
+<div id="confirm-step" class="sc">
   <div class="topbar">
-    <button class="tb-back" onclick="goTo('step4')">← رجوع</button>
-    <div class="tb-logo">GRAFF <span>SPA</span></div>
-    <div class="tb-step">5 / 5</div>
+    <button class="tb-back" onclick="go('otp-step')">← رجوع</button>
+    <div class="tb-logo">GRAFF <em>SPA</em></div>
+    <div class="tb-right">4 / 4</div>
   </div>
-  <div class="progress"><div class="progress-bar" style="width:100%"></div></div>
-  <div class="content">
-    <div class="s-head">
-      <p class="s-head-eye">STEP 5</p>
-      <h2 class="s-head-title">تأكيد الحجز</h2>
-      <p class="s-head-sub">أدخلي اسمك وأكملي الحجز</p>
+  <div class="prog"><div class="prog-bar" style="width:100%"></div></div>
+  <div class="form-content">
+    <div style="text-align:center;padding:20px 0 4px">
+      <p style="font-size:8px;letter-spacing:.3em;color:var(--G);margin-bottom:7px">STEP 4</p>
+      <h2 style="font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:300;color:var(--T);letter-spacing:.07em">تأكيد الحجز</h2>
+      <p style="font-size:11px;color:var(--M);margin-top:4px">أدخلي اسمك وأكملي الحجز</p>
     </div>
-    <div class="form-wrap">
-      <div class="form-card">
-        <div class="form-title">بياناتك</div>
-        <label class="f-label">الاسم الكامل</label>
-        <input class="f-input" id="inp-name" placeholder="سارة الأحمدي">
-      </div>
-      <div class="sum-box" id="sum-box"></div>
-      <div class="err-box" id="err5"></div>
+    <div style="height:16px"></div>
+    <div class="form-card">
+      <div class="form-ttl">بياناتك</div>
+      <label class="f-lbl">الاسم الكامل</label>
+      <input class="f-inp" id="inp-name" placeholder="سارة الأحمدي">
     </div>
+    <div class="sum-box" id="sum-box"></div>
+    <div class="err" id="err-confirm"></div>
   </div>
   <div class="bot-bar">
-    <button class="bot-btn" id="btn-step5" onclick="createBooking()">تأكيد الحجز ←</button>
+    <button class="bot-btn" id="btn-confirm" onclick="createBooking()">تأكيد الحجز والدفع ←</button>
   </div>
 </div>
 
-<!-- ══ SUCCESS ══ -->
-<div id="success" class="screen fade">
+<!-- ══════════════ SUCCESS ══════════════ -->
+<div id="success-sc" class="sc">
   <div class="topbar">
-    <div style="min-width:56px"></div>
-    <div class="tb-logo">GRAFF <span>SPA</span></div>
-    <div style="min-width:56px"></div>
+    <div style="min-width:52px"></div>
+    <div class="tb-logo">GRAFF <em>SPA</em></div>
+    <div style="min-width:52px"></div>
   </div>
-  <div class="suc-wrap">
+  <div class="suc-body">
     <div class="suc-ring">
-      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
         <path class="suc-chk" d="M20 6L9 17l-5-5"/>
       </svg>
     </div>
     <h2 class="suc-title">تم الحجز بنجاح</h2>
-    <p class="suc-sub">تم تأكيد حجزك في نظام GRAFF SPA</p>
+    <p class="suc-sub">تم تسجيل حجزك في نظام GRAFF SPA<br>وظهر في لوحة Rekaz</p>
     <div class="suc-card" id="suc-card"></div>
     <p class="suc-ref">رقم الحجز: <span id="suc-ref">—</span></p>
-    <button class="suc-pay" id="suc-pay-btn" style="display:none" onclick="goPayment()">إتمام الدفع ←</button>
+    <button class="suc-pay-btn" id="suc-pay-btn" onclick="goPay()">إتمام الدفع ←</button>
     <button class="suc-new" onclick="resetAll()">حجز موعد جديد</button>
   </div>
 </div>
 
 <script>
+// ══════════════════════════════════
+// CONFIG
+// ══════════════════════════════════
 var BACKEND = 'https://rekaz-test.onrender.com';
 var MONTHS = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
 var DAYS   = ['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
 
+// ══════════════════════════════════
 // STATE
-var state = {
-  product: null,    // { id, priceId, name, duration, amount }
-  date: null,       // { y, m, d }
-  slot: null,       // full slot object from Rekaz
+// ══════════════════════════════════
+var S = {
+  cart: [],        // [{id, priceId, name, duration, amount}]
+  date: null,      // {y,m,d}
+  slot: null,
   slotLabel: null,
   phone: null,
   customerId: null,
@@ -390,80 +486,226 @@ var state = {
 var calY = new Date().getFullYear();
 var calM = new Date().getMonth();
 var allSlots = [];
+var products = [];
 
 function p2(n){ return String(n).padStart(2,'0'); }
 
-// ── NAVIGATION ──
-function goTo(id) {
-  document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('on'); });
-  var el = document.getElementById(id);
-  el.classList.add('on');
-  el.classList.add('fade');
-  setTimeout(function(){ el.classList.remove('fade'); }, 400);
+// ══════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════
+function go(id) {
+  document.querySelectorAll('.sc').forEach(function(s){ s.classList.remove('on'); });
+  document.getElementById(id).classList.add('on');
   window.scrollTo(0,0);
-  if(id==='step5') renderSummary();
+  if(id === 'confirm-step') renderSummary();
 }
 
-// ── LOAD PRODUCTS ──
+// ══════════════════════════════════
+// SMART GROUPING
+// ══════════════════════════════════
+// Maps Rekaz product names to categories
+var CAT_MAP = {
+  'أظافر':     ['بياب','مناكير','بديكير','شيلاك','اظافر','اكستنشن','جل','لون','فرنش','تعبئة','إزالة','روسي','روسية','press','nail','manicure','pedicure','shellac','gel','extension','biab','french','removal','infill'],
+  'رموش':      ['رموش','حواجب','lash','brow','volume','classic','fox','barbie','cat eye','lifting','lamination'],
+  'شعر':       ['شعر','سشوار','قصة','قص','blow','hair','dry'],
+  'مساج':      ['مساج','massage'],
+  'خدمات أخرى': []
+};
+
+function getCategory(product) {
+  var name = (product.nameAr || product.name || '').toLowerCase();
+  for(var cat in CAT_MAP) {
+    if(cat === 'خدمات أخرى') continue;
+    var kws = CAT_MAP[cat];
+    for(var i=0;i<kws.length;i++) {
+      if(name.includes(kws[i])) return cat;
+    }
+  }
+  return 'خدمات أخرى';
+}
+
+// ══════════════════════════════════
+// LOAD PRODUCTS
+// ══════════════════════════════════
 async function loadProducts() {
   try {
     var r = await fetch(BACKEND + '/products');
     var data = await r.json();
-    var products = data.items || [];
-    if(!products.length) {
-      document.getElementById('products-list').innerHTML = '<div class="prod-error">لا توجد خدمات متاحة</div>';
-      return;
-    }
-    var html = '';
-    products.forEach(function(p) {
-      var priceId = p.pricing && p.pricing[0] ? p.pricing[0].id : '';
-      var amount  = p.amount || 0;
-      var dur     = p.duration ? p.duration + ' دقيقة' : '';
-      var name    = p.nameAr || p.name || '';
-      html += '<div class="srow" id="p-' + p.id + '" onclick="selProduct(\'' + p.id + '\',\'' + priceId + '\',\'' + name.replace(/'/g,'') + '\',' + (p.duration||60) + ',' + amount + ')">';
-      html += '<div class="srow-info"><div class="srow-name">' + name + '</div>';
-      if(dur) html += '<div class="srow-sub">⏱ ' + dur + '</div>';
-      html += '</div>';
-      html += '<div style="display:flex;align-items:center;gap:8px">';
-      html += '<div style="text-align:left"><div class="srow-price">' + amount + '</div><div class="srow-sr">SR</div></div>';
-      html += '<div class="srow-chk"><div class="srow-chk-i"></div></div>';
-      html += '</div></div>';
-    });
-    document.getElementById('products-list').innerHTML = html;
+    products = data.items || [];
+    renderServices(products);
   } catch(e) {
-    document.getElementById('products-list').innerHTML = '<div class="prod-error">خطأ في تحميل الخدمات: ' + e.message + '</div>';
+    document.getElementById('tabs-bar').innerHTML = '<div style="padding:12px 18px;font-size:11px;color:#e74c3c">خطأ في التحميل</div>';
   }
 }
 
-function selProduct(id, priceId, name, duration, amount) {
-  document.querySelectorAll('.srow.on').forEach(function(s){ s.classList.remove('on'); });
-  var same = state.product && state.product.id === id;
-  if(same) {
-    state.product = null;
-    document.getElementById('btn-step1').disabled = true;
-    document.getElementById('btn-step1').textContent = 'اختاري خدمة للمتابعة';
+function renderServices(prods) {
+  // Group by category
+  var grouped = {};
+  prods.forEach(function(p) {
+    var cat = getCategory(p);
+    if(!grouped[cat]) grouped[cat] = [];
+    grouped[cat].push(p);
+  });
+
+  // Build tabs
+  var tabsHTML = '';
+  var contentHTML = '';
+  var first = true;
+  for(var cat in grouped) {
+    if(!grouped[cat].length) continue;
+    var catId = 'cat-' + cat.replace(/\s/g,'_');
+    tabsHTML += '<button class="tab'+(first?' on':'')+'" onclick="switchTab(\''+catId+'\',this)">'+cat+'<span class="tab-badge" id="badge-'+catId+'">0</span></button>';
+    contentHTML += '<div class="cat-section'+(first?' on':'')+'" id="'+catId+'">';
+    grouped[cat].forEach(function(p) {
+      contentHTML += renderProduct(p);
+    });
+    contentHTML += '</div>';
+    first = false;
+  }
+
+  document.getElementById('tabs-bar').innerHTML = tabsHTML;
+  document.getElementById('svc-content').innerHTML = contentHTML;
+}
+
+function renderProduct(p) {
+  var hasVariants = p.pricing && p.pricing.length > 1;
+  var priceId = p.pricing && p.pricing[0] ? p.pricing[0].id : '';
+  var amount  = p.amount || 0;
+  var dur     = p.duration ? p.duration + ' دقيقة' : '';
+  var name    = p.nameAr || p.name || '';
+  var desc    = p.description ? p.description.replace(/<[^>]*>/g, '').replace(/&amp;/g,'&').trim() : '';
+  var pid     = 'p-'+p.id;
+
+  var html = '<div class="scard" id="'+pid+'">';
+  html += '<div class="scard-main" onclick="toggleProduct(\''+p.id+'\',\''+priceId+'\',\''+name.replace(/'/g,'')+'\','+(p.duration||60)+','+amount+',\''+pid+'\')">';
+  html += '<div class="scard-info">';
+  html += '<div class="scard-name">'+name+'</div>';
+  if(dur) html += '<div class="scard-dur">'+dur+'</div>';
+  if(desc) html += '<div class="scard-desc">'+desc+'</div>';
+  html += '</div>';
+  html += '<div class="scard-right">';
+  html += '<div><div class="scard-price">'+(hasVariants ? 'من '+amount : amount)+'</div><div class="scard-sr">SR</div></div>';
+  html += '<div class="scard-row2">';
+  if(hasVariants) {
+    html += '<button class="scard-variants-btn" id="vbtn-'+p.id+'" onclick="event.stopPropagation();toggleVariants(\''+p.id+'\')">خيارات <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></button>';
   } else {
-    document.getElementById('p-' + id).classList.add('on');
-    state.product = { id, priceId, name, duration, amount };
-    document.getElementById('btn-step1').disabled = false;
-    document.getElementById('btn-step1').textContent = name + ' ←';
+    html += '<div class="scard-chk"><div class="scard-chk-i"></div></div>';
   }
+  html += '</div></div></div>';
+
+  // Variants
+  if(hasVariants) {
+    html += '<div class="variants" id="vlist-'+p.id+'">';
+    p.pricing.forEach(function(pr) {
+      var vname = pr.name || '';
+      var vdur  = pr.duration ? pr.duration + ' دقيقة' : '';
+      var vprice= pr.amount || 0;
+      html += '<div class="vrow" id="vr-'+pr.id+'" onclick="selVariant(\''+p.id+'\',\''+pr.id+'\',\''+vname.replace(/'/g,'')+'\','+(pr.duration||60)+','+vprice+')">';
+      html += '<div class="vrow-dot"></div>';
+      html += '<span class="vrow-name">'+vname+'</span>';
+      if(vdur) html += '<span class="vrow-dur">'+vdur+'</span>';
+      html += '<span class="vrow-price">'+vprice+' SR</span>';
+      html += '<div class="vrow-chk"><div class="vrow-chk-i"></div></div>';
+      html += '</div>';
+    });
+    html += '</div>';
+  }
+
+  html += '</div>';
+  return html;
 }
 
-// ── CALENDAR ──
+// ══════════════════════════════════
+// PRODUCT INTERACTION
+// ══════════════════════════════════
+function switchTab(catId, btn) {
+  document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('on'); });
+  btn.classList.add('on');
+  document.querySelectorAll('.cat-section').forEach(function(c){ c.classList.remove('on'); });
+  document.getElementById(catId).classList.add('on');
+}
+
+function toggleVariants(pid) {
+  var vlist = document.getElementById('vlist-'+pid);
+  var vbtn  = document.getElementById('vbtn-'+pid);
+  var open  = vlist.classList.toggle('open');
+  vbtn.classList.toggle('open', open);
+}
+
+function toggleProduct(id, priceId, name, duration, amount, pid) {
+  var card = document.getElementById(pid);
+  var desc = card.querySelector('.scard-desc');
+  
+  // Check if already in cart (simple product)
+  var existing = S.cart.findIndex(function(c){ return c.id === id; });
+  if(existing > -1) {
+    S.cart.splice(existing, 1);
+    card.classList.remove('sel');
+    if(desc) card.classList.remove('expanded');
+  } else {
+    card.classList.add('sel');
+    if(desc) card.classList.add('expanded');
+    S.cart.push({ id, priceId, name, duration, amount });
+  }
+  updateCart();
+}
+
+function selVariant(productId, priceId, name, duration, amount) {
+  var vrow = document.getElementById('vr-'+priceId);
+  
+  // Remove any existing variant of this product
+  S.cart = S.cart.filter(function(c){ return c.productId !== productId; });
+  
+  // Toggle
+  var wasOn = vrow.classList.contains('sel');
+  document.querySelectorAll('[id^="vr-"]').forEach(function(v){
+    if(v.id.startsWith('vr-') && document.getElementById('vlist-'+productId) && document.getElementById('vlist-'+productId).contains(v)) {
+      v.classList.remove('sel');
+    }
+  });
+
+  if(!wasOn) {
+    vrow.classList.add('sel');
+    S.cart.push({ id: productId, priceId, productId, name, duration, amount });
+  }
+  updateCart();
+}
+
+function updateCart() {
+  var total = S.cart.reduce(function(s,i){ return s+i.amount; }, 0);
+  var count = S.cart.length;
+  document.getElementById('cart-count').textContent = count + ' خدمة مختارة';
+  document.getElementById('cart-total').textContent = total.toLocaleString('en');
+  document.getElementById('cart-tags').innerHTML = S.cart.map(function(i){
+    return '<span class="cart-tag">'+i.name+'</span>';
+  }).join('');
+  document.getElementById('cart-bar').classList.toggle('up', count > 0);
+
+  // Update tab badges
+  document.querySelectorAll('.tab').forEach(function(tab) {
+    var catSection = document.querySelector('.cat-section');
+    var badge = tab.querySelector('.tab-badge');
+    if(badge) badge.classList.remove('show');
+  });
+}
+
+// ══════════════════════════════════
+// CALENDAR
+// ══════════════════════════════════
 function renderCal() {
   var y=calY, m=calM;
   document.getElementById('cal-lbl').textContent = MONTHS[m] + ' ' + y;
   var first = new Date(y,m,1).getDay();
   var days  = new Date(y,m+1,0).getDate();
   var tod   = new Date();
-  var html  = '';
+  var todY=tod.getFullYear(), todM=tod.getMonth(), todD=tod.getDate();
+  var html = '';
   for(var i=0;i<first;i++) html += '<div class="cal-d empty"></div>';
   for(var d=1;d<=days;d++) {
     var dt   = new Date(y,m,d);
-    var past = dt < new Date(tod.getFullYear(),tod.getMonth(),tod.getDate());
-    var isT  = d===tod.getDate()&&m===tod.getMonth()&&y===tod.getFullYear();
-    var isSel= state.date&&d===state.date.d&&m===state.date.m&&y===state.date.y;
+    var past = dt < new Date(todY,todM,todD);
+    var isT  = d===todD && m===todM && y===todY;
+    var isSel= S.date && d===S.date.d && m===S.date.m && y===S.date.y;
     var cls  = 'cal-d'+(past?' past':'')+(isSel?' sel':'')+(isT&&!isSel?' today':'');
     if(past) html += '<div class="'+cls+'">'+d+'</div>';
     else html += '<div class="'+cls+'" onclick="pickDate('+y+','+m+','+d+')">'+d+'</div>';
@@ -471,7 +713,7 @@ function renderCal() {
   document.getElementById('cal-grid').innerHTML = html;
 }
 
-function chMonth(dir) {
+function chM(dir) {
   calM += dir;
   if(calM<0){ calM=11; calY--; }
   if(calM>11){ calM=0; calY++; }
@@ -479,41 +721,39 @@ function chMonth(dir) {
 }
 
 function pickDate(y,m,d) {
-  state.date = {y,m,d};
-  state.slot = null; state.slotLabel = null;
+  S.date = {y,m,d};
+  S.slot = null; S.slotLabel = null;
   renderCal();
   document.getElementById('slots-sec').style.display = 'block';
-  document.getElementById('btn-step2').disabled = true;
-  document.getElementById('btn-step2').textContent = 'اختاري وقتاً للمتابعة';
+  document.getElementById('dt-bot').style.display = 'block';
+  document.getElementById('btn-dt').disabled = true;
+  document.getElementById('btn-dt').textContent = 'اختاري وقتاً للمتابعة';
+  document.getElementById('sel-date-lbl').textContent = DAYS[new Date(y,m,d).getDay()]+' '+d+' '+MONTHS[m];
+  document.getElementById('sel-time-lbl').textContent = '—';
   loadSlots(y,m,d);
 }
 
-// ── SLOTS ──
-function utcToAST(utcStr) {
-  var d = new Date(utcStr);
-  var h = (d.getUTCHours()+3)%24;
-  var mn= d.getUTCMinutes();
-  var suf = h<12?'ص':'م';
-  var dh = h===0?12:h>12?h-12:h;
-  return dh+':'+p2(mn)+' '+suf;
+// ══════════════════════════════════
+// SLOTS
+// ══════════════════════════════════
+function utcToAST(s) {
+  var d=new Date(s); var h=(d.getUTCHours()+3)%24; var mn=d.getUTCMinutes();
+  var sf=h<12?'ص':'م'; var dh=h===0?12:h>12?h-12:h;
+  return dh+':'+p2(mn)+' '+sf;
 }
-function utcDateAST(utcStr) {
-  var d = new Date(utcStr);
-  var ast = new Date(d.getTime()+3*3600000);
-  return ast.getUTCFullYear()+'-'+p2(ast.getUTCMonth()+1)+'-'+p2(ast.getUTCDate());
+function utcDateAST(s) {
+  var d=new Date(s); var a=new Date(d.getTime()+3*3600000);
+  return a.getUTCFullYear()+'-'+p2(a.getUTCMonth()+1)+'-'+p2(a.getUTCDate());
 }
 
 async function loadSlots(y,m,d) {
-  if(!state.product) return;
-  document.getElementById('slots-box').innerHTML = '<div class="slot-loading">جاري تحميل الأوقات...</div>';
+  if(!S.cart.length) return;
+  // Use first item's priceId
+  var priceId = S.cart[0].priceId;
+  document.getElementById('slots-box').innerHTML = '<div class="slot-loading">جاري تحميل الأوقات من Rekaz...</div>';
   var dateStr = y+'-'+p2(m+1)+'-'+p2(d);
   try {
-    var params = new URLSearchParams({
-      StartDate: dateStr+'T00:00:00',
-      EndDate:   dateStr+'T23:59:59',
-      PriceId:   state.product.priceId,
-      MinQuantity: '1'
-    });
+    var params = new URLSearchParams({ StartDate:dateStr+'T00:00:00', EndDate:dateStr+'T23:59:59', PriceId:priceId, MinQuantity:'1' });
     var r = await fetch(BACKEND+'/slots?'+params);
     if(!r.ok) throw new Error('HTTP '+r.status);
     var raw = await r.json();
@@ -521,17 +761,16 @@ async function loadSlots(y,m,d) {
     allSlots = (Array.isArray(raw)?raw:[]).filter(function(s){
       if(!s.isAvailable||s.isOutDated) return false;
       if(utcDateAST(s.from)!==dateStr) return false;
-      var lbl = utcToAST(s.from);
-      if(seen[lbl]) return false;
+      var lbl=utcToAST(s.from); if(seen[lbl]) return false;
       seen[lbl]=true; return true;
     });
     if(!allSlots.length) {
-      document.getElementById('slots-box').innerHTML = '<div class="slot-empty">لا توجد أوقات متاحة في هذا اليوم</div>';
+      document.getElementById('slots-box').innerHTML = '<div class="slot-empty">لا توجد أوقات متاحة<br>جربي يوماً آخر</div>';
       return;
     }
     var html = '<div class="slots">';
     allSlots.forEach(function(s,i){
-      var lbl = utcToAST(s.from);
+      var lbl=utcToAST(s.from);
       html += '<div class="slot" id="sl'+i+'" onclick="pickSlot('+i+',\''+lbl+'\')">'+lbl+'</div>';
     });
     html += '</div>';
@@ -544,209 +783,153 @@ async function loadSlots(y,m,d) {
 function pickSlot(i, label) {
   document.querySelectorAll('.slot').forEach(function(s){ s.classList.remove('on'); });
   document.getElementById('sl'+i).classList.add('on');
-  state.slot = allSlots[i];
-  state.slotLabel = label;
-  document.getElementById('btn-step2').disabled = false;
-  document.getElementById('btn-step2').textContent = label + ' ←';
+  S.slot = allSlots[i]; S.slotLabel = label;
+  document.getElementById('sel-time-lbl').textContent = label;
+  document.getElementById('btn-dt').disabled = false;
+  document.getElementById('btn-dt').textContent = label + ' — متابعة ←';
 }
 
-// ── PHONE ──
-function onPhoneInput() {
+// ══════════════════════════════════
+// PHONE
+// ══════════════════════════════════
+function onPhoneIn() {
   var v = document.getElementById('inp-phone').value;
-  document.getElementById('btn-step3').disabled = v.length < 10;
+  document.getElementById('btn-phone').disabled = v.length < 10;
 }
 
-// ── SEND OTP ──
 async function sendOTP(resend) {
   var phone = document.getElementById('inp-phone').value.trim();
   if(phone.length < 10) return;
-  state.phone = phone;
-  var btn = document.getElementById('btn-step3');
-  btn.classList.add('loading');
-  btn.disabled = true;
-  showErr('err3','');
+  S.phone = phone;
+  var btn = document.getElementById('btn-phone');
+  btn.classList.add('ld'); btn.disabled = true;
+  showErr('err-phone','');
   try {
-    var r = await fetch(BACKEND+'/send-otp', {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ phone })
-    });
+    var r = await fetch(BACKEND+'/send-otp',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone})});
     var data = await r.json();
-    if(!r.ok) throw new Error(data.error || 'فشل الإرسال');
-    // Clear OTP inputs
+    if(!r.ok) throw new Error(data.error||'فشل الإرسال');
     ['o1','o2','o3','o4'].forEach(function(id){ document.getElementById(id).value=''; });
-    document.getElementById('otp-sent-to').textContent = 'تم إرسال الرمز على ' + phone;
-    // Show OTP for testing
-    if(data.debug_otp) {
-      document.getElementById('otp-sent-to').textContent += ' — رمز التجربة: ' + data.debug_otp;
-    }
-    goTo('step4');
-    setTimeout(function(){ document.getElementById('o1').focus(); }, 300);
-  } catch(e) {
-    showErr('err3', e.message);
-  }
-  btn.classList.remove('loading');
-  btn.disabled = false;
+    var hintTxt = 'تم إرسال الرمز على '+phone;
+    if(data.debug_otp) hintTxt += ' — رمز التجربة: '+data.debug_otp;
+    document.getElementById('otp-hint-txt').textContent = hintTxt;
+    go('otp-step');
+    setTimeout(function(){ document.getElementById('o1').focus(); },300);
+  } catch(e) { showErr('err-phone',e.message); }
+  btn.classList.remove('ld'); btn.disabled = false;
 }
 
-// ── OTP INPUTS ──
-function otpMove(el, nextId) {
-  if(el.value) { var n=document.getElementById(nextId); if(n) n.focus(); }
-  checkOTPFilled();
-}
-function otpBack(e, el, prevId) {
-  if(e.key==='Backspace'&&!el.value&&prevId) document.getElementById(prevId).focus();
-}
-function otpDone() { checkOTPFilled(); }
-function checkOTPFilled() {
-  var code = ['o1','o2','o3','o4'].map(function(id){ return document.getElementById(id).value; }).join('');
-  document.getElementById('btn-step4').disabled = code.length < 4;
-}
-function getOTP() {
-  return ['o1','o2','o3','o4'].map(function(id){ return document.getElementById(id).value; }).join('');
-}
+// OTP
+function om(el,nid){ if(el.value){ var n=document.getElementById(nid); if(n) n.focus(); } ochk(); }
+function ob(e,el,pid){ if(e.key==='Backspace'&&!el.value&&pid) document.getElementById(pid).focus(); }
+function ochk(){ var c=['o1','o2','o3','o4'].map(function(id){ return document.getElementById(id).value; }).join(''); document.getElementById('btn-otp').disabled=c.length<4; }
+function getOTP(){ return ['o1','o2','o3','o4'].map(function(id){ return document.getElementById(id).value; }).join(''); }
 
-// ── VERIFY OTP ──
 async function verifyOTP() {
   var otp = getOTP();
-  var btn = document.getElementById('btn-step4');
-  btn.classList.add('loading');
-  btn.disabled = true;
-  showErr('err4','');
+  var btn = document.getElementById('btn-otp');
+  btn.classList.add('ld'); btn.disabled = true;
+  showErr('err-otp','');
   try {
-    var r = await fetch(BACKEND+'/verify-otp', {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ phone: state.phone, otp })
-    });
+    var r = await fetch(BACKEND+'/verify-otp',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone:S.phone,otp})});
     var data = await r.json();
-    if(!r.ok) throw new Error(data.error || 'رمز غير صحيح');
-    goTo('step5');
-  } catch(e) {
-    showErr('err4', e.message);
-  }
-  btn.classList.remove('loading');
-  btn.disabled = false;
+    if(!r.ok) throw new Error(data.error||'رمز غير صحيح');
+    go('confirm-step');
+  } catch(e) { showErr('err-otp',e.message); }
+  btn.classList.remove('ld'); btn.disabled = false;
 }
 
-// ── SUMMARY ──
+// ══════════════════════════════════
+// SUMMARY
+// ══════════════════════════════════
 function renderSummary() {
-  if(!state.product||!state.date||!state.slotLabel) return;
-  var d = state.date;
-  var dateLabel = DAYS[new Date(d.y,d.m,d.d).getDay()]+' '+d.d+' '+MONTHS[d.m]+' '+d.y;
-  var sub = state.product.amount;
-  var tax = Math.round(sub*0.15);
-  document.getElementById('sum-box').innerHTML =
-    '<div class="sum-row"><span class="sum-l">الخدمة</span><span class="sum-v">'+state.product.name+'</span></div>'+
-    '<div class="sum-row"><span class="sum-l">التاريخ</span><span class="sum-v">'+dateLabel+'</span></div>'+
-    '<div class="sum-row"><span class="sum-l">الوقت</span><span class="sum-v">'+state.slotLabel+'</span></div>'+
-    '<div class="sum-row"><span class="sum-l">ضريبة 15%</span><span class="sum-v">'+tax.toLocaleString('en')+' SR</span></div>'+
-    '<div class="sum-row"><span class="sum-l">الإجمالي</span><span class="sum-v">'+(sub+tax).toLocaleString('en')+' SR</span></div>';
+  var d=S.date; if(!d) return;
+  var dateLabel=DAYS[new Date(d.y,d.m,d.d).getDay()]+' '+d.d+' '+MONTHS[d.m];
+  var sub=S.cart.reduce(function(s,i){ return s+i.amount; },0);
+  var tax=Math.round(sub*0.15);
+  var html='';
+  S.cart.forEach(function(i){ html+='<div class="sum-row"><span class="sum-l">'+i.name+'</span><span class="sum-v">'+i.amount+' SR</span></div>'; });
+  html+='<div class="sum-row"><span class="sum-l">التاريخ</span><span class="sum-v">'+dateLabel+'</span></div>';
+  html+='<div class="sum-row"><span class="sum-l">الوقت</span><span class="sum-v">'+(S.slotLabel||'—')+'</span></div>';
+  html+='<div class="sum-row"><span class="sum-l">ضريبة 15%</span><span class="sum-v">'+tax.toLocaleString('en')+' SR</span></div>';
+  html+='<div class="sum-row"><span class="sum-l">الإجمالي</span><span class="sum-v">'+(sub+tax).toLocaleString('en')+' SR</span></div>';
+  document.getElementById('sum-box').innerHTML = html;
 }
 
-// ── CREATE BOOKING ──
+// ══════════════════════════════════
+// CREATE BOOKING
+// ══════════════════════════════════
 async function createBooking() {
   var name = document.getElementById('inp-name').value.trim();
-  if(!name) { showErr('err5','يرجى إدخال اسمك الكامل'); return; }
-  if(!state.phone) { showErr('err5','رقم الجوال غير موجود'); return; }
-  if(!state.slot) { showErr('err5','لم يتم اختيار وقت'); return; }
+  if(!name){ showErr('err-confirm','يرجى إدخال اسمك الكامل'); return; }
+  if(!S.phone){ showErr('err-confirm','رقم الجوال غير موجود'); return; }
+  if(!S.slot){ showErr('err-confirm','لم يتم اختيار وقت'); return; }
+  if(!S.cart.length){ showErr('err-confirm','لم يتم اختيار خدمة'); return; }
 
-  var btn = document.getElementById('btn-step5');
-  btn.classList.add('loading');
-  btn.disabled = true;
-  showErr('err5','');
+  var btn = document.getElementById('btn-confirm');
+  btn.classList.add('ld'); btn.disabled = true;
+  showErr('err-confirm','');
 
   try {
-    // Step 1: Create customer in Rekaz
-    var custR = await fetch(BACKEND+'/create-customer', {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ name, phone: state.phone })
-    });
-    var custData = await custR.json();
-    if(!custR.ok) throw new Error(custData.error || 'فشل إنشاء العميل');
-    state.customerId = custData.customerId;
-    console.log('Customer:', state.customerId, custData.existing ? '(existing)' : '(new)');
+    // Create customer
+    var cr = await fetch(BACKEND+'/create-customer',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,phone:S.phone})});
+    var cd = await cr.json();
+    if(!cr.ok) throw new Error(cd.error||'فشل إنشاء العميل');
+    S.customerId = cd.customerId;
 
-    // Step 2: Create booking in Rekaz
-    var bookR = await fetch(BACKEND+'/create-booking', {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({
-        customerId: state.customerId,
-        phone: state.phone,
-        priceId: state.product.priceId,
-        from: state.slot.from,
-        to:   state.slot.to
-      })
-    });
-    var bookData = await bookR.json();
-    console.log('Booking response:', bookData);
-    if(!bookR.ok) throw new Error(bookData.error || 'فشل إنشاء الحجز');
+    // Create booking (use first service's priceId)
+    var item = S.cart[0];
+    var br = await fetch(BACKEND+'/create-booking',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({customerId:S.customerId,phone:S.phone,priceId:item.priceId,from:S.slot.from,to:S.slot.to})});
+    var bd = await br.json();
+    if(!br.ok) throw new Error(bd.error||'فشل إنشاء الحجز');
 
-    // Success
-    state.paymentLink = bookData.paymentLink;
-    var ref = bookData.orderId
-      ? 'GS-'+bookData.orderId.substring(0,8).toUpperCase()
-      : 'GS-'+Math.floor(10000+Math.random()*90000);
-
-    var d = state.date;
-    var dateLabel = DAYS[new Date(d.y,d.m,d.d).getDay()]+' '+d.d+' '+MONTHS[d.m];
-    var sub = state.product.amount;
-    var tax = Math.round(sub*0.15);
+    S.paymentLink = bd.paymentLink;
+    var ref = bd.orderId ? 'GS-'+bd.orderId.substring(0,8).toUpperCase() : 'GS-'+Math.floor(10000+Math.random()*90000);
+    var d=S.date;
+    var dateLabel=DAYS[new Date(d.y,d.m,d.d).getDay()]+' '+d.d+' '+MONTHS[d.m];
+    var sub=S.cart.reduce(function(s,i){ return s+i.amount; },0);
+    var tax=Math.round(sub*0.15);
 
     document.getElementById('suc-card').innerHTML =
-      '<div class="suc-row"><span class="suc-label">الاسم</span><span class="suc-val">'+name+'</span></div>'+
-      '<div class="suc-row"><span class="suc-label">الجوال</span><span class="suc-val">'+state.phone+'</span></div>'+
-      '<div class="suc-row"><span class="suc-label">الخدمة</span><span class="suc-val">'+state.product.name+'</span></div>'+
-      '<div class="suc-row"><span class="suc-label">التاريخ</span><span class="suc-val">'+dateLabel+'</span></div>'+
-      '<div class="suc-row"><span class="suc-label">الوقت</span><span class="suc-val">'+state.slotLabel+'</span></div>'+
-      '<div class="suc-row"><span class="suc-label">الإجمالي</span><span class="suc-val">'+(sub+tax).toLocaleString('en')+' SR</span></div>';
+      '<div class="suc-row"><span class="suc-lbl">الاسم</span><span class="suc-val">'+name+'</span></div>'+
+      '<div class="suc-row"><span class="suc-lbl">الجوال</span><span class="suc-val">'+S.phone+'</span></div>'+
+      '<div class="suc-row"><span class="suc-lbl">الخدمة</span><span class="suc-val">'+item.name+'</span></div>'+
+      '<div class="suc-row"><span class="suc-lbl">التاريخ</span><span class="suc-val">'+dateLabel+'</span></div>'+
+      '<div class="suc-row"><span class="suc-lbl">الوقت</span><span class="suc-val">'+(S.slotLabel||'—')+'</span></div>'+
+      '<div class="suc-row"><span class="suc-lbl">الإجمالي</span><span class="suc-val">'+(sub+tax).toLocaleString('en')+' SR</span></div>';
 
     document.getElementById('suc-ref').textContent = ref;
+    if(bd.paymentLink) document.getElementById('suc-pay-btn').style.display = 'block';
+    go('success-sc');
 
-    if(bookData.paymentLink) {
-      document.getElementById('suc-pay-btn').style.display = 'block';
-    }
-
-    goTo('success');
-
-  } catch(e) {
-    showErr('err5', e.message);
-  }
-
-  btn.classList.remove('loading');
-  btn.disabled = false;
+  } catch(e) { showErr('err-confirm',e.message); }
+  btn.classList.remove('ld'); btn.disabled = false;
 }
 
-function goPayment() {
-  if(state.paymentLink) {
-    window.location.href = 'https://graffspa.com' + state.paymentLink;
-  }
+function goPay() {
+  if(S.paymentLink) window.location.href = 'https://graffspa.com' + S.paymentLink;
 }
 
 function resetAll() {
-  state = { product:null, date:null, slot:null, slotLabel:null, phone:null, customerId:null, paymentLink:null };
+  S = { cart:[], date:null, slot:null, slotLabel:null, phone:null, customerId:null, paymentLink:null };
   allSlots = [];
-  document.querySelectorAll('.srow.on').forEach(function(s){ s.classList.remove('on'); });
+  document.querySelectorAll('.scard.sel').forEach(function(c){ c.classList.remove('sel','expanded'); });
+  document.querySelectorAll('.vrow.sel').forEach(function(v){ v.classList.remove('sel'); });
   document.getElementById('inp-phone').value = '';
   document.getElementById('inp-name').value = '';
-  document.getElementById('btn-step1').disabled = true;
-  document.getElementById('btn-step1').textContent = 'اختاري خدمة للمتابعة';
-  document.getElementById('btn-step2').disabled = true;
-  document.getElementById('btn-step2').textContent = 'اختاري وقتاً للمتابعة';
+  document.getElementById('cart-bar').classList.remove('up');
   document.getElementById('slots-sec').style.display = 'none';
-  goTo('step1');
+  document.getElementById('dt-bot').style.display = 'none';
+  go('home');
 }
 
 function showErr(id, msg) {
-  var el = document.getElementById(id);
-  if(!el) return;
-  el.textContent = msg;
-  el.style.display = msg ? 'block' : 'none';
+  var el=document.getElementById(id); if(!el) return;
+  el.textContent=msg; el.style.display=msg?'block':'none';
 }
 
-// ── INIT ──
+// ══════════════════════════════════
+// INIT
+// ══════════════════════════════════
 renderCal();
 loadProducts();
 </script>
