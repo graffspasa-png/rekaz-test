@@ -992,7 +992,15 @@ async function doPay(){
       bookingSuccess = true;
       try{
         var result=JSON.parse(text);
-        if(Array.isArray(result)&&result[0]&&result[0].id)
+        // If Rekaz returns a payment link, redirect to it
+        if(result.paymentLink){
+          hideProc();
+          window.location.href = 'https://graffspa.com' + result.paymentLink;
+          return;
+        }
+        if(result.orderId)
+          rekazRef='GS-'+result.orderId.substring(0,8).toUpperCase();
+        else if(Array.isArray(result)&&result[0]&&result[0].id)
           rekazRef='GS-'+result[0].id.substring(0,8).toUpperCase();
         else if(result.id)
           rekazRef='GS-'+result.id.substring(0,8).toUpperCase();
@@ -1005,7 +1013,6 @@ async function doPay(){
       }
     }else{
       console.warn('Booking failed - Status:', r.status, 'Body:', text);
-      // Still show confirmation but with generated ref
       rekazRef='GS-'+Math.floor(10000+Math.random()*90000);
     }
   }catch(e){
