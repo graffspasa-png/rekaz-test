@@ -192,11 +192,26 @@ app.post("/create-booking", async (req, res) => {
     // Clear OTP after successful booking
     if (phone) delete otpStore[phone];
     
+    // Build full payment URL
+    const paymentPath = result.paymentLink || '';
+    const paymentUrl = paymentPath.startsWith('http') 
+      ? paymentPath 
+      : paymentPath ? `https://graffspa.com${paymentPath}` : null;
+
+    // Get reservation number (order number from Rekaz)
+    const reservationNumber = result.reservationIds && result.reservationIds[0] 
+      ? result.reservationIds[0] 
+      : result.orderId;
+    
+    console.log("Full Rekaz result:", JSON.stringify(result));
+    
     res.json({ 
       success: true, 
       orderId: result.orderId,
+      reservationNumber: reservationNumber,
       reservationIds: result.reservationIds,
-      paymentLink: result.paymentLink
+      paymentLink: paymentPath,
+      paymentUrl: paymentUrl
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
