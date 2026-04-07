@@ -9,15 +9,13 @@
 <style>
 :root{
   --ink:#080807;--ink2:#0c0b09;
-  --cream:#f3ede3;--cream2:#ebe3d5;--cream3:#e1d8c8;
+  --cream:#f3ede3;--cream2:#ebe3d5;--cream3:#e0d8c8;
   --w:#fff;--gold:#b8965a;--gold2:#c8a66a;
   --text:#17150e;--muted:#78706a;--border:#d8d0c0;
   --err:#b33;--ok:#2a7a4f;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction:rtl;overflow-x:hidden;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
-
-/* SCREENS */
 .pg{display:none;min-height:100dvh;flex-direction:column}
 .pg.on{display:flex;animation:fi .22s ease}
 @keyframes fi{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
@@ -56,7 +54,7 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction
 .hbtn.g:hover{background:var(--gold2)}
 .hbtn.o{background:transparent;border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.5)}
 .hbtn.o:hover{border-color:rgba(184,150,90,.3);color:#fff}
-.arr{opacity:.45;transition:transform .17s;font-size:13px}
+.arr{opacity:.45;transition:transform .17s}
 .hbtn:hover .arr{transform:translateX(-3px)}
 
 /* FOOTER */
@@ -69,14 +67,11 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction
 .fsocial{display:flex;justify-content:center;gap:10px;margin-bottom:16px}
 .fsoc{width:37px;height:37px;border:1px solid rgba(255,255,255,.08);border-radius:9px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;text-decoration:none;color:rgba(255,255,255,.34);background:rgba(255,255,255,.03)}
 .fsoc:hover{border-color:rgba(184,150,90,.36);color:var(--gold)}
-/* Payment - white bg like Rekaz */
-.payrow{display:flex;justify-content:center;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:14px}
-.paychip{height:30px;padding:0 9px;border-radius:5px;background:#fff;display:flex;align-items:center;justify-content:center;min-width:48px}
-.paychip img{height:17px;width:auto;object-fit:contain;display:block}
+.payrow{display:flex;justify-content:center;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:14px}
+.paychip{height:32px;padding:0 10px;border-radius:6px;background:#fff;display:flex;align-items:center;justify-content:center;min-width:50px}
 .fvat{display:flex;align-items:center;justify-content:center;gap:9px;margin-bottom:11px;flex-wrap:wrap}
 .fvatnum{font-size:10px;color:rgba(255,255,255,.24)}
 .fvatb{display:flex;align-items:center;gap:5px;background:rgba(0,88,0,.13);border:1px solid rgba(0,120,0,.2);padding:3px 9px;border-radius:4px}
-.fvatb img{width:18px;height:18px;object-fit:contain}
 .fvatb span{font-size:9px;color:rgba(255,255,255,.4)}
 .fcopy{font-size:9px;color:rgba(255,255,255,.13)}
 
@@ -91,20 +86,26 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction
 .tabs::-webkit-scrollbar{display:none}
 .tab{padding:11px 15px;font-family:'Tajawal',sans-serif;font-size:11px;font-weight:500;letter-spacing:.06em;color:rgba(255,255,255,.3);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:all .15s;white-space:nowrap;flex-shrink:0}
 .tab.on{color:#fff;border-bottom-color:var(--gold)}
-.svcbody{flex:1;overflow-y:auto;padding:10px 11px 100px}
+.svcbody{flex:1;overflow-y:auto;padding:0 12px 100px}
 .cpanel{display:none;flex-direction:column}
 .cpanel.on{display:flex}
-/* Sub-group label - centered */
-.sglbl{font-size:9px;letter-spacing:.14em;color:var(--muted);padding:14px 0 7px;display:flex;align-items:center;gap:8px;text-transform:uppercase;justify-content:center}
-.sglbl::before,.sglbl::after{content:'';flex:1;height:1px;background:var(--border)}
 
-/* Service card */
-.sc{background:var(--w);border:1px solid rgba(198,191,180,.55);margin-bottom:6px;cursor:pointer;transition:border-color .14s;position:relative;overflow:hidden}
+/* SUB-SECTION HEADER — centered, prominent */
+.sub-sec{margin-top:8px}
+.sub-hd{display:flex;flex-direction:column;align-items:center;padding:24px 16px 14px;text-align:center;position:relative}
+.sub-hd-inner{display:flex;flex-direction:column;align-items:center;gap:3px}
+.sub-en{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:400;color:var(--text);letter-spacing:.14em}
+.sub-ar{font-family:'Tajawal',sans-serif;font-size:11px;font-weight:400;color:var(--muted);letter-spacing:.05em}
+.sub-line{width:36px;height:1px;background:var(--gold);opacity:.45;margin-top:9px}
+.sub-cards{display:flex;flex-direction:column;gap:7px;padding-bottom:6px}
+
+/* SERVICE CARD */
+.sc{background:var(--w);border:1px solid rgba(198,191,180,.55);cursor:pointer;transition:border-color .14s;position:relative;overflow:hidden}
 .sc:hover{border-color:rgba(184,150,90,.32)}
 .sc.sel{border-color:rgba(184,150,90,.58);background:#fdf8ed}
 .scbar{position:absolute;right:0;top:0;bottom:0;width:3px;background:var(--gold);transform:scaleY(0);transition:transform .2s cubic-bezier(.4,0,.2,1);transform-origin:center}
 .sc.sel .scbar{transform:scaleY(1)}
-.scbody{display:flex;align-items:flex-start;padding:12px 12px 10px;gap:10px}
+.scbody{display:flex;align-items:flex-start;padding:13px 12px 11px;gap:10px}
 .scinfo{flex:1;min-width:0}
 .scname{font-size:14px;font-weight:500;color:var(--text);line-height:1.28;margin-bottom:3px}
 .scdesc{font-size:11px;color:var(--muted);line-height:1.65;margin-bottom:5px}
@@ -112,7 +113,7 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction
 .scright{display:flex;flex-direction:column;align-items:flex-end;gap:7px;flex-shrink:0;padding-top:1px}
 .scprice{font-family:'Cormorant Garamond',serif;font-size:21px;font-weight:400;color:var(--text);line-height:1}
 .scsr{font-family:'Tajawal',sans-serif;font-size:9px;color:var(--muted);margin-right:1px}
-.scvat{font-size:8px;color:rgba(118,110,100,.48);text-align:left;margin-top:1px}
+.scvat{font-size:8px;color:rgba(118,110,100,.45);text-align:left;margin-top:1px}
 .scchk{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;transition:all .16s;flex-shrink:0}
 .sc.sel .scchk{background:var(--ink);border-color:var(--ink)}
 .chkd{width:8px;height:8px;border-radius:50%;background:#fff;opacity:0;transform:scale(0);transition:all .16s}
@@ -139,20 +140,22 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction
 .vchkd{width:6px;height:6px;border-radius:50%;background:#fff;opacity:0;transition:opacity .13s}
 .vrow.sel .vchkd{opacity:1}
 
-/* Add-ons */
-.addon-wrap{background:rgba(184,150,90,.04);border-top:1px solid rgba(184,150,90,.12);padding:10px 12px}
-.addon-title{font-size:9px;letter-spacing:.14em;color:var(--gold);margin-bottom:8px}
-.addon-row{display:flex;align-items:center;padding:8px 0;border-bottom:1px solid rgba(198,191,180,.3);gap:8px;cursor:pointer}
-.addon-row:last-child{border:none}
-.addon-chk{width:17px;height:17px;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;transition:all .13s;flex-shrink:0}
-.addon-row.sel .addon-chk{background:var(--gold);border-color:var(--gold)}
-.addon-chk-i{width:8px;height:8px;background:url("data:image/svg+xml,%3Csvg viewBox='0 0 10 8' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 4L3.5 6.5L9 1' stroke='white' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E") center/contain no-repeat;opacity:0;transition:opacity .13s}
-.addon-row.sel .addon-chk-i{opacity:1}
-.addon-info{flex:1;font-size:12px;color:var(--text)}
-.addon-price{font-family:'Cormorant Garamond',serif;font-size:15px;color:var(--text);white-space:nowrap}
-.addon-sr{font-family:'Tajawal',sans-serif;font-size:9px;color:var(--muted)}
+/* ADDONS — shows only when card selected */
+.adwrap{background:rgba(184,150,90,.04);border-top:1px solid rgba(184,150,90,.1);padding:11px 12px;display:none}
+.sc.sel .adwrap{display:block}
+.adtitle{font-size:9px;letter-spacing:.16em;color:var(--gold);margin-bottom:9px;text-transform:uppercase}
+.adrow{display:flex;align-items:center;padding:8px 0;border-bottom:1px solid rgba(198,191,180,.25);gap:9px;cursor:pointer}
+.adrow:last-child{border:none}
+.adrow:active{background:rgba(184,150,90,.05)}
+.adchk{width:18px;height:18px;border:1.5px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .13s;border-radius:3px}
+.adrow.sel .adchk{background:var(--gold);border-color:var(--gold)}
+.adchki{width:9px;height:9px;background:url("data:image/svg+xml,%3Csvg viewBox='0 0 10 8' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 4L3.5 6.5L9 1' stroke='white' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E") center/contain no-repeat;opacity:0;transition:opacity .13s}
+.adrow.sel .adchki{opacity:1}
+.adname{flex:1;font-size:12px;color:var(--text);line-height:1.4}
+.adprice{font-family:'Cormorant Garamond',serif;font-size:15px;color:var(--text);white-space:nowrap;flex-shrink:0}
+.adprice-sr{font-family:'Tajawal',sans-serif;font-size:9px;color:var(--muted)}
 
-/* Cart */
+/* CART */
 .cartbar{position:fixed;bottom:0;right:0;left:0;z-index:100;background:var(--ink);border-top:1px solid rgba(184,150,90,.18);padding:11px 14px;display:flex;align-items:center;gap:11px;transform:translateY(110%);transition:transform .32s cubic-bezier(.4,0,.2,1);box-shadow:0 -3px 16px rgba(0,0,0,.26)}
 .cartbar.up{transform:translateY(0)}
 .cartinfo{flex:1;min-width:0}
@@ -185,7 +188,7 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction
 .slotnone{font-size:12px;color:var(--muted);padding:19px;text-align:center;line-height:2;background:var(--w);border:1px solid var(--border)}
 .slots{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
 .slot{padding:10px 3px;text-align:center;background:var(--w);border:1px solid var(--border);font-size:12px;cursor:pointer;transition:all .11s;color:var(--text);font-family:'Tajawal',sans-serif}
-.slot:hover{background:var(--cream2);border-color:rgba(120,112,100,.36)}
+.slot:hover{background:var(--cream2)}
 .slot.on{background:var(--ink);color:#fff;border-color:var(--ink)}
 .dtfoot{position:fixed;bottom:0;right:0;left:0;z-index:100;background:var(--ink);border-top:1px solid rgba(184,150,90,.13);padding:10px 13px;display:none}
 .dtmeta{display:flex;justify-content:space-between;margin-bottom:7px}
@@ -222,7 +225,6 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction
 .otpd:focus{border-color:rgba(24,21,14,.36)}
 .otphnt{font-size:11px;color:var(--muted);text-align:center;margin-top:11px;line-height:1.75}
 .otprsnd{display:block;font-size:11px;color:var(--gold);background:none;border:none;font-family:'Tajawal',sans-serif;cursor:pointer;margin:8px auto 0;padding:4px;opacity:.8}
-.otprsnd:hover{opacity:1}
 
 /* Summary */
 .sumcard{background:var(--w);border:1px solid var(--border);margin-bottom:9px}
@@ -235,7 +237,7 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction
 .sumtotv{font-family:'Cormorant Garamond',serif;font-size:23px;font-weight:300;color:var(--gold)}
 .vatnote{font-size:9px;color:rgba(24,21,14,.3);text-align:center;padding:4px 0;letter-spacing:.04em;margin-bottom:9px}
 
-/* Payment methods */
+/* Payment */
 .pms{background:var(--w);border:1px solid var(--border);margin-bottom:9px}
 .pmrow{display:flex;align-items:center;padding:11px 12px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .1s;gap:9px}
 .pmrow:last-child{border:none}
@@ -248,8 +250,7 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction
 .pminfo{flex:1}
 .pmname{font-size:13px;font-weight:500;color:var(--text);margin-bottom:1px}
 .pmsub{font-size:10px;color:var(--muted)}
-.pmlogo{flex-shrink:0;display:flex;align-items:center;gap:3px}
-.pmlogo img{height:16px;width:auto;object-fit:contain}
+.pmlogos{flex-shrink:0;display:flex;align-items:center;gap:4px}
 
 /* Disc */
 .discw{background:var(--w);border:1px solid var(--border);padding:12px;margin-bottom:9px}
@@ -279,13 +280,30 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction
 .suclbl{color:var(--muted);font-size:10px;flex-shrink:0}
 .sucval{font-weight:500;color:var(--text);text-align:left}
 .sucref{font-size:9px;letter-spacing:.15em;color:var(--muted);margin-bottom:18px}
-.sucref strong{color:var(--gold);font-size:12px;font-weight:500}
-.sucpay{width:100%;max-width:275px;padding:14px;background:var(--gold);color:var(--ink);border:none;font-family:'Tajawal',sans-serif;font-size:12px;font-weight:500;letter-spacing:.12em;cursor:pointer;transition:background .14s;margin-bottom:7px;display:none}
+.sucref strong{color:var(--gold);font-size:14px;font-weight:500;letter-spacing:.02em}
+.sucpay{width:100%;max-width:275px;padding:14px;background:var(--gold);color:var(--ink);border:none;font-family:'Tajawal',sans-serif;font-size:12px;font-weight:500;letter-spacing:.12em;cursor:pointer;transition:background .14s;margin-bottom:7px}
 .sucpay:hover{background:var(--gold2)}
 .sucnew{width:100%;max-width:275px;padding:11px;background:transparent;border:1px solid var(--border);color:var(--text);font-family:'Tajawal',sans-serif;font-size:11px;letter-spacing:.08em;cursor:pointer;transition:all .14s}
 .sucnew:hover{border-color:rgba(24,21,14,.32)}
-.redirmsg{font-size:11px;color:var(--gold);margin-bottom:10px;animation:pulse 1.5s ease infinite}
-@keyframes pulse{0%,100%{opacity:.6}50%{opacity:1}}
+
+/* PAYMENT POPUP */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:200;display:none;align-items:flex-end;justify-content:center}
+.overlay.on{display:flex;animation:fo .2s ease}
+@keyframes fo{from{opacity:0}to{opacity:1}}
+.popup{background:var(--cream);width:100%;max-width:520px;border-radius:18px 18px 0 0;padding:22px 18px 36px;animation:su .28s cubic-bezier(.4,0,.2,1)}
+@keyframes su{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.popup-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.popup-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;color:var(--text);letter-spacing:.06em}
+.popup-close{background:none;border:none;cursor:pointer;color:var(--muted);font-size:24px;padding:2px 6px;line-height:1;transition:color .14s;font-family:'Tajawal',sans-serif}
+.popup-close:hover{color:var(--text)}
+.popup-amount{text-align:center;margin-bottom:22px;padding:18px;background:var(--w);border:1px solid var(--border)}
+.popup-amount-lbl{font-size:10px;letter-spacing:.14em;color:var(--muted);margin-bottom:6px}
+.popup-amount-val{font-family:'Cormorant Garamond',serif;font-size:40px;font-weight:300;color:var(--gold);line-height:1}
+.popup-amount-sr{font-family:'Tajawal',sans-serif;font-size:12px;color:var(--muted)}
+.popup-btn{display:block;width:100%;padding:15px;background:var(--gold);color:var(--ink);text-align:center;text-decoration:none;font-family:'Tajawal',sans-serif;font-size:12px;font-weight:500;letter-spacing:.14em;margin-bottom:9px;transition:background .14s;border:none;cursor:pointer}
+.popup-btn:hover{background:var(--gold2)}
+.popup-btn-sec{display:block;width:100%;padding:12px;background:transparent;border:1px solid var(--border);color:var(--text);text-align:center;text-decoration:none;font-family:'Tajawal',sans-serif;font-size:11px;cursor:pointer;transition:all .14s}
+.popup-btn-sec:hover{border-color:rgba(24,21,14,.32)}
 
 @media(max-width:380px){
   .slots{grid-template-columns:repeat(3,1fr)}
@@ -321,17 +339,51 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction
       <a class="fsoc" href="#"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.747l7.73-8.835L1.254 2.25H8.08l4.261 5.632zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
       <a class="fsoc" href="#"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2C8.5 2 6 4.5 6 8v1c-1 .2-2 .8-2 1.5 0 .5.5.9 1.5 1C5 13 3.5 14.5 2 15c1 .5 2.5.8 3.5.9.5 1 2.5 2.6 6.5 2.6s6-1.6 6.5-2.6c1-.1 2.5-.4 3.5-.9-1.5-.5-3-2-3.5-3.5 1-.1 1.5-.5 1.5-1C21 9.3 20 8.7 19 8.5V8c0-3.5-2.5-6-7-6z"/></svg></a>
     </div>
+    <!-- Payment logos SVG inline on white bg -->
     <div class="payrow">
-      <div class="paychip"><img src="https://cdn.rekaz.io/assets/mastercard.svg" alt="Mastercard"></div>
-      <div class="paychip"><img src="https://cdn.rekaz.io/assets/visa.svg" alt="Visa"></div>
-      <div class="paychip"><img src="https://cdn.rekaz.io/assets/mada.svg" alt="mada"></div>
-      <div class="paychip"><img src="https://cdn.rekaz.io/assets/apple-pay.svg" alt="Apple Pay"></div>
-      <div class="paychip"><img src="https://cdn.rekaz.io/assets/tabby.svg" alt="tabby"></div>
-      <div class="paychip"><img src="https://cdn.rekaz.io/assets/tamara.svg" alt="tamara"></div>
+      <div class="paychip">
+        <svg width="40" height="24" viewBox="0 0 40 24">
+          <circle cx="14" cy="12" r="9" fill="#EB001B"/>
+          <circle cx="26" cy="12" r="9" fill="#F79E1B"/>
+          <path d="M20 4.8a9 9 0 010 14.4A9 9 0 0120 4.8z" fill="#FF5F00"/>
+        </svg>
+      </div>
+      <div class="paychip">
+        <svg width="48" height="18" viewBox="0 0 48 18">
+          <text x="2" y="15" font-family="Arial,Helvetica,sans-serif" font-size="15" font-weight="900" font-style="italic" fill="#1A1F71" letter-spacing="-0.5">VISA</text>
+        </svg>
+      </div>
+      <div class="paychip" style="gap:5px">
+        <svg width="20" height="14" viewBox="0 0 20 14">
+          <rect width="20" height="6" rx="1" fill="#006DB7"/>
+          <rect y="8" width="20" height="6" rx="1" fill="#4CAF50"/>
+        </svg>
+        <span style="font-size:11px;font-weight:700;color:#006DB7;font-family:Arial,sans-serif">mada</span>
+      </div>
+      <div class="paychip" style="gap:4px">
+        <svg width="14" height="17" viewBox="0 0 14 17" fill="#1d1d1f">
+          <path d="M10.9.1c-.1 1.1-.5 2.2-1.2 3-.7.9-1.8 1.5-3 1.4.1-1.1.6-2.2 1.3-3C8.7.6 9.8.1 10.9.1zm2.8 12.1c-.7 1.1-1.5 2.1-2.7 2.1-1.2 0-1.5-.7-3.1-.7-1.6 0-1.9.8-3.1.8-1.2 0-2.1-1.1-2.8-2.2C.5 9.8.1 6.7 1.3 5c.8-1.2 2.1-2 3.5-2 1.4 0 2.2.8 3.3.8 1.1 0 1.8-.8 3.3-.8 1.2 0 2.4.7 3.1 1.7-.3.2-2.8 1.6-2.8 4.8 0 3.6 3.2 4.7 3.2 4.7z"/>
+        </svg>
+        <span style="font-size:10px;font-weight:600;color:#1d1d1f;font-family:-apple-system,sans-serif">Pay</span>
+      </div>
+      <div class="paychip">
+        <span style="font-size:12px;font-weight:800;color:#3EB489;font-family:Arial,sans-serif;letter-spacing:-.3px">tabby</span>
+      </div>
+      <div class="paychip">
+        <span style="font-size:11px;font-weight:700;color:#1a1a1a;font-family:Arial,sans-serif">tamara</span>
+      </div>
     </div>
     <div class="fvat">
       <span class="fvatnum">الرقم الضريبي: 314257469500003</span>
-      <span class="fvatb"><img src="https://cdn.rekaz.io/assets/VAT.svg" alt="VAT"><span>شامل ضريبة القيمة المضافة 15%</span></span>
+      <span class="fvatb">
+        <svg width="20" height="20" viewBox="0 0 40 40">
+          <rect width="40" height="40" rx="4" fill="#006633"/>
+          <text x="20" y="13" text-anchor="middle" font-family="Arial" font-size="7.5" font-weight="700" fill="#fff">هيئة الزكاة</text>
+          <text x="20" y="22" text-anchor="middle" font-family="Arial" font-size="7" fill="#fff">والضريبة</text>
+          <text x="20" y="33" text-anchor="middle" font-family="Arial" font-size="9.5" font-weight="900" fill="#fff">VAT</text>
+        </svg>
+        <span>شامل ضريبة القيمة المضافة 15%</span>
+      </span>
     </div>
     <div class="fdiv"></div>
     <div class="fcopy">© 2026 GRAFF SPA · Riyadh · جميع الحقوق محفوظة</div>
@@ -372,18 +424,11 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction
   <div class="dtbody">
     <div class="seclbl">اختاري التاريخ</div>
     <div class="cal">
-      <div class="calnav">
-        <button class="calbtn" onclick="chM(-1)">›</button>
-        <div class="calmo" id="callbl"></div>
-        <button class="calbtn" onclick="chM(1)">‹</button>
-      </div>
+      <div class="calnav"><button class="calbtn" onclick="chM(-1)">›</button><div class="calmo" id="callbl"></div><button class="calbtn" onclick="chM(1)">‹</button></div>
       <div class="calhd"><div class="calhl">أح</div><div class="calhl">إث</div><div class="calhl">ث</div><div class="calhl">أر</div><div class="calhl">خ</div><div class="calhl">ج</div><div class="calhl">س</div></div>
       <div class="calgrid" id="calgrid"></div>
     </div>
-    <div id="slotsec" style="display:none">
-      <div class="seclbl">الأوقات المتاحة</div>
-      <div id="slotsbox"></div>
-    </div>
+    <div id="slotsec" style="display:none"><div class="seclbl">الأوقات المتاحة</div><div id="slotsbox"></div></div>
   </div>
   <div class="dtfoot" id="dtfoot">
     <div class="dtmeta">
@@ -396,11 +441,7 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction
 
 <!-- PHONE -->
 <div id="phone" class="pg fmpg">
-  <div class="bar">
-    <button class="back" onclick="go('dt')">← رجوع</button>
-    <div class="logo" onclick="go('home')">GRAFF <b>SPA</b></div>
-    <div class="barr"><div class="dot done"></div><div class="dot done"></div><div class="dot on"></div></div>
-  </div>
+  <div class="bar"><button class="back" onclick="go('dt')">← رجوع</button><div class="logo" onclick="go('home')">GRAFF <b>SPA</b></div><div class="barr"><div class="dot done"></div><div class="dot done"></div><div class="dot on"></div></div></div>
   <div class="prog"><b style="width:75%"></b></div>
   <div class="fmbody">
     <div class="fmhd"><p class="fmeye">STEP 3 · VERIFICATION</p><h2 class="fmh1">تأكيد هويتك</h2><p class="fmsub">سنرسل رمز التحقق لجوالك</p></div>
@@ -412,21 +453,12 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction
 
 <!-- OTP -->
 <div id="otp" class="pg fmpg">
-  <div class="bar">
-    <button class="back" onclick="go('phone')">← رجوع</button>
-    <div class="logo" onclick="go('home')">GRAFF <b>SPA</b></div>
-    <div class="barr"><div class="dot done"></div><div class="dot done"></div><div class="dot on"></div></div>
-  </div>
+  <div class="bar"><button class="back" onclick="go('phone')">← رجوع</button><div class="logo" onclick="go('home')">GRAFF <b>SPA</b></div><div class="barr"><div class="dot done"></div><div class="dot done"></div><div class="dot on"></div></div></div>
   <div class="prog"><b style="width:80%"></b></div>
   <div class="fmbody">
     <div class="fmhd"><p class="fmeye">STEP 3 · CODE</p><h2 class="fmh1">رمز التحقق</h2><p class="fmsub" id="otphnt">تم إرسال الرمز على جوالك</p></div>
     <div class="fcard"><div class="fctitl">أدخلي الرمز المكون من 4 أرقام</div>
-      <div class="otprow">
-        <input class="otpd" id="o4" maxlength="1" type="tel" oninput="ochk()" onkeydown="ob(event,this,'o3')">
-        <input class="otpd" id="o3" maxlength="1" type="tel" oninput="om(this,'o4')" onkeydown="ob(event,this,'o2')">
-        <input class="otpd" id="o2" maxlength="1" type="tel" oninput="om(this,'o3')" onkeydown="ob(event,this,'o1')">
-        <input class="otpd" id="o1" maxlength="1" type="tel" oninput="om(this,'o2')" onkeydown="ob(event,this,'')">
-      </div>
+      <div class="otprow"><input class="otpd" id="o4" maxlength="1" type="tel" oninput="ochk()" onkeydown="ob(event,this,'o3')"><input class="otpd" id="o3" maxlength="1" type="tel" oninput="om(this,'o4')" onkeydown="ob(event,this,'o2')"><input class="otpd" id="o2" maxlength="1" type="tel" oninput="om(this,'o3')" onkeydown="ob(event,this,'o1')"><input class="otpd" id="o1" maxlength="1" type="tel" oninput="om(this,'o2')" onkeydown="ob(event,this,'')"></div>
       <div class="otphnt">الرمز صالح لمدة 5 دقائق</div>
       <button class="otprsnd" onclick="sendOTP(true)">⟳ إعادة الإرسال</button>
     </div>
@@ -437,11 +469,7 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction
 
 <!-- CONFIRM -->
 <div id="confirm" class="pg fmpg">
-  <div class="bar">
-    <button class="back" onclick="go('otp')">← رجوع</button>
-    <div class="logo" onclick="go('home')">GRAFF <b>SPA</b></div>
-    <div class="barr"><div class="dot done"></div><div class="dot done"></div><div class="dot on"></div></div>
-  </div>
+  <div class="bar"><button class="back" onclick="go('otp')">← رجوع</button><div class="logo" onclick="go('home')">GRAFF <b>SPA</b></div><div class="barr"><div class="dot done"></div><div class="dot done"></div><div class="dot on"></div></div></div>
   <div class="prog"><b style="width:100%"></b></div>
   <div class="fmbody">
     <div class="fmhd"><p class="fmeye">FINAL STEP</p><h2 class="fmh1">تأكيد الحجز</h2><p class="fmsub">راجعي تفاصيل حجزك وأتممي الدفع</p></div>
@@ -454,10 +482,29 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction
     <div class="discw"><div class="discr"><input class="disci" id="disci" placeholder="أدخلي كود الخصم" maxlength="20"><button class="disca" onclick="applyDisc()">تطبيق</button></div><div class="discm" id="discm"></div></div>
     <div class="seclbl">وسيلة الدفع</div>
     <div class="pms">
-      <div class="pmrow on" onclick="selPay(this)"><div class="pmradio"><div class="pmdot"></div></div><div class="pminfo"><div class="pmname">البطاقة الائتمانية</div><div class="pmsub">مدى · Visa · Mastercard</div></div><div class="pmlogo"><img src="https://cdn.rekaz.io/assets/mastercard.svg" alt="MC"><img src="https://cdn.rekaz.io/assets/visa.svg" alt="Visa"><img src="https://cdn.rekaz.io/assets/mada.svg" alt="mada"></div></div>
-      <div class="pmrow" onclick="selPay(this)"><div class="pmradio"><div class="pmdot"></div></div><div class="pminfo"><div class="pmname">Apple Pay</div><div class="pmsub">الدفع السريع والآمن</div></div><div class="pmlogo"><img src="https://cdn.rekaz.io/assets/apple-pay.svg" alt="Apple Pay"></div></div>
-      <div class="pmrow" onclick="selPay(this)"><div class="pmradio"><div class="pmdot"></div></div><div class="pminfo"><div class="pmname">tabby</div><div class="pmsub">4 أقساط بدون فوائد</div></div><div class="pmlogo"><img src="https://cdn.rekaz.io/assets/tabby.svg" alt="tabby"></div></div>
-      <div class="pmrow" onclick="selPay(this)"><div class="pmradio"><div class="pmdot"></div></div><div class="pminfo"><div class="pmname">tamara</div><div class="pmsub">3 أقساط بدون فوائد</div></div><div class="pmlogo"><img src="https://cdn.rekaz.io/assets/tamara.svg" alt="tamara"></div></div>
+      <div class="pmrow on" onclick="selPay(this)">
+        <div class="pmradio"><div class="pmdot"></div></div>
+        <div class="pminfo"><div class="pmname">البطاقة الائتمانية</div><div class="pmsub">مدى · Visa · Mastercard</div></div>
+        <div class="pmlogos">
+          <svg width="28" height="18" viewBox="0 0 40 24"><circle cx="14" cy="12" r="9" fill="#EB001B"/><circle cx="26" cy="12" r="9" fill="#F79E1B"/><path d="M20 4.8a9 9 0 010 14.4A9 9 0 0120 4.8z" fill="#FF5F00"/></svg>
+          <svg width="32" height="14" viewBox="0 0 48 18"><text x="2" y="15" font-family="Arial" font-size="15" font-weight="900" font-style="italic" fill="#1A1F71">VISA</text></svg>
+        </div>
+      </div>
+      <div class="pmrow" onclick="selPay(this)">
+        <div class="pmradio"><div class="pmdot"></div></div>
+        <div class="pminfo"><div class="pmname">Apple Pay</div><div class="pmsub">الدفع السريع والآمن</div></div>
+        <div class="pmlogos"><svg width="13" height="16" viewBox="0 0 14 17" fill="#1d1d1f"><path d="M10.9.1c-.1 1.1-.5 2.2-1.2 3-.7.9-1.8 1.5-3 1.4.1-1.1.6-2.2 1.3-3C8.7.6 9.8.1 10.9.1zm2.8 12.1c-.7 1.1-1.5 2.1-2.7 2.1-1.2 0-1.5-.7-3.1-.7-1.6 0-1.9.8-3.1.8-1.2 0-2.1-1.1-2.8-2.2C.5 9.8.1 6.7 1.3 5c.8-1.2 2.1-2 3.5-2 1.4 0 2.2.8 3.3.8 1.1 0 1.8-.8 3.3-.8 1.2 0 2.4.7 3.1 1.7-.3.2-2.8 1.6-2.8 4.8 0 3.6 3.2 4.7 3.2 4.7z"/></svg></div>
+      </div>
+      <div class="pmrow" onclick="selPay(this)">
+        <div class="pmradio"><div class="pmdot"></div></div>
+        <div class="pminfo"><div class="pmname">tabby</div><div class="pmsub">4 أقساط بدون فوائد أو رسوم</div></div>
+        <div class="pmlogos"><span style="font-size:13px;font-weight:800;color:#3EB489;font-family:Arial">tabby</span></div>
+      </div>
+      <div class="pmrow" onclick="selPay(this)">
+        <div class="pmradio"><div class="pmdot"></div></div>
+        <div class="pminfo"><div class="pmname">tamara</div><div class="pmsub">3 أقساط بدون فوائد</div></div>
+        <div class="pmlogos"><span style="font-size:12px;font-weight:700;color:#333;font-family:Arial">tamara</span></div>
+      </div>
     </div>
     <div class="errbox" id="errconf"></div>
   </div>
@@ -470,12 +517,27 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction
   <div class="sucb">
     <div class="sucring"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path class="succhk" d="M20 6L9 17l-5-5"/></svg></div>
     <h2 class="suctit">تم الحجز بنجاح</h2>
-    <p class="sucsub" id="sucsub">تم تأكيد حجزك وسيتم تحويلك للدفع...</p>
-    <div class="redirmsg" id="redirmsg" style="display:none">جاري التحويل لصفحة الدفع...</div>
+    <p class="sucsub" id="sucsub">تم تأكيد حجزك في نظام GRAFF SPA</p>
     <div class="succard" id="succard"></div>
-    <p class="sucref">رقم الحجز في النظام: <strong id="sucref">—</strong></p>
-    <button class="sucpay" id="sucpay" onclick="goPay()">إتمام الدفع الآن ←</button>
+    <p class="sucref">رقم الطلب: <strong id="sucref">—</strong></p>
+    <button class="sucpay" id="sucpay" onclick="openPayPopup()">إتمام الدفع ←</button>
     <button class="sucnew" onclick="resetAll()">حجز موعد جديد</button>
+  </div>
+</div>
+
+<!-- PAYMENT POPUP -->
+<div class="overlay" id="payOverlay" onclick="closeOverlay(event)">
+  <div class="popup" id="payPopup">
+    <div class="popup-hd">
+      <span class="popup-title">إتمام الدفع</span>
+      <button class="popup-close" onclick="closePayPopup()">×</button>
+    </div>
+    <div class="popup-amount">
+      <div class="popup-amount-lbl">المبلغ المستحق</div>
+      <div class="popup-amount-val"><span class="popup-amount-sr">SAR </span><span id="popupAmt">0</span></div>
+    </div>
+    <a id="popupPayBtn" href="#" class="popup-btn" onclick="return doPayRedirect()">الدفع الآن ←</a>
+    <button class="popup-btn-sec" onclick="doPayNewTab()">فتح في نافذة جديدة</button>
   </div>
 </div>
 
@@ -483,8 +545,7 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction
 var B='https://rekaz-test.onrender.com';
 var MO=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
 var DA=['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
-
-var S={cart:null,addons:[],date:null,slot:null,slotLbl:null,phone:null,cid:null,payUrl:null,disc:0,discCode:''};
+var S={cart:null,addons:[],date:null,slot:null,slotLbl:null,phone:null,cid:null,payUrl:null,disc:0};
 var calY=new Date().getFullYear(),calM=new Date().getMonth(),allSlots=[];
 
 function p2(n){return String(n).padStart(2,'0');}
@@ -494,48 +555,60 @@ function go(id){
   window.scrollTo(0,0);
   if(id==='confirm')buildConfirm();
 }
+function closePayPopup(){document.getElementById('payOverlay').classList.remove('on');}
+function closeOverlay(e){if(e.target===document.getElementById('payOverlay'))closePayPopup();}
+function openPayPopup(){
+  if(!S.payUrl)return;
+  var tot=calcTotal();
+  document.getElementById('popupAmt').textContent=tot.toLocaleString('en');
+  document.getElementById('payOverlay').classList.add('on');
+}
+function doPayRedirect(){if(S.payUrl){window.location.href=S.payUrl;}return false;}
+function doPayNewTab(){if(S.payUrl){window.open(S.payUrl,'_blank');}closePayPopup();}
+function calcTotal(){
+  if(!S.cart)return 0;
+  var at=S.addons.reduce(function(s,a){return s+a.price;},0);
+  return (S.cart.amount+at)-(S.disc||0);
+}
 
-// ══ STRICT CATEGORY MAPPING ══
-// Each keyword ONLY maps to one category
-// Order matters: more specific first
-var CAT_RULES=[
-  // ── NAILS REMOVAL
-  {cat:'الأظافر',sub:'إزالة',exact:['إزالة اظافر تركيب','إزالة شيلاك','إزالة بياب','gel nail extension removal','shellac removal','biab removal']},
-  // ── NAILS RUSSIAN MANICURE
-  {cat:'الأظافر',sub:'التقنية الروسية',exact:['مناكير بالتقنية الروسية','بدكير بالتقنية الروسية','russian manicure','russian pedicure']},
-  // ── NAILS BIAB/EXTENSION
-  {cat:'الأظافر',sub:'اكستنشن وبياب',exact:['بياب جل','بياب مناكير','تعبئة بياب','جل اكستنشن','إعادة تعبئة جل','كلاسيك مناكير مع جل','biab gel','biab manicure','biab infill','gel extension','russian gel extension']},
-  // ── NAILS MANICURE/PEDICURE
-  {cat:'الأظافر',sub:'مناكير وبديكير',exact:['مناكير وبديكير','مناكير - manicure','مناكير','بديكير','تنظيف سريع مناكير','تنظيف سريع بدكير','تنظيف سريع مناكير وبدكير','manicure & pedicure','manicure','pedicure','quick fix']},
-  // ── NAILS COLOR/ART
-  {cat:'الأظافر',sub:'لون وطلاء',exact:['لون جل','لون فرنش جل','لون فرنش عادي','لون عادي','جل كات آي','رسم أظافر جل','رسم أظافر عادي','shellac color','french gel','french nail','regular color','gel nail art','regular nail art','cat eye','تركيب اظافر اصطناعية']},
-  // ── LASHES
-  {cat:'الرموش',sub:'رموش',exact:['رموش','lash','volume','classic lash','fox','barbie','lifting']},
-  // ── BROWS
-  {cat:'الرموش',sub:'حواجب',exact:['حواجب','brow']},
+// ══ STRICT CLASSIFICATION MAP ══
+// Keywords for each sub-section — lowercase, checked against nameAr + nameEn
+var CATS = [
+  // ── NAILS
+  {cat:'الأظافر', sub:'REMOVAL · إزالة', kw:['إزالة','removal']},
+  {cat:'الأظافر', sub:'EXTENSIONS · اكستنشن وبياب', kw:['اكستنشن','extension','بياب','biab','تعبئة','infill']},
+  {cat:'الأظافر', sub:'COLOR · لون وطلاء', kw:['لون','color','شيلاك','shellac','فرنش','french','كات آي','cat eye']},
+  {cat:'الأظافر', sub:'NAIL ART · رسم أظافر', kw:['رسم','nail art','رسمة']},
+  {cat:'الأظافر', sub:'PRESS-ON · اظافر اصطناعية', kw:['press-on','press on','اصطناعية','صناعية']},
+  {cat:'الأظافر', sub:'QUICK FIX · تنظيف سريع', kw:['تنظيف سريع','quick fix']},
+  {cat:'الأظافر', sub:'PEDICURE · بديكير', kw:['بديكير','pedicure']},
+  {cat:'الأظافر', sub:'MANICURE · مناكير', kw:['مناكير','manicure']},
+  // ── LASHES & BROWS
+  {cat:'الرموش', sub:'LASHES · رموش', kw:['رموش','lash','volume','classic lash','fox','barbie','mega','mega volume']},
+  {cat:'الرموش', sub:'LIFTING & LAMINATION · رفع وتموج', kw:['lifting','lamination','lami','رفع']},
+  {cat:'الرموش', sub:'BROWS · حواجب', kw:['حواجب','brow']},
+  {cat:'الرموش', sub:'REMOVAL · إزالة رموش', kw:['إزالة رموش','lash removal']},
   // ── HAIR
-  {cat:'الشعر',sub:'الشعر',exact:['شعر','hair','سشوار','blow','dry','قص']},
+  {cat:'الشعر', sub:'BLOW DRY · استشوار', kw:['سشوار','استشوار','blow dry','blowdry','blow out']},
+  {cat:'الشعر', sub:'HAIR STYLING · تسريحات', kw:['تسريحة','تسريح','updo','styling','style']},
+  {cat:'الشعر', sub:'HAIR TREATMENT · علاجات', kw:['k18','treatment','علاج','ترطيب','كيراتين','keratin']},
+  {cat:'الشعر', sub:'HAIR COLOR · صبغة', kw:['صبغ','صبغة','color','colour','roots','highlights']},
+  {cat:'الشعر', sub:'HAIR CUT · قص', kw:['قص','trim','cut']},
+  {cat:'الشعر', sub:'HAIR WASH · غسيل', kw:['غسيل','wash','شامبو']},
   // ── MASSAGE
-  {cat:'مساج',sub:'مساج',exact:['مساج','massage']}
+  {cat:'مساج', sub:'MASSAGE · مساج', kw:['مساج','massage']}
 ];
 
 function classify(p){
-  var raw=(p.nameAr||p.name||'').toLowerCase();
-  // Remove the English part after ' - ' for cleaner matching
-  var nameOnly=raw.includes(' - ')?raw.split(' - ')[0].trim():raw;
-  // Also check the full name including English
-  var fullName=raw+' '+(p.nameEn||'').toLowerCase();
-
-  for(var i=0;i<CAT_RULES.length;i++){
-    var rule=CAT_RULES[i];
-    for(var j=0;j<rule.exact.length;j++){
-      var kw=rule.exact[j].toLowerCase();
-      if(nameOnly.includes(kw)||fullName.includes(kw)){
-        return {cat:rule.cat,sub:rule.sub};
-      }
+  var n=((p.nameAr||p.name||'')+' '+(p.nameEn||'')).toLowerCase();
+  for(var i=0;i<CATS.length;i++){
+    var rule=CATS[i];
+    for(var j=0;j<rule.kw.length;j++){
+      if(n.includes(rule.kw[j]))return {cat:rule.cat,sub:rule.sub};
     }
   }
-  return {cat:'خدمات أخرى',sub:'عام'};
+  // Default: if nothing matched, put in first NAILS sub
+  return {cat:'الأظافر',sub:'MANICURE · مناكير'};
 }
 
 async function loadProducts(){
@@ -544,30 +617,43 @@ async function loadProducts(){
     var d=await r.json();
     buildSvc(d.items||[]);
   }catch(e){
-    document.getElementById('tabs').innerHTML='<span style="padding:12px 18px;font-size:11px;color:#e74c3c">خطأ في التحميل</span>';
+    document.getElementById('tabs').innerHTML='<span style="padding:12px 18px;font-size:11px;color:#e74c3c">خطأ في التحميل: '+e.message+'</span>';
   }
 }
 
 function buildSvc(prods){
-  // Maintain original Rekaz order
+  // Group products keeping Rekaz order
   var catOrder=[],catMap={};
   prods.forEach(function(p){
     var cs=classify(p);
-    var cat=cs.cat,sub=cs.sub;
-    if(!catMap[cat]){catMap[cat]={};catOrder.push(cat);}
-    if(!catMap[cat][sub])catMap[cat][sub]=[];
-    catMap[cat][sub].push(p);
+    if(!catMap[cs.cat]){catMap[cs.cat]={};catOrder.push(cs.cat);}
+    if(!catMap[cs.cat][cs.sub])catMap[cs.cat][cs.sub]=[];
+    catMap[cs.cat][cs.sub].push(p);
   });
+  // Enforce preferred cat order
+  var preferred=['الأظافر','الرموش','الشعر','مساج'];
+  var final=[];
+  preferred.forEach(function(c){if(catMap[c])final.push(c);});
+  catOrder.forEach(function(c){if(final.indexOf(c)===-1)final.push(c);});
 
   var tabsH='',bodyH='',first=true;
-  catOrder.forEach(function(cat){
-    var cid='cat'+encodeURIComponent(cat).replace(/%/g,'');
+  final.forEach(function(cat){
+    var cid='cat'+cat.replace(/[^أ-يa-zA-Z0-9]/g,'');
     tabsH+='<button class="tab'+(first?' on':'')+'" onclick="swTab(\''+cid+'\',this)">'+cat+'</button>';
     bodyH+='<div class="cpanel'+(first?' on':'')+'" id="'+cid+'">';
-    var subData=catMap[cat];
-    for(var sub in subData){
-      bodyH+='<div class="sglbl">'+sub+'</div>';
-      subData[sub].forEach(function(p){bodyH+=buildCard(p);});
+    var subs=catMap[cat];
+    for(var sub in subs){
+      if(!subs[sub].length)continue;
+      var parts=sub.split(' · ');
+      var enPart=parts[0]||sub;
+      var arPart=parts[1]||'';
+      bodyH+='<div class="sub-sec">';
+      bodyH+='<div class="sub-hd"><div class="sub-hd-inner"><span class="sub-en">'+enPart+'</span>';
+      if(arPart)bodyH+='<span class="sub-ar">'+arPart+'</span>';
+      bodyH+='</div><div class="sub-line"></div></div>';
+      bodyH+='<div class="sub-cards">';
+      subs[sub].forEach(function(p){bodyH+=buildCard(p);});
+      bodyH+='</div></div>';
     }
     bodyH+='</div>';
     first=false;
@@ -578,10 +664,11 @@ function buildSvc(prods){
 
 function cleanName(n){
   if(!n)return '';
-  // Remove duplicate english: "اسم عربي - English Name"
+  // Remove English suffix after ' - '
   if(n.includes(' - '))return n.split(' - ')[0].trim();
   return n.trim();
 }
+function safeAttr(s){return (s||'').replace(/'/g,'&#39;').replace(/"/g,'&quot;');}
 
 function buildCard(p){
   var hasV=p.pricing&&p.pricing.length>1;
@@ -590,11 +677,13 @@ function buildCard(p){
   var amount=p.amount||0;
   var dur=p.duration||0;
   var name=cleanName(p.nameAr||p.name||'');
-  var rawDesc=(p.description||p.shortDescription||'').replace(/<[^>]*>/g,'').replace(/&amp;/g,'&').replace(/&nbsp;/g,' ').trim();
-  var desc=rawDesc?rawDesc.substring(0,160)+(rawDesc.length>160?'...':''):'';
-  var hasAddons=p.addOns&&p.addOns.length>0;
-  var sname=name.replace(/'/g,'&#39;').replace(/"/g,'&quot;');
-  var click=hasV?'onclick="togCard(\''+pid+'\')"':'onclick="selCard(\''+p.id+'\',\''+priceId+'\',\''+sname+'\','+dur+','+amount+',\''+pid+'\')"';
+  var desc=(p.description||p.shortDescription||'').replace(/<[^>]*>/g,'').replace(/&amp;/g,'&').replace(/&nbsp;/g,' ').trim();
+  if(desc.length>160)desc=desc.substring(0,160)+'...';
+  // Build add-ons safely
+  var hasAd=p.addOns&&p.addOns.length>0;
+  var click=hasV
+    ?'onclick="togCard(\''+pid+'\')"'
+    :'onclick="selCard(\''+p.id+'\',\''+priceId+'\',\''+safeAttr(name)+'\','+dur+','+amount+',\''+pid+'\')"';
 
   var h='<div class="sc" id="'+pid+'" '+click+'>';
   h+='<div class="scbar"></div>';
@@ -604,19 +693,17 @@ function buildCard(p){
   if(dur)h+='<div class="scdur"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>'+dur+' دقيقة</div>';
   h+='</div>';
   h+='<div class="scright">';
-  h+='<div><div class="scprice"><span class="scsr">SAR </span>'+(hasV?'من '+amount:amount)+'</div><div class="scvat">شامل الضريبة</div></div>';
+  h+='<div><div class="scprice"><span class="scsr">SAR </span>'+(hasV?'من '+amount:amount)+'</div><div class="scvat">شامل VAT</div></div>';
   if(hasV)h+='<div class="varbtn" id="vb'+p.id.replace(/-/g,'')+'">خيارات <span class="vchev"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></span></div>';
   else h+='<div class="scchk"><div class="chkd"></div></div>';
   h+='</div></div>';
 
-  // Variants
   if(hasV){
     h+='<div class="vwrap" id="vw'+p.id.replace(/-/g,'')+'">';
     p.pricing.forEach(function(pr){
       var vn=cleanName(pr.name||'');
-      var vsname=vn.replace(/'/g,'&#39;').replace(/"/g,'&quot;');
       var vd=pr.duration||0;
-      h+='<div class="vrow" id="vr'+pr.id.replace(/-/g,'')+'" onclick="event.stopPropagation();selVar(\''+p.id+'\',\''+pr.id+'\',\''+vsname+'\','+vd+','+pr.amount+')">';
+      h+='<div class="vrow" id="vr'+pr.id.replace(/-/g,'')+'" onclick="event.stopPropagation();selVar(\''+p.id+'\',\''+pr.id+'\',\''+safeAttr(vn)+'\','+vd+','+pr.amount+')">';
       h+='<div class="vdot"></div><div class="vinfo"><div class="vname">'+vn+'</div>';
       if(vd)h+='<div class="vdur"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>'+vd+' دقيقة</div>';
       h+='</div><div class="vprice"><span class="vsr">SAR </span>'+pr.amount+'</div><div class="vchk"><div class="vchkd"></div></div></div>';
@@ -624,17 +711,18 @@ function buildCard(p){
     h+='</div>';
   }
 
-  // Add-ons (from Rekaz addOns field)
-  if(hasAddons){
-    h+='<div class="addon-wrap" id="aw'+p.id.replace(/-/g,'')+'" style="display:none">';
-    h+='<div class="addon-title">الإضافات المتاحة</div>';
+  // Add-ons rendered inside .adwrap which shows only when .sc.sel
+  if(hasAd){
+    h+='<div class="adwrap">';
+    h+='<div class="adtitle">ADD-ONS · الإضافات</div>';
     p.addOns.forEach(function(ao){
-      var aon=cleanName(ao.nameAr||ao.name||'');
+      var an=cleanName(ao.nameAr||ao.name||'');
+      var ap=typeof ao.amount==='number'?ao.amount:parseFloat(ao.amount)||0;
       var aoid='ao'+ao.id.replace(/-/g,'');
-      h+='<div class="addon-row" id="'+aoid+'" onclick="togAddon(\''+p.id+'\',\''+ao.id+'\',\''+aon.replace(/'/g,'&#39;')+'\','+( ao.amount||0)+')">';
-      h+='<div class="addon-chk"><div class="addon-chk-i"></div></div>';
-      h+='<span class="addon-info">'+aon+'</span>';
-      h+='<span class="addon-price"><span class="addon-sr">+ SAR </span>'+(ao.amount||0)+'</span>';
+      h+='<div class="adrow" id="'+aoid+'" onclick="event.stopPropagation();togAddon(\''+p.id+'\',\''+ao.id+'\',\''+safeAttr(an)+'\','+ap+')">';
+      h+='<div class="adchk"><div class="adchki"></div></div>';
+      h+='<span class="adname">'+an+'</span>';
+      h+='<span class="adprice"><span class="adprice-sr">+ SAR </span>'+ap+'</span>';
       h+='</div>';
     });
     h+='</div>';
@@ -647,83 +735,59 @@ function swTab(cid,btn){
   document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('on');});btn.classList.add('on');
   document.querySelectorAll('.cpanel').forEach(function(c){c.classList.remove('on');});document.getElementById(cid).classList.add('on');
 }
-
 function togCard(pid){
   var card=document.getElementById(pid);
-  var rawId=pid.replace(/^sc/,'');
-  var vwid='vw'+rawId,vbid='vb'+rawId,awid='aw'+rawId;
+  var rid=pid.replace(/^sc/,'');
+  var vw=document.getElementById('vw'+rid),vb=document.getElementById('vb'+rid);
   var open=card.classList.toggle('has-open');
-  var vw=document.getElementById(vwid);if(vw)vw.classList.toggle('open',open);
-  var vb=document.getElementById(vbid);if(vb)vb.classList.toggle('open',open);
-  var aw=document.getElementById(awid);if(aw)aw.style.display=open?'block':'none';
+  if(vw)vw.classList.toggle('open',open);
+  if(vb)vb.classList.toggle('open',open);
 }
-
-function selCard(id,priceId,name,dur,amount,pid){
-  if(S.cart&&S.cart.pid!==pid){
+function clearSel(){
+  if(S.cart){
     var old=document.getElementById(S.cart.pid);if(old)old.classList.remove('sel');
-    // Hide old addons
-    var oldAw=document.getElementById('aw'+S.cart.pid.replace(/^sc/,''));if(oldAw)oldAw.style.display='none';
-    S.addons=[];
+    document.querySelectorAll('.vrow.sel').forEach(function(v){v.classList.remove('sel');});
+    document.querySelectorAll('.adrow.sel').forEach(function(v){v.classList.remove('sel');});
   }
-  var card=document.getElementById(pid);
-  if(S.cart&&S.cart.pid===pid){
-    S.cart=null;card.classList.remove('sel');
-  }else{
-    S.cart={id:id,priceId:priceId,name:name,dur:dur,amount:amount,pid:pid};
-    card.classList.add('sel');
-    // Show addons if any
-    var aw=document.getElementById('aw'+pid.replace(/^sc/,''));if(aw)aw.style.display='block';
-  }
+  S.addons=[];
+}
+function selCard(id,priceId,name,dur,amount,pid){
+  if(S.cart&&S.cart.pid===pid){clearSel();S.cart=null;updCart();return;}
+  clearSel();
+  S.cart={id:id,priceId:priceId,name:name,dur:dur,amount:amount,pid:pid};
+  document.getElementById(pid).classList.add('sel');
   updCart();
 }
-
 function selVar(pid,priceId,name,dur,amount){
   var ppid='sc'+pid.replace(/-/g,'');
-  if(S.cart&&S.cart.pid!==ppid){
-    var old=document.getElementById(S.cart.pid);if(old)old.classList.remove('sel');
-    S.addons=[];
+  if(S.cart&&S.cart.priceId===priceId){
+    clearSel();S.cart=null;document.getElementById(ppid).classList.remove('sel');updCart();return;
   }
-  var vwid='vw'+pid.replace(/-/g,'');
-  var vw=document.getElementById(vwid);
-  if(vw)vw.querySelectorAll('.vrow').forEach(function(v){v.classList.remove('sel');});
+  clearSel();
   var vrid='vr'+priceId.replace(/-/g,'');
   var vr=document.getElementById(vrid);if(!vr)return;
-  var was=vr.classList.contains('sel');
-  if(was){vr.classList.remove('sel');S.cart=null;document.getElementById(ppid).classList.remove('sel');}
-  else{
-    vr.classList.add('sel');
-    S.cart={id:pid,priceId:priceId,name:name,dur:dur,amount:amount,pid:ppid};
-    document.getElementById(ppid).classList.add('sel');
-    var aw=document.getElementById('aw'+pid.replace(/-/g,''));if(aw)aw.style.display='block';
-  }
+  vr.classList.add('sel');
+  S.cart={id:pid,priceId:priceId,name:name,dur:dur,amount:amount,pid:ppid};
+  document.getElementById(ppid).classList.add('sel');
   updCart();
 }
-
 function togAddon(pid,aoId,name,price){
-  var aoid='ao'+aoId.replace(/-/g,'');
-  var el=document.getElementById(aoid);if(!el)return;
+  var el=document.getElementById('ao'+aoId.replace(/-/g,''));if(!el)return;
   var was=el.classList.contains('sel');
-  if(was){
-    el.classList.remove('sel');
-    S.addons=S.addons.filter(function(a){return a.id!==aoId;});
-  }else{
-    el.classList.add('sel');
-    S.addons.push({id:aoId,name:name,price:price});
-  }
+  if(was){el.classList.remove('sel');S.addons=S.addons.filter(function(a){return a.id!==aoId;});}
+  else{el.classList.add('sel');S.addons.push({id:aoId,name:name,price:price});}
   updCart();
 }
-
 function updCart(){
   var has=S.cart!==null;
-  var addonTotal=S.addons.reduce(function(s,a){return s+a.price;},0);
-  var total=has?(S.cart.amount+addonTotal):0;
+  var tot=calcTotal();
   document.getElementById('cartcnt').textContent=has?'1 خدمة مختارة':'لم يتم الاختيار بعد';
-  document.getElementById('carttot').textContent=total.toLocaleString('en');
-  document.getElementById('carttag').innerHTML=has?'<span class="carttag">'+S.cart.name+(addonTotal>0?' + '+S.addons.length+' إضافة':'')+'</span>':'';
+  document.getElementById('carttot').textContent=tot.toLocaleString('en');
+  document.getElementById('carttag').innerHTML=has?'<span class="carttag">'+S.cart.name+(S.addons.length?' +'+S.addons.length+' إضافة':'')+'</span>':'';
   document.getElementById('cartbar').classList.toggle('up',has);
 }
 
-// ── CALENDAR ──
+// CALENDAR
 function renderCal(){
   document.getElementById('callbl').textContent=MO[calM]+' '+calY;
   var first=new Date(calY,calM,1).getDay(),days=new Date(calY,calM+1,0).getDate();
@@ -750,8 +814,6 @@ function pickDate(y,m,d){
   document.getElementById('seltime').textContent='—';
   loadSlots(y,m,d);
 }
-
-// ── SLOTS ──
 function toAST(s){var d=new Date(s);var h=(d.getUTCHours()+3)%24;var mn=d.getUTCMinutes();return (h===0?12:h>12?h-12:h)+':'+p2(mn)+' '+(h<12?'ص':'م');}
 function toASTDate(s){var d=new Date(s);var a=new Date(d.getTime()+3*3600000);return a.getUTCFullYear()+'-'+p2(a.getUTCMonth()+1)+'-'+p2(a.getUTCDate());}
 async function loadSlots(y,m,d){
@@ -767,7 +829,7 @@ async function loadSlots(y,m,d){
       if(toASTDate(s.from)!==ds)return false;
       var l=toAST(s.from);if(seen[l])return false;seen[l]=true;return true;
     });
-    if(!allSlots.length){document.getElementById('slotsbox').innerHTML='<div class="slotnone">لا توجد مواعيد متاحة في هذا اليوم<br>جربي يوماً آخر</div>';return;}
+    if(!allSlots.length){document.getElementById('slotsbox').innerHTML='<div class="slotnone">لا توجد مواعيد متاحة في هذا اليوم</div>';return;}
     var h='<div class="slots">';
     allSlots.forEach(function(s,i){h+='<div class="slot" id="sl'+i+'" onclick="pickSlot('+i+',\''+toAST(s.from)+'\')">'+toAST(s.from)+'</div>';});
     document.getElementById('slotsbox').innerHTML=h+'</div>';
@@ -782,18 +844,17 @@ function pickSlot(i,lbl){
   document.getElementById('btndt').textContent=lbl+' — متابعة ←';
 }
 
-// ── PHONE & OTP ──
+// PHONE / OTP
 function onPh(){document.getElementById('btnph').disabled=document.getElementById('inpphone').value.length<10;}
-async function sendOTP(resend){
-  var phone=document.getElementById('inpphone').value.trim();if(phone.length<10)return;
-  S.phone=phone;var btn=document.getElementById('btnph');
-  btn.classList.add('ld');btn.disabled=true;showErr('errph','');
+async function sendOTP(r2){
+  var ph=document.getElementById('inpphone').value.trim();if(ph.length<10)return;
+  S.phone=ph;var btn=document.getElementById('btnph');btn.classList.add('ld');btn.disabled=true;showErr('errph','');
   try{
-    var r=await fetch(B+'/send-otp',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone:phone})});
-    var data=await r.json();if(!r.ok)throw new Error(data.error||'فشل الإرسال');
+    var r=await fetch(B+'/send-otp',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone:ph})});
+    var d=await r.json();if(!r.ok)throw new Error(d.error||'فشل الإرسال');
     ['o1','o2','o3','o4'].forEach(function(id){document.getElementById(id).value='';});
-    var hint='تم إرسال الرمز على '+phone;
-    if(data.debug_otp)hint+=' — رمز التجربة: '+data.debug_otp;
+    var hint='تم إرسال الرمز على '+ph;
+    if(d.debug_otp)hint+=' — رمز التجربة: '+d.debug_otp;
     document.getElementById('otphnt').textContent=hint;
     go('otp');setTimeout(function(){document.getElementById('o1').focus();},300);
   }catch(e){showErr('errph',e.message);}
@@ -813,64 +874,63 @@ async function verOTP(){
   btn.classList.remove('ld');btn.disabled=false;
 }
 
-// ── CONFIRM BUILD ──
+// CONFIRM
 function buildConfirm(){
   if(!S.cart||!S.date)return;
   var d=S.date,dl=DA[new Date(d.y,d.m,d.d).getDay()]+' '+d.d+' '+MO[d.m];
-  var addonTotal=S.addons.reduce(function(s,a){return s+a.price;},0);
-  var subtotal=S.cart.amount+addonTotal;
-  var disc=S.disc||0,total=subtotal-disc;
-  var base=Math.round(total/1.15),vat=total-base;
+  var at=S.addons.reduce(function(s,a){return s+a.price;},0);
+  var sub=S.cart.amount+at,disc=S.disc||0,tot=sub-disc;
+  var base=Math.round(tot/1.15),vat=tot-base;
   var h='<div class="sumrow"><span class="suml">الخدمة</span><span class="sumv">'+S.cart.name+'</span></div>';
   h+='<div class="sumrow"><span class="suml">المدة</span><span class="sumv">'+S.cart.dur+' دقيقة</span></div>';
   h+='<div class="sumrow"><span class="suml">التاريخ</span><span class="sumv">'+dl+'</span></div>';
   h+='<div class="sumrow"><span class="suml">الوقت</span><span class="sumv">'+(S.slotLbl||'—')+'</span></div>';
-  S.addons.forEach(function(a){h+='<div class="sumrow" style="color:var(--ok)"><span class="suml">+ '+a.name+'</span><span class="sumv" style="color:var(--ok)">SAR '+a.price+'</span></div>';});
-  if(disc>0)h+='<div class="sumrow" style="color:var(--ok)"><span class="suml">خصم</span><span class="sumv" style="color:var(--ok)">— SAR '+disc.toLocaleString('en')+'</span></div>';
+  S.addons.forEach(function(a){
+    h+='<div class="sumrow"><span class="suml" style="color:var(--ok)">+ '+a.name+'</span><span class="sumv" style="color:var(--ok)">SAR '+a.price.toLocaleString('en')+'</span></div>';
+  });
+  if(disc>0)h+='<div class="sumrow"><span class="suml" style="color:var(--ok)">خصم</span><span class="sumv" style="color:var(--ok)">— SAR '+disc.toLocaleString('en')+'</span></div>';
   h+='<div class="sumrow"><span class="suml">قبل الضريبة</span><span class="sumv">SAR '+base.toLocaleString('en')+'</span></div>';
   h+='<div class="sumrow"><span class="suml">ضريبة 15%</span><span class="sumv">SAR '+vat.toLocaleString('en')+'</span></div>';
   document.getElementById('confsumm').innerHTML=h;
-  document.getElementById('conftot').innerHTML='<span class="sumtotl">الإجمالي</span><span class="sumtotv">SAR '+total.toLocaleString('en')+'</span>';
+  document.getElementById('conftot').innerHTML='<span class="sumtotl">الإجمالي</span><span class="sumtotv">SAR '+tot.toLocaleString('en')+'</span>';
 }
 function selPay(el){el.closest('.pms').querySelectorAll('.pmrow').forEach(function(r){r.classList.remove('on');});el.classList.add('on');}
 function applyDisc(){
   var code=document.getElementById('disci').value.trim().toUpperCase();
   var msg=document.getElementById('discm');
-  if(!code){msg.className='discm err';msg.textContent='أدخلي كود الخصم أولاً';return;}
+  if(!code){msg.className='discm err';msg.textContent='أدخلي كود الخصم';return;}
   var codes={'GRAFF10':10,'WELCOME20':20,'VIP15':15};
   if(codes[code]){
+    var at=S.addons.reduce(function(s,a){return s+a.price;},0);
     var pct=codes[code];
-    var addonTotal=S.addons.reduce(function(s,a){return s+a.price;},0);
-    S.disc=Math.round(((S.cart?S.cart.amount:0)+addonTotal)*pct/100);S.discCode=code+' ('+pct+'%)';
+    S.disc=Math.round(((S.cart?S.cart.amount:0)+at)*pct/100);
     msg.className='discm ok';msg.textContent='تم تطبيق خصم '+pct+'%';buildConfirm();
-  }else{S.disc=0;S.discCode='';msg.className='discm err';msg.textContent='كود الخصم غير صحيح';}
+  }else{S.disc=0;msg.className='discm err';msg.textContent='كود غير صحيح';}
 }
 
-// ── BOOK ──
+// BOOKING
 async function doBook(){
   var name=document.getElementById('inpname').value.trim();
   if(!name){showErr('errconf','يرجى إدخال اسمك الكامل');return;}
-  if(!S.phone||!S.slot||!S.cart){showErr('errconf','بيانات ناقصة. يرجى البدء من جديد');return;}
-  var btn=document.getElementById('btnconf');
-  btn.classList.add('ld');btn.disabled=true;showErr('errconf','');
+  if(!S.phone||!S.slot||!S.cart){showErr('errconf','بيانات ناقصة. يرجى البدء من الخطوة الأولى');return;}
+  var btn=document.getElementById('btnconf');btn.classList.add('ld');btn.disabled=true;showErr('errconf','');
   try{
-    // 1. Create/find customer
+    // Step 1: customer
     var cr=await fetch(B+'/create-customer',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:name,phone:S.phone})});
     var cd=await cr.json();if(!cr.ok)throw new Error(cd.error||'فشل إنشاء العميل');
     S.cid=cd.customerId;
-
-    // 2. Create booking
+    // Step 2: booking
     var br=await fetch(B+'/create-booking',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({customerId:S.cid,phone:S.phone,priceId:S.cart.priceId,from:S.slot.from,to:S.slot.to})});
     var bd=await br.json();
-    if(!br.ok)throw new Error(bd.error||'فشل إنشاء الحجز. يرجى المحاولة مجدداً');
+    if(!br.ok)throw new Error(bd.error||'فشل الحجز');
 
-    // Get real Rekaz order number
-    var ref=bd.reservationNumber||bd.orderId||(bd.reservationIds&&bd.reservationIds[0])||'—';
     S.payUrl=bd.paymentUrl||null;
 
+    // Order number: use readable orderId from Rekaz, NOT the UUID
+    var ref=bd.orderNumber||bd.orderId||'—';
+
     var dd=S.date,dl=DA[new Date(dd.y,dd.m,dd.d).getDay()]+' '+dd.d+' '+MO[dd.m];
-    var addonTotal=S.addons.reduce(function(s,a){return s+a.price;},0);
-    var total=(S.cart.amount+addonTotal)-(S.disc||0);
+    var tot=calcTotal();
 
     document.getElementById('succard').innerHTML=
       '<div class="sucrow"><span class="suclbl">الاسم</span><span class="sucval">'+name+'</span></div>'+
@@ -878,39 +938,32 @@ async function doBook(){
       '<div class="sucrow"><span class="suclbl">الخدمة</span><span class="sucval">'+S.cart.name+'</span></div>'+
       '<div class="sucrow"><span class="suclbl">التاريخ</span><span class="sucval">'+dl+'</span></div>'+
       '<div class="sucrow"><span class="suclbl">الوقت</span><span class="sucval">'+S.slotLbl+'</span></div>'+
-      '<div class="sucrow"><span class="suclbl">الإجمالي</span><span class="sucval">SAR '+total.toLocaleString('en')+'</span></div>';
+      '<div class="sucrow"><span class="suclbl">الإجمالي</span><span class="sucval">SAR '+tot.toLocaleString('en')+'</span></div>';
     document.getElementById('sucref').textContent=ref;
-
+    document.getElementById('sucpay').style.display=S.payUrl?'block':'none';
     go('suc');
-
+    // Show payment popup automatically
     if(S.payUrl){
-      document.getElementById('redirmsg').style.display='block';
-      document.getElementById('sucpay').style.display='block';
-      document.getElementById('sucsub').textContent='تم تأكيد حجزك. سيتم تحويلك للدفع خلال ثانيتين...';
-      setTimeout(function(){window.location.href=S.payUrl;},2000);
-    }else{
-      document.getElementById('sucsub').textContent='تم تأكيد حجزك وتسجيله في النظام';
+      setTimeout(function(){openPayPopup();},700);
     }
   }catch(e){showErr('errconf',e.message);}
   btn.classList.remove('ld');btn.disabled=false;
 }
 
-function goPay(){if(S.payUrl)window.location.href=S.payUrl;}
-
 function resetAll(){
-  S={cart:null,addons:[],date:null,slot:null,slotLbl:null,phone:null,cid:null,payUrl:null,disc:0,discCode:''};
+  S={cart:null,addons:[],date:null,slot:null,slotLbl:null,phone:null,cid:null,payUrl:null,disc:0};
   allSlots=[];
   document.querySelectorAll('.sc.sel,.sc.has-open').forEach(function(c){c.classList.remove('sel','has-open');});
-  document.querySelectorAll('.vrow.sel,.addon-row.sel').forEach(function(v){v.classList.remove('sel');});
-  document.querySelectorAll('.vwrap.open,.addon-wrap').forEach(function(v){v.classList.remove('open');if(v.classList.contains('addon-wrap'))v.style.display='none';});
+  document.querySelectorAll('.vrow.sel,.adrow.sel').forEach(function(v){v.classList.remove('sel');});
+  document.querySelectorAll('.vwrap.open').forEach(function(v){v.classList.remove('open');});
   document.getElementById('inpphone').value='';
   document.getElementById('inpname').value='';
   document.getElementById('cartbar').classList.remove('up');
   document.getElementById('slotsec').style.display='none';
   document.getElementById('dtfoot').style.display='none';
+  closePayPopup();
   go('home');
 }
-
 function showErr(id,msg){var el=document.getElementById(id);if(!el)return;el.textContent=msg;el.style.display=msg?'block':'none';}
 
 renderCal();
