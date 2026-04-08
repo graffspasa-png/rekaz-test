@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <title>GRAFF SPA — Riyadh</title>
-<link rel="icon" id="fav-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='12' fill='%23080807'/><text y='48' x='32' text-anchor='middle' font-size='44' font-family='Georgia,serif' fill='%23b8965a'>G</text></svg>">
-<link id="gfont-main" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500&family=Cormorant+Garamond:wght@300;400&display=swap" rel="stylesheet">
-<style id="theme-vars">
+<link rel="icon" id="fav" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='12' fill='%23080807'/><text y='48' x='32' text-anchor='middle' font-size='44' font-family='Georgia,serif' fill='%23b8965a'>G</text></svg>">
+<link id="gfont" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500&family=Cormorant+Garamond:wght@300;400&display=swap" rel="stylesheet">
+<style>
 :root{
   --gold:#b8965a;--gold2:#c8a66a;
   --ink:#080807;--ink2:#0c0b09;
@@ -14,18 +14,17 @@
   --w:#fff;--text:#17150e;--muted:#78706a;--border:#d8d0c0;
   --err:#b33;--ok:#2a7a4f;--brad:0px;
 }
-</style>
-<style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction:rtl;overflow-x:hidden;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction:rtl;overflow-x:hidden;-webkit-font-smoothing:antialiased}
 .pg{display:none;min-height:100dvh;flex-direction:column}
 .pg.on{display:flex;animation:fi .22s ease}
 @keyframes fi{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
 
 /* TOPBAR */
 .bar{position:sticky;top:0;z-index:99;height:52px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:rgba(8,8,7,.97);backdrop-filter:blur(20px);border-bottom:1px solid rgba(184,150,90,.13)}
-.logo{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:300;letter-spacing:.2em;color:#fff;cursor:pointer;user-select:none;white-space:nowrap}
-.logo b{color:var(--gold);font-weight:300}
+.logo-txt{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:300;letter-spacing:.2em;color:#fff;cursor:pointer;user-select:none;white-space:nowrap}
+.logo-txt b{color:var(--gold);font-weight:300}
+.logo-img{height:32px;object-fit:contain;cursor:pointer}
 .back{background:none;border:none;color:rgba(255,255,255,.4);font-family:'Tajawal',sans-serif;font-size:11px;cursor:pointer;padding:6px 0;display:flex;align-items:center;gap:4px;min-width:52px;transition:color .14s}
 .back:hover{color:var(--gold)}
 .barr{min-width:52px;display:flex;justify-content:flex-end;gap:5px;align-items:center}
@@ -56,13 +55,15 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction
 .hbtn.primary:hover{background:var(--gold2)}
 .hbtn.outline{background:transparent;border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.5)}
 .hbtn.outline:hover{border-color:rgba(184,150,90,.3);color:#fff}
-.barr-arr{opacity:.45;transition:transform .17s}
-.hbtn:hover .barr-arr{transform:translateX(-3px)}
+.harr{opacity:.45;transition:transform .17s}
+.hbtn:hover .harr{transform:translateX(-3px)}
 
 /* FOOTER */
 .footer{background:var(--ink2);border-top:1px solid rgba(184,150,90,.09);padding:28px 20px 22px;text-align:center;flex-shrink:0}
-.flogo{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:300;letter-spacing:.2em;color:#fff;display:block;margin-bottom:3px}
-.flogo b{color:var(--gold);font-weight:300}
+.flogo{display:block;margin-bottom:3px}
+.flogo-txt{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:300;letter-spacing:.2em;color:#fff}
+.flogo-txt b{font-weight:300}
+.flogo-img{height:36px;object-fit:contain}
 .fcity{font-size:8px;letter-spacing:.44em;color:var(--gold);display:block;margin-bottom:11px}
 .fdesc{font-size:11px;color:rgba(255,255,255,.18);line-height:1.82;margin-bottom:16px;max-width:255px;margin-left:auto;margin-right:auto}
 .fdiv{height:1px;background:rgba(184,150,90,.08);margin-bottom:15px}
@@ -71,6 +72,7 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction
 .fsoc:hover{border-color:rgba(184,150,90,.36);color:var(--gold)}
 .payrow{display:flex;justify-content:center;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:14px}
 .paychip{height:32px;padding:0 10px;border-radius:5px;background:#fff;display:flex;align-items:center;justify-content:center;min-width:52px}
+.paychip img{height:22px;max-width:60px;object-fit:contain}
 .fvat{display:flex;align-items:center;justify-content:center;gap:9px;margin-bottom:11px;flex-wrap:wrap}
 .fvatnum{font-size:10px;color:rgba(255,255,255,.24)}
 .fvatb{display:flex;align-items:center;gap:5px;background:rgba(0,88,0,.13);border:1px solid rgba(0,120,0,.2);padding:3px 9px;border-radius:4px}
@@ -92,12 +94,12 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction
 .cpanel{display:none;flex-direction:column}
 .cpanel.on{display:flex}
 
-/* SUB-SECTION HEADER */
+/* ── SUB-SECTION HEADER ── */
 .sub-sec{margin-top:6px}
 .sub-hd{display:flex;flex-direction:column;align-items:center;padding:22px 16px 12px;text-align:center}
-.sub-en{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:400;color:var(--text);letter-spacing:.13em}
-.sub-ar{font-family:'Tajawal',sans-serif;font-size:11px;color:var(--muted);margin-top:2px}
-.sub-line{width:36px;height:1px;background:var(--gold);opacity:.4;margin-top:9px}
+.sub-en{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:400;color:var(--text);letter-spacing:.14em;line-height:1.2}
+.sub-ar{font-family:'Tajawal',sans-serif;font-size:11px;color:var(--muted);margin-top:3px;letter-spacing:.04em}
+.sub-line{width:36px;height:1px;background:var(--gold);opacity:.4;margin-top:10px}
 .sub-cards{display:flex;flex-direction:column;gap:7px;padding-bottom:4px}
 
 /* SERVICE CARD */
@@ -151,11 +153,11 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction
 .adrow.sel .adchki{opacity:1}
 .adname{flex:1;font-size:12px;color:var(--text)}
 .adprice{font-family:'Cormorant Garamond',serif;font-size:15px;color:var(--text);white-space:nowrap}
-.adprice-sr{font-family:'Tajawal',sans-serif;font-size:9px;color:var(--muted)}
-.empty-cat{font-size:12px;color:var(--muted);text-align:center;padding:32px 16px;line-height:2}
+.adpsr{font-family:'Tajawal',sans-serif;font-size:9px;color:var(--muted)}
+.empty-svcs{font-size:12px;color:var(--muted);text-align:center;padding:40px 20px;line-height:2}
 
 /* CART */
-.cartbar{position:fixed;bottom:0;right:0;left:0;z-index:100;background:var(--ink);border-top:1px solid rgba(184,150,90,.18);padding:11px 14px;display:flex;align-items:center;gap:11px;transform:translateY(110%);transition:transform .32s cubic-bezier(.4,0,.2,1);box-shadow:0 -3px 16px rgba(0,0,0,.26)}
+.cartbar{position:fixed;bottom:0;right:0;left:0;z-index:100;background:var(--ink);border-top:1px solid rgba(184,150,90,.18);padding:11px 14px;display:flex;align-items:center;gap:11px;transform:translateY(110%);transition:transform .32s cubic-bezier(.4,0,.2,1)}
 .cartbar.up{transform:translateY(0)}
 .cartinfo{flex:1;min-width:0}
 .cartcnt{font-size:9px;letter-spacing:.09em;color:var(--muted);margin-bottom:1px}
@@ -195,15 +197,6 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction
 .dtml{color:rgba(255,255,255,.25);display:block;margin-bottom:1px}
 .dtmv{color:#fff;font-weight:500}
 
-/* BOT BAR */
-.botbar{position:sticky;bottom:0;z-index:100;background:var(--ink);border-top:1px solid rgba(184,150,90,.12);padding:11px 13px;flex-shrink:0}
-.botbtn{width:100%;padding:14px;background:var(--gold);color:var(--ink);border:none;font-family:'Tajawal',sans-serif;font-size:12px;font-weight:500;letter-spacing:.14em;cursor:pointer;transition:all .16s;display:flex;align-items:center;justify-content:center;gap:8px;border-radius:var(--brad)}
-.botbtn:hover{background:var(--gold2)}
-.botbtn:disabled{background:rgba(184,150,90,.12);color:rgba(255,255,255,.17);cursor:not-allowed}
-.botbtn.ld{pointer-events:none;opacity:.68}
-.botbtn.ld::after{content:'';width:13px;height:13px;border:2px solid rgba(0,0,0,.17);border-top-color:rgba(0,0,0,.62);border-radius:50%;animation:spin .8s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-
 /* FORMS */
 .fmpg{background:var(--cream)}
 .fmbody{flex:1;overflow-y:auto;padding:20px 12px 18px;max-width:440px;margin:0 auto;width:100%}
@@ -224,11 +217,10 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction
 .otprow{display:flex;gap:9px;justify-content:center;direction:ltr;margin-top:12px}
 .otpd{width:58px;height:64px;text-align:center;font-size:28px;font-weight:300;background:var(--cream);border:1px solid var(--border);color:var(--text);outline:none;transition:border-color .15s,box-shadow .15s;font-family:'Cormorant Garamond',serif;border-radius:var(--brad)}
 .otpd:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(184,150,90,.12)}
-.otp-hint{font-size:11px;color:var(--muted);text-align:center;margin-top:12px;line-height:1.75}
-.otp-code-display{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:300;color:var(--gold);letter-spacing:.18em;text-align:center;margin:14px 0 4px;padding:12px;background:rgba(184,150,90,.08);border:1px dashed rgba(184,150,90,.3)}
-.otp-timer{font-size:11px;color:var(--muted);text-align:center;margin-top:8px}
-.otp-resend{display:block;font-size:11px;color:var(--gold);background:none;border:none;font-family:'Tajawal',sans-serif;cursor:pointer;margin:10px auto 0;padding:4px;opacity:.8}
-.otp-resend:disabled{opacity:.35;cursor:not-allowed}
+.otpcode{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;color:var(--gold);letter-spacing:.18em;text-align:center;margin:14px 0 4px;padding:12px;background:rgba(184,150,90,.08);border:1px dashed rgba(184,150,90,.3);border-radius:var(--brad)}
+.otptimer{font-size:11px;color:var(--muted);text-align:center;margin-top:9px}
+.otprsnd{display:block;font-size:11px;color:var(--gold);background:none;border:none;font-family:'Tajawal',sans-serif;cursor:pointer;margin:9px auto 0;padding:4px;opacity:.8}
+.otprsnd:disabled{opacity:.35;pointer-events:none}
 
 /* SUMMARY */
 .sumcard{background:var(--w);border:1px solid var(--border);margin-bottom:9px;border-radius:var(--brad)}
@@ -241,7 +233,7 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction
 .sumtotv{font-family:'Cormorant Garamond',serif;font-size:23px;font-weight:300;color:var(--gold)}
 .vatnote{font-size:9px;color:rgba(24,21,14,.3);text-align:center;padding:4px 0;letter-spacing:.04em;margin-bottom:9px}
 
-/* PAYMENT METHODS */
+/* PAYMENT */
 .pms{background:var(--w);border:1px solid var(--border);margin-bottom:9px;border-radius:var(--brad)}
 .pmrow{display:flex;align-items:center;padding:12px 13px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .1s;gap:10px}
 .pmrow:last-child{border:none}
@@ -255,20 +247,24 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction
 .pmname{font-size:13px;font-weight:500;color:var(--text);margin-bottom:1px}
 .pmsub{font-size:10px;color:var(--muted)}
 .pmlogos{flex-shrink:0;display:flex;align-items:center;gap:4px}
-.pay-safe{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--muted);background:rgba(42,122,79,.06);border:1px solid rgba(42,122,79,.15);padding:10px 13px;margin-bottom:9px;border-radius:var(--brad)}
-
-/* DISC */
+.paysafe{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--muted);background:rgba(42,122,79,.06);border:1px solid rgba(42,122,79,.15);padding:10px 13px;margin-bottom:9px;border-radius:var(--brad)}
 .discw{background:var(--w);border:1px solid var(--border);padding:12px;margin-bottom:9px;border-radius:var(--brad)}
 .discr{display:flex;gap:6px}
-.disci{flex:1;padding:10px 11px;background:var(--cream);border:1px solid var(--border);font-family:'Tajawal',sans-serif;font-size:13px;color:var(--text);outline:none;transition:border-color .14s;border-radius:var(--brad)}
-.disci:focus{border-color:rgba(24,21,14,.33)}
-.disci::placeholder{color:rgba(145,135,125,.4);font-size:12px}
-.disca{padding:10px 14px;background:var(--ink);color:#fff;border:none;font-family:'Tajawal',sans-serif;font-size:11px;letter-spacing:.1em;cursor:pointer;transition:background .14s;white-space:nowrap;border-radius:var(--brad)}
-.disca:hover{background:#201c14}
+.disci{flex:1;padding:10px 11px;background:var(--cream);border:1px solid var(--border);font-family:'Tajawal',sans-serif;font-size:13px;color:var(--text);outline:none;border-radius:var(--brad)}
+.disca{padding:10px 14px;background:var(--ink);color:#fff;border:none;font-family:'Tajawal',sans-serif;font-size:11px;letter-spacing:.1em;cursor:pointer;border-radius:var(--brad)}
 .discm{font-size:11px;margin-top:6px;padding:7px 10px;display:none;border-radius:var(--brad)}
 .discm.ok{background:rgba(42,122,79,.07);color:var(--ok);border:1px solid rgba(42,122,79,.17);display:block}
 .discm.err{background:rgba(180,50,50,.05);color:var(--err);border:1px solid rgba(180,50,50,.15);display:block}
 .errbox{background:rgba(180,50,50,.05);border:1px solid rgba(180,50,50,.14);padding:9px 12px;font-size:12px;color:var(--err);margin-bottom:8px;display:none;line-height:1.58;border-radius:var(--brad)}
+
+/* BOTBAR */
+.botbar{position:sticky;bottom:0;z-index:100;background:var(--ink);border-top:1px solid rgba(184,150,90,.12);padding:11px 13px;flex-shrink:0}
+.botbtn{width:100%;padding:14px;background:var(--gold);color:var(--ink);border:none;font-family:'Tajawal',sans-serif;font-size:12px;font-weight:500;letter-spacing:.14em;cursor:pointer;transition:all .16s;display:flex;align-items:center;justify-content:center;gap:8px;border-radius:var(--brad)}
+.botbtn:hover{background:var(--gold2)}
+.botbtn:disabled{background:rgba(184,150,90,.12);color:rgba(255,255,255,.17);cursor:not-allowed}
+.botbtn.ld{pointer-events:none;opacity:.68}
+.botbtn.ld::after{content:'';width:13px;height:13px;border:2px solid rgba(0,0,0,.17);border-top-color:rgba(0,0,0,.62);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
 
 /* SUCCESS */
 #suc{background:var(--cream)}
@@ -288,10 +284,36 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction
 .sucref strong{color:var(--gold);font-size:14px;font-weight:500}
 .sucpay{width:100%;max-width:275px;padding:14px;background:var(--gold);color:var(--ink);border:none;font-family:'Tajawal',sans-serif;font-size:12px;font-weight:500;letter-spacing:.12em;cursor:pointer;transition:background .14s;margin-bottom:7px;border-radius:var(--brad)}
 .sucpay:hover{background:var(--gold2)}
-.sucnew{width:100%;max-width:275px;padding:11px;background:transparent;border:1px solid var(--border);color:var(--text);font-family:'Tajawal',sans-serif;font-size:11px;letter-spacing:.08em;cursor:pointer;transition:all .14s;border-radius:var(--brad)}
-.sucnew:hover{border-color:rgba(24,21,14,.32)}
+.sucnew{width:100%;max-width:275px;padding:11px;background:transparent;border:1px solid var(--border);color:var(--text);font-family:'Tajawal',sans-serif;font-size:11px;letter-spacing:.08em;cursor:pointer;border-radius:var(--brad)}
 
-/* PAYMENT POPUP */
+/* PAGES */
+#gift-page,#memberships-page{background:var(--cream)}
+.page-body{flex:1;overflow-y:auto;padding:0 16px 40px;max-width:680px;margin:0 auto;width:100%}
+.page-hero{text-align:center;padding:44px 20px 32px;border-bottom:1px solid var(--border);margin-bottom:28px}
+.page-eyebrow{font-size:8px;letter-spacing:.36em;color:var(--gold);margin-bottom:10px}
+.page-h1{font-family:'Cormorant Garamond',serif;font-size:clamp(28px,7vw,42px);font-weight:300;color:var(--text);letter-spacing:.06em;line-height:1.1;margin-bottom:10px}
+.page-sub{font-size:13px;color:var(--muted);line-height:1.7;max-width:360px;margin:0 auto}
+.gift-amounts{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:24px}
+.gift-amt{padding:20px 16px;background:var(--w);border:1.5px solid var(--border);cursor:pointer;transition:all .15s;text-align:center;border-radius:var(--brad)}
+.gift-amt:hover{border-color:rgba(184,150,90,.4)}
+.gift-amt.sel{border-color:var(--gold);background:rgba(184,150,90,.06)}
+.gift-amt-val{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;color:var(--text)}
+.gift-amt-sr{font-family:'Tajawal',sans-serif;font-size:11px;color:var(--muted)}
+.mem-grid{display:flex;flex-direction:column;gap:14px;margin-bottom:24px}
+.mem-card{background:var(--w);border:1px solid var(--border);padding:22px;position:relative;border-radius:var(--brad)}
+.mem-card.featured{border-color:var(--gold);background:linear-gradient(135deg,#fdf8ee 0%,var(--w) 100%)}
+.mem-badge{position:absolute;top:14px;left:14px;font-size:9px;background:var(--gold);color:var(--ink);padding:3px 10px;letter-spacing:.1em}
+.mem-name{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400;color:var(--text);letter-spacing:.08em;margin-bottom:4px}
+.mem-price{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:300;color:var(--gold);line-height:1;margin-bottom:14px}
+.mem-price-sr{font-family:'Tajawal',sans-serif;font-size:12px;color:var(--muted)}
+.mem-feats{list-style:none;margin-bottom:18px}
+.mem-feat{display:flex;align-items:flex-start;gap:8px;padding:5px 0;border-bottom:1px solid rgba(200,193,183,.3);font-size:12px;color:var(--text)}
+.mem-feat:last-child{border:none}
+.mem-feat::before{content:'✦';color:var(--gold);font-size:9px;margin-top:2px;flex-shrink:0}
+.mem-btn{width:100%;padding:13px;background:var(--ink);color:#fff;border:none;font-family:'Tajawal',sans-serif;font-size:11px;letter-spacing:.13em;cursor:pointer;border-radius:var(--brad)}
+.mem-card.featured .mem-btn{background:var(--gold);color:var(--ink)}
+
+/* POPUP */
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;display:none;align-items:flex-end;justify-content:center}
 .overlay.on{display:flex;animation:fo .2s ease}
 @keyframes fo{from{opacity:0}to{opacity:1}}
@@ -300,52 +322,17 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction
 .popup-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
 .popup-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;color:var(--text);letter-spacing:.06em}
 .popup-x{background:none;border:none;cursor:pointer;color:var(--muted);font-size:26px;padding:0 4px;line-height:1}
-.popup-amount{text-align:center;margin-bottom:22px;padding:18px;background:var(--w);border:1px solid var(--border);border-radius:var(--brad)}
-.popup-amt-lbl{font-size:10px;letter-spacing:.14em;color:var(--muted);margin-bottom:6px}
+.popup-amt{text-align:center;margin-bottom:18px;padding:16px;background:var(--w);border:1px solid var(--border);border-radius:var(--brad)}
+.popup-amt-lbl{font-size:10px;letter-spacing:.14em;color:var(--muted);margin-bottom:5px}
 .popup-amt-val{font-family:'Cormorant Garamond',serif;font-size:40px;font-weight:300;color:var(--gold);line-height:1}
-.popup-amt-sr{font-family:'Tajawal',sans-serif;font-size:12px;color:var(--muted)}
 .popup-safe{font-size:11px;color:var(--ok);text-align:center;margin-bottom:14px;display:flex;align-items:center;justify-content:center;gap:5px}
-.popup-pay-btn{display:block;width:100%;padding:15px;background:var(--gold);color:var(--ink);text-align:center;text-decoration:none;font-family:'Tajawal',sans-serif;font-size:12px;font-weight:500;letter-spacing:.14em;margin-bottom:9px;transition:background .14s;border:none;cursor:pointer;border-radius:var(--brad)}
-.popup-pay-btn:hover{background:var(--gold2)}
-.popup-sec-btn{display:block;width:100%;padding:12px;background:transparent;border:1px solid var(--border);color:var(--text);text-align:center;text-decoration:none;font-family:'Tajawal',sans-serif;font-size:11px;cursor:pointer;transition:all .14s;border-radius:var(--brad)}
-.popup-sec-btn:hover{border-color:rgba(24,21,14,.32)}
-
-/* PAGES */
-#gift-page,#memberships-page,#custom-page{background:var(--cream)}
-.page-body{flex:1;overflow-y:auto;padding:0 16px 40px;max-width:680px;margin:0 auto;width:100%}
-.page-hero{text-align:center;padding:44px 20px 32px;border-bottom:1px solid var(--border);margin-bottom:28px}
-.page-eyebrow{font-size:8px;letter-spacing:.36em;color:var(--gold);margin-bottom:10px}
-.page-h1{font-family:'Cormorant Garamond',serif;font-size:clamp(28px,7vw,42px);font-weight:300;color:var(--text);letter-spacing:.06em;line-height:1.1;margin-bottom:10px}
-.page-sub{font-size:13px;color:var(--muted);line-height:1.7;max-width:360px;margin:0 auto}
-
-/* GIFT CARD */
-.gift-amounts{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:24px}
-.gift-amt{padding:20px 16px;background:var(--w);border:1.5px solid var(--border);cursor:pointer;transition:all .15s;text-align:center;border-radius:var(--brad)}
-.gift-amt:hover{border-color:rgba(184,150,90,.4)}
-.gift-amt.sel{border-color:var(--gold);background:rgba(184,150,90,.06)}
-.gift-amt-val{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;color:var(--text)}
-.gift-amt-sr{font-family:'Tajawal',sans-serif;font-size:11px;color:var(--muted)}
-
-/* MEMBERSHIPS */
-.mem-grid{display:flex;flex-direction:column;gap:14px;margin-bottom:24px}
-.mem-card{background:var(--w);border:1px solid var(--border);padding:22px;position:relative;overflow:hidden;border-radius:var(--brad)}
-.mem-card.featured{border-color:var(--gold);background:linear-gradient(135deg,#fdf8ee 0%,var(--w) 100%)}
-.mem-badge{position:absolute;top:14px;left:14px;font-size:9px;background:var(--gold);color:var(--ink);padding:3px 10px;letter-spacing:.1em}
-.mem-name{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400;color:var(--text);letter-spacing:.08em;margin-bottom:4px}
-.mem-price{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:300;color:var(--gold);line-height:1;margin-bottom:14px}
-.mem-price-sr{font-family:'Tajawal',sans-serif;font-size:12px;color:var(--muted)}
-.mem-features{list-style:none;margin-bottom:18px}
-.mem-feature{display:flex;align-items:flex-start;gap:8px;padding:5px 0;border-bottom:1px solid rgba(200,193,183,.3);font-size:12px;color:var(--text)}
-.mem-feature:last-child{border:none}
-.mem-feature::before{content:'✦';color:var(--gold);font-size:9px;margin-top:2px;flex-shrink:0}
-.mem-btn{width:100%;padding:13px;background:var(--ink);color:#fff;border:none;font-family:'Tajawal',sans-serif;font-size:11px;letter-spacing:.13em;cursor:pointer;transition:background .15s;border-radius:var(--brad)}
-.mem-card.featured .mem-btn{background:var(--gold);color:var(--ink)}
-.mem-btn:hover{opacity:.88}
+.popup-paybtn{display:block;width:100%;padding:15px;background:var(--gold);color:var(--ink);text-align:center;font-family:'Tajawal',sans-serif;font-size:12px;font-weight:500;letter-spacing:.14em;margin-bottom:9px;border:none;cursor:pointer;border-radius:var(--brad)}
+.popup-paybtn:hover{background:var(--gold2)}
+.popup-secbtn{display:block;width:100%;padding:12px;background:transparent;border:1px solid var(--border);color:var(--text);text-align:center;font-family:'Tajawal',sans-serif;font-size:11px;cursor:pointer;border-radius:var(--brad)}
 
 @media(max-width:380px){
   .slots{grid-template-columns:repeat(3,1fr)}
   .otpd{width:50px;height:58px;font-size:24px}
-  .gift-amounts{grid-template-columns:1fr 1fr}
 }
 </style>
 </head>
@@ -356,19 +343,23 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction
   <div class="hbg"></div><div class="hglow"></div>
   <div class="hero">
     <p class="eyebrow">LUXURY SPA &amp; WELLNESS</p>
-    <h1 class="hlogo" id="home-logo">GRAFF <b>SPA</b></h1>
+    <div id="home-logo-wrap">
+      <h1 class="hlogo" id="home-logo-txt">GRAFF <b>SPA</b></h1>
+    </div>
     <p class="hcity" id="home-city">R I Y A D H</p>
     <div class="horn"><div class="hl"></div><div class="hd"></div><div class="hl r"></div></div>
     <p class="htag" id="home-tagline">حيث تلتقي العناية بالفخامة · في أدق تفاصيلها</p>
   </div>
   <div class="hbtns" id="home-btns">
-    <button class="hbtn primary" data-action="booking" onclick="go('svcs')"><span>احجزي موعدك الآن</span><span class="barr-arr">←</span></button>
-    <button class="hbtn outline" data-action="gift" onclick="go('gift-page')"><span>أهدي من تحبين</span><span class="barr-arr">←</span></button>
-    <button class="hbtn outline" data-action="memberships" onclick="go('memberships-page')"><span>العضويات</span><span class="barr-arr">←</span></button>
-    <button class="hbtn outline" data-action="whatsapp" onclick="openWA()"><span>تواصلي معنا</span><span class="barr-arr">←</span></button>
+    <button class="hbtn primary" onclick="go('svcs')"><span>احجزي موعدك الآن</span><span class="harr">←</span></button>
+    <button class="hbtn outline" onclick="go('gift-page')"><span>أهدي من تحبين</span><span class="harr">←</span></button>
+    <button class="hbtn outline" onclick="go('memberships-page')"><span>العضويات</span><span class="harr">←</span></button>
+    <button class="hbtn outline" onclick="openWA()"><span>تواصلي معنا</span><span class="harr">←</span></button>
   </div>
   <div class="footer">
-    <span class="flogo" id="footer-logo">GRAFF <b>SPA</b></span>
+    <div class="flogo" id="footer-logo-wrap">
+      <span class="flogo-txt" id="footer-logo-txt">GRAFF <b>SPA</b></span>
+    </div>
     <span class="fcity" id="footer-city">R I Y A D H</span>
     <p class="fdesc">وجهتك الأولى للعناية الفاخرة في الرياض — تجربة راقية لا تُنسى</p>
     <div class="fdiv"></div>
@@ -388,11 +379,11 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction
 
 <!-- SERVICES -->
 <div id="svcs" class="pg">
-  <div class="bar"><button class="back" onclick="go('home')">← رجوع</button><div class="logo" onclick="go('home')">GRAFF <b>SPA</b></div><div class="barr"><div class="sdot on"></div><div class="sdot"></div><div class="sdot"></div></div></div>
+  <div class="bar"><button class="back" onclick="go('home')">← رجوع</button><div id="bar-logo-svcs" class="logo-txt" onclick="go('home')">GRAFF <b>SPA</b></div><div class="barr"><div class="sdot on"></div><div class="sdot"></div><div class="sdot"></div></div></div>
   <div class="prog"><b style="width:25%"></b></div>
   <div class="svchd">
     <div class="svcttl"><p class="svceye">STEP 1 OF 3</p><h2 class="svch1">اختاري خدمتك</h2><p class="svcsub">خدمة واحدة لكل حجز</p></div>
-    <div class="tabs" id="tabs"><span style="padding:12px 18px;font-size:10px;color:rgba(255,255,255,.25)">جاري التحميل...</span></div>
+    <div class="tabs" id="tabs"></div>
   </div>
   <div class="svcbody" id="svcbody"></div>
   <div class="cartbar" id="cartbar">
@@ -403,7 +394,7 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction
 
 <!-- DATETIME -->
 <div id="dt" class="pg">
-  <div class="bar"><button class="back" onclick="go('svcs')">← رجوع</button><div class="logo" onclick="go('home')">GRAFF <b>SPA</b></div><div class="barr"><div class="sdot done"></div><div class="sdot on"></div><div class="sdot"></div></div></div>
+  <div class="bar"><button class="back" onclick="go('svcs')">← رجوع</button><div class="logo-txt" onclick="go('home')">GRAFF <b>SPA</b></div><div class="barr"><div class="sdot done"></div><div class="sdot on"></div><div class="sdot"></div></div></div>
   <div class="prog"><b style="width:55%"></b></div>
   <div class="dtbody">
     <div class="seclbl">اختاري التاريخ</div>
@@ -418,7 +409,7 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction
 
 <!-- PHONE -->
 <div id="phone" class="pg fmpg">
-  <div class="bar"><button class="back" onclick="go('dt')">← رجوع</button><div class="logo" onclick="go('home')">GRAFF <b>SPA</b></div><div class="barr"><div class="sdot done"></div><div class="sdot done"></div><div class="sdot on"></div></div></div>
+  <div class="bar"><button class="back" onclick="go('dt')">← رجوع</button><div class="logo-txt" onclick="go('home')">GRAFF <b>SPA</b></div><div class="barr"><div class="sdot done"></div><div class="sdot done"></div><div class="sdot on"></div></div></div>
   <div class="prog"><b style="width:75%"></b></div>
   <div class="fmbody">
     <div class="fmhd"><p class="fmeye">STEP 3 · VERIFICATION</p><h2 class="fmh1">تأكيد هويتك</h2><p class="fmsub">سنرسل رمز التحقق لجوالك</p></div>
@@ -430,15 +421,15 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction
 
 <!-- OTP -->
 <div id="otp" class="pg fmpg">
-  <div class="bar"><button class="back" onclick="go('phone')">← رجوع</button><div class="logo" onclick="go('home')">GRAFF <b>SPA</b></div><div class="barr"><div class="sdot done"></div><div class="sdot done"></div><div class="sdot on"></div></div></div>
+  <div class="bar"><button class="back" onclick="go('phone')">← رجوع</button><div class="logo-txt" onclick="go('home')">GRAFF <b>SPA</b></div><div class="barr"><div class="sdot done"></div><div class="sdot done"></div><div class="sdot on"></div></div></div>
   <div class="prog"><b style="width:80%"></b></div>
   <div class="fmbody">
     <div class="fmhd"><p class="fmeye">STEP 3 · CODE</p><h2 class="fmh1">رمز التحقق</h2><p class="fmsub" id="otphnt">تم إرسال الرمز على جوالك</p></div>
     <div class="fcard"><div class="fctitl">أدخلي الرمز المكون من 4 أرقام</div>
-      <div id="otp-code-show"></div>
+      <div id="otpcode"></div>
       <div class="otprow"><input class="otpd" id="o4" maxlength="1" type="tel" inputmode="numeric" oninput="ochk()" onkeydown="ob(event,this,'o3')"><input class="otpd" id="o3" maxlength="1" type="tel" inputmode="numeric" oninput="om(this,'o4')" onkeydown="ob(event,this,'o2')"><input class="otpd" id="o2" maxlength="1" type="tel" inputmode="numeric" oninput="om(this,'o3')" onkeydown="ob(event,this,'o1')"><input class="otpd" id="o1" maxlength="1" type="tel" inputmode="numeric" oninput="om(this,'o2')" onkeydown="ob(event,this,'')"></div>
-      <div class="otp-timer" id="otp-timer"></div>
-      <button class="otp-resend" id="otp-resend" onclick="sendOTP(true)" disabled>⟳ إعادة الإرسال</button>
+      <div class="otptimer" id="otptimer"></div>
+      <button class="otprsnd" id="otprsnd" onclick="sendOTP(true)" disabled>⟳ إعادة الإرسال</button>
     </div>
     <div class="errbox" id="errotp"></div>
   </div>
@@ -447,7 +438,7 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction
 
 <!-- CONFIRM -->
 <div id="confirm" class="pg fmpg">
-  <div class="bar"><button class="back" onclick="go('otp')">← رجوع</button><div class="logo" onclick="go('home')">GRAFF <b>SPA</b></div><div class="barr"><div class="sdot done"></div><div class="sdot done"></div><div class="sdot on"></div></div></div>
+  <div class="bar"><button class="back" onclick="go('otp')">← رجوع</button><div class="logo-txt" onclick="go('home')">GRAFF <b>SPA</b></div><div class="barr"><div class="sdot done"></div><div class="sdot done"></div><div class="sdot on"></div></div></div>
   <div class="prog"><b style="width:100%"></b></div>
   <div class="fmbody">
     <div class="fmhd"><p class="fmeye">FINAL STEP</p><h2 class="fmh1">تأكيد الحجز</h2><p class="fmsub">راجعي تفاصيل حجزك وأتممي الدفع</p></div>
@@ -459,8 +450,8 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction
     <div class="seclbl">كود الخصم</div>
     <div class="discw"><div class="discr"><input class="disci" id="disci" placeholder="أدخلي كود الخصم" maxlength="20"><button class="disca" onclick="applyDisc()">تطبيق</button></div><div class="discm" id="discm"></div></div>
     <div class="seclbl">وسيلة الدفع</div>
-    <div class="pay-safe"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>دفع آمن ومشفر · سيتم تحويلك لإتمام العملية بأمان</div>
-    <div class="pms" id="pay-methods-list"></div>
+    <div class="paysafe"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>دفع آمن ومشفر · سيتم تحويلك لإتمام العملية</div>
+    <div class="pms" id="pms"></div>
     <div class="errbox" id="errconf"></div>
   </div>
   <div class="botbar"><button class="botbtn" id="btnconf" onclick="doBook()">تأكيد الحجز والدفع ←</button></div>
@@ -468,7 +459,7 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction
 
 <!-- SUCCESS -->
 <div id="suc" class="pg">
-  <div class="bar"><div style="min-width:52px"></div><div class="logo" onclick="go('home')">GRAFF <b>SPA</b></div><div style="min-width:52px"></div></div>
+  <div class="bar"><div style="min-width:52px"></div><div class="logo-txt" onclick="go('home')">GRAFF <b>SPA</b></div><div style="min-width:52px"></div></div>
   <div class="sucb">
     <div class="sucring"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path class="succhk" d="M20 6L9 17l-5-5"/></svg></div>
     <h2 class="suctit">تم الحجز بنجاح</h2>
@@ -482,35 +473,39 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction
 
 <!-- GIFT PAGE -->
 <div id="gift-page" class="pg">
-  <div class="bar"><button class="back" onclick="go('home')">← رجوع</button><div class="logo" onclick="go('home')">GRAFF <b>SPA</b></div><div style="min-width:52px"></div></div>
+  <div class="bar"><button class="back" onclick="go('home')">← رجوع</button><div class="logo-txt" onclick="go('home')">GRAFF <b>SPA</b></div><div style="min-width:52px"></div></div>
   <div class="page-body">
     <div class="page-hero">
-      <p class="page-eyebrow" id="gift-eyebrow">GIFT CARD</p>
-      <h1 class="page-h1" id="gift-title">بطاقة الإهداء</h1>
-      <p class="page-sub" id="gift-subtitle">اهدي تجربة لا تُنسى لمن تحبين</p>
+      <p class="page-eyebrow">GIFT CARD</p>
+      <h1 class="page-h1" id="gift-h1">بطاقة الإهداء</h1>
+      <p class="page-sub" id="gift-sub">اهدي تجربة لا تُنسى لمن تحبين</p>
     </div>
     <div class="gift-amounts" id="gift-amounts"></div>
     <div class="fcard">
-      <div class="fctitl">بيانات المُهدى إليها</div>
-      <label class="flbl">الاسم</label><input class="finp" placeholder="اسم المُهدى إليها">
-      <label class="flbl">رقم الجوال</label><input class="finp" type="tel" placeholder="05xxxxxxxx">
+      <div class="fctitl">بيانات بطاقة الإهداء</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div><label class="flbl">اسم المُهدي</label><input class="finp" id="gf-from-name" placeholder="سارة"></div>
+        <div><label class="flbl">جوال المُهدي</label><input class="finp" id="gf-from-ph" type="tel" placeholder="05xxxxxxxx"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:2px">
+        <div><label class="flbl">اسم المُهدى إليها</label><input class="finp" id="gf-to-name" placeholder="نورة"></div>
+        <div><label class="flbl">جوال المُهدى إليها</label><input class="finp" id="gf-to-ph" type="tel" placeholder="05xxxxxxxx"></div>
+      </div>
       <label class="flbl">رسالة شخصية (اختياري)</label>
-      <textarea class="finp" rows="3" placeholder="أكتبي رسالتك هنا..." style="resize:none"></textarea>
+      <textarea class="finp" id="gf-msg" rows="3" placeholder="أكتبي رسالتك هنا..." style="resize:none"></textarea>
     </div>
-    <div class="botbar" style="position:static;border:none;padding:0 0 24px">
-      <button class="botbtn">شراء بطاقة الإهداء ←</button>
-    </div>
+    <div class="botbar" style="position:static;border:none;padding:0 0 24px"><button class="botbtn">شراء بطاقة الإهداء ←</button></div>
   </div>
 </div>
 
 <!-- MEMBERSHIPS PAGE -->
 <div id="memberships-page" class="pg">
-  <div class="bar"><button class="back" onclick="go('home')">← رجوع</button><div class="logo" onclick="go('home')">GRAFF <b>SPA</b></div><div style="min-width:52px"></div></div>
+  <div class="bar"><button class="back" onclick="go('home')">← رجوع</button><div class="logo-txt" onclick="go('home')">GRAFF <b>SPA</b></div><div style="min-width:52px"></div></div>
   <div class="page-body">
     <div class="page-hero">
       <p class="page-eyebrow">MEMBERSHIPS</p>
       <h1 class="page-h1">العضويات</h1>
-      <p class="page-sub">اختاري الباقة المناسبة لك وتمتعي بامتيازات حصرية طوال العام</p>
+      <p class="page-sub">اختاري الباقة المناسبة لك وتمتعي بامتيازات حصرية</p>
     </div>
     <div class="mem-grid" id="mem-grid"></div>
   </div>
@@ -520,553 +515,336 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction
 <div class="overlay" id="payOverlay" onclick="if(event.target===this)closePopup()">
   <div class="popup">
     <div class="popup-hd"><span class="popup-title">إتمام الدفع</span><button class="popup-x" onclick="closePopup()">×</button></div>
-    <div class="popup-amount"><div class="popup-amt-lbl">المبلغ المستحق</div><div class="popup-amt-val"><span class="popup-amt-sr">SAR </span><span id="popAmt">0</span></div></div>
+    <div class="popup-amt"><div class="popup-amt-lbl">المبلغ المستحق</div><div class="popup-amt-val"><span style="font-family:'Tajawal',sans-serif;font-size:14px;color:var(--muted)">SAR </span><span id="popAmt">0</span></div></div>
     <div class="popup-safe"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>دفع آمن ومشفر بالكامل</div>
-    <button class="popup-pay-btn" onclick="doPayRedirect()">الدفع الآن ←</button>
-    <button class="popup-sec-btn" onclick="doPayNewTab()">فتح في نافذة جديدة</button>
+    <button class="popup-paybtn" onclick="doPayRedirect()">الدفع الآن ←</button>
+    <button class="popup-secbtn" onclick="doPayNewTab()">فتح في نافذة جديدة</button>
   </div>
 </div>
 
 <script>
-var B = 'https://rekaz-test.onrender.com';
-var MO = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
-var DA = ['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
-var S = {cart:null,addons:[],date:null,slot:null,slotLbl:null,phone:null,cid:null,payUrl:null,disc:0};
-var calY = new Date().getFullYear(), calM = new Date().getMonth(), allSlots = [];
-var SITE_CFG = null, otpTimerInterval = null;
+var B='https://rekaz-test.onrender.com';
+var MO=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+var DA=['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+var S={cart:null,addons:[],date:null,slot:null,slotLbl:null,phone:null,cid:null,payUrl:null,disc:0};
+var calY=new Date().getFullYear(),calM=new Date().getMonth(),allSlots=[],otpTimer=null;
+var CFG=null;
 
 // ── INIT ──
-async function init() {
-  try {
-    var r = await fetch(B + '/site');
-    if (r.ok) SITE_CFG = await r.json();
-  } catch(e) { console.log('Site config error:', e.message); }
+async function init(){
+  try{var r=await fetch(B+'/site');if(r.ok)CFG=await r.json();}catch(e){console.log('Site config:',e.message);}
   applyConfig();
-  renderPayMethods();
-  renderGiftPage();
-  renderMemberships();
   renderSocial();
   renderFooterPay();
   renderHomeButtons();
+  renderGiftPage();
+  renderMems();
+  renderPayMethods();
 }
 
-function applyConfig() {
-  if (!SITE_CFG) return;
-  var ui = SITE_CFG.ui || {};
-  var root = document.documentElement;
-  if (ui.primaryColor)      root.style.setProperty('--gold',  ui.primaryColor);
-  if (ui.primaryColorHover) root.style.setProperty('--gold2', ui.primaryColorHover);
-  if (ui.bgColor)           root.style.setProperty('--ink',   ui.bgColor);
-  if (ui.bgColor2)          root.style.setProperty('--ink2',  ui.bgColor2);
-  if (ui.creamColor)        root.style.setProperty('--cream', ui.creamColor);
-  if (ui.textColor)         root.style.setProperty('--text',  ui.textColor);
-  if (ui.mutedColor)        root.style.setProperty('--muted', ui.mutedColor);
-  if (ui.borderColor)       root.style.setProperty('--border',ui.borderColor);
-  if (ui.buttonRadius != null) root.style.setProperty('--brad', ui.buttonRadius + 'px');
-  if (ui.fontArabic) {
-    var lnk = document.getElementById('gfont-main');
-    lnk.href = 'https://fonts.googleapis.com/css2?family=' + encodeURIComponent(ui.fontArabic) + ':wght@300;400;500&family=Cormorant+Garamond:wght@300;400&display=swap';
-    document.body.style.fontFamily = "'" + ui.fontArabic + "',sans-serif";
+function applyConfig(){
+  if(!CFG)return;
+  var t=CFG.theme||{},l=CFG.layout||{};
+  var R=document.documentElement;
+  if(t.primaryColor)   R.style.setProperty('--gold',t.primaryColor);
+  if(t.primaryHover)   R.style.setProperty('--gold2',t.primaryHover);
+  if(t.bgDark)         R.style.setProperty('--ink',t.bgDark);
+  if(t.bgDark2)        R.style.setProperty('--ink2',t.bgDark2);
+  if(t.bgLight)        R.style.setProperty('--cream',t.bgLight);
+  if(t.textColor)      R.style.setProperty('--text',t.textColor);
+  if(t.mutedColor)     R.style.setProperty('--muted',t.mutedColor);
+  if(t.borderColor)    R.style.setProperty('--border',t.borderColor);
+  if(t.borderRadius!=null) R.style.setProperty('--brad',t.borderRadius+'px');
+  if(t.fontArabic){
+    var lnk=document.getElementById('gfont');
+    lnk.href='https://fonts.googleapis.com/css2?family='+encodeURIComponent(t.fontArabic)+':wght@300;400;500&family=Cormorant+Garamond:wght@300;400&display=swap';
+    document.body.style.fontFamily="'"+t.fontArabic+"',sans-serif";
   }
-  if (ui.heroTagline) { var el = document.getElementById('home-tagline'); if(el) el.textContent = ui.heroTagline; }
-  if (ui.heroCity)    { var el = document.getElementById('home-city');    if(el) el.textContent = ui.heroCity; }
-  if (ui.vatNumber)   { var el = document.getElementById('vat-num'); if(el) el.textContent = 'الرقم الضريبي: ' + ui.vatNumber; }
-  // Gift card
-  var gc = SITE_CFG.giftCard || {};
-  if (gc.title) { var el = document.getElementById('gift-title'); if(el) el.textContent = gc.title; }
-  if (gc.subtitle) { var el = document.getElementById('gift-subtitle'); if(el) el.textContent = gc.subtitle; }
+  // Logo
+  if(l.logoImage){
+    document.getElementById('home-logo-wrap').innerHTML='<img src="'+l.logoImage+'" class="hlogo" style="height:80px;object-fit:contain">';
+    document.getElementById('footer-logo-wrap').innerHTML='<img src="'+l.logoImage+'" class="flogo-img">';
+  } else {
+    var logoTxt=l.logoText||'GRAFF SPA';
+    var parts=logoTxt.split(' ');
+    var logoHtml=parts.length>1 ? parts[0]+' <b style="color:'+(t.logoAccent||'var(--gold)')+'">'+parts.slice(1).join(' ')+'</b>' : logoTxt;
+    document.getElementById('home-logo-wrap').innerHTML='<h1 class="hlogo">'+logoHtml+'</h1>';
+    document.getElementById('footer-logo-wrap').innerHTML='<span class="flogo-txt">'+logoHtml+'</span>';
+  }
+  // Update all bar logos
+  document.querySelectorAll('.logo-txt').forEach(function(el){
+    var txt=l.logoText||'GRAFF SPA';
+    var p=txt.split(' ');
+    el.innerHTML=p.length>1?p[0]+' <b style="color:'+(t.logoAccent||'var(--gold)')+'">'+p.slice(1).join(' ')+'</b>':txt;
+  });
+  if(l.heroTagline){var el=document.getElementById('home-tagline');if(el)el.textContent=l.heroTagline;}
+  if(l.heroCity){var el=document.getElementById('home-city');if(el)el.textContent=l.heroCity;}
+  if(l.vatNumber){var el=document.getElementById('vat-num');if(el)el.textContent='الرقم الضريبي: '+l.vatNumber;}
+  // Gift
+  var gc=(CFG.pages&&CFG.pages.gift)||{};
+  if(gc.title){var el=document.getElementById('gift-h1');if(el)el.textContent=gc.title;}
+  if(gc.subtitle){var el=document.getElementById('gift-sub');if(el)el.textContent=gc.subtitle;}
 }
 
-function renderHomeButtons() {
-  var btns = SITE_CFG && SITE_CFG.buttons ? SITE_CFG.buttons : null;
-  if (!btns) return;
-  var actions = {
-    booking:      function(){ go('svcs'); },
-    gift:         function(){ go('gift-page'); },
-    memberships:  function(){ go('memberships-page'); },
-    whatsapp:     openWA
-  };
-  var container = document.getElementById('home-btns');
-  container.innerHTML = btns.filter(function(b){ return b.visible !== false; }).map(function(b,i){
-    var cls = i===0 ? 'primary' : 'outline';
-    return '<button class="hbtn '+cls+'" data-action="'+esc(b.action||'')+'">'
-      +'<span>'+esc(b.textAr||'')+'</span><span class="barr-arr">←</span></button>';
+function renderHomeButtons(){
+  var btns=CFG&&CFG.buttons?CFG.buttons:null;if(!btns||!btns.length)return;
+  var actions={booking:function(){go('svcs');},gift:function(){go('gift-page');},memberships:function(){go('memberships-page');},whatsapp:openWA};
+  var html=btns.filter(function(b){return b.visible!==false;}).map(function(b,i){
+    return '<button class="hbtn '+(i===0?'primary':'outline')+'" data-action="'+esc(b.action||'')+'"><span>'+esc(b.textAr||'')+'</span><span class="harr">←</span></button>';
   }).join('');
-  container.querySelectorAll('.hbtn').forEach(function(btn){
-    var act = btn.dataset.action;
-    btn.onclick = actions[act] || function(){ go('svcs'); };
+  var c=document.getElementById('home-btns');
+  c.innerHTML=html;
+  c.querySelectorAll('.hbtn').forEach(function(btn){
+    var act=btn.dataset.action;
+    btn.onclick=actions[act]||function(){go('svcs');};
   });
 }
 
-function renderSocial() {
-  var soc = SITE_CFG && SITE_CFG.social ? SITE_CFG.social : {};
-  var icons = {
-    tiktok: '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>',
-    instagram: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/></svg>',
-    twitter: '<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.747l7.73-8.835L1.254 2.25H8.08l4.261 5.632zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>',
-    snapchat: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2C8.5 2 6 4.5 6 8v1c-1 .2-2 .8-2 1.5 0 .5.5.9 1.5 1C5 13 3.5 14.5 2 15c1 .5 2.5.8 3.5.9.5 1 2.5 2.6 6.5 2.6s6-1.6 6.5-2.6c1-.1 2.5-.4 3.5-.9-1.5-.5-3-2-3.5-3.5 1-.1 1.5-.5 1.5-1C21 9.3 20 8.7 19 8.5V8c0-3.5-2.5-6-7-6z"/></svg>',
-    whatsapp: '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>'
-  };
-  var links = [];
-  if (soc.tiktok)    links.push({url:soc.tiktok,    icon:icons.tiktok,    label:'TikTok'});
-  if (soc.instagram) links.push({url:soc.instagram, icon:icons.instagram, label:'Instagram'});
-  if (soc.twitter)   links.push({url:soc.twitter,   icon:icons.twitter,   label:'X'});
-  if (soc.snapchat)  links.push({url:soc.snapchat,  icon:icons.snapchat,  label:'Snapchat'});
-  if (soc.whatsapp)  links.push({url:'https://wa.me/'+soc.whatsapp.replace(/\D/g,''), icon:icons.whatsapp, label:'WhatsApp'});
-  if (!links.length) {
-    links = [
-      {url:'#',icon:icons.tiktok,label:'TikTok'},
-      {url:'#',icon:icons.instagram,label:'Instagram'},
-      {url:'#',icon:icons.twitter,label:'X'},
-      {url:'#',icon:icons.snapchat,label:'Snapchat'}
-    ];
+// ── SOCIAL ──
+var SOC_ICONS={
+  tiktok:'<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>',
+  instagram:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/></svg>',
+  twitter:'<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.747l7.73-8.835L1.254 2.25H8.08l4.261 5.632zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>',
+  snapchat:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2C8.5 2 6 4.5 6 8v1c-1 .2-2 .8-2 1.5 0 .5.5.9 1.5 1C5 13 3.5 14.5 2 15c1 .5 2.5.8 3.5.9.5 1 2.5 2.6 6.5 2.6s6-1.6 6.5-2.6c1-.1 2.5-.4 3.5-.9-1.5-.5-3-2-3.5-3.5 1-.1 1.5-.5 1.5-1C21 9.3 20 8.7 19 8.5V8c0-3.5-2.5-6-7-6z"/></svg>',
+  whatsapp:'<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>'
+};
+function renderSocial(){
+  var soc=CFG&&CFG.social?CFG.social:{};
+  var links=[];
+  if(soc.tiktok)    links.push({url:soc.tiktok,    key:'tiktok'});
+  if(soc.instagram) links.push({url:soc.instagram, key:'instagram'});
+  if(soc.twitter)   links.push({url:soc.twitter,   key:'twitter'});
+  if(soc.snapchat)  links.push({url:soc.snapchat,  key:'snapchat'});
+  if(soc.whatsapp)  links.push({url:'https://wa.me/'+soc.whatsapp.replace(/\D/g,''), key:'whatsapp'});
+  if(!links.length){
+    // Default placeholder icons
+    ['tiktok','instagram','twitter','snapchat'].forEach(function(k){links.push({url:'#',key:k});});
   }
-  document.getElementById('footer-social').innerHTML = links.map(function(l){
-    return '<a class="fsoc" href="'+l.url+'" target="_blank" rel="noopener" aria-label="'+l.label+'">'+l.icon+'</a>';
+  document.getElementById('footer-social').innerHTML=links.map(function(l){
+    return '<a class="fsoc" href="'+l.url+'" target="_blank" rel="noopener">'+SOC_ICONS[l.key]+'</a>';
   }).join('');
 }
 
-function renderFooterPay() {
-  var logos = SITE_CFG && SITE_CFG.paymentLogos ? SITE_CFG.paymentLogos : null;
-  var payLogos = [
-    {id:'mastercard', html:'<svg width="40" height="24" viewBox="0 0 40 24"><circle cx="14" cy="12" r="9" fill="#EB001B"/><circle cx="26" cy="12" r="9" fill="#F79E1B"/><path d="M20 4.8a9 9 0 010 14.4A9 9 0 0120 4.8z" fill="#FF5F00"/></svg>'},
-    {id:'visa', html:'<svg width="48" height="18" viewBox="0 0 48 18"><text x="2" y="15" font-family="Arial" font-size="15" font-weight="900" font-style="italic" fill="#1A1F71">VISA</text></svg>'},
-    {id:'mada', html:'<div style="display:flex;align-items:center;gap:4px"><svg width="20" height="14" viewBox="0 0 20 14"><rect width="20" height="6" rx="1" fill="#006DB7"/><rect y="8" width="20" height="6" rx="1" fill="#4CAF50"/></svg><span style="font-size:11px;font-weight:700;color:#006DB7;font-family:Arial">mada</span></div>'},
-    {id:'applepay', html:'<div style="display:flex;align-items:center;gap:3px"><svg width="13" height="16" viewBox="0 0 14 17" fill="#1d1d1f"><path d="M10.9.1c-.1 1.1-.5 2.2-1.2 3-.7.9-1.8 1.5-3 1.4.1-1.1.6-2.2 1.3-3C8.7.6 9.8.1 10.9.1zm2.8 12.1c-.7 1.1-1.5 2.1-2.7 2.1-1.2 0-1.5-.7-3.1-.7-1.6 0-1.9.8-3.1.8-1.2 0-2.1-1.1-2.8-2.2C.5 9.8.1 6.7 1.3 5c.8-1.2 2.1-2 3.5-2 1.4 0 2.2.8 3.3.8 1.1 0 1.8-.8 3.3-.8 1.2 0 2.4.7 3.1 1.7-.3.2-2.8 1.6-2.8 4.8 0 3.6 3.2 4.7 3.2 4.7z"/></svg><span style="font-size:10px;font-weight:600;color:#1d1d1f;font-family:Arial">Pay</span></div>'},
-    {id:'tabby', html:'<span style="font-size:12px;font-weight:800;color:#3EB489;font-family:Arial">tabby</span>'},
-    {id:'tamara', html:'<span style="font-size:11px;font-weight:700;color:#1a1a1a;font-family:Arial">tamara</span>'}
+// Default inline SVG payment logos
+var PAY_SVG={
+  mastercard:'<svg width="40" height="24" viewBox="0 0 40 24"><circle cx="14" cy="12" r="9" fill="#EB001B"/><circle cx="26" cy="12" r="9" fill="#F79E1B"/><path d="M20 4.8a9 9 0 010 14.4A9 9 0 0120 4.8z" fill="#FF5F00"/></svg>',
+  visa:'<svg width="48" height="18" viewBox="0 0 48 18"><text x="2" y="15" font-family="Arial" font-size="15" font-weight="900" font-style="italic" fill="#1A1F71">VISA</text></svg>',
+  mada:'<div style="display:flex;align-items:center;gap:4px"><svg width="20" height="14" viewBox="0 0 20 14"><rect width="20" height="6" rx="1" fill="#006DB7"/><rect y="8" width="20" height="6" rx="1" fill="#4CAF50"/></svg><span style="font-size:11px;font-weight:700;color:#006DB7;font-family:Arial">mada</span></div>',
+  applepay:'<div style="display:flex;align-items:center;gap:3px"><svg width="13" height="16" viewBox="0 0 14 17" fill="#1d1d1f"><path d="M10.9.1c-.1 1.1-.5 2.2-1.2 3-.7.9-1.8 1.5-3 1.4.1-1.1.6-2.2 1.3-3C8.7.6 9.8.1 10.9.1zm2.8 12.1c-.7 1.1-1.5 2.1-2.7 2.1-1.2 0-1.5-.7-3.1-.7-1.6 0-1.9.8-3.1.8-1.2 0-2.1-1.1-2.8-2.2C.5 9.8.1 6.7 1.3 5c.8-1.2 2.1-2 3.5-2 1.4 0 2.2.8 3.3.8 1.1 0 1.8-.8 3.3-.8 1.2 0 2.4.7 3.1 1.7-.3.2-2.8 1.6-2.8 4.8 0 3.6 3.2 4.7 3.2 4.7z"/></svg><span style="font-size:10px;font-weight:600;color:#1d1d1f;font-family:Arial">Pay</span></div>',
+  tabby:'<span style="font-size:12px;font-weight:800;color:#3EB489;font-family:Arial">tabby</span>',
+  tamara:'<span style="font-size:11px;font-weight:700;color:#1a1a1a;font-family:Arial">tamara</span>'
+};
+function getPayLogo(p){
+  if(p.customImage) return '<img src="'+p.customImage+'" style="height:22px;max-width:60px;object-fit:contain">';
+  return PAY_SVG[p.id]||('<span style="font-size:11px;color:#333;font-family:Arial">'+esc(p.label)+'</span>');
+}
+function renderFooterPay(){
+  var pays=CFG&&CFG.payments?CFG.payments.filter(function(p){return p.visible!==false;}):Object.keys(PAY_SVG).map(function(k){return{id:k,label:k};});
+  document.getElementById('footer-pay').innerHTML=pays.map(function(p){
+    return '<div class="paychip">'+getPayLogo(p)+'</div>';
+  }).join('');
+}
+function renderPayMethods(){
+  var pays=CFG&&CFG.payments?CFG.payments.filter(function(p){return p.visible!==false;}):[];
+  var methods=[
+    {id:'card',name:'البطاقة الائتمانية',sub:'مدى · Visa · Mastercard',ids:['mastercard','visa','mada']},
+    {id:'applepay',name:'Apple Pay',sub:'الدفع السريع والآمن',ids:['applepay']},
+    {id:'tabby',name:'tabby',sub:'4 أقساط بدون فوائد',ids:['tabby']},
+    {id:'tamara',name:'tamara',sub:'3 أقساط بدون فوائد',ids:['tamara']}
   ];
-  var visible = logos ? logos.filter(function(l){ return l.visible !== false; }).map(function(l){ return l.id; }) : payLogos.map(function(l){ return l.id; });
-  document.getElementById('footer-pay').innerHTML = payLogos.filter(function(l){ return visible.indexOf(l.id) > -1; }).map(function(l){
-    return '<div class="paychip">'+l.html+'</div>';
+  var visible=pays.length?pays.map(function(p){return p.id;}):methods.map(function(m){return m.id;});
+  var show=methods.filter(function(m){return m.ids.some(function(id){return visible.indexOf(id)>-1;})||visible.indexOf(m.id)>-1;});
+  document.getElementById('pms').innerHTML=show.map(function(m,i){
+    var logo=pays.find(function(p){return m.ids.indexOf(p.id)>-1&&p.customImage;})?'<img src="'+pays.find(function(p){return m.ids.indexOf(p.id)>-1&&p.customImage;}).customImage+'" style="height:20px;object-fit:contain">':PAY_SVG[m.ids[0]]||'';
+    return '<div class="pmrow'+(i===0?' on':'')+'" onclick="selPay(this)"><div class="pmradio"><div class="pmdot"></div></div><div class="pminfo"><div class="pmname">'+m.name+'</div><div class="pmsub">'+m.sub+'</div></div><div class="pmlogos">'+logo+'</div></div>';
   }).join('');
 }
 
-function renderPayMethods() {
-  var logos = SITE_CFG && SITE_CFG.paymentLogos ? SITE_CFG.paymentLogos : null;
-  var methods = [
-    {id:'card', name:'البطاقة الائتمانية', sub:'مدى · Visa · Mastercard',
-     logo:'<svg width="28" height="18" viewBox="0 0 40 24"><circle cx="14" cy="12" r="9" fill="#EB001B"/><circle cx="26" cy="12" r="9" fill="#F79E1B"/><path d="M20 4.8a9 9 0 010 14.4A9 9 0 0120 4.8z" fill="#FF5F00"/></svg><svg width="32" height="14" viewBox="0 0 48 18"><text x="2" y="15" font-family="Arial" font-size="15" font-weight="900" font-style="italic" fill="#1A1F71">VISA</text></svg>'},
-    {id:'applepay', name:'Apple Pay', sub:'الدفع السريع والآمن',
-     logo:'<svg width="13" height="16" viewBox="0 0 14 17" fill="#1d1d1f"><path d="M10.9.1c-.1 1.1-.5 2.2-1.2 3-.7.9-1.8 1.5-3 1.4.1-1.1.6-2.2 1.3-3C8.7.6 9.8.1 10.9.1zm2.8 12.1c-.7 1.1-1.5 2.1-2.7 2.1-1.2 0-1.5-.7-3.1-.7-1.6 0-1.9.8-3.1.8-1.2 0-2.1-1.1-2.8-2.2C.5 9.8.1 6.7 1.3 5c.8-1.2 2.1-2 3.5-2 1.4 0 2.2.8 3.3.8 1.1 0 1.8-.8 3.3-.8 1.2 0 2.4.7 3.1 1.7-.3.2-2.8 1.6-2.8 4.8 0 3.6 3.2 4.7 3.2 4.7z"/></svg>'},
-    {id:'tabby', name:'tabby', sub:'4 أقساط بدون فوائد أو رسوم',
-     logo:'<span style="font-size:13px;font-weight:800;color:#3EB489;font-family:Arial">tabby</span>'},
-    {id:'tamara', name:'tamara', sub:'3 أقساط بدون فوائد',
-     logo:'<span style="font-size:12px;font-weight:700;color:#333;font-family:Arial">tamara</span>'}
+function renderGiftPage(){
+  var gc=CFG&&CFG.pages&&CFG.pages.gift?CFG.pages.gift:{};
+  var amounts=gc.amounts||[200,300,500,1000];
+  document.getElementById('gift-amounts').innerHTML=amounts.map(function(a){
+    return '<div class="gift-amt" onclick="selGift(this)"><div class="gift-amt-val">'+a+'</div><div class="gift-amt-sr">ريال سعودي</div></div>';
+  }).join('');
+}
+function selGift(el){document.querySelectorAll('.gift-amt').forEach(function(e){e.classList.remove('sel');});el.classList.add('sel');}
+
+function renderMems(){
+  var mems=CFG&&CFG.pages&&CFG.pages.memberships&&CFG.pages.memberships.items?CFG.pages.memberships.items:[
+    {name:'Classic',price:4000,featured:false,features:['مناكير روسي','علاج فيشيال','12 زيارة / 12 شهراً']},
+    {name:'VIP',price:8000,featured:true,features:['جل اكستنشن أو بياب','مناكير روسي','علاج فيشيال','12 زيارة']},
+    {name:'V-VIP',price:10000,featured:false,features:['كل مميزات VIP','رموش كلاسيك','مساج','12 زيارة']}
   ];
-  var visible = logos ? logos.filter(function(l){ return l.visible !== false; }).map(function(l){ return l.id === 'mastercard' || l.id === 'visa' || l.id === 'mada' ? 'card' : l.id; }) : ['card','applepay','tabby','tamara'];
-  var uniqueVisible = visible.filter(function(v,i){ return visible.indexOf(v) === i; });
-  document.getElementById('pay-methods-list').innerHTML = methods.filter(function(m){ return uniqueVisible.indexOf(m.id) > -1; }).map(function(m,i){
-    return '<div class="pmrow'+(i===0?' on':'')+'" onclick="selPay(this)">'
-      +'<div class="pmradio"><div class="pmdot"></div></div>'
-      +'<div class="pminfo"><div class="pmname">'+m.name+'</div><div class="pmsub">'+m.sub+'</div></div>'
-      +'<div class="pmlogos">'+m.logo+'</div></div>';
+  document.getElementById('mem-grid').innerHTML=mems.map(function(m){
+    return '<div class="mem-card'+(m.featured?' featured':'')+'">'+
+      (m.featured?'<div class="mem-badge">الأكثر طلباً</div>':'')+
+      '<div class="mem-name">'+esc(m.name)+'</div>'+
+      '<div class="mem-price">'+Number(m.price).toLocaleString('en')+'<span class="mem-price-sr"> SAR</span></div>'+
+      '<ul class="mem-feats">'+(m.features||[]).map(function(f){return '<li class="mem-feat">'+esc(f)+'</li>';}).join('')+'</ul>'+
+      '<button class="mem-btn" onclick="go(\'svcs\')">احجزي الآن</button></div>';
   }).join('');
 }
 
-function renderGiftPage() {
-  var gc = SITE_CFG && SITE_CFG.giftCard ? SITE_CFG.giftCard : {};
-  var amounts = gc.amounts || [200, 300, 500, 1000];
-  document.getElementById('gift-amounts').innerHTML = amounts.map(function(a){
-    return '<div class="gift-amt" onclick="selGift(this)">'
-      +'<div class="gift-amt-val">'+a+'</div>'
-      +'<div class="gift-amt-sr">ريال سعودي</div></div>';
-  }).join('');
-}
-function selGift(el){
-  document.querySelectorAll('.gift-amt').forEach(function(e){e.classList.remove('sel');});
-  el.classList.add('sel');
-}
-
-function renderMemberships() {
-  var mems = SITE_CFG && SITE_CFG.memberships && SITE_CFG.memberships.length
-    ? SITE_CFG.memberships
-    : [
-        {name:'Classic', price:4000, featured:false, features:['مناكير روسي كامل','علاج فيشيال للبشرة','ماسك K18 للشعر','12 زيارة / 12 شهراً']},
-        {name:'VIP',     price:8000, featured:true,  features:['جل اكستنشن أو بياب','مناكير روسي','علاج فيشيال','لون فرنش','12 زيارة / 12 شهراً']},
-        {name:'V-VIP',   price:10000,featured:false, features:['كل مميزات VIP','رموش كلاسيك','30 دقيقة مساج','هدية ترحيبية فاخرة','12 زيارة / 12 شهراً']}
-      ];
-  document.getElementById('mem-grid').innerHTML = mems.map(function(m){
-    return '<div class="mem-card'+(m.featured?' featured':'')+'">'
-      +(m.featured?'<div class="mem-badge">الأكثر طلباً</div>':'')
-      +'<div class="mem-name">'+esc(m.name)+'</div>'
-      +'<div class="mem-price">'+Number(m.price).toLocaleString('en')+'<span class="mem-price-sr"> SAR</span></div>'
-      +'<ul class="mem-features">'+(m.features||[]).map(function(f){ return '<li class="mem-feature">'+esc(f)+'</li>'; }).join('')+'</ul>'
-      +'<button class="mem-btn" onclick="go(\'svcs\')">احجزي الآن</button></div>';
-  }).join('');
-}
-
-
-// ── MENU: display categories from CMS ──
-function buildSvcFromMenu(cats) {
-  var tabsH = '', bodyH = '', first = true;
-  cats.forEach(function(cat) {
-    var cid = 'c_' + cat.id.replace(/[^a-zA-Z0-9]/g,'');
-    tabsH += '<button class="tab'+(first?' on':'')+'" data-cid="'+cid+'" onclick="swTab(this.dataset.cid,this)">' + esc(cat.nameAr) + '</button>';
-    bodyH += '<div class="cpanel'+(first?' on':'')+'" id="'+cid+'">';
-    if (!cat.services || !cat.services.length) {
-      bodyH += '<div class="empty-cat">لا توجد خدمات في هذا القسم</div>';
-    } else {
-      bodyH += '<div class="sub-cards" style="padding:10px 0">';
-      cat.services.forEach(function(svc) { bodyH += buildMenuCard(svc); });
-      bodyH += '</div>';
-    }
-    bodyH += '</div>';
-    first = false;
-  });
-  document.getElementById('tabs').innerHTML = tabsH;
-  document.getElementById('svcbody').innerHTML = bodyH;
-}
-
-function buildMenuCard(svc) {
-  var pid = 'sc_' + svc.id.replace(/[^a-zA-Z0-9]/g,'');
-  var hasV = svc.hasVariants && svc.variants && svc.variants.length > 1;
-  var priceId = svc.rekazPriceId;
-  var name = svc.nameAr || '';
-  var desc = (svc.description||'').replace(/<[^>]*>/g,'').replace(/&amp;/g,'&').replace(/&nbsp;/g,' ').trim();
-  if (desc.length > 160) desc = desc.substring(0,160)+'...';
-  // click handled via clickAttr and data attributes above
-
-  var h = '<div class="sc" id="'+pid+'" '+clickAttr+dataAttrs+'>';
-  h += '<div class="scbar"></div>';
-  h += '<div class="scbody"><div class="scinfo"><div class="scname">'+esc(name)+'</div>';
-  if (desc) h += '<div class="scdesc">'+esc(desc)+'</div>';
-  if (svc.duration) h += '<div class="scdur"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>'+svc.duration+' دقيقة</div>';
-  h += '</div>';
-  h += '<div class="scright">';
-  h += '<div><div class="scprice"><span class="scsr">SAR </span>'+(hasV?'من ':'')+svc.amount+'</div><div class="scvat">شامل VAT</div></div>';
-  if (hasV) h += '<div class="varbtn" id="vb_'+svc.id.replace(/[^a-zA-Z0-9]/g,'')+'">خيارات <span class="vchev"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></span></div>';
-  else h += '<div class="scchk"><div class="chkd"></div></div>';
-  h += '</div></div>';
-
-  if (hasV) {
-    h += '<div class="vwrap" id="vw_'+svc.id.replace(/[^a-zA-Z0-9]/g,'')+'">';
-    svc.variants.forEach(function(vr) {
-      h += '<div class="vrow" id="vr_'+vr.id.replace(/-/g,'')+'" data-prod="'+svc.rekazProductId+'" data-price="'+vr.id+'" data-name="'+(vr.name||'').replace(/"/g,'')+'" data-dur="'+vr.duration+'" data-amt="'+vr.amount+'" onclick="event.stopPropagation();selVarEl(this)">';
-      h += '<div class="vdot"></div><div class="vinfo"><div class="vname">'+esc(vr.name||'')+'</div>';
-      if (vr.duration) h += '<div class="vdur">'+vr.duration+' دقيقة</div>';
-      h += '</div><div class="vprice"><span class="vsr">SAR </span>'+vr.amount+'</div><div class="vchk"><div class="vchkd"></div></div></div>';
-    });
-    h += '</div>';
-  }
-
-  if (svc.addOns && svc.addOns.length) {
-    h += '<div class="adwrap"><div class="adtitle">ADD-ONS · الإضافات</div>';
-    svc.addOns.forEach(function(ao) {
-      h += '<div class="adrow" id="ao_'+ao.id.replace(/-/g,'')+'" data-prod="'+svc.rekazProductId+'" data-ao="'+ao.id+'" data-name="'+(ao.nameAr||'').replace(/"/g,'')+'" data-amt="'+ao.amount+'" onclick="event.stopPropagation();togAddonEl(this)">';
-      h += '<div class="adchk"><div class="adchki"></div></div>';
-      h += '<span class="adname">'+esc(ao.nameAr||'')+'</span>';
-      h += '<span class="adprice"><span class="adprice-sr">+ SAR </span>'+ao.amount+'</span></div>';
-    });
-    h += '</div>';
-  }
-  h += '</div>';
-  return h;
-}
-
-// ── SERVICES — config-driven ──
-function cleanName(n){ if(!n)return ''; return n.includes(' - ')?n.split(' - ')[0].trim():n.trim(); }
-function safeAttr(s){ return (s||'').replace(/'/g,'&#39;').replace(/"/g,'&quot;'); }
-function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-
+// ── SERVICES: load from /menu ──
 async function loadProducts(){
-  try {
-    var r = await fetch(B+'/menu');
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-    var data = await r.json();
-    var cats = data.categories || [];
-    if (!cats.length) {
-      document.getElementById('tabs').innerHTML = '<span style="padding:12px 18px;font-size:11px;color:rgba(255,255,255,.35)">لم يتم إعداد الأقسام بعد — افتحي لوحة التحكم لإضافة الأقسام وربط الخدمات</span>';
+  document.getElementById('tabs').innerHTML='<span style="padding:12px 18px;font-size:10px;color:rgba(255,255,255,.25)">جاري التحميل...</span>';
+  try{
+    var r=await fetch(B+'/menu');
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    var d=await r.json();
+    var cats=d.categories||[];
+    if(!cats.length){
+      document.getElementById('tabs').innerHTML='';
+      document.getElementById('svcbody').innerHTML='<div class="empty-svcs">لم يتم إعداد الأقسام بعد<br>يرجى إعداد الأقسام وربط الخدمات من لوحة التحكم</div>';
       return;
     }
     buildSvcFromMenu(cats);
-  } catch(e) {
-    document.getElementById('tabs').innerHTML = '<span style="padding:12px 18px;font-size:11px;color:#e74c3c">فشل التحميل: '+esc(e.message)+'</span>';
+  }catch(e){
+    document.getElementById('tabs').innerHTML='';
+    document.getElementById('svcbody').innerHTML='<div class="empty-svcs" style="color:var(--err)">فشل التحميل: '+esc(e.message)+'</div>';
   }
 }
 
-function buildSvc(prods) {
-  // Build priceId → product map for quick lookup
-  var prodMap = {};
-  prods.forEach(function(p){
-    // Map by product id
-    prodMap[p.id] = p;
-    // Also map each pricing id
-    if (p.pricing) p.pricing.forEach(function(pr){ prodMap[pr.id] = p; });
-  });
-
-  var sections = SITE_CFG && SITE_CFG.sections && SITE_CFG.sections.length ? SITE_CFG.sections : null;
-
-  // If admin has configured sections, use them — otherwise auto-group
-  if (sections && sections.length) {
-    renderConfiguredSections(sections, prodMap, prods);
-  } else {
-    renderAutoSections(prods);
-  }
-}
-
-function renderConfiguredSections(sections, prodMap, allProds) {
-  // Map all rekaz products by id
-  var rekazById = {};
-  allProds.forEach(function(p){ rekazById[p.id] = p; });
-
-  var tabsH = '', bodyH = '', first = true;
-  var visibleSecs = sections.filter(function(s){ return s.visible !== false; });
-
-  if (!visibleSecs.length) { renderAutoSections(allProds); return; }
-
-  visibleSecs.forEach(function(sec) {
-    var secId = 'sec_' + sec.nameAr.replace(/[^أ-يa-zA-Z0-9]/g,'');
-    tabsH += '<button class="tab'+(first?' on':'')+'" data-cid="'+secId+'" onclick="swTab(this.dataset.cid,this)">'+esc(sec.nameAr)+'</button>';
-    bodyH += '<div class="cpanel'+(first?' on':'')+'" id="'+secId+'">';
-    var subSections = sec.subs || [];
-    if (subSections.length) {
-      subSections.forEach(function(sub) {
-        // sub can have services array with priceIds
-        var services = (sub.services || []).map(function(svcId){
-          // svcId can be product id or price id
-          var p = rekazById[svcId] || prodMap[svcId];
-          return p || null;
-        }).filter(Boolean);
-        // Deduplicate
-        var seen = {}; services = services.filter(function(p){ if(seen[p.id]) return false; seen[p.id]=true; return true; });
-        if (!services.length) return;
-        var parts = (sub.name||'').split(' · ');
-        bodyH += '<div class="sub-sec"><div class="sub-hd"><span class="sub-en">'+(parts[0]||sub.name)+'</span>';
-        if (parts[1]) bodyH += '<span class="sub-ar">'+esc(parts[1])+'</span>';
-        bodyH += '<div class="sub-line"></div></div><div class="sub-cards">';
-        services.forEach(function(p){ bodyH += buildCard(p); });
-        bodyH += '</div></div>';
-      });
-    } else {
-      // No sub-sections — show all services in this section
-      var services = (sec.services || []).map(function(svcId){
-        var p = rekazById[svcId] || prodMap[svcId]; return p||null;
-      }).filter(Boolean);
-      var seen = {}; services = services.filter(function(p){ if(seen[p.id]) return false; seen[p.id]=true; return true; });
-      if (services.length) {
-        bodyH += '<div class="sub-cards" style="padding:10px 0">';
-        services.forEach(function(p){ bodyH += buildCard(p); });
-        bodyH += '</div>';
-      } else {
-        bodyH += '<div class="empty-cat">لا توجد خدمات في هذا القسم بعد.<br>أضيفيها من لوحة التحكم.</div>';
-      }
+function buildSvcFromMenu(cats){
+  var tabsH='',bodyH='',first=true;
+  cats.forEach(function(cat){
+    var cid='cat_'+cat.id.replace(/[^a-zA-Z0-9]/g,'');
+    tabsH+='<button class="tab'+(first?' on':'')+'" data-cid="'+cid+'" onclick="swTab(this.dataset.cid,this)">'+esc(cat.nameAr)+'</button>';
+    bodyH+='<div class="cpanel'+(first?' on':'')+'" id="'+cid+'">';
+    // Sub-section header
+    if(cat.subLabel){
+      var sp=cat.subLabel.split(' · ');
+      bodyH+='<div class="sub-sec"><div class="sub-hd"><span class="sub-en">'+(sp[0]||cat.subLabel)+'</span>';
+      if(sp[1])bodyH+='<span class="sub-ar">'+esc(sp[1])+'</span>';
+      bodyH+='<div class="sub-line"></div></div><div class="sub-cards">';
+      cat.services.forEach(function(svc){bodyH+=buildCard(svc);});
+      bodyH+='</div></div>';
+    }else{
+      bodyH+='<div class="sub-cards" style="padding-top:10px">';
+      cat.services.forEach(function(svc){bodyH+=buildCard(svc);});
+      bodyH+='</div>';
     }
-    bodyH += '</div>';
-    first = false;
+    bodyH+='</div>';
+    first=false;
   });
-  document.getElementById('tabs').innerHTML = tabsH;
-  document.getElementById('svcbody').innerHTML = bodyH;
+  document.getElementById('tabs').innerHTML=tabsH;
+  document.getElementById('svcbody').innerHTML=bodyH;
 }
 
-// Fallback auto-grouping when no admin sections configured
-var AUTO_CATS = [
-  {cat:'الأظافر', subs:[
-    {sub:'REMOVAL · إزالة',            kw:['إزالة','removal']},
-    {sub:'EXTENSIONS · اكستنشن وبياب', kw:['اكستنشن','extension','بياب','biab','تعبئة','infill']},
-    {sub:'COLOR · لون وطلاء',          kw:['لون','color','شيلاك','shellac','فرنش','french','كات','cat eye']},
-    {sub:'NAIL ART · رسم أظافر',       kw:['رسم','nail art']},
-    {sub:'PRESS-ON · اظافر اصطناعية',  kw:['press-on','press on','اصطناعي']},
-    {sub:'QUICK FIX · تنظيف سريع',    kw:['تنظيف سريع','quick fix']},
-    {sub:'PEDICURE · بديكير',          kw:['بديكير','pedicure']},
-    {sub:'MANICURE · مناكير',          kw:['مناكير','manicure']}
-  ]},
-  {cat:'الرموش', subs:[
-    {sub:'LASHES · رموش',              kw:['رموش','lash','volume','classic lash','fox','barbie']},
-    {sub:'LIFTING · رفع',              kw:['lifting','lamination','رفع']},
-    {sub:'BROWS · حواجب',              kw:['حواجب','brow']}
-  ]},
-  {cat:'الشعر', subs:[
-    {sub:'BLOW DRY · استشوار',         kw:['سشوار','استشوار','blow dry','blowdry']},
-    {sub:'STYLING · تسريحات',          kw:['تسريحة','updo','styling']},
-    {sub:'TREATMENTS · علاجات',        kw:['k18','treatment','علاج','keratin','كيراتين']},
-    {sub:'HAIR CUT · قص',              kw:['قص','trim','cut']}
-  ]},
-  {cat:'مساج', subs:[
-    {sub:'MASSAGE · مساج',             kw:['مساج','massage']}
-  ]}
-];
-
-function autoClassify(p) {
-  var n = ((p.nameAr||p.name||'')+' '+(p.nameEn||'')).toLowerCase();
-  for (var i=0; i<AUTO_CATS.length; i++) {
-    var cat = AUTO_CATS[i];
-    for (var j=0; j<cat.subs.length; j++) {
-      var sub = cat.subs[j];
-      for (var k=0; k<sub.kw.length; k++) {
-        if (n.includes(sub.kw[k])) return {cat:cat.cat, sub:sub.sub};
-      }
-    }
-  }
-  return {cat:'الأظافر', sub:'MANICURE · مناكير'};
-}
-
-function renderAutoSections(prods) {
-  var catMap = {}, catOrder = [];
-  prods.forEach(function(p){
-    var cs = autoClassify(p);
-    if (!catMap[cs.cat]) { catMap[cs.cat] = {}; catOrder.push(cs.cat); }
-    if (!catMap[cs.cat][cs.sub]) catMap[cs.cat][cs.sub] = [];
-    // Prevent duplicates
-    if (!catMap[cs.cat][cs.sub].find(function(x){ return x.id===p.id; }))
-      catMap[cs.cat][cs.sub].push(p);
-  });
-  var tabsH='', bodyH='', first=true;
-  catOrder.forEach(function(cat){
-    var cid='auto_'+cat.replace(/[^أ-يa-zA-Z0-9]/g,'');
-    tabsH += '<button class="tab'+(first?' on':'')+'" data-cid="'+cid+'" onclick="swTab(this.dataset.cid,this)">'+cat+'</button>';
-    bodyH += '<div class="cpanel'+(first?' on':'')+'" id="'+cid+'">';
-    for (var sub in catMap[cat]) {
-      var items = catMap[cat][sub];
-      if (!items.length) continue;
-      var parts = sub.split(' · ');
-      bodyH += '<div class="sub-sec"><div class="sub-hd"><span class="sub-en">'+(parts[0]||sub)+'</span>';
-      if (parts[1]) bodyH += '<span class="sub-ar">'+esc(parts[1])+'</span>';
-      bodyH += '<div class="sub-line"></div></div><div class="sub-cards">';
-      items.forEach(function(p){ bodyH += buildCard(p); });
-      bodyH += '</div></div>';
-    }
-    bodyH += '</div>';
-    first = false;
-  });
-  document.getElementById('tabs').innerHTML = tabsH;
-  document.getElementById('svcbody').innerHTML = bodyH;
-}
-
-function buildCard(p) {
-  var hasV = p.pricing && p.pricing.length > 1;
-  var pid = 'sc'+p.id.replace(/-/g,'');
-  var priceId = p.pricing && p.pricing[0] ? p.pricing[0].id : '';
-  var amount = p.amount || 0;
-  var dur = p.duration || 0;
-  var name = cleanName(p.nameAr||p.name||'');
-  var desc = (p.description||p.shortDescription||'').replace(/<[^>]*>/g,'').replace(/&amp;/g,'&').replace(/&nbsp;/g,' ').trim();
-  if (desc.length > 160) desc = desc.substring(0,160)+'...';
-  var click = hasV
-    ? 'onclick="togCard(\''+pid+'\')"'
-    : 'onclick="selCard(\''+p.id+'\',\''+priceId+'\',\''+safeAttr(name)+'\','+dur+','+amount+',\''+pid+'\')"';
-  var hasAd = p.addOns && p.addOns.length > 0;
-  var h = '<div class="sc" id="'+pid+'" '+clickAttr+dataAttrs+'>';
-  h += '<div class="scbar"></div>';
-  h += '<div class="scbody"><div class="scinfo"><div class="scname">'+esc(name)+'</div>';
-  if (desc) h += '<div class="scdesc">'+esc(desc)+'</div>';
-  if (dur) h += '<div class="scdur"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>'+dur+' دقيقة</div>';
-  h += '</div><div class="scright">';
-  h += '<div><div class="scprice"><span class="scsr">SAR </span>'+(hasV?'من '+amount:amount)+'</div><div class="scvat">شامل VAT</div></div>';
-  if (hasV) h += '<div class="varbtn" id="vb'+p.id.replace(/-/g,'')+'">خيارات <span class="vchev"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></span></div>';
-  else h += '<div class="scchk"><div class="chkd"></div></div>';
-  h += '</div></div>';
-  if (hasV) {
-    h += '<div class="vwrap" id="vw'+p.id.replace(/-/g,'')+'">';
-    p.pricing.forEach(function(pr){
-      var vn = cleanName(pr.name||''); var vd = pr.duration||0;
-      h += '<div class="vrow" id="vr'+pr.id.replace(/-/g,'')+'" onclick="event.stopPropagation();selVar(\''+p.id+'\',\''+pr.id+'\',\''+safeAttr(vn)+'\','+vd+','+pr.amount+')">';
-      h += '<div class="vdot"></div><div class="vinfo"><div class="vname">'+esc(vn)+'</div>';
-      if (vd) h += '<div class="vdur"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>'+vd+' دقيقة</div>';
-      h += '</div><div class="vprice"><span class="vsr">SAR </span>'+pr.amount+'</div><div class="vchk"><div class="vchkd"></div></div></div>';
+function buildCard(svc){
+  var pid='sc_'+svc.id.replace(/[^a-zA-Z0-9]/g,'');
+  var hasV=svc.hasVariants&&svc.variants&&svc.variants.length>1;
+  var name=svc.nameAr||'';
+  var desc=(svc.description||'').replace(/<[^>]*>/g,'').replace(/&amp;/g,'&').replace(/&nbsp;/g,' ').trim();
+  if(desc.length>160)desc=desc.substring(0,160)+'...';
+  var dur=svc.duration||0;
+  var amt=svc.amount||0;
+  // Use data attributes — zero quote escaping issues
+  var h='<div class="sc" id="'+pid+'"'
+    +' data-pid="'+pid+'"'
+    +' data-prod="'+esc2(svc.rekazProductId||'')+'"'
+    +' data-price="'+esc2(svc.rekazPriceId||'')+'"'
+    +' data-name="'+esc2(name)+'"'
+    +' data-dur="'+dur+'"'
+    +' data-amt="'+amt+'"'
+    +' data-hasv="'+(hasV?1:0)+'"'
+    +' onclick="onCardClick(this)">';
+  h+='<div class="scbar"></div>';
+  h+='<div class="scbody"><div class="scinfo"><div class="scname">'+esc(name)+'</div>';
+  if(desc)h+='<div class="scdesc">'+esc(desc)+'</div>';
+  if(dur)h+='<div class="scdur"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>'+dur+' دقيقة</div>';
+  h+='</div><div class="scright">';
+  h+='<div><div class="scprice"><span class="scsr">SAR </span>'+(hasV?'من ':'')+amt+'</div><div class="scvat">شامل VAT</div></div>';
+  if(hasV)h+='<div class="varbtn" id="vb_'+svc.id.replace(/[^a-zA-Z0-9]/g,'')+'">خيارات <span class="vchev"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></span></div>';
+  else h+='<div class="scchk"><div class="chkd"></div></div>';
+  h+='</div></div>';
+  if(hasV){
+    h+='<div class="vwrap" id="vw_'+svc.id.replace(/[^a-zA-Z0-9]/g,'')+'"">';
+    svc.variants.forEach(function(vr){
+      var vn=(vr.name||'');
+      h+='<div class="vrow" id="vr_'+vr.id.replace(/-/g,'')+'"'
+        +' data-prod="'+esc2(svc.rekazProductId||'')+'"'
+        +' data-price="'+esc2(vr.id)+'"'
+        +' data-name="'+esc2(vn)+'"'
+        +' data-dur="'+(vr.duration||0)+'"'
+        +' data-amt="'+vr.amount+'"'
+        +' data-card="'+pid+'"'
+        +' onclick="event.stopPropagation();onVarClick(this)">';
+      h+='<div class="vdot"></div><div class="vinfo"><div class="vname">'+esc(vn)+'</div>';
+      if(vr.duration)h+='<div class="vdur"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>'+vr.duration+' دقيقة</div>';
+      h+='</div><div class="vprice"><span class="vsr">SAR </span>'+vr.amount+'</div><div class="vchk"><div class="vchkd"></div></div></div>';
     });
-    h += '</div>';
+    h+='</div>';
   }
-  if (hasAd) {
-    h += '<div class="adwrap"><div class="adtitle">ADD-ONS · الإضافات</div>';
-    p.addOns.forEach(function(ao){
-      var an = cleanName(ao.nameAr||ao.name||'');
-      var ap = typeof ao.amount==='number' ? ao.amount : parseFloat(ao.amount)||0;
-      h += '<div class="adrow" id="ao'+ao.id.replace(/-/g,'')+'" onclick="event.stopPropagation();togAddon(\''+p.id+'\',\''+ao.id+'\',\''+safeAttr(an)+'\','+ap+')">';
-      h += '<div class="adchk"><div class="adchki"></div></div>';
-      h += '<span class="adname">'+esc(an)+'</span>';
-      h += '<span class="adprice"><span class="adprice-sr">+ SAR </span>'+ap+'</span></div>';
+  if(svc.addOns&&svc.addOns.length){
+    h+='<div class="adwrap"><div class="adtitle">ADD-ONS · الإضافات</div>';
+    svc.addOns.forEach(function(ao){
+      h+='<div class="adrow" id="ao_'+ao.id.replace(/-/g,'')+'"'
+        +' data-aoid="'+esc2(ao.id)+'"'
+        +' data-name="'+esc2(ao.nameAr||'')+'"'
+        +' data-amt="'+(ao.amount||0)+'"'
+        +' onclick="event.stopPropagation();onAddonClick(this)">';
+      h+='<div class="adchk"><div class="adchki"></div></div>';
+      h+='<span class="adname">'+esc(ao.nameAr||'')+'</span>';
+      h+='<span class="adprice"><span class="adpsr">+ SAR </span>'+(ao.amount||0)+'</span></div>';
     });
-    h += '</div>';
+    h+='</div>';
   }
-  h += '</div>';
+  h+='</div>';
   return h;
 }
 
-function swTab(cid,btn){
-  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('on');});
-  btn.classList.add('on');
-  document.querySelectorAll('.cpanel').forEach(function(c){c.classList.remove('on');});
-  document.getElementById(cid).classList.add('on');
+// Click handlers using data attributes
+function onCardClick(el){
+  var hasV=el.dataset.hasv==='1';
+  if(hasV){
+    var rid=el.id.replace(/^sc_?/,'');
+    var vw=document.getElementById('vw_'+rid);
+    var vb=document.getElementById('vb_'+rid);
+    var open=el.classList.toggle('has-open');
+    if(vw)vw.classList.toggle('open',open);
+    if(vb)vb.classList.toggle('open',open);
+  }else{
+    var pid=el.id;
+    if(S.cart&&S.cart.pid===pid){clearSel();S.cart=null;updCart();return;}
+    clearSel();
+    S.cart={id:el.dataset.prod,priceId:el.dataset.price,name:el.dataset.name,
+            dur:parseInt(el.dataset.dur)||0,amount:parseFloat(el.dataset.amt)||0,pid:pid};
+    el.classList.add('sel');updCart();
+  }
 }
-function togCard(pid){
-  var card=document.getElementById(pid);
-  // Handle both sc_ID and scID formats
-  var rid=pid.replace(/^sc_?/,'');
-  var vw=document.getElementById('vw_'+rid)||document.getElementById('vw'+rid);
-  var vb=document.getElementById('vb_'+rid)||document.getElementById('vb'+rid);
-  var open=card.classList.toggle('has-open');
-  if(vw)vw.classList.toggle('open',open);
-  if(vb)vb.classList.toggle('open',open);
+function onVarClick(el){
+  var pid=el.dataset.card;
+  var priceId=el.dataset.price;
+  if(S.cart&&S.cart.priceId===priceId){clearSel();S.cart=null;if(pid)document.getElementById(pid).classList.remove('sel');updCart();return;}
+  clearSel();
+  el.classList.add('sel');
+  S.cart={id:el.dataset.prod,priceId:priceId,name:el.dataset.name,
+          dur:parseInt(el.dataset.dur)||0,amount:parseFloat(el.dataset.amt)||0,pid:pid};
+  if(pid)document.getElementById(pid).classList.add('sel');
+  updCart();
 }
-
-function selCardEl(el) {
-  var pid = el.id;
-  var id = el.dataset.prod;
-  var priceId = el.dataset.price;
-  var name = el.dataset.name;
-  var dur = parseInt(el.dataset.dur) || 0;
-  var amount = parseFloat(el.dataset.amt) || 0;
-  selCard(id, priceId, name, dur, amount, pid);
+function onAddonClick(el){
+  var id=el.dataset.aoid;
+  var was=el.classList.contains('sel');
+  if(was){el.classList.remove('sel');S.addons=S.addons.filter(function(a){return a.id!==id;});}
+  else{el.classList.add('sel');S.addons.push({id:id,name:el.dataset.name,price:parseFloat(el.dataset.amt)||0});}
+  updCart();
 }
-
-function selVarEl(el) {
-  var pid = el.closest('.sc').id;
-  var prodId = el.dataset.prod;
-  var priceId = el.dataset.price;
-  var name = el.dataset.name || '';
-  var dur = parseInt(el.dataset.dur) || 0;
-  var amount = parseFloat(el.dataset.amt) || 0;
-  selVar(prodId, priceId, name, dur, amount);
-  // Update card pid reference
-  if (S.cart) S.cart.pid = pid;
-  document.getElementById(pid).classList.toggle('sel', S.cart !== null);
-}
-
-
-function togAddonEl(el) {
-  var pid = el.dataset.prod;
-  var aoId = el.dataset.ao;
-  var name = el.dataset.name || '';
-  var price = parseFloat(el.dataset.amt) || 0;
-  togAddon(pid, aoId, name, price);
-}
-
 function clearSel(){
   if(S.cart){
-    var old=document.getElementById(S.cart.pid); if(old)old.classList.remove('sel');
+    var old=document.getElementById(S.cart.pid);if(old)old.classList.remove('sel');
     document.querySelectorAll('.vrow.sel,.adrow.sel').forEach(function(v){v.classList.remove('sel');});
   }
   S.addons=[];
 }
-function selCard(id,priceId,name,dur,amount,pid){
-  if(S.cart&&S.cart.pid===pid){clearSel();S.cart=null;updCart();return;}
-  clearSel();
-  S.cart={id:id,priceId:priceId,name:name,dur:dur,amount:amount,pid:pid};
-  document.getElementById(pid).classList.add('sel');
-  updCart();
+function swTab(cid,btn){
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('on');});btn.classList.add('on');
+  document.querySelectorAll('.cpanel').forEach(function(c){c.classList.remove('on');});document.getElementById(cid).classList.add('on');
 }
-function selVar(pid,priceId,name,dur,amount){
-  var ppid='sc'+pid.replace(/-/g,'');
-  if(S.cart&&S.cart.priceId===priceId){clearSel();S.cart=null;document.getElementById(ppid).classList.remove('sel');updCart();return;}
-  clearSel();
-  var vrid='vr'+priceId.replace(/-/g,'');
-  var vr=document.getElementById(vrid); if(!vr)return;
-  vr.classList.add('sel');
-  S.cart={id:pid,priceId:priceId,name:name,dur:dur,amount:amount,pid:ppid};
-  document.getElementById(ppid).classList.add('sel');
-  updCart();
-}
-function togAddon(pid,aoId,name,price){
-  var el=document.getElementById('ao'+aoId.replace(/-/g,'')); if(!el)return;
-  var was=el.classList.contains('sel');
-  if(was){el.classList.remove('sel');S.addons=S.addons.filter(function(a){return a.id!==aoId;});}
-  else{el.classList.add('sel');S.addons.push({id:aoId,name:name,price:price});}
-  updCart();
-}
-function calcTotal(){ if(!S.cart)return 0; return S.cart.amount+S.addons.reduce(function(s,a){return s+a.price;},0)-(S.disc||0); }
+function calcTotal(){if(!S.cart)return 0;return S.cart.amount+S.addons.reduce(function(s,a){return s+a.price;},0)-(S.disc||0);}
 function updCart(){
-  var has=S.cart!==null; var tot=calcTotal();
+  var has=S.cart!==null;var tot=calcTotal();
   document.getElementById('cartcnt').textContent=has?'1 خدمة مختارة':'لم يتم الاختيار بعد';
   document.getElementById('carttot').textContent=tot.toLocaleString('en');
   document.getElementById('carttag').innerHTML=has?'<span class="carttag">'+esc(S.cart.name)+(S.addons.length?' +'+S.addons.length+' إضافة':'')+'</span>':'';
@@ -1109,12 +887,12 @@ async function loadSlots(y,m,d){
   var ds=y+'-'+p2(m+1)+'-'+p2(d);
   try{
     var q=new URLSearchParams({StartDate:ds+'T00:00:00',EndDate:ds+'T23:59:59',PriceId:S.cart.priceId,MinQuantity:'1'});
-    var r=await fetch(B+'/slots?'+q); if(!r.ok)throw new Error('HTTP '+r.status);
-    var raw=await r.json(); var seen={};
+    var r=await fetch(B+'/slots?'+q);if(!r.ok)throw new Error('HTTP '+r.status);
+    var raw=await r.json();var seen={};
     allSlots=(Array.isArray(raw)?raw:[]).filter(function(s){
       if(!s.isAvailable||s.isOutDated)return false;
       if(toASTDate(s.from)!==ds)return false;
-      var l=toAST(s.from); if(seen[l])return false; seen[l]=true; return true;
+      var l=toAST(s.from);if(seen[l])return false;seen[l]=true;return true;
     });
     if(!allSlots.length){document.getElementById('slotsbox').innerHTML='<div class="slotnone">لا توجد مواعيد متاحة في هذا اليوم</div>';return;}
     var h='<div class="slots">';
@@ -1133,37 +911,26 @@ function pickSlot(i,lbl){
 
 // ── OTP ──
 function onPh(){document.getElementById('btnph').disabled=document.getElementById('inpphone').value.length<10;}
-function startOtpTimer(){
-  var secs=300;
-  clearInterval(otpTimerInterval);
-  var btn=document.getElementById('otp-resend');
-  btn.disabled=true;
-  otpTimerInterval=setInterval(function(){
-    secs--;
-    var m=Math.floor(secs/60),s=secs%60;
-    document.getElementById('otp-timer').textContent='الرمز صالح: '+m+':'+p2(s);
-    if(secs<=0){clearInterval(otpTimerInterval);btn.disabled=false;document.getElementById('otp-timer').textContent='انتهت صلاحية الرمز';}
+function startTimer(){
+  var s=300;clearInterval(otpTimer);
+  var btn=document.getElementById('otprsnd');btn.disabled=true;
+  otpTimer=setInterval(function(){
+    s--;var m=Math.floor(s/60);
+    document.getElementById('otptimer').textContent='الرمز صالح: '+m+':'+p2(s%60);
+    if(s<=0){clearInterval(otpTimer);btn.disabled=false;document.getElementById('otptimer').textContent='انتهت صلاحية الرمز';}
   },1000);
 }
-async function sendOTP(resend){
-  var ph=document.getElementById('inpphone').value.trim();
-  if(ph.length<10)return;
-  S.phone=ph;
-  var btn=document.getElementById('btnph');
-  btn.classList.add('ld');btn.disabled=true;showErr('errph','');
+async function sendOTP(r2){
+  var ph=document.getElementById('inpphone').value.trim();if(ph.length<10)return;
+  S.phone=ph;var btn=document.getElementById('btnph');btn.classList.add('ld');btn.disabled=true;showErr('errph','');
   try{
     var r=await fetch(B+'/send-otp',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone:ph})});
-    var d=await r.json(); if(!r.ok)throw new Error(d.error||'فشل الإرسال');
+    var d=await r.json();if(!r.ok)throw new Error(d.error||'فشل الإرسال');
     ['o1','o2','o3','o4'].forEach(function(id){document.getElementById(id).value='';});
     document.getElementById('otphnt').textContent='تم الإرسال على '+ph;
-    // Show OTP code clearly
-    var codeBox=document.getElementById('otp-code-show');
-    if(d.debug_otp){
-      codeBox.innerHTML='<div class="otp-code-display">'+d.debug_otp+'</div>';
-    }else{codeBox.innerHTML='';}
-    startOtpTimer();
-    go('otp');
-    setTimeout(function(){document.getElementById('o1').focus();},300);
+    var cb=document.getElementById('otpcode');
+    cb.innerHTML=d.debug_otp?'<div class="otpcode">'+d.debug_otp+'</div>':'';
+    startTimer();go('otp');setTimeout(function(){document.getElementById('o1').focus();},300);
   }catch(e){showErr('errph',e.message);}
   btn.classList.remove('ld');btn.disabled=false;
 }
@@ -1175,9 +942,8 @@ async function verOTP(){
   var btn=document.getElementById('btnotp');btn.classList.add('ld');btn.disabled=true;showErr('errotp','');
   try{
     var r=await fetch(B+'/verify-otp',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone:S.phone,otp:getOTP()})});
-    var d=await r.json(); if(!r.ok)throw new Error(d.error||'رمز غير صحيح');
-    clearInterval(otpTimerInterval);
-    go('confirm');
+    var d=await r.json();if(!r.ok)throw new Error(d.error||'رمز غير صحيح');
+    clearInterval(otpTimer);go('confirm');
   }catch(e){showErr('errotp',e.message);}
   btn.classList.remove('ld');btn.disabled=false;
 }
@@ -1187,8 +953,7 @@ function buildConfirm(){
   if(!S.cart||!S.date)return;
   var d=S.date,dl=DA[new Date(d.y,d.m,d.d).getDay()]+' '+d.d+' '+MO[d.m];
   var at=S.addons.reduce(function(s,a){return s+a.price;},0);
-  var sub=S.cart.amount+at,disc=S.disc||0,tot=sub-disc;
-  var base=Math.round(tot/1.15),vat=tot-base;
+  var sub=S.cart.amount+at,disc=S.disc||0,tot=sub-disc,base=Math.round(tot/1.15),vat=tot-base;
   var h='<div class="sumrow"><span class="suml">الخدمة</span><span class="sumv">'+esc(S.cart.name)+'</span></div>';
   h+='<div class="sumrow"><span class="suml">المدة</span><span class="sumv">'+S.cart.dur+' دقيقة</span></div>';
   h+='<div class="sumrow"><span class="suml">التاريخ</span><span class="sumv">'+dl+'</span></div>';
@@ -1209,8 +974,7 @@ function applyDisc(){
   if(codes[code]){
     var at=S.addons.reduce(function(s,a){return s+a.price;},0);
     S.disc=Math.round(((S.cart?S.cart.amount:0)+at)*codes[code]/100);
-    msg.className='discm ok';msg.textContent='تم تطبيق خصم '+codes[code]+'%';
-    buildConfirm();
+    msg.className='discm ok';msg.textContent='تم تطبيق خصم '+codes[code]+'%';buildConfirm();
   }else{S.disc=0;msg.className='discm err';msg.textContent='كود غير صحيح';}
 }
 
@@ -1218,16 +982,16 @@ function applyDisc(){
 async function doBook(){
   var name=document.getElementById('inpname').value.trim();
   if(!name){showErr('errconf','يرجى إدخال اسمك الكامل');return;}
-  if(!S.phone||!S.slot||!S.cart){showErr('errconf','بيانات ناقصة، ابدئي من الخطوة الأولى');return;}
+  if(!S.phone||!S.slot||!S.cart){showErr('errconf','بيانات ناقصة');return;}
   var btn=document.getElementById('btnconf');btn.classList.add('ld');btn.disabled=true;showErr('errconf','');
   try{
     var cr=await fetch(B+'/create-customer',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:name,phone:S.phone})});
-    var cd=await cr.json(); if(!cr.ok)throw new Error(cd.error||'فشل إنشاء العميل');
+    var cd=await cr.json();if(!cr.ok)throw new Error(cd.error||'فشل إنشاء العميل');
     S.cid=cd.customerId;
     var br=await fetch(B+'/create-booking',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({customerId:S.cid,phone:S.phone,priceId:S.cart.priceId,from:S.slot.from,to:S.slot.to})});
-    var bd=await br.json(); if(!br.ok)throw new Error(bd.error||'فشل إنشاء الحجز');
-    S.payUrl=bd.paymentUrl||null;
-    var ref=bd.orderNumber||bd.orderId||'—';
+    var bd=await br.json();if(!br.ok)throw new Error(bd.error||'فشل الحجز');
+    S.payUrl=bd.payUrl||null;
+    var ref=bd.orderNumber||'—';
     var dd=S.date,dl=DA[new Date(dd.y,dd.m,dd.d).getDay()]+' '+dd.d+' '+MO[dd.m];
     var tot=calcTotal();
     document.getElementById('succard').innerHTML=
@@ -1238,14 +1002,14 @@ async function doBook(){
       '<div class="sucrow"><span class="suclbl">الوقت</span><span class="sucval">'+S.slotLbl+'</span></div>'+
       '<div class="sucrow"><span class="suclbl">الإجمالي</span><span class="sucval">SAR '+tot.toLocaleString('en')+'</span></div>';
     document.getElementById('sucref').textContent=ref;
-    if(S.payUrl){document.getElementById('sucpay').style.display='block';}
+    if(S.payUrl)document.getElementById('sucpay').style.display='block';
     go('suc');
-    if(S.payUrl) setTimeout(openPayPopup,800);
+    if(S.payUrl)setTimeout(openPayPopup,800);
   }catch(e){showErr('errconf',e.message);}
   btn.classList.remove('ld');btn.disabled=false;
 }
 
-// ── PAYMENT POPUP ──
+// ── POPUP ──
 function openPayPopup(){
   if(!S.payUrl)return;
   document.getElementById('popAmt').textContent=calcTotal().toLocaleString('en');
@@ -1263,7 +1027,7 @@ function go(id){
   if(id==='confirm')buildConfirm();
 }
 function openWA(){
-  var num=(SITE_CFG&&SITE_CFG.social&&SITE_CFG.social.whatsapp)||'966500000000';
+  var num=(CFG&&CFG.social&&CFG.social.whatsapp)||'966500000000';
   window.open('https://wa.me/'+num.replace(/\D/g,''),'_blank');
 }
 function resetAll(){
@@ -1277,13 +1041,14 @@ function resetAll(){
   document.getElementById('cartbar').classList.remove('up');
   document.getElementById('slotsec').style.display='none';
   document.getElementById('dtfoot').style.display='none';
-  clearInterval(otpTimerInterval);
+  clearInterval(otpTimer);
   closePopup();
   go('home');
 }
 function showErr(id,msg){var el=document.getElementById(id);if(!el)return;el.textContent=msg;el.style.display=msg?'block':'none';}
+function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function esc2(s){return (s||'').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
 
-// ── START ──
 renderCal();
 init().then(loadProducts);
 </script>
