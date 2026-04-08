@@ -258,6 +258,26 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink2);color:#fff;directio
           <div class="f"><label>تدوير الزوايا (border-radius): <span id="brad-lbl">0</span>px</label><input type="range" id="c-brad" min="0" max="20" oninput="document.getElementById('brad-lbl').textContent=this.value"></div>
         </div>
         <div class="card">
+          <div class="card-ttl">الشعار</div>
+          <div style="display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap">
+            <div style="flex:1;min-width:180px">
+              <div class="f"><label>نص الشعار (الاسم)</label><input type="text" id="l-logo" placeholder="GRAFF SPA"></div>
+              <div class="f"><label>لون الكلمة الثانية (الجزء الذهبي)</label><div class="swatch" id="sw-logo-acc"></div><input type="color" id="c-logo-acc" oninput="document.getElementById('sw-logo-acc').style.background=this.value"></div>
+            </div>
+            <div style="flex:1;min-width:180px">
+              <div class="f">
+                <label>صورة الشعار (PNG/SVG — اختياري، تستبدل النص)</label>
+                <div id="logo-preview" style="height:60px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);margin-bottom:8px;font-size:12px;color:rgba(255,255,255,.3)">لا توجد صورة</div>
+                <label style="cursor:pointer;display:inline-block;padding:8px 14px;background:rgba(184,150,90,.15);border:1px solid rgba(184,150,90,.3);color:var(--gold);font-size:11px">
+                  رفع صورة الشعار
+                  <input type="file" accept="image/*" style="display:none" onchange="uploadLogo(this)">
+                </label>
+                <button class="li-btn" style="margin-right:8px" onclick="clearLogo()">حذف</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
           <div class="card-ttl">النصوص</div>
           <div class="gr2">
             <div class="f"><label>العبارة الرئيسية (Tagline)</label><input type="text" id="l-tagline"></div>
@@ -279,12 +299,19 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink2);color:#fff;directio
       <!-- GIFT -->
       <div class="panel" id="p-gift">
         <div class="card">
-          <div class="card-ttl">محتوى صفحة الإهداء</div>
+          <div class="card-ttl">إعدادات بطاقة الإهداء</div>
+          <div class="gr2">
+            <div class="f"><label>العنوان</label><input type="text" id="gc-title" placeholder="بطاقة الإهداء"></div>
+            <div class="f"><label>العنوان الفرعي</label><input type="text" id="gc-subtitle" placeholder="اهدي تجربة لا تُنسى"></div>
+          </div>
+          <div class="f"><label>المبالغ المتاحة (مفصولة بفاصلة)</label><input type="text" id="gc-amounts" placeholder="200,300,500,1000" style="direction:ltr;text-align:left"></div>
+        </div>
+        <div class="card">
+          <div class="card-ttl">محتوى إضافي</div>
           <div id="gift-blocks"></div>
           <div style="display:flex;gap:8px;margin-top:12px">
             <button class="add-btn" style="margin:0" onclick="addBlock('gift','title')">+ عنوان</button>
             <button class="add-btn" style="margin:0" onclick="addBlock('gift','text')">+ نص</button>
-            <button class="add-btn" style="margin:0" onclick="addBlock('gift','amounts')">+ مبالغ</button>
           </div>
         </div>
       </div>
@@ -302,19 +329,22 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink2);color:#fff;directio
       <div class="panel" id="p-social">
         <div class="card">
           <div class="card-ttl">روابط التواصل الاجتماعي</div>
-          <div class="f"><label>Instagram</label><input type="url" id="s-ig" placeholder="https://instagram.com/graffspa" style="direction:ltr;text-align:left"></div>
-          <div class="f"><label>TikTok</label><input type="url" id="s-tt" placeholder="https://tiktok.com/@graffspa" style="direction:ltr;text-align:left"></div>
-          <div class="f"><label>Snapchat</label><input type="url" id="s-sc" placeholder="https://snapchat.com/add/graffspa" style="direction:ltr;text-align:left"></div>
-          <div class="f"><label>X (Twitter)</label><input type="url" id="s-tw" placeholder="https://x.com/graffspa" style="direction:ltr;text-align:left"></div>
-          <div class="f"><label>WhatsApp (رقم بدون + مثال: 966500000000)</label><input type="text" id="s-wa" placeholder="966500000000" style="direction:ltr;text-align:left"></div>
+          <div style="font-size:11px;color:rgba(255,255,255,.4);margin-bottom:14px;line-height:1.7">أدخلي اسم المستخدم (username) فقط بدون الرابط الكامل</div>
+          <div class="f"><label>Instagram — اسم المستخدم</label><input type="text" id="s-ig" placeholder="graffspa" style="direction:ltr;text-align:left"></div>
+          <div class="f"><label>TikTok — اسم المستخدم</label><input type="text" id="s-tt" placeholder="graffspa" style="direction:ltr;text-align:left"></div>
+          <div class="f"><label>Snapchat — اسم المستخدم</label><input type="text" id="s-sc" placeholder="graffspa" style="direction:ltr;text-align:left"></div>
+          <div class="f"><label>X (Twitter) — اسم المستخدم</label><input type="text" id="s-tw" placeholder="graffspa" style="direction:ltr;text-align:left"></div>
+          <div class="f"><label>WhatsApp — رقم كامل مع رمز الدولة (مثال: 966500000000)</label><input type="text" id="s-wa" placeholder="966500000000" style="direction:ltr;text-align:left"></div>
         </div>
       </div>
 
       <!-- PAYMENT -->
       <div class="panel" id="p-payment">
         <div class="card">
-          <div class="card-ttl">بوابات الدفع المعروضة</div>
+          <div class="card-ttl">بوابات الدفع</div>
+          <div style="font-size:11px;color:rgba(255,255,255,.4);margin-bottom:14px;line-height:1.7">يمكنك إظهار/إخفاء كل بوابة، أو رفع صورة مخصصة لها (PNG/SVG موصى به بخلفية شفافة)</div>
           <div id="pay-list"></div>
+          <button class="add-btn" onclick="addPayMethod()">+ إضافة بوابة دفع مخصصة</button>
         </div>
       </div>
 
@@ -329,6 +359,14 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink2);color:#fff;directio
     <div class="gr2">
       <div class="f"><label>الاسم العربي *</label><input type="text" id="cm-ar" placeholder="الأظافر"></div>
       <div class="f"><label>الاسم الإنجليزي</label><input type="text" id="cm-en" placeholder="NAILS"></div>
+    </div>
+    <div class="f">
+      <label>اسم القسم الفرعي (يظهر في المنتصف — عربي وإنجليزي)</label>
+      <div style="display:flex;gap:8px">
+        <input type="text" id="cm-sub-en" placeholder="MANICURE" style="direction:ltr;text-align:left;flex:1">
+        <input type="text" id="cm-sub-ar" placeholder="مناكير" style="flex:1">
+      </div>
+      <div style="font-size:10px;color:rgba(255,255,255,.3);margin-top:5px">يظهر كفاصل جميل في المنتصف بين الخدمات — اتركيه فارغاً إذا لم تريدي فاصل</div>
     </div>
     <div class="f" style="margin-top:16px">
       <label style="font-size:11px;color:rgba(255,255,255,.55);margin-bottom:8px;display:block">اختاري خدمات Rekaz لهذا القسم (كل خدمة تختارينها ستظهر في الموقع)</label>
@@ -487,6 +525,7 @@ function openNewCat() {
   editCatId = null;
   g('cat-modal-ttl').textContent = 'قسم جديد';
   g('cm-ar').value = ''; g('cm-en').value = '';
+  g('cm-sub-en').value = ''; g('cm-sub-ar').value = '';
   renderRekazPicker([]);
   g('cat-modal').classList.add('on');
 }
@@ -497,7 +536,11 @@ function editCat(id) {
   g('cat-modal-ttl').textContent = 'تعديل: ' + cat.nameAr;
   g('cm-ar').value = cat.nameAr || '';
   g('cm-en').value = cat.nameEn || '';
-  // Get currently linked services
+  // Sub-section name: stored as "EN · AR"
+  const sub = cat.subLabel || '';
+  const parts = sub.split(' · ');
+  g('cm-sub-en').value = parts[0] || '';
+  g('cm-sub-ar').value = parts[1] || '';
   const linked = (DB.services || []).filter(s => s.categoryId === id).map(s => s.rekazPriceId);
   renderRekazPicker(linked);
   g('cat-modal').classList.add('on');
@@ -519,16 +562,20 @@ async function saveCat() {
   if (!ar) { alert('أدخلي اسم القسم'); return; }
   const selected = getSelectedRekaz();
 
+  const subEn = g('cm-sub-en').value.trim();
+  const subAr = g('cm-sub-ar').value.trim();
+  const subLabel = subEn && subAr ? subEn + ' · ' + subAr : (subEn || subAr || '');
+  const catPayload = { nameAr: ar, nameEn: g('cm-en').value.trim(), subLabel };
+
   if (!editCatId) {
-    // Create new category
-    const cat = await api('POST', '/admin/categories', { nameAr: ar, nameEn: g('cm-en').value.trim(), order: DB.categories.length + 1 });
+    catPayload.order = DB.categories.length + 1;
+    const cat = await api('POST', '/admin/categories', catPayload);
     DB.categories.push(cat);
     editCatId = cat.id;
   } else {
-    // Update existing
-    await api('PUT', '/admin/categories/' + editCatId, { nameAr: ar, nameEn: g('cm-en').value.trim() });
+    await api('PUT', '/admin/categories/' + editCatId, catPayload);
     const cat = DB.categories.find(c => c.id === editCatId);
-    if (cat) { cat.nameAr = ar; cat.nameEn = g('cm-en').value.trim(); }
+    if (cat) Object.assign(cat, catPayload);
   }
 
   // Save services for this category
@@ -622,19 +669,27 @@ function closeModal() { g('cat-modal').classList.remove('on'); editCatId = null;
 // ── DESIGN ──
 function renderDesign() {
   const t = DB.theme || {};
+  const l = DB.layout || {};
   setc('c-gold', t.primaryColor || '#b8965a');
   setc('c-ink', t.bgDark || '#080807');
   setc('c-light', t.bgLight || '#f3ede3');
   setc('c-text', t.textColor || '#17150e');
   ['gold','ink','light','text'].forEach(k => g('sw-'+k).style.background = g('c-'+k).value);
+  setc('c-logo-acc', t.logoAccent || '#b8965a');
+  g('sw-logo-acc').style.background = t.logoAccent || '#b8965a';
   setSel('f-arabic', t.fontArabic || 'Tajawal');
   setSel('f-display', t.fontDisplay || 'Cormorant Garamond');
   setv('c-brad', t.borderRadius || 0);
   g('brad-lbl').textContent = t.borderRadius || 0;
-  const l = DB.layout || {};
   setv('l-tagline', l.heroTagline || '');
   setv('l-city', l.heroCity || '');
   setv('l-vat', l.vatNumber || '');
+  setv('l-logo', l.logoText || 'GRAFF SPA');
+  // Show logo image preview if exists
+  const prev = g('logo-preview');
+  if (l.logoImage) {
+    prev.innerHTML = '<img src="'+l.logoImage+'" style="max-height:54px;max-width:160px;object-fit:contain">';
+  }
   prevFont();
 }
 function sw(k, v) { g('sw-'+k).style.background = v; }
@@ -653,13 +708,30 @@ function collectDesign() {
     textColor: g('c-text').value,
     fontArabic: g('f-arabic').value,
     fontDisplay: g('f-display').value,
-    borderRadius: parseInt(g('c-brad').value) || 0
+    borderRadius: parseInt(g('c-brad').value) || 0,
+    logoAccent: g('c-logo-acc').value
   };
   DB.layout = { ...DB.layout,
     heroTagline: g('l-tagline').value,
     heroCity: g('l-city').value,
-    vatNumber: g('l-vat').value
+    vatNumber: g('l-vat').value,
+    logoText: g('l-logo').value
   };
+}
+function uploadLogo(input) {
+  const file = input.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    DB.layout = DB.layout || {};
+    DB.layout.logoImage = ev.target.result;
+    const prev = g('logo-preview');
+    prev.innerHTML = '<img src="'+ev.target.result+'" style="max-height:54px;max-width:160px;object-fit:contain">';
+  };
+  reader.readAsDataURL(file);
+}
+function clearLogo() {
+  if (DB.layout) DB.layout.logoImage = '';
+  g('logo-preview').innerHTML = '<span style="font-size:12px;color:rgba(255,255,255,.3)">لا توجد صورة</span>';
 }
 
 // ── BUTTONS ──
@@ -692,35 +764,83 @@ function collectButtons() { DB.buttons.forEach((b, i) => b.order = i + 1); }
 // ── SOCIAL ──
 function renderSocial() {
   const s = DB.social || {};
-  setv('s-ig', s.instagram||''); setv('s-tt', s.tiktok||''); setv('s-sc', s.snapchat||'');
-  setv('s-tw', s.twitter||''); setv('s-wa', s.whatsapp||'');
+  // Show just the username/handle
+  setv('s-ig', s.instagram_user||s.instagram||'');
+  setv('s-tt', s.tiktok_user||s.tiktok||'');
+  setv('s-sc', s.snapchat_user||s.snapchat||'');
+  setv('s-tw', s.twitter_user||s.twitter||'');
+  setv('s-wa', s.whatsapp||'');
 }
 function collectSocial() {
-  DB.social = { instagram:g('s-ig').value, tiktok:g('s-tt').value, snapchat:g('s-sc').value, twitter:g('s-tw').value, whatsapp:g('s-wa').value };
+  const igUser = g('s-ig').value.trim().replace(/^@/,'').replace(/.*instagram.com\//,'');
+  const ttUser = g('s-tt').value.trim().replace(/^@/,'').replace(/.*tiktok.com\/@?/,'');
+  const scUser = g('s-sc').value.trim().replace(/^@/,'').replace(/.*snapchat.com\/add\//,'');
+  const twUser = g('s-tw').value.trim().replace(/^@/,'').replace(/.*x.com\//,'').replace(/.*twitter.com\//,'');
+  DB.social = {
+    instagram_user: igUser,
+    instagram: igUser ? 'https://instagram.com/'+igUser : '',
+    tiktok_user: ttUser,
+    tiktok: ttUser ? 'https://tiktok.com/@'+ttUser : '',
+    snapchat_user: scUser,
+    snapchat: scUser ? 'https://snapchat.com/add/'+scUser : '',
+    twitter_user: twUser,
+    twitter: twUser ? 'https://x.com/'+twUser : '',
+    whatsapp: g('s-wa').value.trim().replace(/\D/g,'')
+  };
 }
 
 // ── PAYMENT ──
 function renderPayment() {
   const pays = (DB.payments || []).sort((a,b) => a.order - b.order);
-  g('pay-list').innerHTML = pays.map((p, i) => `
-    <div class="list-item" draggable="true">
-      <span class="drag-handle">⠿</span>
-      <div class="li-info"><div class="li-name">${e(p.label)}</div></div>
+  g('pay-list').innerHTML = pays.map((p, i) => {
+    const imgPreview = p.customImage
+      ? `<img src="${p.customImage}" style="height:22px;max-width:60px;object-fit:contain;background:#fff;padding:2px 4px;border-radius:3px">`
+      : `<span style="font-size:11px;color:rgba(255,255,255,.3)">افتراضي</span>`;
+    return `<div class="list-item">
+      <div class="drag-handle">⠿</div>
+      <div class="li-info">
+        <div class="li-name">${e(p.label)}</div>
+        <div style="margin-top:5px;display:flex;align-items:center;gap:8px">
+          ${imgPreview}
+          <label style="font-size:10px;color:var(--gold);cursor:pointer;border:1px solid rgba(184,150,90,.3);padding:3px 8px">
+            رفع صورة
+            <input type="file" accept="image/*" style="display:none" onchange="uploadPayImg(${i},this)">
+          </label>
+          ${p.customImage ? `<button class="li-btn" style="font-size:10px;padding:3px 7px" onclick="clearPayImg(${i})">حذف الصورة</button>` : ''}
+        </div>
+      </div>
       <div class="tog ${p.visible!==false?'on':''}" onclick="togPay(${i})"></div>
-    </div>`).join('');
+      ${i > 5 ? `<button class="li-btn del" onclick="delPay(${i})">×</button>` : ''}
+    </div>`;
+  }).join('');
 }
 function togPay(i) { DB.payments[i].visible = !(DB.payments[i].visible !== false); renderPayment(); }
+function delPay(i) { DB.payments.splice(i,1); renderPayment(); }
+function addPayMethod() {
+  DB.payments = DB.payments || [];
+  DB.payments.push({ id:'pay_'+Date.now(), label:'بوابة جديدة', visible:true, order:DB.payments.length+1, customImage:'' });
+  renderPayment();
+}
+function uploadPayImg(i, input) {
+  const file = input.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => { DB.payments[i].customImage = e.target.result; renderPayment(); };
+  reader.readAsDataURL(file);
+}
+function clearPayImg(i) { DB.payments[i].customImage = ''; renderPayment(); }
 function collectPayments() {}
 
 // ── GIFT PAGE BUILDER ──
 function renderGift() {
-  const sections = (DB.pages && DB.pages.gift && DB.pages.gift.sections) || [];
+  const gp = (DB.pages && DB.pages.gift) || {};
+  setv('gc-title', gp.title || 'بطاقة الإهداء');
+  setv('gc-subtitle', gp.subtitle || 'اهدي تجربة لا تُنسى');
+  setv('gc-amounts', (gp.amounts || [200,300,500,1000]).join(','));
+  const sections = gp.sections || [];
   g('gift-blocks').innerHTML = sections.map((blk, i) => `
     <div class="pb-block">
       <span class="pb-type">${blk.type}</span>
-      <input class="pb-inp" value="${e(blk.type==='amounts'?(blk.values||[]).join(','):blk.value||'')}" 
-        placeholder="${blk.type==='amounts'?'200,300,500,1000':'النص...'}"
-        onchange="updBlock('gift',${i},this.value)">
+      <input class="pb-inp" value="${e(blk.value||'')}" placeholder="النص..." onchange="updBlock('gift',${i},this.value)">
       <button class="li-btn del" onclick="delBlock('gift',${i})" style="flex-shrink:0">×</button>
     </div>`).join('');
 }
@@ -728,16 +848,18 @@ function addBlock(page, type) {
   if (!DB.pages) DB.pages = {};
   if (!DB.pages[page]) DB.pages[page] = { sections:[] };
   if (!DB.pages[page].sections) DB.pages[page].sections = [];
-  DB.pages[page].sections.push(type==='amounts' ? { type, values:[200,300,500,1000] } : { type, value:'' });
+  DB.pages[page].sections.push({ type, value:'' });
   renderGift();
 }
-function updBlock(page, i, v) {
-  const blk = DB.pages[page].sections[i];
-  if (blk.type === 'amounts') blk.values = v.split(',').map(x => parseInt(x.trim())).filter(Boolean);
-  else blk.value = v;
-}
+function updBlock(page, i, v) { DB.pages[page].sections[i].value = v; }
 function delBlock(page, i) { DB.pages[page].sections.splice(i,1); renderGift(); }
-function collectGift() {}
+function collectGift() {
+  if (!DB.pages) DB.pages = {};
+  if (!DB.pages.gift) DB.pages.gift = {};
+  DB.pages.gift.title = g('gc-title').value.trim();
+  DB.pages.gift.subtitle = g('gc-subtitle').value.trim();
+  DB.pages.gift.amounts = (g('gc-amounts').value||'').split(',').map(x=>parseInt(x.trim())).filter(Boolean);
+}
 
 // ── MEMBERSHIPS ──
 function renderMems() {
