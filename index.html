@@ -698,6 +698,13 @@ function buildSvc(prods){
   document.getElementById('svcbody').innerHTML=bodyH;
 }
 
+function cleanName(n){
+  if(!n)return '';
+  if(n.includes(' - '))return n.split(' - ')[0].trim();
+  return n.trim();
+}
+function safeAttr(s){return (s||'').replace(/'/g,'&#39;').replace(/"/g,'&quot;');}
+
 function buildCard(p){
   var hasV=p.pricing&&p.pricing.length>1;
   var pid='sc'+p.id.replace(/-/g,'');
