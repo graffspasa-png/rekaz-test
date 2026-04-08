@@ -6,18 +6,18 @@
 <title>GRAFF SPA — لوحة التحكم</title>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500&family=Cormorant+Garamond:wght@300;400&display=swap" rel="stylesheet">
 <style>
-:root{--ink:#080807;--ink2:#0f0d0a;--ink3:#1a1713;--w:#fff;--gold:#b8965a;--gold2:#c8a66a;--text:#17150e;--muted:#78706a;--border:#ddd5c5;--red:#c0392b;--green:#27ae60;--sb:220px}
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{--ink:#080807;--ink2:#0f0d0a;--ink3:#1a1713;--gold:#b8965a;--gold2:#c8a66a;--text:#17150e;--muted:#78706a;--border:#ddd5c5;--red:#c0392b;--green:#27ae60;--sb:230px}
+*{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Tajawal',sans-serif;background:var(--ink2);color:#fff;direction:rtl;-webkit-font-smoothing:antialiased}
 
 /* LOGIN */
 #login{position:fixed;inset:0;background:var(--ink);display:flex;align-items:center;justify-content:center;z-index:999}
 #login.hide{display:none}
-.lbox{background:var(--ink3);border:1px solid rgba(184,150,90,.2);padding:40px 32px;width:100%;max-width:340px;text-align:center}
+.lbox{background:var(--ink3);border:1px solid rgba(184,150,90,.2);padding:40px 32px;width:340px;text-align:center}
 .llogo{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;letter-spacing:.2em;color:#fff;margin-bottom:4px}
 .llogo b{color:var(--gold);font-weight:300}
 .lsub{font-size:11px;color:rgba(255,255,255,.3);letter-spacing:.12em;margin-bottom:28px}
-.linp{width:100%;padding:12px 14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#fff;font-family:'Tajawal',sans-serif;font-size:14px;outline:none;text-align:center;letter-spacing:.08em;margin-bottom:10px;transition:border-color .15s}
+.linp{width:100%;padding:12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#fff;font-family:'Tajawal',sans-serif;font-size:14px;outline:none;text-align:center;margin-bottom:10px;transition:border-color .15s}
 .linp:focus{border-color:rgba(184,150,90,.4)}
 .lbtn{width:100%;padding:13px;background:var(--gold);color:var(--ink);border:none;font-family:'Tajawal',sans-serif;font-size:12px;font-weight:500;letter-spacing:.14em;cursor:pointer}
 .lbtn:hover{background:var(--gold2)}
@@ -27,33 +27,33 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink2);color:#fff;directio
 #app{display:none;min-height:100vh}
 #app.on{display:flex}
 .sidebar{width:var(--sb);background:var(--ink);border-left:1px solid rgba(184,150,90,.1);display:flex;flex-direction:column;flex-shrink:0;position:fixed;top:0;right:0;bottom:0;overflow-y:auto;z-index:10}
-.sl{padding:20px 18px 14px;border-bottom:1px solid rgba(184,150,90,.1)}
-.sl-txt{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:300;letter-spacing:.18em;color:#fff}
-.sl-txt b{color:var(--gold);font-weight:300}
-.slbl{font-size:8px;letter-spacing:.2em;color:rgba(255,255,255,.28);padding:14px 18px 5px}
-.ni{display:flex;align-items:center;gap:9px;padding:9px 18px;cursor:pointer;transition:all .13s;font-size:12px;color:rgba(255,255,255,.44);letter-spacing:.03em;border-right:2px solid transparent}
+.sl-logo{padding:20px 18px 14px;border-bottom:1px solid rgba(184,150,90,.1)}
+.sl-logo-t{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:300;letter-spacing:.18em;color:#fff}
+.sl-logo-t b{color:var(--gold);font-weight:300}
+.sl-section{font-size:8px;letter-spacing:.2em;color:rgba(255,255,255,.28);padding:14px 18px 5px;text-transform:uppercase}
+.ni{display:flex;align-items:center;gap:9px;padding:9px 18px;cursor:pointer;transition:all .13s;font-size:12px;color:rgba(255,255,255,.44);border-right:2px solid transparent}
 .ni:hover{color:#fff;background:rgba(255,255,255,.03)}
 .ni.on{color:#fff;border-right-color:var(--gold);background:rgba(184,150,90,.06)}
 .ni svg{width:15px;height:15px;opacity:.6;flex-shrink:0}
 .ni.on svg{opacity:1}
-.sfoot{margin-top:auto;padding:12px 18px;border-top:1px solid rgba(184,150,90,.1)}
-.lout{width:100%;padding:8px;background:transparent;border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.4);font-family:'Tajawal',sans-serif;font-size:11px;cursor:pointer;transition:all .13s}
-.lout:hover{border-color:rgba(184,150,90,.3);color:#fff}
+.sl-foot{margin-top:auto;padding:12px 18px;border-top:1px solid rgba(184,150,90,.1)}
+.lout-btn{width:100%;padding:8px;background:transparent;border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.4);font-family:'Tajawal',sans-serif;font-size:11px;cursor:pointer}
+.lout-btn:hover{border-color:rgba(184,150,90,.3);color:#fff}
 
 /* MAIN */
-.main{margin-right:var(--sb);flex:1;min-height:100vh;display:flex;flex-direction:column}
+.main{margin-right:var(--sb);flex:1;display:flex;flex-direction:column;min-height:100vh}
 .topbar{background:var(--ink);border-bottom:1px solid rgba(184,150,90,.1);padding:0 24px;height:52px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;position:sticky;top:0;z-index:5}
 .tb-title{font-size:14px;font-weight:500;color:#fff}
-.tb-right{display:flex;align-items:center;gap:10px}
+.tb-r{display:flex;align-items:center;gap:10px}
 .save-ok{font-size:11px;color:var(--green);opacity:0;transition:opacity .3s}
 .save-ok.on{opacity:1}
-.sbtn{padding:8px 18px;background:var(--gold);color:var(--ink);border:none;font-family:'Tajawal',sans-serif;font-size:11px;font-weight:500;letter-spacing:.1em;cursor:pointer;transition:background .14s}
+.sbtn{padding:8px 18px;background:var(--gold);color:var(--ink);border:none;font-family:'Tajawal',sans-serif;font-size:11px;font-weight:500;letter-spacing:.1em;cursor:pointer}
 .sbtn:hover{background:var(--gold2)}
-.sbtn.saving{opacity:.6;pointer-events:none}
+.sbtn:disabled{opacity:.5;pointer-events:none}
 
-.content{flex:1;padding:24px;max-width:860px;width:100%}
+.content{flex:1;padding:22px;max-width:900px;width:100%}
 .panel{display:none}
-.panel.on{display:block;animation:fi .2s ease}
+.panel.on{display:block;animation:fi .18s ease}
 @keyframes fi{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
 
 /* CARDS */
@@ -61,90 +61,93 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink2);color:#fff;directio
 .card-ttl{font-size:11px;font-weight:500;letter-spacing:.1em;color:rgba(255,255,255,.65);margin-bottom:16px;display:flex;align-items:center;gap:8px;text-transform:uppercase}
 .card-ttl::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.07)}
 
-/* FORM ELEMENTS */
-.field{margin-bottom:14px}
-.field label{display:block;font-size:10px;letter-spacing:.09em;color:rgba(255,255,255,.4);margin-bottom:5px}
-.field input,.field select,.field textarea{width:100%;padding:9px 11px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#fff;font-family:'Tajawal',sans-serif;font-size:13px;outline:none;transition:border-color .13s}
-.field input:focus,.field select:focus,.field textarea:focus{border-color:rgba(184,150,90,.4)}
-.field select option{background:var(--ink)}
-.field textarea{resize:vertical;min-height:72px;line-height:1.6}
-.field input[type=color]{padding:3px 5px;height:34px;cursor:pointer}
-.field input[type=range]{padding:0;background:none;border:none;width:100%;accent-color:var(--gold)}
+/* FORM */
+.f{margin-bottom:13px}
+.f label{display:block;font-size:10px;letter-spacing:.09em;color:rgba(255,255,255,.4);margin-bottom:5px}
+.f input,.f select,.f textarea{width:100%;padding:9px 11px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#fff;font-family:'Tajawal',sans-serif;font-size:13px;outline:none;transition:border-color .13s}
+.f input:focus,.f select:focus,.f textarea:focus{border-color:rgba(184,150,90,.4)}
+.f select option{background:var(--ink)}
+.f textarea{resize:vertical;min-height:72px}
+.f input[type=color]{padding:3px 5px;height:34px;cursor:pointer}
+.f input[type=range]{padding:0;background:none;border:none;accent-color:var(--gold)}
 .gr2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.gr3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.gr3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
 
 /* TOGGLE */
-.tog-row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.05)}
-.tog-row:last-child{border:none}
-.tog-l{font-size:12px;color:rgba(255,255,255,.65)}
-.tog-sub{font-size:10px;color:rgba(255,255,255,.28);margin-top:1px}
-.tog{width:38px;height:21px;background:rgba(255,255,255,.12);border-radius:11px;cursor:pointer;position:relative;transition:background .2s;flex-shrink:0}
+.tog{width:38px;height:21px;background:rgba(255,255,255,.12);border-radius:11px;cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;display:inline-block}
 .tog.on{background:var(--gold)}
 .tog::after{content:'';width:17px;height:17px;background:#fff;border-radius:50%;position:absolute;top:2px;right:2px;transition:right .2s;box-shadow:0 1px 3px rgba(0,0,0,.3)}
 .tog.on::after{right:19px}
 
-/* LIST ITEMS */
-.list-item{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);padding:12px 13px;display:flex;align-items:center;gap:10px;margin-bottom:7px;transition:background .12s}
-.list-item:hover{background:rgba(255,255,255,.07)}
-.drag-h{color:rgba(255,255,255,.2);font-size:15px;cursor:grab;flex-shrink:0}
-.li-main{flex:1;min-width:0}
+/* LIST */
+.list-item{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);padding:11px 12px;display:flex;align-items:center;gap:9px;margin-bottom:7px}
+.drag-handle{color:rgba(255,255,255,.2);font-size:16px;cursor:grab;flex-shrink:0;user-select:none}
+.li-info{flex:1;min-width:0}
 .li-name{font-size:13px;color:#fff;margin-bottom:2px}
-.li-sub{font-size:10px;color:rgba(255,255,255,.32);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.li-badge{font-size:9px;background:rgba(184,150,90,.15);color:var(--gold);padding:2px 8px;border-radius:20px;white-space:nowrap}
-.li-acts{display:flex;gap:5px}
+.li-sub{font-size:10px;color:rgba(255,255,255,.32)}
+.li-acts{display:flex;gap:5px;align-items:center;flex-shrink:0}
 .li-btn{background:none;border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.44);font-size:10px;padding:4px 9px;cursor:pointer;font-family:'Tajawal',sans-serif;transition:all .12s}
 .li-btn:hover{border-color:rgba(184,150,90,.35);color:#fff}
 .li-btn.del:hover{border-color:rgba(192,57,43,.4);color:var(--red)}
-
-/* ADD BUTTON */
-.add-btn{padding:9px 18px;background:transparent;border:1px solid rgba(184,150,90,.3);color:var(--gold);font-family:'Tajawal',sans-serif;font-size:11px;letter-spacing:.09em;cursor:pointer;transition:all .14s;margin-top:12px}
+.add-btn{padding:9px 18px;background:transparent;border:1px solid rgba(184,150,90,.3);color:var(--gold);font-family:'Tajawal',sans-serif;font-size:11px;letter-spacing:.09em;cursor:pointer;transition:all .14s;margin-top:12px;display:inline-block}
 .add-btn:hover{background:rgba(184,150,90,.07)}
 
-/* PRODUCTS GRID */
-.prod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px;margin-top:10px;max-height:360px;overflow-y:auto}
-.prod-c{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);padding:10px 11px;cursor:pointer;transition:all .12s}
-.prod-c:hover,.prod-c.sel{border-color:rgba(184,150,90,.4);background:rgba(184,150,90,.06)}
-.prod-c-name{font-size:12px;color:#fff;margin-bottom:3px;line-height:1.3}
-.prod-c-price{font-size:11px;color:var(--gold)}
-.prod-c-chk{width:15px;height:15px;border:1.5px solid rgba(255,255,255,.2);float:left;transition:all .12s}
-.prod-c.sel .prod-c-chk{background:var(--gold);border-color:var(--gold)}
+/* CATEGORY DETAIL */
+.cat-detail{background:rgba(184,150,90,.04);border:1px solid rgba(184,150,90,.14);padding:16px;margin-top:8px;display:none}
+.cat-detail.open{display:block}
+
+/* REKAZ PRODUCT PICKER */
+.rpicker{display:flex;flex-direction:column;gap:0}
+.rp-search{width:100%;padding:8px 11px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#fff;font-family:'Tajawal',sans-serif;font-size:12px;outline:none;margin-bottom:8px}
+.rp-search:focus{border-color:rgba(184,150,90,.4)}
+.rp-list{max-height:280px;overflow-y:auto;border:1px solid rgba(255,255,255,.08)}
+.rp-item{display:flex;align-items:center;padding:9px 11px;border-bottom:1px solid rgba(255,255,255,.05);cursor:pointer;transition:background .1s;gap:9px}
+.rp-item:last-child{border:none}
+.rp-item:hover{background:rgba(255,255,255,.04)}
+.rp-item.sel{background:rgba(184,150,90,.08)}
+.rp-chk{width:16px;height:16px;border:1.5px solid rgba(255,255,255,.2);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .12s}
+.rp-item.sel .rp-chk{background:var(--gold);border-color:var(--gold)}
+.rp-chk-i{width:9px;height:9px;background:url("data:image/svg+xml,%3Csvg viewBox='0 0 10 8' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 4L3.5 6.5L9 1' stroke='white' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E") center/contain no-repeat;opacity:0}
+.rp-item.sel .rp-chk-i{opacity:1}
+.rp-info{flex:1;min-width:0}
+.rp-name{font-size:12px;color:#fff;line-height:1.3}
+.rp-price{font-size:10px;color:var(--gold)}
+.rp-tag{font-size:9px;background:rgba(184,150,90,.12);color:var(--gold);padding:1px 7px;border-radius:20px;white-space:nowrap;flex-shrink:0}
+
+/* SELECTED SERVICES */
+.svc-in-cat{display:flex;align-items:center;padding:9px 11px;border-bottom:1px solid rgba(255,255,255,.05);gap:9px;background:rgba(255,255,255,.03)}
+.svc-in-cat:last-child{border:none}
 
 /* MODAL */
-.moverlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;display:none;align-items:center;justify-content:center;padding:16px}
-.moverlay.on{display:flex}
-.modal{background:var(--ink3);border:1px solid rgba(184,150,90,.2);padding:26px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:200;display:none;align-items:center;justify-content:center;padding:16px}
+.overlay.on{display:flex}
+.modal{background:var(--ink3);border:1px solid rgba(184,150,90,.2);padding:24px;width:100%;max-width:580px;max-height:92vh;overflow-y:auto}
 .modal-ttl{font-size:15px;font-weight:500;color:#fff;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between}
 .modal-x{background:none;border:none;color:rgba(255,255,255,.4);font-size:22px;cursor:pointer;padding:0 4px;line-height:1}
 .modal-x:hover{color:#fff}
 .modal-btns{display:flex;gap:8px;margin-top:16px;justify-content:flex-end}
 .btn-p{padding:9px 20px;background:var(--gold);color:var(--ink);border:none;font-family:'Tajawal',sans-serif;font-size:11px;font-weight:500;letter-spacing:.1em;cursor:pointer}
+.btn-p:hover{background:var(--gold2)}
 .btn-s{padding:9px 16px;background:transparent;border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.55);font-family:'Tajawal',sans-serif;font-size:11px;cursor:pointer}
 
 /* COLOR SWATCH */
-.swatch{width:100%;height:34px;border:1px solid rgba(255,255,255,.1);margin-bottom:5px;transition:background .2s}
+.swatch{width:100%;height:32px;border:1px solid rgba(255,255,255,.1);margin-bottom:5px}
 
 /* STATUS */
-.stat-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-left:5px}
-.stat-dot.live{background:var(--green)}
-.stat-dot.off{background:rgba(255,255,255,.2)}
+.st-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-left:5px}
+.st-dot.live{background:var(--green)}
+.st-dot.off{background:rgba(255,255,255,.2)}
 
-/* PAGE EDITOR */
-.pe{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);padding:18px;display:none}
-.pe.on{display:block}
-.pe-toolbar{display:flex;gap:5px;margin-bottom:8px;flex-wrap:wrap}
-.pe-btn{padding:4px 9px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.55);font-size:11px;cursor:pointer;font-family:'Tajawal',sans-serif}
-.pe-btn:hover{background:rgba(255,255,255,.1);color:#fff}
-.pe-area{width:100%;min-height:180px;padding:11px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);color:#fff;font-family:'Tajawal',sans-serif;font-size:13px;outline:none;resize:vertical;line-height:1.65}
+/* PAGE BUILDER */
+.pb-block{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);padding:12px;margin-bottom:7px;display:flex;align-items:flex-start;gap:10px}
+.pb-type{font-size:9px;background:rgba(184,150,90,.15);color:var(--gold);padding:2px 8px;border-radius:20px;white-space:nowrap;flex-shrink:0;margin-top:2px}
+.pb-inp{flex:1;padding:7px 9px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#fff;font-family:'Tajawal',sans-serif;font-size:12px;outline:none;width:100%}
 
-/* MEM CARD */
-.mem-item{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);padding:14px;margin-bottom:9px}
-.mem-item-ttl{font-size:13px;color:#fff;margin-bottom:10px;display:flex;justify-content:space-between}
+/* MEM */
+.mem-card-edit{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);padding:14px;margin-bottom:9px}
+.mem-card-edit-ttl{font-size:12px;color:#fff;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
 
-@media(max-width:768px){
-  .sidebar{display:none}
-  .main{margin-right:0}
-  .gr2,.gr3{grid-template-columns:1fr}
-}
+@media(max-width:768px){.sidebar{display:none}.main{margin-right:0}.gr2,.gr3{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -154,8 +157,8 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink2);color:#fff;directio
   <div class="lbox">
     <div class="llogo">GRAFF <b>SPA</b></div>
     <div class="lsub">ADMIN PANEL</div>
-    <input class="linp" id="linp" type="password" placeholder="كلمة المرور" onkeydown="if(event.key==='Enter')login()">
-    <button class="lbtn" onclick="login()">دخول</button>
+    <input class="linp" id="linp" type="password" placeholder="كلمة المرور" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="lbtn" onclick="doLogin()">دخول</button>
     <div class="lerr" id="lerr"></div>
   </div>
 </div>
@@ -163,87 +166,88 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink2);color:#fff;directio
 <!-- APP -->
 <div id="app">
   <div class="sidebar">
-    <div class="sl"><div class="sl-txt">GRAFF <b>SPA</b></div></div>
-    <div class="slbl">الإدارة الرئيسية</div>
+    <div class="sl-logo"><div class="sl-logo-t">GRAFF <b>SPA</b></div></div>
+    <div class="sl-section">الإدارة</div>
     <div class="ni on" onclick="show('overview')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>نظرة عامة</div>
-    <div class="ni" onclick="show('sections')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>الأقسام والخدمات</div>
-    <div class="ni" onclick="show('design')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>التصميم والهوية</div>
+    <div class="ni" onclick="show('menu')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>الأقسام والخدمات</div>
+    <div class="ni" onclick="show('design')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>التصميم</div>
     <div class="ni" onclick="show('buttons')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="10" rx="2"/><path d="M7 12h10"/></svg>الأزرار</div>
-    <div class="slbl">المحتوى</div>
-    <div class="ni" onclick="show('pages')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>الصفحات</div>
+    <div class="sl-section">المحتوى</div>
     <div class="ni" onclick="show('gift')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><path d="M12 22V7M12 7H7.5a2.5 2.5 0 010-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 000-5C13 2 12 7 12 7z"/></svg>بطاقة الإهداء</div>
-    <div class="ni" onclick="show('memberships')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>العضويات</div>
-    <div class="ni" onclick="show('social')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>السوشيال ميديا</div>
+    <div class="ni" onclick="show('memberships')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>العضويات</div>
+    <div class="ni" onclick="show('social')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>السوشيال</div>
     <div class="ni" onclick="show('payment')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>الدفع</div>
-    <div class="sfoot"><button class="lout" onclick="logout()">تسجيل الخروج</button></div>
+    <div class="sl-foot"><button class="lout-btn" onclick="doLogout()">تسجيل الخروج</button></div>
   </div>
 
   <div class="main">
     <div class="topbar">
       <div class="tb-title" id="tb-title">نظرة عامة</div>
-      <div class="tb-right">
+      <div class="tb-r">
         <span class="save-ok" id="save-ok">✓ تم الحفظ</span>
-        <button class="sbtn" id="sbtn" onclick="saveAll()">حفظ التغييرات</button>
+        <button class="sbtn" id="sbtn" onclick="save()">حفظ التغييرات</button>
       </div>
     </div>
 
     <div class="content">
 
       <!-- OVERVIEW -->
-      <div class="panel on" id="panel-overview">
+      <div class="panel on" id="p-overview">
         <div class="card">
           <div class="card-ttl">حالة النظام</div>
-          <div class="tog-row"><div><div class="tog-l">الموقع الرئيسي</div><div class="tog-sub">GRAFF SPA Riyadh</div></div><span><span class="stat-dot live"></span>يعمل</span></div>
-          <div class="tog-row"><div><div class="tog-l">نظام Rekaz</div><div class="tog-sub" id="rekaz-status">جاري الفحص...</div></div><span><span class="stat-dot" id="rekaz-dot"></span></span></div>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px"><span>Rekaz API</span><span><span class="st-dot" id="rdot"></span><span id="rstatus">فحص...</span></span></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px"><span>الأقسام المُعدّة</span><span id="ov-cats" style="color:var(--gold)">—</span></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px"><span>الخدمات المربوطة</span><span id="ov-svcs" style="color:var(--gold)">—</span></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px"><span>خدمات Rekaz المتاحة</span><span id="ov-rekaz" style="color:var(--gold)">—</span></div>
+          </div>
         </div>
         <div class="card">
-          <div class="card-ttl">ملخص الإعدادات</div>
-          <div id="ov-summary" style="font-size:12px;color:rgba(255,255,255,.45);line-height:2.4"></div>
+          <div class="card-ttl">تحذير مهم</div>
+          <div style="font-size:12px;color:rgba(255,255,255,.55);line-height:1.8">
+            ⚠️ الخدمات <strong style="color:#fff">لن تظهر</strong> في الموقع إلا إذا كانت مربوطة بقسم.<br>
+            اذهبي إلى <strong style="color:var(--gold)">الأقسام والخدمات</strong> وأنشئي أقساماً وارتبطي الخدمات فيها.
+          </div>
         </div>
       </div>
 
-      <!-- SECTIONS -->
-      <div class="panel" id="panel-sections">
+      <!-- MENU MANAGEMENT -->
+      <div class="panel" id="p-menu">
         <div class="card">
-          <div class="card-ttl">الأقسام الرئيسية</div>
-          <div style="font-size:11px;color:rgba(255,255,255,.35);margin-bottom:12px;line-height:1.7">الأقسام تتحكم في كيفية عرض خدمات Rekaz. اسحبي لإعادة الترتيب.</div>
-          <div id="sec-list"></div>
-          <button class="add-btn" onclick="openSecModal()">+ إضافة قسم</button>
-        </div>
-        <div class="card">
-          <div class="card-ttl">خدمات Rekaz</div>
-          <div style="font-size:11px;color:rgba(255,255,255,.35);margin-bottom:8px">جميع الخدمات المتاحة من Rekaz — ارجعي لأقسامك لربطها</div>
-          <div id="rekaz-prods" class="prod-grid"></div>
+          <div class="card-ttl">الأقسام</div>
+          <div style="font-size:11px;color:rgba(255,255,255,.35);margin-bottom:14px;line-height:1.7">
+            أنشئي أقساماً ثم اربطي خدمات Rekaz بكل قسم. الخدمات غير المربوطة لن تظهر في الموقع.
+          </div>
+          <div id="cats-list"></div>
+          <button class="add-btn" onclick="openNewCat()">+ إضافة قسم جديد</button>
         </div>
       </div>
 
       <!-- DESIGN -->
-      <div class="panel" id="panel-design">
+      <div class="panel" id="p-design">
         <div class="card">
           <div class="card-ttl">الألوان</div>
           <div class="gr2">
-            <div class="field"><label>اللون الذهبي الأساسي</label><div class="swatch" id="sw-gold"></div><input type="color" id="c-gold" oninput="updateSwatch('gold',this.value)"></div>
-            <div class="field"><label>لون الخلفية الداكنة</label><div class="swatch" id="sw-ink"></div><input type="color" id="c-ink" oninput="updateSwatch('ink',this.value)"></div>
-            <div class="field"><label>لون الكريم (الصفحات)</label><div class="swatch" id="sw-cream"></div><input type="color" id="c-cream" oninput="updateSwatch('cream',this.value)"></div>
-            <div class="field"><label>لون النص</label><div class="swatch" id="sw-text"></div><input type="color" id="c-text" oninput="updateSwatch('text',this.value)"></div>
+            <div class="f"><label>اللون الذهبي الأساسي</label><div class="swatch" id="sw-gold"></div><input type="color" id="c-gold" oninput="sw('gold',this.value)"></div>
+            <div class="f"><label>لون الخلفية الداكنة</label><div class="swatch" id="sw-ink"></div><input type="color" id="c-ink" oninput="sw('ink',this.value)"></div>
+            <div class="f"><label>لون الصفحات (فاتح)</label><div class="swatch" id="sw-light"></div><input type="color" id="c-light" oninput="sw('light',this.value)"></div>
+            <div class="f"><label>لون النص</label><div class="swatch" id="sw-text"></div><input type="color" id="c-text" oninput="sw('text',this.value)"></div>
           </div>
         </div>
         <div class="card">
-          <div class="card-ttl">الخطوط</div>
+          <div class="card-ttl">الخطوط والشكل</div>
           <div class="gr2">
-            <div class="field">
-              <label>خط النصوص العربية</label>
-              <select id="f-arabic" onchange="previewFont()">
+            <div class="f"><label>خط النصوص العربية</label>
+              <select id="f-arabic" onchange="prevFont()">
                 <option value="Tajawal">Tajawal</option>
                 <option value="Cairo">Cairo</option>
                 <option value="Almarai">Almarai</option>
                 <option value="Noto Sans Arabic">Noto Sans Arabic</option>
                 <option value="Readex Pro">Readex Pro</option>
               </select>
-              <div id="font-prev" style="font-size:16px;color:rgba(255,255,255,.4);padding:8px 0;margin-top:4px">مثال على النص العربي</div>
+              <div id="fp" style="font-size:16px;color:rgba(255,255,255,.4);padding:8px 0">مثال على النص</div>
             </div>
-            <div class="field">
-              <label>خط العناوين الإنجليزية</label>
+            <div class="f"><label>خط العناوين الإنجليزية</label>
               <select id="f-display">
                 <option value="Cormorant Garamond">Cormorant Garamond</option>
                 <option value="Playfair Display">Playfair Display</option>
@@ -251,94 +255,66 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink2);color:#fff;directio
               </select>
             </div>
           </div>
+          <div class="f"><label>تدوير الزوايا (border-radius): <span id="brad-lbl">0</span>px</label><input type="range" id="c-brad" min="0" max="20" oninput="document.getElementById('brad-lbl').textContent=this.value"></div>
         </div>
         <div class="card">
-          <div class="card-ttl">الهوية والنصوص</div>
-          <div class="field"><label>العبارة الرئيسية (Tagline)</label><input type="text" id="ui-tagline"></div>
-          <div class="field"><label>المدينة تحت الشعار</label><input type="text" id="ui-city"></div>
-          <div class="field"><label>الرقم الضريبي</label><input type="text" id="ui-vat" style="direction:ltr;text-align:left"></div>
+          <div class="card-ttl">النصوص</div>
           <div class="gr2">
-            <div class="field"><label>تدوير الأزرار (border radius)</label><input type="range" id="ui-brad" min="0" max="50" oninput="document.getElementById('brad-val').textContent=this.value+'px'"><span id="brad-val" style="font-size:11px;color:rgba(255,255,255,.4)">0px</span></div>
+            <div class="f"><label>العبارة الرئيسية (Tagline)</label><input type="text" id="l-tagline"></div>
+            <div class="f"><label>المدينة تحت الشعار</label><input type="text" id="l-city"></div>
           </div>
+          <div class="f"><label>الرقم الضريبي</label><input type="text" id="l-vat" style="direction:ltr;text-align:left"></div>
         </div>
       </div>
 
       <!-- BUTTONS -->
-      <div class="panel" id="panel-buttons">
+      <div class="panel" id="p-buttons">
         <div class="card">
           <div class="card-ttl">أزرار الصفحة الرئيسية</div>
           <div id="btns-list"></div>
-          <button class="add-btn" onclick="addButton()">+ إضافة زر</button>
-        </div>
-      </div>
-
-      <!-- PAGES -->
-      <div class="panel" id="panel-pages">
-        <div class="card">
-          <div class="card-ttl">الصفحات</div>
-          <div id="pages-list"></div>
-          <button class="add-btn" onclick="openPageEditor(-1)">+ إضافة صفحة</button>
-        </div>
-        <div class="pe" id="page-editor">
-          <div class="card-ttl" id="pe-title">صفحة جديدة</div>
-          <div class="gr2">
-            <div class="field"><label>العنوان العربي</label><input type="text" id="pe-title-ar" placeholder="مثال: من نحن"></div>
-            <div class="field"><label>الرابط (Slug)</label><input type="text" id="pe-slug" placeholder="about-us" style="direction:ltr;text-align:left"></div>
-          </div>
-          <div class="field"><label>المحتوى</label>
-            <div class="pe-toolbar">
-              <button class="pe-btn" onclick="ins('h2')">عنوان H2</button>
-              <button class="pe-btn" onclick="ins('p')">فقرة</button>
-              <button class="pe-btn" onclick="ins('b')">عريض</button>
-              <button class="pe-btn" onclick="ins('br')">سطر</button>
-            </div>
-            <textarea class="pe-area" id="pe-content"></textarea>
-          </div>
-          <div class="field"><label>مرئية</label><div class="tog on" id="pe-vis" onclick="this.classList.toggle('on')"></div></div>
-          <div style="display:flex;gap:8px;margin-top:12px">
-            <button class="btn-p" onclick="savePage()">حفظ الصفحة</button>
-            <button class="btn-s" onclick="document.getElementById('page-editor').classList.remove('on')">إلغاء</button>
-          </div>
+          <button class="add-btn" onclick="addBtn()">+ إضافة زر</button>
         </div>
       </div>
 
       <!-- GIFT -->
-      <div class="panel" id="panel-gift">
+      <div class="panel" id="p-gift">
         <div class="card">
-          <div class="card-ttl">إعدادات بطاقة الإهداء</div>
-          <div class="field"><label>العنوان الرئيسي</label><input type="text" id="gc-title" placeholder="بطاقة الإهداء"></div>
-          <div class="field"><label>العنوان الفرعي</label><input type="text" id="gc-subtitle" placeholder="اهدي تجربة لا تُنسى"></div>
-          <div class="field"><label>القيم المتاحة (مفصولة بفواصل)</label><input type="text" id="gc-amounts" placeholder="200,300,500,1000" style="direction:ltr;text-align:left"></div>
-          <div class="tog-row"><div class="tog-l">تفعيل بطاقة الإهداء</div><div class="tog on" id="gc-enabled" onclick="this.classList.toggle('on')"></div></div>
+          <div class="card-ttl">محتوى صفحة الإهداء</div>
+          <div id="gift-blocks"></div>
+          <div style="display:flex;gap:8px;margin-top:12px">
+            <button class="add-btn" style="margin:0" onclick="addBlock('gift','title')">+ عنوان</button>
+            <button class="add-btn" style="margin:0" onclick="addBlock('gift','text')">+ نص</button>
+            <button class="add-btn" style="margin:0" onclick="addBlock('gift','amounts')">+ مبالغ</button>
+          </div>
         </div>
       </div>
 
       <!-- MEMBERSHIPS -->
-      <div class="panel" id="panel-memberships">
+      <div class="panel" id="p-memberships">
         <div class="card">
           <div class="card-ttl">باقات العضوية</div>
-          <div id="mem-list"></div>
+          <div id="mems-list"></div>
           <button class="add-btn" onclick="addMem()">+ إضافة باقة</button>
         </div>
       </div>
 
       <!-- SOCIAL -->
-      <div class="panel" id="panel-social">
+      <div class="panel" id="p-social">
         <div class="card">
-          <div class="card-ttl">روابط التواصل</div>
-          <div class="field"><label>Instagram</label><input type="url" id="soc-ig" placeholder="https://instagram.com/graffspa" style="direction:ltr;text-align:left"></div>
-          <div class="field"><label>TikTok</label><input type="url" id="soc-tt" placeholder="https://tiktok.com/@graffspa" style="direction:ltr;text-align:left"></div>
-          <div class="field"><label>Snapchat</label><input type="url" id="soc-sc" placeholder="https://snapchat.com/add/graffspa" style="direction:ltr;text-align:left"></div>
-          <div class="field"><label>X (Twitter)</label><input type="url" id="soc-tw" placeholder="https://x.com/graffspa" style="direction:ltr;text-align:left"></div>
-          <div class="field"><label>WhatsApp (رقم بدون +)</label><input type="text" id="soc-wa" placeholder="966500000000" style="direction:ltr;text-align:left"></div>
+          <div class="card-ttl">روابط التواصل الاجتماعي</div>
+          <div class="f"><label>Instagram</label><input type="url" id="s-ig" placeholder="https://instagram.com/graffspa" style="direction:ltr;text-align:left"></div>
+          <div class="f"><label>TikTok</label><input type="url" id="s-tt" placeholder="https://tiktok.com/@graffspa" style="direction:ltr;text-align:left"></div>
+          <div class="f"><label>Snapchat</label><input type="url" id="s-sc" placeholder="https://snapchat.com/add/graffspa" style="direction:ltr;text-align:left"></div>
+          <div class="f"><label>X (Twitter)</label><input type="url" id="s-tw" placeholder="https://x.com/graffspa" style="direction:ltr;text-align:left"></div>
+          <div class="f"><label>WhatsApp (رقم بدون + مثال: 966500000000)</label><input type="text" id="s-wa" placeholder="966500000000" style="direction:ltr;text-align:left"></div>
         </div>
       </div>
 
       <!-- PAYMENT -->
-      <div class="panel" id="panel-payment">
+      <div class="panel" id="p-payment">
         <div class="card">
           <div class="card-ttl">بوابات الدفع المعروضة</div>
-          <div id="pay-logos-list"></div>
+          <div id="pay-list"></div>
         </div>
       </div>
 
@@ -346,285 +322,455 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink2);color:#fff;directio
   </div>
 </div>
 
-<!-- SECTION MODAL -->
-<div class="moverlay" id="sec-modal">
+<!-- CAT MODAL -->
+<div class="overlay" id="cat-modal">
   <div class="modal">
-    <div class="modal-ttl"><span id="sec-modal-ttl">إضافة قسم</span><button class="modal-x" onclick="closeModal('sec-modal')">×</button></div>
+    <div class="modal-ttl"><span id="cat-modal-ttl">قسم جديد</span><button class="modal-x" onclick="closeModal()">×</button></div>
     <div class="gr2">
-      <div class="field"><label>الاسم العربي</label><input type="text" id="sec-ar" placeholder="الأظافر"></div>
-      <div class="field"><label>الاسم الإنجليزي</label><input type="text" id="sec-en" placeholder="NAILS"></div>
+      <div class="f"><label>الاسم العربي *</label><input type="text" id="cm-ar" placeholder="الأظافر"></div>
+      <div class="f"><label>الاسم الإنجليزي</label><input type="text" id="cm-en" placeholder="NAILS"></div>
     </div>
-    <div class="field"><label>الأقسام الفرعية (كل سطر قسم بالشكل: EN · عربي)</label><textarea id="sec-subs" placeholder="MANICURE · مناكير&#10;PEDICURE · بديكير&#10;REMOVAL · إزالة" rows="5"></textarea></div>
-    <div class="field"><label>اختاري خدمات Rekaz لهذا القسم</label><div id="sec-modal-prods" class="prod-grid" style="max-height:220px"></div></div>
-    <div class="modal-btns"><button class="btn-p" onclick="saveSection()">حفظ</button><button class="btn-s" onclick="closeModal('sec-modal')">إلغاء</button></div>
+    <div class="f" style="margin-top:16px">
+      <label style="font-size:11px;color:rgba(255,255,255,.55);margin-bottom:8px;display:block">اختاري خدمات Rekaz لهذا القسم (كل خدمة تختارينها ستظهر في الموقع)</label>
+      <input class="rp-search" id="rp-search" placeholder="بحث في الخدمات..." oninput="filterRekaz(this.value)">
+      <div class="rp-list" id="rp-list"><div style="padding:16px;text-align:center;font-size:12px;color:rgba(255,255,255,.3)">جاري التحميل...</div></div>
+    </div>
+    <div style="font-size:11px;color:rgba(255,255,255,.3);margin-top:8px" id="rp-count">0 خدمة مختارة</div>
+    <div class="modal-btns">
+      <button class="btn-p" onclick="saveCat()">حفظ القسم</button>
+      <button class="btn-s" onclick="closeModal()">إلغاء</button>
+    </div>
   </div>
 </div>
 
 <script>
-var B = 'https://rekaz-test.onrender.com';
-var TOK = '', CFG = {}, editSecIdx = -1, editPageIdx = -1;
-var allProds = [];
+const B = 'https://rekaz-test.onrender.com';
+let TOK = '', DB = {}, rekazProds = [], editCatId = null;
 
-function login(){
-  var pw = document.getElementById('linp').value;
-  fetch(B+'/admin/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:pw})})
-    .then(function(r){return r.json();})
-    .then(function(d){
-      if(d.success){ TOK=d.token; document.getElementById('login').classList.add('hide'); document.getElementById('app').classList.add('on'); init(); }
-      else document.getElementById('lerr').textContent=d.error||'خطأ';
-    }).catch(function(){document.getElementById('lerr').textContent='لا يمكن الوصول للسيرفر';});
+// ── AUTH ──
+function doLogin() {
+  const pw = g('linp').value;
+  api('POST', '/admin/login', { password: pw })
+    .then(d => {
+      if (d.success) { TOK = d.token; g('login').classList.add('hide'); g('app').classList.add('on'); init(); }
+      else g('lerr').textContent = d.error || 'خطأ';
+    }).catch(() => g('lerr').textContent = 'لا يمكن الاتصال بالسيرفر');
 }
-function logout(){TOK='';location.reload();}
-document.getElementById('linp').addEventListener('keydown',function(e){if(e.key==='Enter')login();});
+function doLogout() { TOK = ''; location.reload(); }
+g('linp').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
 
-var TITLES = {overview:'نظرة عامة',sections:'الأقسام والخدمات',design:'التصميم والهوية',buttons:'الأزرار',pages:'الصفحات',gift:'بطاقة الإهداء',memberships:'العضويات',social:'السوشيال ميديا',payment:'الدفع'};
-function show(id){
-  document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('on');});
-  document.querySelectorAll('.ni').forEach(function(n){n.classList.remove('on');});
-  document.getElementById('panel-'+id).classList.add('on');
-  var nav = document.querySelector('.ni[onclick="show(\''+id+'\')"]');
-  if(nav)nav.classList.add('on');
-  document.getElementById('tb-title').textContent=TITLES[id]||id;
-}
-
-function init(){
-  fetch(B+'/admin/config',{headers:{Authorization:'Bearer '+TOK}}).then(function(r){return r.json();}).then(function(d){CFG=d;renderAll();});
-  loadProds();
+// ── INIT ──
+async function init() {
+  await loadDB();
+  loadRekazProducts();
   checkRekaz();
+  renderAll();
 }
 
-function renderAll(){
-  renderDesign();renderSections();renderButtons();renderPages();renderGift();renderMemberships();renderSocial();renderPayment();renderOverview();
+async function loadDB() {
+  DB = await api('GET', '/admin/db');
+  DB.categories = DB.categories || [];
+  DB.services = DB.services || [];
+  DB.theme = DB.theme || {};
+  DB.layout = DB.layout || {};
+  DB.social = DB.social || {};
+  DB.buttons = DB.buttons || [];
+  DB.payments = DB.payments || [];
+  DB.pages = DB.pages || {};
 }
 
-// SAVE
-function saveAll(){
-  var btn=document.getElementById('sbtn');btn.textContent='جاري...';btn.classList.add('saving');
-  collectDesign();collectSocial();collectButtons();collectGift();
-  fetch(B+'/admin/config',{method:'PUT',headers:{'Content-Type':'application/json','Authorization':'Bearer '+TOK},body:JSON.stringify(CFG)})
-    .then(function(){btn.textContent='حفظ التغييرات';btn.classList.remove('saving');var ok=document.getElementById('save-ok');ok.classList.add('on');setTimeout(function(){ok.classList.remove('on');},2500);});
+async function loadRekazProducts() {
+  try {
+    const d = await api('GET', '/admin/rekaz-products');
+    rekazProds = d.items || [];
+    g('ov-rekaz').textContent = rekazProds.length + ' خدمة';
+  } catch(e) { g('ov-rekaz').textContent = 'خطأ'; }
 }
 
-// DESIGN
-function renderDesign(){
-  var u=CFG.ui||{};
-  set('c-gold',u.primaryColor||'#b8965a');set('c-ink',u.bgColor||'#080807');
-  set('c-cream',u.creamColor||'#f3ede3');set('c-text',u.textColor||'#17150e');
-  ['gold','ink','cream','text'].forEach(function(k){
-    var inp=document.getElementById('c-'+k);
-    document.getElementById('sw-'+k).style.background=inp.value;
+function checkRekaz() {
+  fetch(B + '/slots?StartDate=2026-01-01T00:00:00&EndDate=2026-01-01T23:59:59&PriceId=test&MinQuantity=1')
+    .then(() => { g('rdot').classList.add('live'); g('rstatus').textContent = 'متصل'; })
+    .catch(() => {
+      fetch(B + '/').then(() => { g('rdot').classList.add('live'); g('rstatus').textContent = 'متصل'; }).catch(() => g('rstatus').textContent = 'غير متصل');
+    });
+}
+
+// ── SAVE ──
+async function save() {
+  const btn = g('sbtn');
+  btn.disabled = true; btn.textContent = 'جاري الحفظ...';
+  collectDesign(); collectSocial(); collectButtons(); collectPayments(); collectGift(); collectMems();
+  await api('PUT', '/admin/db', DB);
+  btn.disabled = false; btn.textContent = 'حفظ التغييرات';
+  const ok = g('save-ok'); ok.classList.add('on'); setTimeout(() => ok.classList.remove('on'), 2500);
+}
+
+// ── PANELS ──
+const PANEL_TITLES = { overview:'نظرة عامة', menu:'الأقسام والخدمات', design:'التصميم', buttons:'الأزرار', gift:'بطاقة الإهداء', memberships:'العضويات', social:'السوشيال ميديا', payment:'الدفع' };
+function show(id) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('on'));
+  document.querySelectorAll('.ni').forEach(n => n.classList.remove('on'));
+  g('p-' + id).classList.add('on');
+  document.querySelector(`.ni[onclick="show('${id}')"]`).classList.add('on');
+  g('tb-title').textContent = PANEL_TITLES[id] || id;
+}
+
+function renderAll() {
+  renderOverview(); renderMenu(); renderDesign(); renderButtons(); renderGift(); renderMems(); renderSocial(); renderPayment();
+}
+
+// ── OVERVIEW ──
+function renderOverview() {
+  g('ov-cats').textContent = (DB.categories || []).length + ' قسم';
+  g('ov-svcs').textContent = (DB.services || []).length + ' خدمة';
+}
+
+// ── MENU: CATEGORIES & SERVICES ──
+function renderMenu() {
+  const cats = (DB.categories || []).sort((a, b) => a.order - b.order);
+  if (!cats.length) {
+    g('cats-list').innerHTML = '<div style="font-size:12px;color:rgba(255,255,255,.3);padding:10px 0">لا توجد أقسام. أضيفي قسماً أولاً.</div>';
+    return;
+  }
+  g('cats-list').innerHTML = cats.map((cat, idx) => {
+    const svcs = (DB.services || []).filter(s => s.categoryId === cat.id).sort((a,b) => a.order - b.order);
+    const svcSummary = svcs.length ? svcs.map(s => s.nameAr || s.rekazPriceId).join('، ').substring(0, 60) : 'لا توجد خدمات مربوطة';
+    return `
+      <div class="list-item" draggable="true" data-id="${cat.id}" ondragstart="drs(event,'${cat.id}')" ondragover="event.preventDefault()" ondrop="drp(event,'${cat.id}')">
+        <span class="drag-handle">⠿</span>
+        <div class="li-info">
+          <div class="li-name">${e(cat.nameAr)} <span style="color:rgba(255,255,255,.3);font-size:11px">/ ${e(cat.nameEn||'')}</span></div>
+          <div class="li-sub">${svcs.length} خدمة — ${e(svcSummary)}</div>
+        </div>
+        <div class="li-acts">
+          <div class="tog ${cat.visible!==false?'on':''}" onclick="togCat('${cat.id}')"></div>
+          <button class="li-btn" onclick="editCat('${cat.id}')">تعديل وخدمات</button>
+          <button class="li-btn del" onclick="delCat('${cat.id}')">حذف</button>
+        </div>
+      </div>`;
+  }).join('');
+  renderOverview();
+}
+
+// Drag & Drop
+let dragId = null;
+function drs(e, id) { dragId = id; }
+function drp(e, id) {
+  e.preventDefault();
+  if (!dragId || dragId === id) return;
+  const cats = DB.categories;
+  const fi = cats.findIndex(c => c.id === dragId);
+  const ti = cats.findIndex(c => c.id === id);
+  const [moved] = cats.splice(fi, 1);
+  cats.splice(ti, 0, moved);
+  cats.forEach((c, i) => c.order = i + 1);
+  dragId = null;
+  renderMenu();
+  // Auto-save order
+  api('PUT', '/admin/categories-order', { order: cats.map(c => c.id) });
+}
+
+// Open new category modal
+function openNewCat() {
+  editCatId = null;
+  g('cat-modal-ttl').textContent = 'قسم جديد';
+  g('cm-ar').value = ''; g('cm-en').value = '';
+  renderRekazPicker([]);
+  g('cat-modal').classList.add('on');
+}
+function editCat(id) {
+  editCatId = id;
+  const cat = DB.categories.find(c => c.id === id);
+  if (!cat) return;
+  g('cat-modal-ttl').textContent = 'تعديل: ' + cat.nameAr;
+  g('cm-ar').value = cat.nameAr || '';
+  g('cm-en').value = cat.nameEn || '';
+  // Get currently linked services
+  const linked = (DB.services || []).filter(s => s.categoryId === id).map(s => s.rekazPriceId);
+  renderRekazPicker(linked);
+  g('cat-modal').classList.add('on');
+}
+function togCat(id) {
+  const cat = DB.categories.find(c => c.id === id);
+  if (cat) cat.visible = !(cat.visible !== false);
+  renderMenu();
+}
+function delCat(id) {
+  if (!confirm('سيتم حذف القسم وجميع خدماته المربوطة. متأكدة؟')) return;
+  DB.categories = DB.categories.filter(c => c.id !== id);
+  DB.services = DB.services.filter(s => s.categoryId !== id);
+  renderMenu();
+  api('DELETE', '/admin/categories/' + id);
+}
+async function saveCat() {
+  const ar = g('cm-ar').value.trim();
+  if (!ar) { alert('أدخلي اسم القسم'); return; }
+  const selected = getSelectedRekaz();
+
+  if (!editCatId) {
+    // Create new category
+    const cat = await api('POST', '/admin/categories', { nameAr: ar, nameEn: g('cm-en').value.trim(), order: DB.categories.length + 1 });
+    DB.categories.push(cat);
+    editCatId = cat.id;
+  } else {
+    // Update existing
+    await api('PUT', '/admin/categories/' + editCatId, { nameAr: ar, nameEn: g('cm-en').value.trim() });
+    const cat = DB.categories.find(c => c.id === editCatId);
+    if (cat) { cat.nameAr = ar; cat.nameEn = g('cm-en').value.trim(); }
+  }
+
+  // Save services for this category
+  const priceIds = selected.map((item, idx) => ({
+    rekazPriceId: item.priceId,
+    rekazProductId: item.productId,
+    nameAr: item.nameAr,
+    order: idx + 1
+  }));
+  await api('PUT', `/admin/categories/${editCatId}/services`, { priceIds });
+
+  // Update local DB
+  DB.services = DB.services.filter(s => s.categoryId !== editCatId);
+  priceIds.forEach((item, idx) => {
+    DB.services.push({
+      id: 'srv_' + Date.now() + idx,
+      rekazPriceId: item.rekazPriceId,
+      rekazProductId: item.rekazProductId,
+      categoryId: editCatId,
+      nameAr: item.nameAr,
+      order: idx + 1,
+      visible: true
+    });
   });
-  setVal('ui-tagline',u.heroTagline||'');setVal('ui-city',u.heroCity||'');setVal('ui-vat',u.vatNumber||'');
-  setVal('ui-brad',u.buttonRadius||0);document.getElementById('brad-val').textContent=(u.buttonRadius||0)+'px';
-  setSel('f-arabic',u.fontArabic||'Tajawal');setSel('f-display',u.fontDisplay||'Cormorant Garamond');
-  previewFont();
-}
-function updateSwatch(k,v){document.getElementById('sw-'+k).style.background=v;}
-function previewFont(){
-  var f=document.getElementById('f-arabic').value;
-  var lnk=document.getElementById('gfl')||document.createElement('link');
-  lnk.id='gfl';lnk.rel='stylesheet';lnk.href='https://fonts.googleapis.com/css2?family='+encodeURIComponent(f)+':wght@400&display=swap';
-  document.head.appendChild(lnk);
-  document.getElementById('font-prev').style.fontFamily="'"+f+"',sans-serif";
-}
-function collectDesign(){
-  CFG.ui=CFG.ui||{};
-  CFG.ui.primaryColor=val('c-gold');CFG.ui.bgColor=val('c-ink');
-  CFG.ui.creamColor=val('c-cream');CFG.ui.textColor=val('c-text');
-  CFG.ui.heroTagline=val('ui-tagline');CFG.ui.heroCity=val('ui-city');CFG.ui.vatNumber=val('ui-vat');
-  CFG.ui.buttonRadius=parseInt(val('ui-brad')||0);
-  CFG.ui.fontArabic=document.getElementById('f-arabic').value;
-  CFG.ui.fontDisplay=document.getElementById('f-display').value;
+
+  closeModal();
+  renderMenu();
 }
 
-// SECTIONS
-function renderSections(){
-  var secs=CFG.sections||[];
-  if(!secs.length){document.getElementById('sec-list').innerHTML='<div style="font-size:12px;color:rgba(255,255,255,.3);padding:8px 0">لا توجد أقسام — سيتم التصنيف التلقائي.</div>';return;}
-  document.getElementById('sec-list').innerHTML=secs.map(function(s,i){
-    var subsTxt=(s.subs||[]).map(function(x){return typeof x==='string'?x:x.name||'';}).join(' · ');
-    return '<div class="list-item" draggable="true" data-i="'+i+'" ondragstart="drs(event,'+i+')" ondragover="event.preventDefault()" ondrop="drp(event,'+i+')">'
-      +'<span class="drag-h">⠿</span>'
-      +'<div class="li-main"><div class="li-name">'+e(s.nameAr)+' <span style="color:rgba(255,255,255,.3)">/ '+e(s.nameEn||'')+'</span></div><div class="li-sub">'+e(subsTxt.substring(0,60))+'</div></div>'
-      +'<span class="li-badge">'+(s.visible!==false?'مرئي':'مخفي')+'</span>'
-      +'<div class="li-acts"><button class="li-btn" onclick="editSec('+i+')">تعديل</button><button class="li-btn" onclick="togVis('+i+')">'+(s.visible!==false?'إخفاء':'إظهار')+'</button><button class="li-btn del" onclick="delSec('+i+')">حذف</button></div>'
-      +'</div>';
-  }).join('');
+// ── REKAZ PICKER ──
+function renderRekazPicker(selectedPriceIds) {
+  g('rp-search').value = '';
+  renderRekazList(rekazProds, selectedPriceIds);
 }
-var dri=-1;
-function drs(e,i){dri=i;}
-function drp(e,i){e.preventDefault();if(dri<0||dri===i)return;var a=CFG.sections.splice(dri,1)[0];CFG.sections.splice(i,0,a);dri=-1;renderSections();}
-function openSecModal(){editSecIdx=-1;document.getElementById('sec-modal-ttl').textContent='إضافة قسم';clear('sec-ar');clear('sec-en');clear('sec-subs');renderSecProds([]);document.getElementById('sec-modal').classList.add('on');}
-function editSec(i){
-  editSecIdx=i;var s=CFG.sections[i];
-  document.getElementById('sec-modal-ttl').textContent='تعديل القسم';
-  setVal('sec-ar',s.nameAr||'');setVal('sec-en',s.nameEn||'');
-  var subsStr=(s.subs||[]).map(function(x){return typeof x==='string'?x:x.name||'';}).join('\n');
-  setVal('sec-subs',subsStr);
-  renderSecProds(s.services||[]);
-  document.getElementById('sec-modal').classList.add('on');
+function filterRekaz(q) {
+  const selected = getSelectedRekaz().map(i => i.priceId);
+  const filtered = q ? rekazProds.filter(p => {
+    const n = ((p.nameAr || p.name || '') + ' ' + (p.nameEn || '')).toLowerCase();
+    return n.includes(q.toLowerCase());
+  }) : rekazProds;
+  renderRekazList(filtered, selected);
 }
-function renderSecProds(selected){
-  document.getElementById('sec-modal-prods').innerHTML=allProds.map(function(p){
-    var n=cleanName(p.nameAr||p.name||'');
-    var sel=selected.indexOf(p.id)>-1?'sel':'';
-    return '<div class="prod-c '+sel+'" data-id="'+p.id+'" onclick="this.classList.toggle(\'sel\')">'
-      +'<div class="prod-c-chk"></div><div class="prod-c-name">'+e(n)+'</div>'
-      +'<div class="prod-c-price">SAR '+(p.amount||0)+'</div></div>';
-  }).join('');
-}
-function saveSection(){
-  var ar=val('sec-ar').trim(),en=val('sec-en').trim();if(!ar)return;
-  var subs=val('sec-subs').split('\n').map(function(x){return x.trim();}).filter(Boolean);
-  var selProds=[].slice.call(document.querySelectorAll('#sec-modal-prods .prod-c.sel')).map(function(el){return el.dataset.id;});
-  var s={nameAr:ar,nameEn:en,subs:subs,services:selProds,visible:true};
-  CFG.sections=CFG.sections||[];
-  if(editSecIdx>=0)CFG.sections[editSecIdx]=s;else CFG.sections.push(s);
-  renderSections();closeModal('sec-modal');saveAll();
-}
-function togVis(i){CFG.sections[i].visible=!(CFG.sections[i].visible!==false);renderSections();}
-function delSec(i){if(!confirm('حذف؟'))return;CFG.sections.splice(i,1);renderSections();saveAll();}
+function renderRekazList(prods, selectedIds) {
+  const container = g('rp-list');
+  if (!prods.length) { container.innerHTML = '<div style="padding:16px;text-align:center;font-size:12px;color:rgba(255,255,255,.3)">لا توجد نتائج</div>'; return; }
 
-// BUTTONS
-function renderButtons(){
-  var btns=CFG.buttons||[];
-  document.getElementById('btns-list').innerHTML=btns.map(function(b,i){
-    return '<div class="list-item">'
-      +'<div class="tog'+(b.visible!==false?' on':'')+'" onclick="togBtn('+i+')"></div>'
-      +'<div class="li-main"><input style="background:transparent;border:none;border-bottom:1px solid rgba(255,255,255,.1);color:#fff;font-family:\'Tajawal\',sans-serif;font-size:13px;padding:4px 0;width:100%" value="'+e(b.textAr||'')+'" onchange="updBtn('+i+',\'textAr\',this.value)" placeholder="نص الزر"></div>'
-      +'<select style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.6);font-family:\'Tajawal\',sans-serif;font-size:11px;padding:4px 6px;margin:0 8px" onchange="updBtn('+i+',\'action\',this.value)">'
-      +'<option value="booking"'+(b.action==='booking'?' selected':'')+'>حجز</option>'
-      +'<option value="gift"'+(b.action==='gift'?' selected':'')+'>إهداء</option>'
-      +'<option value="memberships"'+(b.action==='memberships'?' selected':'')+'>عضويات</option>'
-      +'<option value="whatsapp"'+(b.action==='whatsapp'?' selected':'')+'>واتساب</option>'
-      +'</select>'
-      +'<button class="li-btn del" onclick="delBtn('+i+')">حذف</button>'
-      +'</div>';
-  }).join('');
-}
-function togBtn(i){CFG.buttons[i].visible=!(CFG.buttons[i].visible!==false);renderButtons();}
-function updBtn(i,k,v){CFG.buttons[i][k]=v;}
-function delBtn(i){CFG.buttons.splice(i,1);renderButtons();}
-function addButton(){CFG.buttons=CFG.buttons||[];CFG.buttons.push({textAr:'زر جديد',visible:true,action:'booking',style:'outline'});renderButtons();}
-function collectButtons(){}
+  container.innerHTML = prods.map(p => {
+    const name = (p.nameAr || p.name || '').split(' - ')[0].trim();
+    const hasV = p.pricing && p.pricing.length > 1;
 
-// PAGES
-function renderPages(){
-  var pages=CFG.pages||[];
-  var list='';if(!pages.length)list='<div style="font-size:12px;color:rgba(255,255,255,.3);padding:6px 0">لا توجد صفحات بعد</div>';
-  else list=pages.map(function(p,i){
-    return '<div class="list-item" style="cursor:pointer" onclick="openPageEditor('+i+')">'
-      +'<div class="li-main"><div class="li-name">'+e(p.titleAr||'')+'</div><div class="li-slug">/'+e(p.slug||'')+'</div></div>'
-      +'<button class="li-btn del" onclick="event.stopPropagation();delPage('+i+')">حذف</button></div>';
+    if (hasV) {
+      // Show each pricing option separately
+      return p.pricing.map(pr => {
+        const sel = selectedIds.includes(pr.id) ? 'sel' : '';
+        return `<div class="rp-item ${sel}" data-price-id="${pr.id}" data-product-id="${p.id}" data-name="${esc(name + ' - ' + (pr.name||''))}" onclick="togRp(this)">
+          <div class="rp-chk"><div class="rp-chk-i"></div></div>
+          <div class="rp-info"><div class="rp-name">${e(name)} — ${e(pr.name||'')}</div><div class="rp-price">SAR ${pr.amount||0} · ${pr.duration||0} دق</div></div>
+          <span class="rp-tag">خيار</span>
+        </div>`;
+      }).join('');
+    } else {
+      const priceId = (p.pricing && p.pricing[0]) ? p.pricing[0].id : p.id;
+      const sel = selectedIds.includes(priceId) ? 'sel' : '';
+      return `<div class="rp-item ${sel}" data-price-id="${priceId}" data-product-id="${p.id}" data-name="${esc(name)}" onclick="togRp(this)">
+        <div class="rp-chk"><div class="rp-chk-i"></div></div>
+        <div class="rp-info"><div class="rp-name">${e(name)}</div><div class="rp-price">SAR ${p.amount||0} · ${p.duration||0} دق</div></div>
+      </div>`;
+    }
   }).join('');
-  document.getElementById('pages-list').innerHTML=list;
-}
-function openPageEditor(i){
-  editPageIdx=i;
-  var p=i>=0?CFG.pages[i]:{};
-  document.getElementById('pe-title').textContent=i>=0?'تعديل: '+(p.titleAr||''):'صفحة جديدة';
-  setVal('pe-title-ar',p.titleAr||'');setVal('pe-slug',p.slug||'');setVal('pe-content',p.content||'');
-  var vis=document.getElementById('pe-vis');p.visible!==false?vis.classList.add('on'):vis.classList.remove('on');
-  document.getElementById('page-editor').classList.add('on');
-}
-function savePage(){
-  var p={titleAr:val('pe-title-ar').trim(),slug:val('pe-slug').trim().replace(/\s+/g,'-').toLowerCase(),content:val('pe-content'),visible:document.getElementById('pe-vis').classList.contains('on')};
-  if(!p.titleAr||!p.slug){alert('أدخلي العنوان والرابط');return;}
-  CFG.pages=CFG.pages||[];
-  if(editPageIdx>=0)CFG.pages[editPageIdx]=p;else CFG.pages.push(p);
-  renderPages();document.getElementById('page-editor').classList.remove('on');saveAll();
-}
-function delPage(i){if(!confirm('حذف؟'))return;CFG.pages.splice(i,1);renderPages();}
-function ins(tag){var ta=document.getElementById('pe-content');var s=ta.selectionStart,en=ta.selectionEnd,v=ta.value,sel=v.substring(s,en)||'النص';if(tag==='br')ta.value=v.substring(0,s)+'\n'+v.substring(en);else ta.value=v.substring(0,s)+'<'+tag+'>'+sel+'</'+tag+'>'+v.substring(en);}
 
-// GIFT
-function renderGift(){
-  var gc=CFG.giftCard||{};
-  setVal('gc-title',gc.title||'بطاقة الإهداء');setVal('gc-subtitle',gc.subtitle||'');
-  setVal('gc-amounts',(gc.amounts||[200,300,500,1000]).join(','));
-  var tog=document.getElementById('gc-enabled');gc.enabled!==false?tog.classList.add('on'):tog.classList.remove('on');
+  updateRpCount();
 }
-function collectGift(){
-  CFG.giftCard={
-    title:val('gc-title'),subtitle:val('gc-subtitle'),
-    amounts:val('gc-amounts').split(',').map(function(x){return parseInt(x.trim());}).filter(Boolean),
-    enabled:document.getElementById('gc-enabled').classList.contains('on')
+function togRp(el) {
+  el.classList.toggle('sel');
+  updateRpCount();
+}
+function updateRpCount() {
+  const n = document.querySelectorAll('#rp-list .rp-item.sel').length;
+  g('rp-count').textContent = n + ' خدمة مختارة';
+}
+function getSelectedRekaz() {
+  return [].slice.call(document.querySelectorAll('#rp-list .rp-item.sel')).map(el => ({
+    priceId: el.dataset.priceId,
+    productId: el.dataset.productId,
+    nameAr: el.dataset.name || ''
+  }));
+}
+
+function closeModal() { g('cat-modal').classList.remove('on'); editCatId = null; }
+
+// ── DESIGN ──
+function renderDesign() {
+  const t = DB.theme || {};
+  setc('c-gold', t.primaryColor || '#b8965a');
+  setc('c-ink', t.bgDark || '#080807');
+  setc('c-light', t.bgLight || '#f3ede3');
+  setc('c-text', t.textColor || '#17150e');
+  ['gold','ink','light','text'].forEach(k => g('sw-'+k).style.background = g('c-'+k).value);
+  setSel('f-arabic', t.fontArabic || 'Tajawal');
+  setSel('f-display', t.fontDisplay || 'Cormorant Garamond');
+  setv('c-brad', t.borderRadius || 0);
+  g('brad-lbl').textContent = t.borderRadius || 0;
+  const l = DB.layout || {};
+  setv('l-tagline', l.heroTagline || '');
+  setv('l-city', l.heroCity || '');
+  setv('l-vat', l.vatNumber || '');
+  prevFont();
+}
+function sw(k, v) { g('sw-'+k).style.background = v; }
+function prevFont() {
+  const f = g('f-arabic').value;
+  let lnk = document.getElementById('gfl');
+  if (!lnk) { lnk = document.createElement('link'); lnk.id='gfl'; lnk.rel='stylesheet'; document.head.appendChild(lnk); }
+  lnk.href = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(f)}:wght@400&display=swap`;
+  g('fp').style.fontFamily = `'${f}',sans-serif`;
+}
+function collectDesign() {
+  DB.theme = { ...DB.theme,
+    primaryColor: g('c-gold').value,
+    bgDark: g('c-ink').value,
+    bgLight: g('c-light').value,
+    textColor: g('c-text').value,
+    fontArabic: g('f-arabic').value,
+    fontDisplay: g('f-display').value,
+    borderRadius: parseInt(g('c-brad').value) || 0
+  };
+  DB.layout = { ...DB.layout,
+    heroTagline: g('l-tagline').value,
+    heroCity: g('l-city').value,
+    vatNumber: g('l-vat').value
   };
 }
 
-// MEMBERSHIPS
-function renderMemberships(){
-  var mems=CFG.memberships||[];
-  document.getElementById('mem-list').innerHTML=mems.map(function(m,i){
-    return '<div class="mem-item">'
-      +'<div class="mem-item-ttl"><span>'+e(m.name||'')+'</span><button class="li-btn del" onclick="delMem('+i+')">حذف</button></div>'
-      +'<div class="gr3"><div class="field"><label>الاسم</label><input value="'+e(m.name||'')+'" onchange="CFG.memberships['+i+'].name=this.value"></div>'
-      +'<div class="field"><label>السعر (SAR)</label><input type="number" value="'+( m.price||0)+'" onchange="CFG.memberships['+i+'].price=parseInt(this.value)"></div>'
-      +'<div class="field"><label>مميز</label><div class="tog'+(m.featured?' on':'')+'" onclick="this.classList.toggle(\'on\');CFG.memberships['+i+'].featured=this.classList.contains(\'on\')"></div></div></div>'
-      +'<div class="field"><label>المميزات (كل سطر ميزة)</label><textarea onchange="CFG.memberships['+i+'].features=this.value.split(\'\\n\').filter(Boolean)">'+e((m.features||[]).join('\n'))+'</textarea></div>'
-      +'</div>';
-  }).join('');
+// ── BUTTONS ──
+function renderButtons() {
+  const btns = (DB.buttons || []).sort((a,b) => a.order - b.order);
+  g('btns-list').innerHTML = btns.map((b, i) => `
+    <div class="list-item">
+      <div class="tog ${b.visible!==false?'on':''}" onclick="togBtn(${i})"></div>
+      <div class="li-info">
+        <input style="background:transparent;border:none;border-bottom:1px solid rgba(255,255,255,.1);color:#fff;font-family:'Tajawal',sans-serif;font-size:13px;padding:4px 0;width:100%" value="${e(b.textAr||'')}" onchange="DB.buttons[${i}].textAr=this.value" placeholder="نص الزر">
+      </div>
+      <select style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.6);font-family:'Tajawal',sans-serif;font-size:11px;padding:4px;margin:0 8px" onchange="DB.buttons[${i}].action=this.value">
+        <option value="booking" ${b.action==='booking'?'selected':''}>حجز</option>
+        <option value="gift" ${b.action==='gift'?'selected':''}>إهداء</option>
+        <option value="memberships" ${b.action==='memberships'?'selected':''}>عضويات</option>
+        <option value="whatsapp" ${b.action==='whatsapp'?'selected':''}>واتساب</option>
+      </select>
+      <select style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.6);font-family:'Tajawal',sans-serif;font-size:11px;padding:4px;margin-left:5px" onchange="DB.buttons[${i}].style=this.value">
+        <option value="primary" ${b.style==='primary'?'selected':''}>أساسي</option>
+        <option value="outline" ${b.style==='outline'?'selected':''}>خطوط</option>
+      </select>
+      <button class="li-btn del" onclick="delBtn(${i})">×</button>
+    </div>`).join('');
 }
-function addMem(){CFG.memberships=CFG.memberships||[];CFG.memberships.push({name:'باقة جديدة',price:0,featured:false,features:[]});renderMemberships();}
-function delMem(i){CFG.memberships.splice(i,1);renderMemberships();}
+function togBtn(i) { DB.buttons[i].visible = !(DB.buttons[i].visible !== false); renderButtons(); }
+function delBtn(i) { DB.buttons.splice(i, 1); renderButtons(); }
+function addBtn() { DB.buttons.push({ id:'btn_'+Date.now(), textAr:'زر جديد', action:'booking', style:'outline', order:DB.buttons.length+1, visible:true }); renderButtons(); }
+function collectButtons() { DB.buttons.forEach((b, i) => b.order = i + 1); }
 
-// SOCIAL
-function renderSocial(){
-  var s=CFG.social||{};
-  setVal('soc-ig',s.instagram||'');setVal('soc-tt',s.tiktok||'');setVal('soc-sc',s.snapchat||'');setVal('soc-tw',s.twitter||'');setVal('soc-wa',s.whatsapp||'');
+// ── SOCIAL ──
+function renderSocial() {
+  const s = DB.social || {};
+  setv('s-ig', s.instagram||''); setv('s-tt', s.tiktok||''); setv('s-sc', s.snapchat||'');
+  setv('s-tw', s.twitter||''); setv('s-wa', s.whatsapp||'');
 }
-function collectSocial(){
-  CFG.social={instagram:val('soc-ig'),tiktok:val('soc-tt'),snapchat:val('soc-sc'),twitter:val('soc-tw'),whatsapp:val('soc-wa')};
-}
-
-// PAYMENT
-function renderPayment(){
-  var logos=CFG.paymentLogos||[];
-  document.getElementById('pay-logos-list').innerHTML=logos.map(function(l,i){
-    return '<div class="tog-row"><div class="tog-l">'+e(l.label||l.id)+'</div><div class="tog'+(l.visible!==false?' on':'')+'" onclick="this.classList.toggle(\'on\');CFG.paymentLogos['+i+'].visible=this.classList.contains(\'on\')"></div></div>';
-  }).join('');
-}
-
-// OVERVIEW
-function renderOverview(){
-  var u=CFG.ui||{},s=CFG.sections||[],p=CFG.pages||[],soc=CFG.social||{};
-  document.getElementById('ov-summary').innerHTML=
-    '<div>🎨 اللون الأساسي: <span style="color:var(--gold)">'+e(u.primaryColor||'#b8965a')+'</span></div>'+
-    '<div>🔤 الخط: <span style="color:var(--gold)">'+e(u.fontArabic||'Tajawal')+'</span></div>'+
-    '<div>📑 الأقسام: <span style="color:var(--gold)">'+s.length+' قسم</span></div>'+
-    '<div>📄 الصفحات: <span style="color:var(--gold)">'+p.length+' صفحة</span></div>'+
-    '<div>📱 واتساب: <span style="color:var(--gold)">'+(soc.whatsapp||'غير محدد')+'</span></div>';
+function collectSocial() {
+  DB.social = { instagram:g('s-ig').value, tiktok:g('s-tt').value, snapchat:g('s-sc').value, twitter:g('s-tw').value, whatsapp:g('s-wa').value };
 }
 
-// REKAZ PRODUCTS
-function loadProds(){
-  fetch(B+'/admin/products',{headers:{Authorization:'Bearer '+TOK}})
-    .then(function(r){return r.json();})
-    .then(function(d){
-      allProds=d.items||[];
-      document.getElementById('rekaz-prods').innerHTML=allProds.map(function(p){
-        return '<div class="prod-c" title="'+e(p.nameAr||p.name||'')+'">'
-          +'<div class="prod-c-name">'+e(cleanName(p.nameAr||p.name||'').substring(0,26))+'</div>'
-          +'<div class="prod-c-price">SAR '+(p.amount||0)+'</div></div>';
-      }).join('');
-    }).catch(function(){document.getElementById('rekaz-prods').innerHTML='<div style="font-size:12px;color:#e74c3c">فشل التحميل</div>';});
+// ── PAYMENT ──
+function renderPayment() {
+  const pays = (DB.payments || []).sort((a,b) => a.order - b.order);
+  g('pay-list').innerHTML = pays.map((p, i) => `
+    <div class="list-item" draggable="true">
+      <span class="drag-handle">⠿</span>
+      <div class="li-info"><div class="li-name">${e(p.label)}</div></div>
+      <div class="tog ${p.visible!==false?'on':''}" onclick="togPay(${i})"></div>
+    </div>`).join('');
 }
-function checkRekaz(){
-  fetch(B+'/products').then(function(r){
-    var d=document.getElementById('rekaz-dot'),t=document.getElementById('rekaz-status');
-    if(r.ok){d.classList.add('live');t.textContent='متصل ويعمل';}else t.textContent='خطأ في الاتصال';
-  }).catch(function(){document.getElementById('rekaz-status').textContent='غير متصل';});
-}
+function togPay(i) { DB.payments[i].visible = !(DB.payments[i].visible !== false); renderPayment(); }
+function collectPayments() {}
 
-// UTILS
-function closeModal(id){document.getElementById(id).classList.remove('on');}
-function e(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-function cleanName(n){return n&&n.includes(' - ')?n.split(' - ')[0].trim():n||'';}
-function val(id){var el=document.getElementById(id);return el?el.value:'';}
-function setVal(id,v){var el=document.getElementById(id);if(el)el.value=v;}
-function set(id,v){var el=document.getElementById(id);if(el)el.value=v;}
-function setSel(id,v){var el=document.getElementById(id);if(!el)return;for(var i=0;i<el.options.length;i++)if(el.options[i].value===v){el.selectedIndex=i;break;}}
-function clear(id){setVal(id,'');}
+// ── GIFT PAGE BUILDER ──
+function renderGift() {
+  const sections = (DB.pages && DB.pages.gift && DB.pages.gift.sections) || [];
+  g('gift-blocks').innerHTML = sections.map((blk, i) => `
+    <div class="pb-block">
+      <span class="pb-type">${blk.type}</span>
+      <input class="pb-inp" value="${e(blk.type==='amounts'?(blk.values||[]).join(','):blk.value||'')}" 
+        placeholder="${blk.type==='amounts'?'200,300,500,1000':'النص...'}"
+        onchange="updBlock('gift',${i},this.value)">
+      <button class="li-btn del" onclick="delBlock('gift',${i})" style="flex-shrink:0">×</button>
+    </div>`).join('');
+}
+function addBlock(page, type) {
+  if (!DB.pages) DB.pages = {};
+  if (!DB.pages[page]) DB.pages[page] = { sections:[] };
+  if (!DB.pages[page].sections) DB.pages[page].sections = [];
+  DB.pages[page].sections.push(type==='amounts' ? { type, values:[200,300,500,1000] } : { type, value:'' });
+  renderGift();
+}
+function updBlock(page, i, v) {
+  const blk = DB.pages[page].sections[i];
+  if (blk.type === 'amounts') blk.values = v.split(',').map(x => parseInt(x.trim())).filter(Boolean);
+  else blk.value = v;
+}
+function delBlock(page, i) { DB.pages[page].sections.splice(i,1); renderGift(); }
+function collectGift() {}
+
+// ── MEMBERSHIPS ──
+function renderMems() {
+  const mems = (DB.pages && DB.pages.memberships && DB.pages.memberships.items) || [];
+  g('mems-list').innerHTML = mems.map((m, i) => `
+    <div class="mem-card-edit">
+      <div class="mem-card-edit-ttl">
+        <span>${e(m.name||'باقة')}</span>
+        <div style="display:flex;gap:6px;align-items:center">
+          <label style="font-size:11px;color:rgba(255,255,255,.4)">مميز</label>
+          <div class="tog ${m.featured?'on':''}" onclick="DB.pages.memberships.items[${i}].featured=!DB.pages.memberships.items[${i}].featured;renderMems()"></div>
+          <button class="li-btn del" onclick="delMem(${i})">×</button>
+        </div>
+      </div>
+      <div class="gr3">
+        <div class="f"><label>الاسم</label><input value="${e(m.name||'')}" onchange="DB.pages.memberships.items[${i}].name=this.value"></div>
+        <div class="f"><label>السعر SAR</label><input type="number" value="${m.price||0}" onchange="DB.pages.memberships.items[${i}].price=parseInt(this.value)||0"></div>
+        <div class="f"><label>عدد الزيارات</label><input type="number" value="${m.visits||12}" onchange="DB.pages.memberships.items[${i}].visits=parseInt(this.value)||12"></div>
+      </div>
+      <div class="f"><label>المميزات (كل سطر ميزة)</label>
+        <textarea onchange="DB.pages.memberships.items[${i}].features=this.value.split('\\n').filter(Boolean)">${e((m.features||[]).join('\n'))}</textarea>
+      </div>
+    </div>`).join('');
+}
+function addMem() {
+  if (!DB.pages) DB.pages = {};
+  if (!DB.pages.memberships) DB.pages.memberships = { items:[] };
+  if (!DB.pages.memberships.items) DB.pages.memberships.items = [];
+  DB.pages.memberships.items.push({ name:'باقة جديدة', price:0, featured:false, visits:12, features:[] });
+  renderMems();
+}
+function delMem(i) { DB.pages.memberships.items.splice(i,1); renderMems(); }
+function collectMems() {}
+
+// ── UTILS ──
+const api = (method, path, body) => fetch(B+path, {
+  method, headers: { 'Content-Type':'application/json', Authorization:'Bearer '+TOK },
+  body: body ? JSON.stringify(body) : undefined
+}).then(r => r.json());
+const g = id => document.getElementById(id);
+const e = s => (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const esc = s => (s||'').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+const setv = (id, v) => { const el=g(id); if(el) el.value=v; };
+const setc = (id, v) => { const el=g(id); if(el) el.value=v; };
+const setSel = (id, v) => { const el=g(id); if(!el) return; for(let i=0;i<el.options.length;i++) if(el.options[i].value===v){el.selectedIndex=i;break;} };
 </script>
 </body>
 </html>
