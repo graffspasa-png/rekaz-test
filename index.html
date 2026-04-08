@@ -538,9 +538,9 @@ var SITE_CFG = null, otpTimerInterval = null;
 // ── INIT ──
 async function init() {
   try {
-    var r = await fetch(B + '/config');
+    var r = await fetch(B + '/site');
     if (r.ok) SITE_CFG = await r.json();
-  } catch(e) { console.log('Config load error:', e.message); }
+  } catch(e) { console.log('Site config error:', e.message); }
   applyConfig();
   renderPayMethods();
   renderGiftPage();
@@ -696,6 +696,74 @@ function renderMemberships() {
   }).join('');
 }
 
+
+// ── MENU: display categories from CMS ──
+function buildSvcFromMenu(cats) {
+  var tabsH = '', bodyH = '', first = true;
+  cats.forEach(function(cat) {
+    var cid = 'c_' + cat.id.replace(/[^a-zA-Z0-9]/g,'');
+    tabsH += '<button class="tab'+(first?' on':'')+'" data-cid="'+cid+'" onclick="swTab(this.dataset.cid,this)">' + esc(cat.nameAr) + '</button>';
+    bodyH += '<div class="cpanel'+(first?' on':'')+'" id="'+cid+'">';
+    if (!cat.services || !cat.services.length) {
+      bodyH += '<div class="empty-cat">لا توجد خدمات في هذا القسم</div>';
+    } else {
+      bodyH += '<div class="sub-cards" style="padding:10px 0">';
+      cat.services.forEach(function(svc) { bodyH += buildMenuCard(svc); });
+      bodyH += '</div>';
+    }
+    bodyH += '</div>';
+    first = false;
+  });
+  document.getElementById('tabs').innerHTML = tabsH;
+  document.getElementById('svcbody').innerHTML = bodyH;
+}
+
+function buildMenuCard(svc) {
+  var pid = 'sc_' + svc.id.replace(/[^a-zA-Z0-9]/g,'');
+  var hasV = svc.hasVariants && svc.variants && svc.variants.length > 1;
+  var priceId = svc.rekazPriceId;
+  var name = svc.nameAr || '';
+  var desc = (svc.description||'').replace(/<[^>]*>/g,'').replace(/&amp;/g,'&').replace(/&nbsp;/g,' ').trim();
+  if (desc.length > 160) desc = desc.substring(0,160)+'...';
+  // click handled via clickAttr and data attributes above
+
+  var h = '<div class="sc" id="'+pid+'" '+clickAttr+dataAttrs+'>';
+  h += '<div class="scbar"></div>';
+  h += '<div class="scbody"><div class="scinfo"><div class="scname">'+esc(name)+'</div>';
+  if (desc) h += '<div class="scdesc">'+esc(desc)+'</div>';
+  if (svc.duration) h += '<div class="scdur"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>'+svc.duration+' دقيقة</div>';
+  h += '</div>';
+  h += '<div class="scright">';
+  h += '<div><div class="scprice"><span class="scsr">SAR </span>'+(hasV?'من ':'')+svc.amount+'</div><div class="scvat">شامل VAT</div></div>';
+  if (hasV) h += '<div class="varbtn" id="vb_'+svc.id.replace(/[^a-zA-Z0-9]/g,'')+'">خيارات <span class="vchev"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></span></div>';
+  else h += '<div class="scchk"><div class="chkd"></div></div>';
+  h += '</div></div>';
+
+  if (hasV) {
+    h += '<div class="vwrap" id="vw_'+svc.id.replace(/[^a-zA-Z0-9]/g,'')+'">';
+    svc.variants.forEach(function(vr) {
+      h += '<div class="vrow" id="vr_'+vr.id.replace(/-/g,'')+'" data-prod="'+svc.rekazProductId+'" data-price="'+vr.id+'" data-name="'+(vr.name||'').replace(/"/g,'')+'" data-dur="'+vr.duration+'" data-amt="'+vr.amount+'" onclick="event.stopPropagation();selVarEl(this)">';
+      h += '<div class="vdot"></div><div class="vinfo"><div class="vname">'+esc(vr.name||'')+'</div>';
+      if (vr.duration) h += '<div class="vdur">'+vr.duration+' دقيقة</div>';
+      h += '</div><div class="vprice"><span class="vsr">SAR </span>'+vr.amount+'</div><div class="vchk"><div class="vchkd"></div></div></div>';
+    });
+    h += '</div>';
+  }
+
+  if (svc.addOns && svc.addOns.length) {
+    h += '<div class="adwrap"><div class="adtitle">ADD-ONS · الإضافات</div>';
+    svc.addOns.forEach(function(ao) {
+      h += '<div class="adrow" id="ao_'+ao.id.replace(/-/g,'')+'" data-prod="'+svc.rekazProductId+'" data-ao="'+ao.id+'" data-name="'+(ao.nameAr||'').replace(/"/g,'')+'" data-amt="'+ao.amount+'" onclick="event.stopPropagation();togAddonEl(this)">';
+      h += '<div class="adchk"><div class="adchki"></div></div>';
+      h += '<span class="adname">'+esc(ao.nameAr||'')+'</span>';
+      h += '<span class="adprice"><span class="adprice-sr">+ SAR </span>'+ao.amount+'</span></div>';
+    });
+    h += '</div>';
+  }
+  h += '</div>';
+  return h;
+}
+
 // ── SERVICES — config-driven ──
 function cleanName(n){ if(!n)return ''; return n.includes(' - ')?n.split(' - ')[0].trim():n.trim(); }
 function safeAttr(s){ return (s||'').replace(/'/g,'&#39;').replace(/"/g,'&quot;'); }
@@ -703,10 +771,15 @@ function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').repla
 
 async function loadProducts(){
   try {
-    var [pRes, cRes] = await Promise.all([fetch(B+'/products'), fetch(B+'/config')]);
-    var products = pRes.ok ? (await pRes.json()).items || [] : [];
-    if (cRes.ok) SITE_CFG = Object.assign(SITE_CFG||{}, await cRes.json());
-    buildSvc(products);
+    var r = await fetch(B+'/menu');
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    var data = await r.json();
+    var cats = data.categories || [];
+    if (!cats.length) {
+      document.getElementById('tabs').innerHTML = '<span style="padding:12px 18px;font-size:11px;color:rgba(255,255,255,.35)">لم يتم إعداد الأقسام بعد — افتحي لوحة التحكم لإضافة الأقسام وربط الخدمات</span>';
+      return;
+    }
+    buildSvcFromMenu(cats);
   } catch(e) {
     document.getElementById('tabs').innerHTML = '<span style="padding:12px 18px;font-size:11px;color:#e74c3c">فشل التحميل: '+esc(e.message)+'</span>';
   }
@@ -873,7 +946,7 @@ function buildCard(p) {
     ? 'onclick="togCard(\''+pid+'\')"'
     : 'onclick="selCard(\''+p.id+'\',\''+priceId+'\',\''+safeAttr(name)+'\','+dur+','+amount+',\''+pid+'\')"';
   var hasAd = p.addOns && p.addOns.length > 0;
-  var h = '<div class="sc" id="'+pid+'" '+click+'>';
+  var h = '<div class="sc" id="'+pid+'" '+clickAttr+dataAttrs+'>';
   h += '<div class="scbar"></div>';
   h += '<div class="scbody"><div class="scinfo"><div class="scname">'+esc(name)+'</div>';
   if (desc) h += '<div class="scdesc">'+esc(desc)+'</div>';
@@ -918,12 +991,47 @@ function swTab(cid,btn){
 }
 function togCard(pid){
   var card=document.getElementById(pid);
-  var rid=pid.replace(/^sc/,'');
-  var vw=document.getElementById('vw'+rid),vb=document.getElementById('vb'+rid);
+  // Handle both sc_ID and scID formats
+  var rid=pid.replace(/^sc_?/,'');
+  var vw=document.getElementById('vw_'+rid)||document.getElementById('vw'+rid);
+  var vb=document.getElementById('vb_'+rid)||document.getElementById('vb'+rid);
   var open=card.classList.toggle('has-open');
   if(vw)vw.classList.toggle('open',open);
   if(vb)vb.classList.toggle('open',open);
 }
+
+function selCardEl(el) {
+  var pid = el.id;
+  var id = el.dataset.prod;
+  var priceId = el.dataset.price;
+  var name = el.dataset.name;
+  var dur = parseInt(el.dataset.dur) || 0;
+  var amount = parseFloat(el.dataset.amt) || 0;
+  selCard(id, priceId, name, dur, amount, pid);
+}
+
+function selVarEl(el) {
+  var pid = el.closest('.sc').id;
+  var prodId = el.dataset.prod;
+  var priceId = el.dataset.price;
+  var name = el.dataset.name || '';
+  var dur = parseInt(el.dataset.dur) || 0;
+  var amount = parseFloat(el.dataset.amt) || 0;
+  selVar(prodId, priceId, name, dur, amount);
+  // Update card pid reference
+  if (S.cart) S.cart.pid = pid;
+  document.getElementById(pid).classList.toggle('sel', S.cart !== null);
+}
+
+
+function togAddonEl(el) {
+  var pid = el.dataset.prod;
+  var aoId = el.dataset.ao;
+  var name = el.dataset.name || '';
+  var price = parseFloat(el.dataset.amt) || 0;
+  togAddon(pid, aoId, name, price);
+}
+
 function clearSel(){
   if(S.cart){
     var old=document.getElementById(S.cart.pid); if(old)old.classList.remove('sel');
