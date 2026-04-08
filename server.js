@@ -86,9 +86,8 @@ app.post("/send-otp", async (req, res) => {
   console.log(`[OTP] Generated for ${phone}: ${otp}`);
 
   // TODO: Replace with real SMS (Unifonic / Taqnyat)
-  // For now: return OTP only in dev mode
-  const response = { success: true, message: "OTP sent" };
-  if (IS_DEV) response.debug_otp = otp;
+  // TEMP: Always return OTP until SMS is connected
+  const response = { success: true, message: "OTP sent", debug_otp: otp };
 
   res.json(response);
 });
