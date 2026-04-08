@@ -543,6 +543,64 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction
 
 <script>
 var B='https://rekaz-test.onrender.com';
+var SITE_CONFIG = null;
+
+// Load site config from admin panel settings
+async function loadSiteConfig() {
+  try {
+    var r = await fetch(B + '/config');
+    if (r.ok) SITE_CONFIG = await r.json();
+  } catch(e) { console.log('Config load skipped:', e.message); }
+  applyConfig();
+}
+
+function applyConfig() {
+  if (!SITE_CONFIG) return;
+  var ui = SITE_CONFIG.ui || {};
+  // Apply colors
+  if (ui.primaryColor) {
+    document.documentElement.style.setProperty('--gold', ui.primaryColor);
+    document.documentElement.style.setProperty('--gold2', ui.primaryColor);
+  }
+  if (ui.backgroundColor) {
+    document.documentElement.style.setProperty('--ink', ui.backgroundColor);
+  }
+  // Apply tagline
+  if (ui.heroTagline) {
+    var el = document.querySelector('.htag');
+    if (el) el.textContent = ui.heroTagline;
+  }
+  // Apply font
+  if (ui.fontFamily) {
+    var link = document.getElementById('gfont-runtime');
+    if (!link) { link=document.createElement('link'); link.id='gfont-runtime'; link.rel='stylesheet'; document.head.appendChild(link); }
+    link.href = 'https://fonts.googleapis.com/css2?family=' + encodeURIComponent(ui.fontFamily) + ':wght@300;400;500&display=swap';
+    document.body.style.fontFamily = "'" + ui.fontFamily + "',sans-serif";
+  }
+  // Apply button style
+  if (ui.buttonStyle) {
+    var radius = ui.buttonStyle === 'pill' ? '50px' : ui.buttonStyle === 'rounded' ? '8px' : '0';
+    var style = document.getElementById('btn-style-override');
+    if (!style) { style=document.createElement('style'); style.id='btn-style-override'; document.head.appendChild(style); }
+    style.textContent = '.hbtn,.botbtn,.cartcta,.sucpay,.sucnew,.popup-btn,.popup-btn-sec{border-radius:' + radius + ' !important}';
+  }
+  // Apply home buttons visibility/text
+  var btns = SITE_CONFIG.buttons || [];
+  btns.forEach(function(b) {
+    var el = document.querySelector('[data-btn-id="' + b.id + '"]');
+    if (el) {
+      el.style.display = b.visible !== false ? '' : 'none';
+      var span = el.querySelector('span:first-child');
+      if (span && b.text) span.textContent = b.text;
+    }
+  });
+  // Apply social links
+  var soc = SITE_CONFIG.social || {};
+  var waBtn = document.querySelector('[data-btn-id="contact"]');
+  if (waBtn && soc.whatsapp) {
+    waBtn.onclick = function(){ window.open('https://wa.me/' + soc.whatsapp.replace(/\D/g,''), '_blank'); };
+  }
+}
 var MO=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
 var DA=['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
 var S={cart:null,addons:[],date:null,slot:null,slotLbl:null,phone:null,cid:null,payUrl:null,disc:0};
@@ -1005,6 +1063,7 @@ function resetAll(){
 }
 function showErr(id,msg){var el=document.getElementById(id);if(!el)return;el.textContent=msg;el.style.display=msg?'block':'none';}
 
+loadSiteConfig();
 renderCal();
 loadProducts();
 </script>
