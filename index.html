@@ -888,9 +888,12 @@ async function sendOTP(r2){
     var r=await fetch(B+'/send-otp',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone:ph})});
     var d=await r.json();if(!r.ok)throw new Error(d.error||'فشل الإرسال');
     ['o1','o2','o3','o4'].forEach(function(id){document.getElementById(id).value='';});
-    var hint='تم إرسال الرمز على '+ph;
-    if(d.debug_otp)hint+=' — رمز التجربة: '+d.debug_otp;
-    document.getElementById('otphnt').textContent=hint;
+    var otpEl=document.getElementById('otphnt');
+    if(d.debug_otp){
+      otpEl.innerHTML='رمز التحقق: <strong style="font-size:22px;letter-spacing:.18em;color:var(--gold)">'+d.debug_otp+'</strong>';
+    }else{
+      otpEl.textContent='تم إرسال الرمز على '+ph;
+    }
     go('otp');setTimeout(function(){document.getElementById('o1').focus();},300);
   }catch(e){showErr('errph',e.message);}
   btn.classList.remove('ld');btn.disabled=false;
