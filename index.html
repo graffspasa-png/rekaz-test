@@ -571,104 +571,132 @@ function calcTotal(){
   return (S.cart.amount+at)-(S.disc||0);
 }
 
-// ══ STRICT CLASSIFICATION MAP ══
-// Keywords for each sub-section — lowercase, checked against nameAr + nameEn
-var CATS = [
-  // ── NAILS
-  {cat:'الأظافر', sub:'REMOVAL · إزالة', kw:['إزالة','removal']},
-  {cat:'الأظافر', sub:'EXTENSIONS · اكستنشن وبياب', kw:['اكستنشن','extension','بياب','biab','تعبئة','infill']},
-  {cat:'الأظافر', sub:'COLOR · لون وطلاء', kw:['لون','color','شيلاك','shellac','فرنش','french','كات آي','cat eye']},
-  {cat:'الأظافر', sub:'NAIL ART · رسم أظافر', kw:['رسم','nail art','رسمة']},
-  {cat:'الأظافر', sub:'PRESS-ON · اظافر اصطناعية', kw:['press-on','press on','اصطناعية','صناعية']},
-  {cat:'الأظافر', sub:'QUICK FIX · تنظيف سريع', kw:['تنظيف سريع','quick fix']},
-  {cat:'الأظافر', sub:'PEDICURE · بديكير', kw:['بديكير','pedicure']},
-  {cat:'الأظافر', sub:'MANICURE · مناكير', kw:['مناكير','manicure']},
-  // ── LASHES & BROWS
-  {cat:'الرموش', sub:'LASHES · رموش', kw:['رموش','lash','volume','classic lash','fox','barbie','mega','mega volume']},
-  {cat:'الرموش', sub:'LIFTING & LAMINATION · رفع وتموج', kw:['lifting','lamination','lami','رفع']},
-  {cat:'الرموش', sub:'BROWS · حواجب', kw:['حواجب','brow']},
-  {cat:'الرموش', sub:'REMOVAL · إزالة رموش', kw:['إزالة رموش','lash removal']},
-  // ── HAIR
-  {cat:'الشعر', sub:'BLOW DRY · استشوار', kw:['سشوار','استشوار','blow dry','blowdry','blow out']},
-  {cat:'الشعر', sub:'HAIR STYLING · تسريحات', kw:['تسريحة','تسريح','updo','styling','style']},
-  {cat:'الشعر', sub:'HAIR TREATMENT · علاجات', kw:['k18','treatment','علاج','ترطيب','كيراتين','keratin']},
-  {cat:'الشعر', sub:'HAIR COLOR · صبغة', kw:['صبغ','صبغة','color','colour','roots','highlights']},
-  {cat:'الشعر', sub:'HAIR CUT · قص', kw:['قص','trim','cut']},
-  {cat:'الشعر', sub:'HAIR WASH · غسيل', kw:['غسيل','wash','شامبو']},
-  // ── MASSAGE
-  {cat:'مساج', sub:'MASSAGE · مساج', kw:['مساج','massage']}
+// ══ PRODUCT GROUPING — uses Rekaz customFields for order ══
+// Add these customFields to each product in Rekaz dashboard:
+//   "category"      → القسم الرئيسي  e.g. "الأظافر"
+//   "subCategory"   → القسم الفرعي   e.g. "MANICURE · مناكير"
+//   "categoryOrder" → رقم ترتيب القسم
+//   "productOrder"  → رقم ترتيب المنتج
+
+// Fallback keyword classification (when customFields not yet set in Rekaz)
+var FALLBACK_CATS = [
+  {cat:'الأظافر',  sub:'REMOVAL · إزالة',             kw:['إزالة','removal']},
+  {cat:'الأظافر',  sub:'EXTENSIONS · اكستنشن وبياب',  kw:['اكستنشن','extension','بياب','biab','تعبئة','infill']},
+  {cat:'الأظافر',  sub:'COLOR · لون وطلاء',           kw:['لون','color','شيلاك','shellac','فرنش','french','كات','cat eye']},
+  {cat:'الأظافر',  sub:'NAIL ART · رسم أظافر',        kw:['رسم','nail art']},
+  {cat:'الأظافر',  sub:'PRESS-ON · اظافر اصطناعية',   kw:['press-on','press on','اصطناعي']},
+  {cat:'الأظافر',  sub:'QUICK FIX · تنظيف سريع',     kw:['تنظيف سريع','quick fix']},
+  {cat:'الأظافر',  sub:'PEDICURE · بديكير',           kw:['بديكير','pedicure']},
+  {cat:'الأظافر',  sub:'MANICURE · مناكير',           kw:['مناكير','manicure']},
+  {cat:'الرموش',   sub:'LASHES · رموش',               kw:['رموش','lash','volume','classic lash','fox','barbie']},
+  {cat:'الرموش',   sub:'LIFTING · رفع',               kw:['lifting','lamination','رفع']},
+  {cat:'الرموش',   sub:'BROWS · حواجب',               kw:['حواجب','brow']},
+  {cat:'الشعر',    sub:'BLOW DRY · استشوار',          kw:['سشوار','استشوار','blow dry','blowdry']},
+  {cat:'الشعر',    sub:'HAIR STYLING · تسريحات',      kw:['تسريحة','تسريح','updo','styling']},
+  {cat:'الشعر',    sub:'TREATMENTS · علاجات',         kw:['k18','treatment','علاج','keratin','كيراتين']},
+  {cat:'الشعر',    sub:'HAIR COLOR · صبغة',           kw:['صبغ','صبغة','roots','highlights']},
+  {cat:'الشعر',    sub:'HAIR CUT · قص',               kw:['قص','trim','cut']},
+  {cat:'الشعر',    sub:'HAIR WASH · غسيل',            kw:['غسيل','wash']},
+  {cat:'مساج',     sub:'MASSAGE · مساج',              kw:['مساج','massage']}
 ];
 
-function classify(p){
+function getCustomField(p, name) {
+  var fields = p.customFields || [];
+  for (var i=0; i<fields.length; i++) {
+    if (fields[i].name === name) return fields[i].value;
+  }
+  return null;
+}
+
+function classifyFallback(p) {
   var n=((p.nameAr||p.name||'')+' '+(p.nameEn||'')).toLowerCase();
-  for(var i=0;i<CATS.length;i++){
-    var rule=CATS[i];
+  for(var i=0;i<FALLBACK_CATS.length;i++){
+    var rule=FALLBACK_CATS[i];
     for(var j=0;j<rule.kw.length;j++){
       if(n.includes(rule.kw[j]))return {cat:rule.cat,sub:rule.sub};
     }
   }
-  // Default: if nothing matched, put in first NAILS sub
   return {cat:'الأظافر',sub:'MANICURE · مناكير'};
+}
+
+// Main grouping function using Rekaz customFields
+function groupProducts(products) {
+  var categories = {};
+  products.forEach(function(p) {
+    var category    = getCustomField(p,'category')     || null;
+    var subCategory = getCustomField(p,'subCategory')  || null;
+    var catOrder    = parseInt(getCustomField(p,'categoryOrder') || '999');
+    var prodOrder   = parseInt(getCustomField(p,'productOrder')  || '999');
+
+    // If no customFields in Rekaz yet, use keyword fallback
+    if (!category) {
+      var fb = classifyFallback(p);
+      category = fb.cat; subCategory = fb.sub; catOrder = 999; prodOrder = 999;
+    }
+    if (!subCategory) subCategory = classifyFallback(p).sub;
+
+    if (!categories[category]) {
+      categories[category] = { name:category, order:catOrder, subs:{} };
+    }
+    if (!categories[category].subs[subCategory]) {
+      categories[category].subs[subCategory] = { name:subCategory, items:[] };
+    }
+    categories[category].subs[subCategory].items.push(
+      Object.assign({}, p, { _prodOrder: prodOrder })
+    );
+  });
+
+  // Sort categories and products by their order
+  return Object.values(categories)
+    .sort(function(a,b){ return a.order - b.order; })
+    .map(function(cat) {
+      Object.values(cat.subs).forEach(function(sub) {
+        sub.items.sort(function(a,b){ return a._prodOrder - b._prodOrder; });
+      });
+      return cat;
+    });
 }
 
 async function loadProducts(){
   try{
     var r=await fetch(B+'/products');
+    if(!r.ok) throw new Error('فشل التحميل ('+r.status+')');
     var d=await r.json();
     buildSvc(d.items||[]);
   }catch(e){
-    document.getElementById('tabs').innerHTML='<span style="padding:12px 18px;font-size:11px;color:#e74c3c">خطأ في التحميل: '+e.message+'</span>';
+    document.getElementById('tabs').innerHTML='<span style="padding:12px 18px;font-size:11px;color:#e74c3c">'+e.message+'</span>';
   }
 }
 
 function buildSvc(prods){
-  // Group products keeping Rekaz order
-  var catOrder=[],catMap={};
-  prods.forEach(function(p){
-    var cs=classify(p);
-    if(!catMap[cs.cat]){catMap[cs.cat]={};catOrder.push(cs.cat);}
-    if(!catMap[cs.cat][cs.sub])catMap[cs.cat][cs.sub]=[];
-    catMap[cs.cat][cs.sub].push(p);
-  });
-  // Enforce preferred cat order
-  var preferred=['الأظافر','الرموش','الشعر','مساج'];
-  var final=[];
-  preferred.forEach(function(c){if(catMap[c])final.push(c);});
-  catOrder.forEach(function(c){if(final.indexOf(c)===-1)final.push(c);});
-
+  var grouped = groupProducts(prods);
+  if(!grouped.length){
+    document.getElementById('tabs').innerHTML='<span style="padding:12px 18px;font-size:10px;color:rgba(255,255,255,.25)">لا توجد خدمات</span>';
+    return;
+  }
   var tabsH='',bodyH='',first=true;
-  final.forEach(function(cat){
-    var cid='cat'+cat.replace(/[^أ-يa-zA-Z0-9]/g,'');
-    tabsH+='<button class="tab'+(first?' on':'')+'" onclick="swTab(\''+cid+'\',this)">'+cat+'</button>';
+  grouped.forEach(function(cat){
+    var cid='cat'+cat.name.replace(/[^\u0600-\u06FFa-zA-Z0-9]/g,'');
+    tabsH+='<button class="tab'+(first?' on':'')+'" onclick="swTab(''+cid+'',this)">'+cat.name+'</button>';
     bodyH+='<div class="cpanel'+(first?' on':'')+'" id="'+cid+'">';
-    var subs=catMap[cat];
-    for(var sub in subs){
-      if(!subs[sub].length)continue;
-      var parts=sub.split(' · ');
-      var enPart=parts[0]||sub;
-      var arPart=parts[1]||'';
+    Object.values(cat.subs).forEach(function(sub){
+      if(!sub.items.length)return;
+      var parts=sub.name.split(' · ');
+      var enPart=parts[0]||sub.name, arPart=parts[1]||'';
       bodyH+='<div class="sub-sec">';
       bodyH+='<div class="sub-hd"><div class="sub-hd-inner"><span class="sub-en">'+enPart+'</span>';
       if(arPart)bodyH+='<span class="sub-ar">'+arPart+'</span>';
       bodyH+='</div><div class="sub-line"></div></div>';
       bodyH+='<div class="sub-cards">';
-      subs[sub].forEach(function(p){bodyH+=buildCard(p);});
+      sub.items.forEach(function(p){bodyH+=buildCard(p);});
       bodyH+='</div></div>';
-    }
+    });
     bodyH+='</div>';
     first=false;
   });
   document.getElementById('tabs').innerHTML=tabsH;
   document.getElementById('svcbody').innerHTML=bodyH;
 }
-
-function cleanName(n){
-  if(!n)return '';
-  // Remove English suffix after ' - '
-  if(n.includes(' - '))return n.split(' - ')[0].trim();
-  return n.trim();
-}
-function safeAttr(s){return (s||'').replace(/'/g,'&#39;').replace(/"/g,'&quot;');}
 
 function buildCard(p){
   var hasV=p.pricing&&p.pricing.length>1;
@@ -926,8 +954,8 @@ async function doBook(){
 
     S.payUrl=bd.paymentUrl||null;
 
-    // Order number: use readable orderId from Rekaz, NOT the UUID
-    var ref=bd.orderNumber||bd.orderId||'—';
+    // Readable order number from Rekaz (orderId is the short readable ref)
+    var ref = bd.orderNumber || bd.orderId || '—';
 
     var dd=S.date,dl=DA[new Date(dd.y,dd.m,dd.d).getDay()]+' '+dd.d+' '+MO[dd.m];
     var tot=calcTotal();
@@ -941,6 +969,7 @@ async function doBook(){
       '<div class="sucrow"><span class="suclbl">الإجمالي</span><span class="sucval">SAR '+tot.toLocaleString('en')+'</span></div>';
     document.getElementById('sucref').textContent=ref;
     document.getElementById('sucpay').style.display=S.payUrl?'block':'none';
+    console.log('[Booking] payUrl:', S.payUrl, 'orderNumber:', ref);
     go('suc');
     // Show payment popup automatically
     if(S.payUrl){
