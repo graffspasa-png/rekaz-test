@@ -677,7 +677,7 @@ function buildSvc(prods){
   var tabsH='',bodyH='',first=true;
   grouped.forEach(function(cat){
     var cid='cat'+cat.name.replace(/[^\u0600-\u06FFa-zA-Z0-9]/g,'');
-    tabsH+='<button class="tab'+(first?' on':'')+'" onclick="swTab(''+cid+'',this)">'+cat.name+'</button>';
+    tabsH+='<button class="tab'+(first?' on':'')+'" data-cid="'+cid+'" onclick="swTab(this.dataset.cid,this)">'+cat.name+'</button>';
     bodyH+='<div class="cpanel'+(first?' on':'')+'" id="'+cid+'">';
     Object.values(cat.subs).forEach(function(sub){
       if(!sub.items.length)return;
