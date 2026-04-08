@@ -7,7 +7,6 @@ dotenv.config();
 const app = express();
 app.use(express.json({ limit: "10mb" }));
 
-// ── CORS ──
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
@@ -21,7 +20,7 @@ app.use((req, res, next) => {
   next();
 });
 
-const BASE_URL = "https://platform.rekaz.io/api/public";
+const REKAZ_API = "https://platform.rekaz.io/api/public";
 const REKAZ_BASE = "https://platform.rekaz.io";
 const REKAZ_HEADERS = {
   "Authorization": `Basic ${process.env.REKAZ_AUTH}`,
@@ -32,40 +31,57 @@ const BRANCH_ID = process.env.REKAZ_BRANCH_ID;
 const ADMIN_PASS = process.env.ADMIN_PASSWORD || "graff2026";
 const CONFIG_FILE = "/tmp/graff_config.json";
 
+// Products cache — 10 min
+let productsCache = null;
+let productsCacheTime = 0;
+const CACHE_TTL = 10 * 60 * 1000;
+
 // ── Default config ──
 const DEFAULT_CONFIG = {
   ui: {
     primaryColor: "#b8965a",
-    backgroundColor: "#080807",
+    primaryColorHover: "#c8a66a",
+    bgColor: "#080807",
+    bgColor2: "#0c0b09",
+    creamColor: "#f3ede3",
     textColor: "#17150e",
-    fontFamily: "Tajawal",
-    buttonStyle: "sharp",
-    heroTagline: "حيث تلتقي العناية بالفخامة · في أدق تفاصيلها"
+    mutedColor: "#78706a",
+    borderColor: "#d8d0c0",
+    fontArabic: "Tajawal",
+    fontDisplay: "Cormorant Garamond",
+    buttonRadius: "0",
+    heroTagline: "حيث تلتقي العناية بالفخامة · في أدق تفاصيلها",
+    heroCity: "R I Y A D H",
+    logoText: "GRAFF SPA",
+    vatNumber: "314257469500003"
   },
-  social: {
-    instagram: "",
-    tiktok: "",
-    whatsapp: "966500000000",
-    twitter: "",
-    snapchat: ""
-  },
+  social: { instagram: "", tiktok: "", whatsapp: "966500000000", twitter: "", snapchat: "" },
   sections: [],
   pages: [],
+  memberships: [],
+  giftCard: { enabled: true, title: "بطاقة الإهداء", subtitle: "اهدي تجربة لا تُنسى", amounts: [200, 300, 500, 1000] },
   buttons: [
-    { id: "book", text: "احجزي موعدك الآن", visible: true, link: "booking" },
-    { id: "gift", text: "أهدي من تحبين · Gift Card", visible: true, link: "gift" },
-    { id: "contact", text: "تواصلي معنا", visible: true, link: "whatsapp" }
+    { id: "book", textAr: "احجزي موعدك الآن", visible: true, action: "booking", style: "primary" },
+    { id: "gift", textAr: "أهدي من تحبين", visible: true, action: "gift", style: "outline" },
+    { id: "contact", textAr: "تواصلي معنا", visible: true, action: "whatsapp", style: "outline" }
+  ],
+  paymentLogos: [
+    { id: "mastercard", label: "Mastercard", visible: true },
+    { id: "visa", label: "Visa", visible: true },
+    { id: "mada", label: "mada", visible: true },
+    { id: "applepay", label: "Apple Pay", visible: true },
+    { id: "tabby", label: "tabby", visible: true },
+    { id: "tamara", label: "tamara", visible: true }
   ]
 };
 
 function loadConfig() {
   try {
     if (existsSync(CONFIG_FILE)) {
-      return JSON.parse(readFileSync(CONFIG_FILE, "utf8"));
+      const raw = readFileSync(CONFIG_FILE, "utf8");
+      return Object.assign({}, DEFAULT_CONFIG, JSON.parse(raw));
     }
-  } catch (e) {
-    console.log("Config load error, using default:", e.message);
-  }
+  } catch (e) { console.log("Config load error:", e.message); }
   return JSON.parse(JSON.stringify(DEFAULT_CONFIG));
 }
 
@@ -76,33 +92,37 @@ function saveConfig(config) {
 // ── Rekaz helper ──
 async function rekazFetch(url, options = {}) {
   console.log(`[Rekaz] ${options.method || "GET"} ${url}`);
+  if (options.body) console.log(`[Rekaz] Body:`, options.body.substring(0, 200));
   const r = await fetch(url, { ...options, headers: { ...REKAZ_HEADERS, ...(options.headers || {}) } });
   const text = await r.text();
-  console.log(`[Rekaz] ${r.status} — ${text.substring(0, 300)}`);
+  console.log(`[Rekaz] ${r.status}:`, text.substring(0, 300));
   if (!text) throw new Error("Empty response from Rekaz");
   return { status: r.status, ok: r.ok, text, json: () => JSON.parse(text) };
 }
 
 const otpStore = {};
 
-// ══════════════════════════════════════════
-//  PUBLIC API
-// ══════════════════════════════════════════
+// ══ PUBLIC ENDPOINTS ══
 
-app.get("/", (req, res) => res.send("GRAFF SPA Backend ✅"));
+app.get("/", (req, res) => res.send("GRAFF SPA API ✅"));
 
-// GET /config — frontend reads this
-app.get("/config", (req, res) => {
-  res.json(loadConfig());
-});
+// GET /config
+app.get("/config", (req, res) => res.json(loadConfig()));
 
-// GET /products
+// GET /products — with caching
 app.get("/products", async (req, res) => {
   try {
-    const r = await rekazFetch(`${BASE_URL}/products`);
+    const now = Date.now();
+    if (productsCache && now - productsCacheTime < CACHE_TTL) {
+      return res.json(productsCache);
+    }
+    const r = await rekazFetch(`${REKAZ_API}/products`);
     if (!r.ok) return res.status(r.status).json({ error: "Failed to load products" });
-    res.json(r.json());
+    productsCache = r.json();
+    productsCacheTime = now;
+    res.json(productsCache);
   } catch (err) {
+    console.error("[/products]", err.message);
     res.status(500).json({ error: err.message });
   }
 });
@@ -111,7 +131,7 @@ app.get("/products", async (req, res) => {
 app.get("/slots", async (req, res) => {
   try {
     const q = new URLSearchParams(req.query).toString();
-    const r = await rekazFetch(`${BASE_URL}/reservations/slots?${q}`);
+    const r = await rekazFetch(`${REKAZ_API}/reservations/slots?${q}`);
     res.status(r.status).send(r.text);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -125,6 +145,7 @@ app.post("/send-otp", async (req, res) => {
   const otp = Math.floor(1000 + Math.random() * 9000).toString();
   otpStore[phone] = { otp, expires: Date.now() + 5 * 60 * 1000, verified: false };
   console.log(`[OTP] ${phone}: ${otp}`);
+  // TODO: connect real SMS
   res.json({ success: true, debug_otp: otp });
 });
 
@@ -134,7 +155,7 @@ app.post("/verify-otp", async (req, res) => {
   if (!phone || !otp) return res.status(400).json({ error: "Phone and OTP required" });
   const stored = otpStore[phone];
   if (!stored) return res.status(400).json({ error: "أرسلي رمزاً جديداً" });
-  if (Date.now() > stored.expires) { delete otpStore[phone]; return res.status(400).json({ error: "انتهت صلاحية الرمز" }); }
+  if (Date.now() > stored.expires) { delete otpStore[phone]; return res.status(400).json({ error: "انتهت صلاحية الرمز، اضغطي إعادة الإرسال" }); }
   if (stored.otp !== otp.toString()) return res.status(400).json({ error: "الرمز غير صحيح" });
   otpStore[phone].verified = true;
   res.json({ success: true });
@@ -148,12 +169,12 @@ app.post("/create-customer", async (req, res) => {
   if (!stored || !stored.verified) return res.status(403).json({ error: "يجب التحقق من الجوال أولاً" });
   try {
     const mobile = phone.startsWith("+966") ? phone : "+966" + phone.replace(/^0/, "");
-    const check = await rekazFetch(`${BASE_URL}/customers?mobileNumber=${encodeURIComponent(mobile)}`);
+    const check = await rekazFetch(`${REKAZ_API}/customers?mobileNumber=${encodeURIComponent(mobile)}`);
     if (check.ok) {
       const d = check.json();
       if (d.items && d.items.length > 0) return res.json({ customerId: d.items[0].id });
     }
-    const r = await rekazFetch(`${BASE_URL}/customers`, {
+    const r = await rekazFetch(`${REKAZ_API}/customers`, {
       method: "POST",
       body: JSON.stringify({ name, mobileNumber: mobile, type: 1 })
     });
@@ -173,7 +194,7 @@ app.post("/create-booking", async (req, res) => {
     if (!stored || !stored.verified) return res.status(403).json({ error: "Phone not verified" });
   }
   try {
-    const r = await rekazFetch(`${BASE_URL}/reservations/bulk`, {
+    const r = await rekazFetch(`${REKAZ_API}/reservations/bulk`, {
       method: "POST",
       body: JSON.stringify({
         customerDetails: null, customerId, branchId: BRANCH_ID,
@@ -184,76 +205,45 @@ app.post("/create-booking", async (req, res) => {
     const result = r.json();
     if (phone) delete otpStore[phone];
     const paymentPath = result.paymentLink || "";
-    const paymentUrl = paymentPath
-      ? (paymentPath.startsWith("http") ? paymentPath : `${REKAZ_BASE}${paymentPath}`)
-      : null;
+    const paymentUrl = paymentPath ? (paymentPath.startsWith("http") ? paymentPath : `${REKAZ_BASE}${paymentPath}`) : null;
     const orderNumber = result.orderId || result.orderNumber || result.reservationNumber || null;
-    console.log(`[Booking] Order: ${orderNumber} | Pay: ${paymentUrl}`);
+    console.log(`[Booking] Order:${orderNumber} Pay:${paymentUrl}`);
     res.json({ success: true, orderNumber, paymentUrl });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-// ══════════════════════════════════════════
-//  ADMIN API — protected by password
-// ══════════════════════════════════════════
+// ══ ADMIN ENDPOINTS ══
 
 function adminAuth(req, res, next) {
-  const auth = req.headers.authorization || "";
-  const token = auth.replace("Bearer ", "");
+  const token = (req.headers.authorization || "").replace("Bearer ", "");
   if (token !== ADMIN_PASS) return res.status(401).json({ error: "Unauthorized" });
   next();
 }
 
-// POST /admin/login
 app.post("/admin/login", (req, res) => {
-  const { password } = req.body;
-  if (password === ADMIN_PASS) {
-    res.json({ success: true, token: ADMIN_PASS });
-  } else {
-    res.status(401).json({ error: "كلمة المرور غير صحيحة" });
-  }
+  if (req.body.password === ADMIN_PASS) res.json({ success: true, token: ADMIN_PASS });
+  else res.status(401).json({ error: "كلمة المرور غير صحيحة" });
 });
 
-// GET /admin/config
-app.get("/admin/config", adminAuth, (req, res) => {
-  res.json(loadConfig());
-});
+app.get("/admin/config", adminAuth, (req, res) => res.json(loadConfig()));
 
-// PUT /admin/config — save full config
 app.put("/admin/config", adminAuth, (req, res) => {
-  try {
-    const config = req.body;
-    saveConfig(config);
-    res.json({ success: true });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+  try { saveConfig(req.body); res.json({ success: true }); }
+  catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-// PUT /admin/config/:section — save one section
-app.put("/admin/config/:section", adminAuth, (req, res) => {
-  try {
-    const config = loadConfig();
-    config[req.params.section] = req.body;
-    saveConfig(config);
-    res.json({ success: true });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// GET /admin/products — fetch Rekaz products for admin
 app.get("/admin/products", adminAuth, async (req, res) => {
   try {
-    const r = await rekazFetch(`${BASE_URL}/products`);
+    const now = Date.now();
+    if (productsCache && now - productsCacheTime < CACHE_TTL) return res.json(productsCache);
+    const r = await rekazFetch(`${REKAZ_API}/products`);
     if (!r.ok) return res.status(r.status).json({ error: "Failed" });
-    res.json(r.json());
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+    productsCache = r.json(); productsCacheTime = now;
+    res.json(productsCache);
+  } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`[Server] Port ${PORT}`));
+app.listen(PORT, () => console.log(`[GRAFF SPA] Server on port ${PORT}`));
