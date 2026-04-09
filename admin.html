@@ -141,6 +141,7 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink2);color:#fff;directio
     <div class="ni" onclick="show('design')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>التصميم والألوان</div>
     <div class="ni" onclick="show('logo')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>الشعار</div>
     <div class="sl-sec">المحتوى</div>
+    <div class="ni" onclick="show('buttons')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="10" rx="2"/><path d="M7 12h10"/></svg>الأزرار</div>
     <div class="ni" onclick="show('gift')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><path d="M12 22V7M12 7H7.5a2.5 2.5 0 010-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 000-5C13 2 12 7 12 7z"/></svg>بطاقة الإهداء</div>
     <div class="ni" onclick="show('memberships')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>العضويات</div>
     <div class="ni" onclick="show('social')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>السوشيال ميديا</div>
@@ -242,6 +243,15 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink2);color:#fff;directio
               </div>
             </div>
           </div>
+        </div>
+      </div>
+
+      <!-- BUTTONS -->
+      <div class="panel" id="p-buttons">
+        <div class="card"><div class="card-ttl">أزرار الصفحة الرئيسية</div>
+          <p style="font-size:11px;color:rgba(255,255,255,.4);margin-bottom:14px">يمكنك تعديل النص، تغيير الإجراء، إخفاء الزر، أو إضافة زر جديد</p>
+          <div id="btns-list"></div>
+          <button class="add-btn" onclick="addBtn()">+ إضافة زر</button>
         </div>
       </div>
 
@@ -355,7 +365,7 @@ async function loadDB(){
 }
 
 // ── PANELS ──
-const TITLES={overview:'نظرة عامة',menu:'الأقسام والخدمات',texts:'جميع النصوص',design:'التصميم والألوان',logo:'الشعار',gift:'بطاقة الإهداء',memberships:'العضويات',social:'التواصل الاجتماعي',payment:'بوابات الدفع'};
+const TITLES={overview:'نظرة عامة',menu:'الأقسام والخدمات',texts:'جميع النصوص',design:'التصميم والألوان',logo:'الشعار',buttons:'الأزرار',gift:'بطاقة الإهداء',memberships:'العضويات',social:'التواصل الاجتماعي',payment:'بوابات الدفع'};
 function show(id){
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
   document.querySelectorAll('.ni').forEach(n=>n.classList.remove('on'));
@@ -363,7 +373,7 @@ function show(id){
   document.querySelector(`.ni[onclick="show('${id}')"]`).classList.add('on');
   g('tb-title').textContent=TITLES[id]||id;
 }
-function renderAll(){renderOverview();renderMenu();renderTexts();renderDesign();renderLogo();renderGift();renderMems();renderSocial();renderPayment();}
+function renderAll(){renderOverview();renderMenu();renderTexts();renderDesign();renderLogo();renderButtons();renderGift();renderMems();renderSocial();renderPayment();}
 
 // ── SAVE ──
 async function saveAll(){
@@ -576,6 +586,39 @@ async function saveCat(){
     DB.services.push({id:'srv_'+Date.now()+idx,rekazPriceId:item.rekazPriceId,rekazProductId:item.rekazProductId,categoryId:editCatId,nameAr:item.nameAr,order:idx+1,visible:true});
   });
   closeModal();renderMenu();
+}
+
+// ── BUTTONS ──
+function renderButtons(){
+  const btns=(DB.buttons||[]).sort((a,b)=>a.order-b.order);
+  const actions=['booking','gift','memberships','whatsapp'];
+  const actionLabels={booking:'حجز',gift:'إهداء',memberships:'عضويات',whatsapp:'واتساب'};
+  const styles=['primary','outline'];
+  g('btns-list').innerHTML=btns.map((b,i)=>`
+    <div class="li">
+      <span class="dh" style="cursor:default">⠿</span>
+      <div class="li-info" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <input style="background:transparent;border:none;border-bottom:1px solid rgba(255,255,255,.15);color:#fff;font-family:'Tajawal',sans-serif;font-size:13px;padding:4px 0;min-width:130px;flex:1;outline:none"
+          value="${e(b.textAr||'')}" onchange="DB.buttons[${i}].textAr=this.value" placeholder="نص الزر">
+        <select style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.6);font-family:'Tajawal',sans-serif;font-size:11px;padding:4px 6px;outline:none" onchange="DB.buttons[${i}].action=this.value">
+          ${actions.map(a=>`<option value="${a}"${b.action===a?' selected':''}>${actionLabels[a]}</option>`).join('')}
+        </select>
+        <select style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.6);font-family:'Tajawal',sans-serif;font-size:11px;padding:4px 6px;outline:none" onchange="DB.buttons[${i}].style=this.value">
+          ${styles.map(s=>`<option value="${s}"${b.style===s?' selected':''}>${s==='primary'?'ذهبي':'شفاف'}</option>`).join('')}
+        </select>
+      </div>
+      <div class="li-acts">
+        <div class="tog ${b.visible!==false?'on':''}" onclick="togBtn(${i})"></div>
+        <button class="lb del" onclick="delBtn(${i})">×</button>
+      </div>
+    </div>`).join('');
+}
+function togBtn(i){DB.buttons[i].visible=!(DB.buttons[i].visible!==false);renderButtons();}
+function delBtn(i){if(!confirm('حذف الزر؟'))return;DB.buttons.splice(i,1);renderButtons();}
+function addBtn(){
+  DB.buttons=DB.buttons||[];
+  DB.buttons.push({id:'btn_'+Date.now(),textAr:'زر جديد',action:'booking',style:'outline',order:DB.buttons.length+1,visible:true});
+  renderButtons();
 }
 
 // ── DESIGN ──
