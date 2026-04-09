@@ -27,7 +27,7 @@ body,button,input,textarea,select{
   font-feature-settings:'kern' 1,'liga' 1,'calt' 1
 }
 /* Display/English elements only use Cormorant */
-.hlogo,.hlogo b,.logo-txt,.flogo-txt,.sub-en,
+.hlogo,.hlogo b,.logo-txt,.flogo-txt,.title-en,
 .page-h1,.suctit,.fmh1,.scprice,.vprice,
 .mem-price,.sumtotv,.gift-amt-val{
   font-family:'Cormorant Garamond',serif !important
@@ -41,7 +41,7 @@ body,button,input,textarea,select{
 body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility}
 [dir=rtl] *{letter-spacing:0 !important;word-spacing:0}
 /* Restore letter-spacing only for English/display elements */
-.eyebrow,.hcity,.svceye,.seclbl,.fmeye,.fctitl,.page-eyebrow,.adtitle,.sub-en,.logo-txt,.flogo-txt,.fcity,.vatnote,.sucref,.tb-title,.card-ttl{letter-spacing:.1em !important}
+.eyebrow,.hcity,.svceye,.seclbl,.fmeye,.fctitl,.page-eyebrow,.adtitle,.title-en,.logo-txt,.flogo-txt,.fcity,.vatnote,.sucref,.tb-title,.card-ttl{letter-spacing:.1em !important}
 .hlogo,.hlogo b,.page-h1,.suctit,.popup-title,.fmh1{letter-spacing:.06em !important}
 
 /* TOPBAR */
@@ -119,32 +119,10 @@ body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-r
 .cpanel.on{display:flex}
 
 /* ── SUB-SECTION HEADER ── */
-.sub-sec{margin-top:14px;margin-bottom:4px}
-.sub-hd{
-  display:flex;flex-direction:column;align-items:center;
-  padding:26px 16px 14px;text-align:center
-}
-/* LINE 1: English — uppercase, spaced, display font */
-.sub-en{
-  font-family:'Cormorant Garamond',serif;
-  font-size:17px;font-weight:400;color:var(--text);
-  letter-spacing:.16em;line-height:1.2;
-  display:block;text-transform:uppercase
-}
-/* LINE 2: Arabic — Tajawal, no letter-spacing, connected */
-.sub-ar{
-  font-family:'Tajawal',sans-serif;
-  font-size:13px;color:var(--muted);
-  margin-top:5px;letter-spacing:0;word-spacing:0;
-  display:block;font-weight:400;direction:rtl;
-  font-feature-settings:'kern' 1,'liga' 1
-}
-/* LINE 3: Short golden divider */
-.sub-line{
-  width:44px;height:1px;
-  background:var(--gold);opacity:.55;
-  margin-top:12px;display:block
-}
+.subcategory-title{text-align:center;margin-bottom:20px;margin-top:24px;padding:0 16px}
+.title-en{display:block;font-size:18px;letter-spacing:4px;text-transform:uppercase;font-family:'Cormorant Garamond',serif;color:var(--text);line-height:1.3}
+.title-ar{display:block;font-size:16px;margin-top:6px;font-family:'Tajawal',sans-serif;direction:rtl;color:var(--muted);letter-spacing:0;font-weight:400}
+.title-line{width:60px;height:2px;background:#c5a46d;margin:10px auto 0;border-radius:2px}
 .sub-cards{display:flex;flex-direction:column;gap:7px;padding-bottom:4px}
 
 /* SERVICE CARD */
@@ -795,10 +773,10 @@ function buildSvcFromMenu(cats){
         var enPart=parts[0]||'';
         var arPart=parts[1]||'';
         if(enPart||arPart){
-          bodyH+='<div class="sub-sec"><div class="sub-hd">';
-          if(enPart)bodyH+='<span class="sub-en">'+esc(enPart)+'</span>';
-          if(arPart)bodyH+='<span class="sub-ar">'+esc(arPart)+'</span>';
-          bodyH+='<div class="sub-line"></div></div>';
+          bodyH+='<div class="subcategory-title">';
+          if(enPart)bodyH+='<div class="title-en">'+esc(enPart)+'</div>';
+          if(arPart)bodyH+='<div class="title-ar">'+esc(arPart)+'</div>';
+          bodyH+='<div class="title-line"></div></div>';
         }
         bodyH+='<div class="sub-cards">';
         // Show services in this sub-section
@@ -811,9 +789,9 @@ function buildSvcFromMenu(cats){
     } else if(cat.subLabel){
       // Legacy single sub-label
       var sp=cat.subLabel.split(' · ');
-      bodyH+='<div class="sub-sec"><div class="sub-hd"><span class="sub-en">'+(sp[0]||cat.subLabel)+'</span>';
-      if(sp[1])bodyH+='<span class="sub-ar">'+esc(sp[1])+'</span>';
-      bodyH+='<div class="sub-line"></div></div><div class="sub-cards">';
+      bodyH+='<div class="subcategory-title"><div class="title-en">'+esc(sp[0]||cat.subLabel)+'</div>';
+      if(sp[1])bodyH+='<div class="title-ar">'+esc(sp[1])+'</div>';
+      bodyH+='<div class="title-line"></div></div><div class="sub-cards">';
       cat.services.forEach(function(svc){bodyH+=buildCard(svc);});
       bodyH+='</div>';
     } else {
