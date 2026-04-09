@@ -19,9 +19,12 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction
 .pg{display:none;min-height:100dvh;flex-direction:column}
 .pg.on{display:flex;animation:fi .22s ease}
 @keyframes fi{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
-/* Arabic text rendering fix */
-*[lang=ar],*:lang(ar),[dir=rtl] p,[dir=rtl] span,[dir=rtl] h1,[dir=rtl] h2,[dir=rtl] button,[dir=rtl] input,[dir=rtl] div{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
-.htag,.fmsub,.fdesc,.scdesc,.scname,.adname,.vname,.pmname,.pmsub,.mem-feat,.page-sub,.gift-amt-sr,.fvatb span{letter-spacing:0 !important;word-spacing:normal;font-kerning:auto}
+/* Arabic text — zero letter-spacing everywhere */
+body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility}
+[dir=rtl] *{letter-spacing:0 !important;word-spacing:0}
+/* Restore letter-spacing only for English/display elements */
+.eyebrow,.hcity,.svceye,.seclbl,.fmeye,.fctitl,.page-eyebrow,.adtitle,.sub-en,.logo-txt,.flogo-txt,.fcity,.vatnote,.sucref,.tb-title,.card-ttl{letter-spacing:.1em !important}
+.hlogo,.hlogo b,.page-h1,.suctit,.popup-title,.fmh1{letter-spacing:.06em !important}
 
 /* TOPBAR */
 .bar{position:sticky;top:0;z-index:99;height:52px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:rgba(8,8,7,.97);backdrop-filter:blur(20px);border-bottom:1px solid rgba(184,150,90,.13)}
@@ -98,11 +101,11 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction
 .cpanel.on{display:flex}
 
 /* ── SUB-SECTION HEADER ── */
-.sub-sec{margin-top:6px}
-.sub-hd{display:flex;flex-direction:column;align-items:center;padding:22px 16px 12px;text-align:center}
-.sub-en{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:400;color:var(--text);letter-spacing:.14em;line-height:1.2}
-.sub-ar{font-family:'Tajawal',sans-serif;font-size:11px;color:var(--muted);margin-top:3px;letter-spacing:.04em}
-.sub-line{width:36px;height:1px;background:var(--gold);opacity:.4;margin-top:10px}
+.sub-sec{margin-top:8px;margin-bottom:2px}
+.sub-hd{display:flex;flex-direction:column;align-items:center;padding:24px 16px 14px;text-align:center}
+.sub-en{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:400;color:var(--text);letter-spacing:.14em;line-height:1.2;display:block}
+.sub-ar{font-family:'Tajawal',sans-serif;font-size:12px;color:var(--muted);margin-top:4px;letter-spacing:0;display:block;font-weight:400}
+.sub-line{width:40px;height:1px;background:var(--gold);opacity:.5;margin-top:11px}
 .sub-cards{display:flex;flex-direction:column;gap:7px;padding-bottom:4px}
 
 /* SERVICE CARD */
@@ -498,7 +501,7 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction
       <label class="flbl">رسالة شخصية (اختياري)</label>
       <textarea class="finp" id="gf-msg" rows="3" placeholder="أكتبي رسالتك هنا..." style="resize:none"></textarea>
     </div>
-    <div class="botbar" style="position:static;border:none;padding:0 0 24px"><button class="botbtn">شراء بطاقة الإهداء ←</button></div>
+    <div style="padding:0 0 28px"><button class="botbtn" style="border-radius:var(--brad)">شراء بطاقة الإهداء ←</button></div>
   </div>
 </div>
 
@@ -529,9 +532,14 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction
       <button class="popup-paybtn" id="pay-open-btn" onclick="openPayFrame()">الدفع الآن ←</button>
       <button class="popup-secbtn" onclick="doPayNewTab()">فتح في نافذة جديدة</button>
     </div>
-    <!-- iframe container -->
-    <div id="pay-frame-wrap" style="display:none">
-      <iframe id="pay-iframe" style="width:100%;height:520px;border:none;display:block" allowpaymentrequest></iframe>
+    <!-- Payment window info -->
+    <div id="pay-frame-wrap" style="display:none;padding:20px 0 10px;text-align:center">
+      <div style="font-size:13px;color:var(--muted);line-height:1.9;margin-bottom:16px">
+        تم فتح صفحة الدفع في نافذة جديدة<br>
+        <span style="font-size:11px;color:rgba(24,21,14,.4)">أكملي الدفع ثم ارجعي لهذه الصفحة</span>
+      </div>
+      <button class="popup-paybtn" onclick="doPayNewTabAgain()" style="margin-bottom:8px">إعادة فتح صفحة الدفع</button>
+      <button class="popup-secbtn" onclick="confirmPayDone()">تأكيد — تم الدفع بنجاح ✓</button>
     </div>
   </div>
 </div>
@@ -1080,27 +1088,19 @@ function openPayPopup(){
   document.getElementById('payOverlay').classList.add('on');
 }
 function openPayFrame(){
-  // Load payment in iframe
+  // Open payment in popup window (not iframe — Rekaz blocks iframes)
   var fw=document.getElementById('pay-frame-wrap');
-  var fr=document.getElementById('pay-iframe');
   var loading=document.getElementById('pay-loading');
   loading.style.display='none';
   fw.style.display='block';
-  fr.src=S.payUrl;
-  // Listen for iframe navigation (payment complete)
-  fr.onload=function(){
-    try{
-      var iUrl=fr.contentWindow.location.href;
-      if(iUrl&&iUrl!=='about:blank'&&iUrl!==S.payUrl){
-        // Payment done or redirected
-        closePopup();
-        showSuccess();
-      }
-    }catch(e){
-      // Cross-origin — payment is processing, go to success after delay
-      setTimeout(function(){closePopup();showSuccess();},3000);
-    }
-  };
+  window.open(S.payUrl,'graff_pay','width=480,height=700,left=200,top=100');
+}
+function doPayNewTabAgain(){
+  window.open(S.payUrl,'graff_pay','width=480,height=700,left=200,top=100');
+}
+function confirmPayDone(){
+  closePopup();
+  go('suc');
 }
 function showSuccess(){
   document.getElementById('payOverlay').classList.remove('on');
