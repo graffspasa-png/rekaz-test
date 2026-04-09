@@ -16,12 +16,26 @@
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction:rtl;overflow-x:hidden;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;font-feature-settings:'kern' 1,'liga' 1,'calt' 1}
-/* Arabic font rendering — critical */
-:lang(ar),*[dir=rtl]{font-family:'Tajawal',sans-serif !important;font-synthesis:none;-webkit-font-feature-settings:'kern' 1;font-feature-settings:'kern' 1}
-/* English/display elements keep their fonts */
-.hlogo,.hlogo b,.logo-txt,.flogo-txt,.sub-en,.page-h1,.suctit,.popup-title,.fmh1,.scprice,.vprice,.mem-price,.popup-amt-val,.sumtotv,.gift-amt-val{font-family:'Cormorant Garamond',serif !important}
+/* Arabic font — critical rendering fix */
+:lang(ar){font-synthesis:none}
+/* All body text uses Tajawal for Arabic */
+body,button,input,textarea,select{
+  font-family:'Tajawal',sans-serif;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  text-rendering:optimizeLegibility;
+  font-feature-settings:'kern' 1,'liga' 1,'calt' 1
+}
+/* Display/English elements only use Cormorant */
+.hlogo,.hlogo b,.logo-txt,.flogo-txt,.sub-en,
+.page-h1,.suctit,.fmh1,.scprice,.vprice,
+.mem-price,.sumtotv,.gift-amt-val{
+  font-family:'Cormorant Garamond',serif !important
+}
 .pg{display:none;min-height:100dvh;flex-direction:column}
 .pg.on{display:flex;animation:fi .22s ease}
+@keyframes fo{from{opacity:0}to{opacity:1}}
+@keyframes su{from{transform:scale(.9);opacity:0}to{transform:scale(1);opacity:1}}
 @keyframes fi{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
 /* Arabic text — zero letter-spacing everywhere */
 body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility}
@@ -105,14 +119,32 @@ body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-r
 .cpanel.on{display:flex}
 
 /* ── SUB-SECTION HEADER ── */
-.sub-sec{margin-top:12px;margin-bottom:4px}
-.sub-hd{display:flex;flex-direction:column;align-items:center;padding:28px 16px 14px;text-align:center}
-/* Line 1: English — uppercase, display font */
-.sub-en{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:400;color:var(--text);letter-spacing:.14em;line-height:1.2;display:block;text-transform:uppercase}
-/* Line 2: Arabic — clean, no spacing */
-.sub-ar{font-family:'Tajawal',sans-serif;font-size:13px;color:var(--muted);margin-top:6px;letter-spacing:0;word-spacing:0;display:block;font-weight:400;direction:rtl}
-/* Line 3: Golden line */
-.sub-line{width:48px;height:1px;background:var(--gold);opacity:.6;margin-top:13px;display:block}
+.sub-sec{margin-top:14px;margin-bottom:4px}
+.sub-hd{
+  display:flex;flex-direction:column;align-items:center;
+  padding:26px 16px 14px;text-align:center
+}
+/* LINE 1: English — uppercase, spaced, display font */
+.sub-en{
+  font-family:'Cormorant Garamond',serif;
+  font-size:17px;font-weight:400;color:var(--text);
+  letter-spacing:.16em;line-height:1.2;
+  display:block;text-transform:uppercase
+}
+/* LINE 2: Arabic — Tajawal, no letter-spacing, connected */
+.sub-ar{
+  font-family:'Tajawal',sans-serif;
+  font-size:13px;color:var(--muted);
+  margin-top:5px;letter-spacing:0;word-spacing:0;
+  display:block;font-weight:400;direction:rtl;
+  font-feature-settings:'kern' 1,'liga' 1
+}
+/* LINE 3: Short golden divider */
+.sub-line{
+  width:44px;height:1px;
+  background:var(--gold);opacity:.55;
+  margin-top:12px;display:block
+}
 .sub-cards{display:flex;flex-direction:column;gap:7px;padding-bottom:4px}
 
 /* SERVICE CARD */
@@ -510,14 +542,42 @@ body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-r
   </div>
 </div>
 
-<!-- PAYMENT POPUP -->
-<!-- PAYMENT FULLSCREEN MODAL -->
-<div id="payOverlay" style="display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.85);flex-direction:column">
-  <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:#000;flex-shrink:0">
-    <span style="font-family:'Tajawal',sans-serif;font-size:13px;color:rgba(255,255,255,.7)">إتمام الدفع — SAR <span id="popAmt">0</span></span>
-    <button onclick="closePopup()" style="background:rgba(255,255,255,.12);border:none;color:#fff;width:34px;height:34px;border-radius:50%;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1">×</button>
+<!-- PAYMENT OVERLAY -->
+<div id="payOverlay" style="display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.78);align-items:center;justify-content:center;padding:20px;animation:fo .2s ease">
+  <div style="background:var(--cream);width:100%;max-width:420px;border-radius:20px;padding:32px 28px;text-align:center;animation:su .3s cubic-bezier(.4,0,.2,1)">
+
+    <!-- Icon -->
+    <div style="width:64px;height:64px;border-radius:50%;background:rgba(184,150,90,.12);border:1px solid rgba(184,150,90,.25);display:flex;align-items:center;justify-content:center;margin:0 auto 18px">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><rect x="1" y="4" width="22" height="16" rx="3"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+    </div>
+
+    <!-- Title -->
+    <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;color:var(--text);letter-spacing:.06em;margin-bottom:8px">تم فتح صفحة الدفع</div>
+
+    <!-- Amount -->
+    <div style="font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:300;color:var(--gold);margin-bottom:6px;line-height:1"><span style="font-family:'Tajawal',sans-serif;font-size:14px;color:var(--muted)">SAR </span><span id="popAmt">0</span></div>
+
+    <!-- Description -->
+    <div style="font-size:13px;color:var(--muted);line-height:1.8;margin-bottom:24px">
+      تم فتح صفحة الدفع في نافذة جديدة<br>
+      <span style="font-size:11px;color:rgba(24,21,14,.38)">يرجى إتمام عملية الدفع ثم العودة لإكمال الحجز</span>
+    </div>
+
+    <!-- Primary button: payment done -->
+    <button onclick="confirmPayDone()" style="width:100%;padding:15px;background:var(--gold);color:var(--ink);border:none;font-family:'Tajawal',sans-serif;font-size:13px;font-weight:500;border-radius:12px;cursor:pointer;margin-bottom:10px;transition:background .15s">
+      ✓ تم الدفع — إتمام الحجز
+    </button>
+
+    <!-- Secondary button: reopen -->
+    <button onclick="reopenPay()" style="width:100%;padding:13px;background:transparent;border:1.5px solid var(--border);color:var(--text);font-family:'Tajawal',sans-serif;font-size:12px;border-radius:12px;cursor:pointer;margin-bottom:10px;transition:all .15s">
+      إعادة فتح صفحة الدفع
+    </button>
+
+    <!-- Cancel -->
+    <button onclick="closePopup()" style="background:none;border:none;font-family:'Tajawal',sans-serif;font-size:11px;color:rgba(24,21,14,.35);cursor:pointer;padding:4px">
+      إلغاء
+    </button>
   </div>
-  <iframe id="pay-iframe" src="" style="flex:1;width:100%;border:none;background:#fff" allow="payment"></iframe>
 </div>
 
 <script>
@@ -1056,34 +1116,22 @@ async function doBook(){
 // ── POPUP ──
 function openPayPopup(){
   if(!S.payUrl)return;
-  var overlay=document.getElementById('payOverlay');
-  var iframe=document.getElementById('pay-iframe');
+  // 1. Open Rekaz payment in new tab
+  window.open(S.payUrl,'_blank');
+  // 2. Show overlay on current page
   document.getElementById('popAmt').textContent=calcTotal().toLocaleString('en');
-  // Load payment URL inside iframe
-  iframe.src=S.payUrl;
-  // Show fullscreen overlay
-  overlay.style.display='flex';
+  document.getElementById('payOverlay').style.display='flex';
   document.body.style.overflow='hidden';
-  // Listen for iframe load changes (payment completion)
-  iframe.onload=function(){
-    try{
-      var u=iframe.contentWindow.location.href;
-      // If Rekaz redirects to a success/complete URL, close and show success
-      if(u&&u!=='about:blank'&&u.indexOf(S.payUrl)===-1){
-        closePopup();
-        go('suc');
-      }
-    }catch(e){
-      // Cross-origin block is expected — payment is in progress
-    }
-  };
 }
-
+function reopenPay(){
+  if(S.payUrl)window.open(S.payUrl,'_blank');
+}
+function confirmPayDone(){
+  closePopup();
+  go('suc');
+}
 function closePopup(){
-  var overlay=document.getElementById('payOverlay');
-  var iframe=document.getElementById('pay-iframe');
-  overlay.style.display='none';
-  iframe.src='about:blank';
+  document.getElementById('payOverlay').style.display='none';
   document.body.style.overflow='';
 }
 
