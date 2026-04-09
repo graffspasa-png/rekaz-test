@@ -101,11 +101,11 @@ body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-r
 .cpanel.on{display:flex}
 
 /* ── SUB-SECTION HEADER ── */
-.sub-sec{margin-top:8px;margin-bottom:2px}
-.sub-hd{display:flex;flex-direction:column;align-items:center;padding:24px 16px 14px;text-align:center}
-.sub-en{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:400;color:var(--text);letter-spacing:.14em;line-height:1.2;display:block}
-.sub-ar{font-family:'Tajawal',sans-serif;font-size:12px;color:var(--muted);margin-top:4px;letter-spacing:0;display:block;font-weight:400}
-.sub-line{width:40px;height:1px;background:var(--gold);opacity:.5;margin-top:11px}
+.sub-sec{margin-top:10px;margin-bottom:4px}
+.sub-hd{display:flex;flex-direction:column;align-items:center;padding:26px 16px 14px;text-align:center}
+.sub-en{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:400;color:var(--text);letter-spacing:.12em;line-height:1.2;display:block}
+.sub-ar{font-family:'Tajawal',sans-serif;font-size:12px;color:var(--muted);margin-top:5px;letter-spacing:0 !important;display:block;font-weight:400;word-spacing:0}
+.sub-line{width:40px;height:1px;background:var(--gold);opacity:.5;margin-top:12px}
 .sub-cards{display:flex;flex-direction:column;gap:7px;padding-bottom:4px}
 
 /* SERVICE CARD */
@@ -520,26 +520,28 @@ body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-r
 
 <!-- PAYMENT POPUP -->
 <div class="overlay" id="payOverlay">
-  <div class="popup pay-popup" id="payPopupInner">
+  <div class="popup" id="payPopupInner">
     <div class="popup-hd">
       <span class="popup-title">إتمام الدفع</span>
       <button class="popup-x" onclick="closePopup()">×</button>
     </div>
-    <!-- Loading state -->
-    <div id="pay-loading" style="text-align:center;padding:32px 16px">
-      <div class="popup-amt"><div class="popup-amt-lbl">المبلغ المستحق</div><div class="popup-amt-val"><span style="font-family:'Tajawal',sans-serif;font-size:14px;color:var(--muted)">SAR </span><span id="popAmt">0</span></div></div>
-      <div class="popup-safe"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>دفع آمن ومشفر بالكامل</div>
-      <button class="popup-paybtn" id="pay-open-btn" onclick="openPayFrame()">الدفع الآن ←</button>
-      <button class="popup-secbtn" onclick="doPayNewTab()">فتح في نافذة جديدة</button>
+    <div class="popup-amt">
+      <div class="popup-amt-lbl">المبلغ المستحق</div>
+      <div class="popup-amt-val"><span style="font-family:'Tajawal',sans-serif;font-size:14px;color:var(--muted)">SAR </span><span id="popAmt">0</span></div>
     </div>
-    <!-- Payment window info -->
-    <div id="pay-frame-wrap" style="display:none;padding:20px 0 10px;text-align:center">
-      <div style="font-size:13px;color:var(--muted);line-height:1.9;margin-bottom:16px">
-        تم فتح صفحة الدفع في نافذة جديدة<br>
-        <span style="font-size:11px;color:rgba(24,21,14,.4)">أكملي الدفع ثم ارجعي لهذه الصفحة</span>
+    <div class="popup-safe"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>دفع آمن ومشفر بالكامل</div>
+    <!-- State 1: Ready to pay -->
+    <div id="pay-state-1">
+      <button class="popup-paybtn" onclick="startPay()">انتقلي للدفع ←</button>
+    </div>
+    <!-- State 2: Payment opened, waiting -->
+    <div id="pay-state-2" style="display:none;text-align:center;padding:8px 0 4px">
+      <div style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.8">
+        تم فتح صفحة الدفع<br>
+        <span style="font-size:11px;color:rgba(24,21,14,.35)">بعد إتمام الدفع اضغطي الزر أدناه</span>
       </div>
-      <button class="popup-paybtn" onclick="doPayNewTabAgain()" style="margin-bottom:8px">إعادة فتح صفحة الدفع</button>
-      <button class="popup-secbtn" onclick="confirmPayDone()">تأكيد — تم الدفع بنجاح ✓</button>
+      <button class="popup-paybtn" onclick="confirmPayDone()" style="background:var(--ok);margin-bottom:9px">✓ تم الدفع — إتمام الحجز</button>
+      <button class="popup-secbtn" onclick="startPay()">إعادة فتح صفحة الدفع</button>
     </div>
   </div>
 </div>
@@ -1078,44 +1080,51 @@ async function doBook(){
 }
 
 // ── POPUP ──
+var payWin = null;
+
 function openPayPopup(){
   if(!S.payUrl)return;
   document.getElementById('popAmt').textContent=calcTotal().toLocaleString('en');
-  // Reset to loading state
-  document.getElementById('pay-loading').style.display='block';
-  document.getElementById('pay-frame-wrap').style.display='none';
-  var fr=document.getElementById('pay-iframe');if(fr)fr.src='';
+  document.getElementById('pay-state-1').style.display='block';
+  document.getElementById('pay-state-2').style.display='none';
   document.getElementById('payOverlay').classList.add('on');
 }
-function openPayFrame(){
-  // Open payment in popup window (not iframe — Rekaz blocks iframes)
-  var fw=document.getElementById('pay-frame-wrap');
-  var loading=document.getElementById('pay-loading');
-  loading.style.display='none';
-  fw.style.display='block';
-  window.open(S.payUrl,'graff_pay','width=480,height=700,left=200,top=100');
+
+function startPay(){
+  // Open Rekaz payment in a centered popup window
+  var w=500,h=700;
+  var l=Math.max(0,Math.round((screen.width-w)/2));
+  var t=Math.max(0,Math.round((screen.height-h)/2));
+  payWin=window.open(S.payUrl,'rekaz_pay',
+    'width='+w+',height='+h+',left='+l+',top='+t+
+    ',toolbar=0,menubar=0,scrollbars=1,resizable=1');
+  // Show "waiting" state
+  document.getElementById('pay-state-1').style.display='none';
+  document.getElementById('pay-state-2').style.display='block';
+  // Poll: if popup closes, ask user to confirm
+  var poll=setInterval(function(){
+    if(payWin&&payWin.closed){
+      clearInterval(poll);
+      // Popup closed — assume payment done
+      confirmPayDone();
+    }
+  },600);
 }
-function doPayNewTabAgain(){
-  window.open(S.payUrl,'graff_pay','width=480,height=700,left=200,top=100');
-}
+
 function confirmPayDone(){
   closePopup();
   go('suc');
 }
-function showSuccess(){
-  document.getElementById('payOverlay').classList.remove('on');
-  go('suc');
-}
+
 function closePopup(){
   document.getElementById('payOverlay').classList.remove('on');
-  var fr=document.getElementById('pay-iframe');
-  if(fr)fr.src='';
+  if(payWin&&!payWin.closed){payWin.close();}
+  payWin=null;
 }
+
 function doPayNewTab(){
-  if(S.payUrl){window.open(S.payUrl,'_blank');}
+  if(S.payUrl)window.open(S.payUrl,'_blank');
   closePopup();
-  // Show success after opening payment
-  setTimeout(function(){go('suc');},500);
 }
 
 // ── NAV ──
