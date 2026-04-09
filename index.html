@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <title>GRAFF SPA — Riyadh</title>
 <link rel="icon" id="fav" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='12' fill='%23080807'/><text y='48' x='32' text-anchor='middle' font-size='44' font-family='Georgia,serif' fill='%23b8965a'>G</text></svg>">
-<link id="gfont" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500&family=Cormorant+Garamond:wght@300;400&display=swap" rel="stylesheet">
+<link id="gfont" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500&family=Cairo:wght@300;400;500&family=Cormorant+Garamond:wght@300;400&display=swap" rel="stylesheet">
 <style>
 :root{
   --gold:#b8965a;--gold2:#c8a66a;
@@ -15,7 +15,11 @@
   --err:#b33;--ok:#2a7a4f;--brad:0px;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction:rtl;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction:rtl;overflow-x:hidden;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;font-feature-settings:'kern' 1,'liga' 1,'calt' 1}
+/* Arabic font rendering — critical */
+:lang(ar),*[dir=rtl]{font-family:'Tajawal',sans-serif !important;font-synthesis:none;-webkit-font-feature-settings:'kern' 1;font-feature-settings:'kern' 1}
+/* English/display elements keep their fonts */
+.hlogo,.hlogo b,.logo-txt,.flogo-txt,.sub-en,.page-h1,.suctit,.popup-title,.fmh1,.scprice,.vprice,.mem-price,.popup-amt-val,.sumtotv,.gift-amt-val{font-family:'Cormorant Garamond',serif !important}
 .pg{display:none;min-height:100dvh;flex-direction:column}
 .pg.on{display:flex;animation:fi .22s ease}
 @keyframes fi{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
@@ -101,11 +105,14 @@ body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-r
 .cpanel.on{display:flex}
 
 /* ── SUB-SECTION HEADER ── */
-.sub-sec{margin-top:10px;margin-bottom:4px}
-.sub-hd{display:flex;flex-direction:column;align-items:center;padding:26px 16px 14px;text-align:center}
-.sub-en{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:400;color:var(--text);letter-spacing:.12em;line-height:1.2;display:block}
-.sub-ar{font-family:'Tajawal',sans-serif;font-size:12px;color:var(--muted);margin-top:5px;letter-spacing:0 !important;display:block;font-weight:400;word-spacing:0}
-.sub-line{width:40px;height:1px;background:var(--gold);opacity:.5;margin-top:12px}
+.sub-sec{margin-top:12px;margin-bottom:4px}
+.sub-hd{display:flex;flex-direction:column;align-items:center;padding:28px 16px 14px;text-align:center}
+/* Line 1: English — uppercase, display font */
+.sub-en{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:400;color:var(--text);letter-spacing:.14em;line-height:1.2;display:block;text-transform:uppercase}
+/* Line 2: Arabic — clean, no spacing */
+.sub-ar{font-family:'Tajawal',sans-serif;font-size:13px;color:var(--muted);margin-top:6px;letter-spacing:0;word-spacing:0;display:block;font-weight:400;direction:rtl}
+/* Line 3: Golden line */
+.sub-line{width:48px;height:1px;background:var(--gold);opacity:.6;margin-top:13px;display:block}
 .sub-cards{display:flex;flex-direction:column;gap:7px;padding-bottom:4px}
 
 /* SERVICE CARD */
@@ -320,22 +327,7 @@ body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-r
 .mem-card.featured .mem-btn{background:var(--gold);color:var(--ink)}
 
 /* POPUP */
-.overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;display:none;align-items:flex-end;justify-content:center}
-.overlay.on{display:flex;animation:fo .2s ease}
-@keyframes fo{from{opacity:0}to{opacity:1}}
-.popup{background:var(--cream);width:100%;max-width:520px;border-radius:18px 18px 0 0;padding:24px 18px 36px;animation:su .28s cubic-bezier(.4,0,.2,1)}
-.pay-popup{padding:20px 18px 0;max-height:92dvh;overflow:hidden}
-@keyframes su{from{transform:translateY(100%)}to{transform:translateY(0)}}
-.popup-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
-.popup-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;color:var(--text);letter-spacing:.06em}
-.popup-x{background:none;border:none;cursor:pointer;color:var(--muted);font-size:26px;padding:0 4px;line-height:1}
-.popup-amt{text-align:center;margin-bottom:18px;padding:16px;background:var(--w);border:1px solid var(--border);border-radius:var(--brad)}
-.popup-amt-lbl{font-size:10px;letter-spacing:.14em;color:var(--muted);margin-bottom:5px}
-.popup-amt-val{font-family:'Cormorant Garamond',serif;font-size:40px;font-weight:300;color:var(--gold);line-height:1}
-.popup-safe{font-size:11px;color:var(--ok);text-align:center;margin-bottom:14px;display:flex;align-items:center;justify-content:center;gap:5px}
-.popup-paybtn{display:block;width:100%;padding:15px;background:var(--gold);color:var(--ink);text-align:center;font-family:'Tajawal',sans-serif;font-size:12px;font-weight:500;letter-spacing:.14em;margin-bottom:9px;border:none;cursor:pointer;border-radius:var(--brad)}
-.popup-paybtn:hover{background:var(--gold2)}
-.popup-secbtn{display:block;width:100%;padding:12px;background:transparent;border:1px solid var(--border);color:var(--text);text-align:center;font-family:'Tajawal',sans-serif;font-size:11px;cursor:pointer;border-radius:var(--brad)}
+/* Payment modal styles inline in HTML */
 
 @media(max-width:380px){
   .slots{grid-template-columns:repeat(3,1fr)}
@@ -519,31 +511,13 @@ body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-r
 </div>
 
 <!-- PAYMENT POPUP -->
-<div class="overlay" id="payOverlay">
-  <div class="popup" id="payPopupInner">
-    <div class="popup-hd">
-      <span class="popup-title">إتمام الدفع</span>
-      <button class="popup-x" onclick="closePopup()">×</button>
-    </div>
-    <div class="popup-amt">
-      <div class="popup-amt-lbl">المبلغ المستحق</div>
-      <div class="popup-amt-val"><span style="font-family:'Tajawal',sans-serif;font-size:14px;color:var(--muted)">SAR </span><span id="popAmt">0</span></div>
-    </div>
-    <div class="popup-safe"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>دفع آمن ومشفر بالكامل</div>
-    <!-- State 1: Ready to pay -->
-    <div id="pay-state-1">
-      <button class="popup-paybtn" onclick="startPay()">انتقلي للدفع ←</button>
-    </div>
-    <!-- State 2: Payment opened, waiting -->
-    <div id="pay-state-2" style="display:none;text-align:center;padding:8px 0 4px">
-      <div style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.8">
-        تم فتح صفحة الدفع<br>
-        <span style="font-size:11px;color:rgba(24,21,14,.35)">بعد إتمام الدفع اضغطي الزر أدناه</span>
-      </div>
-      <button class="popup-paybtn" onclick="confirmPayDone()" style="background:var(--ok);margin-bottom:9px">✓ تم الدفع — إتمام الحجز</button>
-      <button class="popup-secbtn" onclick="startPay()">إعادة فتح صفحة الدفع</button>
-    </div>
+<!-- PAYMENT FULLSCREEN MODAL -->
+<div id="payOverlay" style="display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.85);flex-direction:column">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:#000;flex-shrink:0">
+    <span style="font-family:'Tajawal',sans-serif;font-size:13px;color:rgba(255,255,255,.7)">إتمام الدفع — SAR <span id="popAmt">0</span></span>
+    <button onclick="closePopup()" style="background:rgba(255,255,255,.12);border:none;color:#fff;width:34px;height:34px;border-radius:50%;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1">×</button>
   </div>
+  <iframe id="pay-iframe" src="" style="flex:1;width:100%;border:none;background:#fff" allow="payment"></iframe>
 </div>
 
 <script>
@@ -1080,51 +1054,37 @@ async function doBook(){
 }
 
 // ── POPUP ──
-var payWin = null;
-
 function openPayPopup(){
   if(!S.payUrl)return;
+  var overlay=document.getElementById('payOverlay');
+  var iframe=document.getElementById('pay-iframe');
   document.getElementById('popAmt').textContent=calcTotal().toLocaleString('en');
-  document.getElementById('pay-state-1').style.display='block';
-  document.getElementById('pay-state-2').style.display='none';
-  document.getElementById('payOverlay').classList.add('on');
-}
-
-function startPay(){
-  // Open Rekaz payment in a centered popup window
-  var w=500,h=700;
-  var l=Math.max(0,Math.round((screen.width-w)/2));
-  var t=Math.max(0,Math.round((screen.height-h)/2));
-  payWin=window.open(S.payUrl,'rekaz_pay',
-    'width='+w+',height='+h+',left='+l+',top='+t+
-    ',toolbar=0,menubar=0,scrollbars=1,resizable=1');
-  // Show "waiting" state
-  document.getElementById('pay-state-1').style.display='none';
-  document.getElementById('pay-state-2').style.display='block';
-  // Poll: if popup closes, ask user to confirm
-  var poll=setInterval(function(){
-    if(payWin&&payWin.closed){
-      clearInterval(poll);
-      // Popup closed — assume payment done
-      confirmPayDone();
+  // Load payment URL inside iframe
+  iframe.src=S.payUrl;
+  // Show fullscreen overlay
+  overlay.style.display='flex';
+  document.body.style.overflow='hidden';
+  // Listen for iframe load changes (payment completion)
+  iframe.onload=function(){
+    try{
+      var u=iframe.contentWindow.location.href;
+      // If Rekaz redirects to a success/complete URL, close and show success
+      if(u&&u!=='about:blank'&&u.indexOf(S.payUrl)===-1){
+        closePopup();
+        go('suc');
+      }
+    }catch(e){
+      // Cross-origin block is expected — payment is in progress
     }
-  },600);
-}
-
-function confirmPayDone(){
-  closePopup();
-  go('suc');
+  };
 }
 
 function closePopup(){
-  document.getElementById('payOverlay').classList.remove('on');
-  if(payWin&&!payWin.closed){payWin.close();}
-  payWin=null;
-}
-
-function doPayNewTab(){
-  if(S.payUrl)window.open(S.payUrl,'_blank');
-  closePopup();
+  var overlay=document.getElementById('payOverlay');
+  var iframe=document.getElementById('pay-iframe');
+  overlay.style.display='none';
+  iframe.src='about:blank';
+  document.body.style.overflow='';
 }
 
 // ── NAV ──
