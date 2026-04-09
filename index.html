@@ -19,6 +19,9 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction
 .pg{display:none;min-height:100dvh;flex-direction:column}
 .pg.on{display:flex;animation:fi .22s ease}
 @keyframes fi{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+/* Arabic text rendering fix */
+*[lang=ar],*:lang(ar),[dir=rtl] p,[dir=rtl] span,[dir=rtl] h1,[dir=rtl] h2,[dir=rtl] button,[dir=rtl] input,[dir=rtl] div{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+.htag,.fmsub,.fdesc,.scdesc,.scname,.adname,.vname,.pmname,.pmsub,.mem-feat,.page-sub,.gift-amt-sr,.fvatb span{letter-spacing:0 !important;word-spacing:normal;font-kerning:auto}
 
 /* TOPBAR */
 .bar{position:sticky;top:0;z-index:99;height:52px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:rgba(8,8,7,.97);backdrop-filter:blur(20px);border-bottom:1px solid rgba(184,150,90,.13)}
@@ -35,8 +38,8 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction
 
 /* HOME */
 #home{background:var(--ink);overflow:hidden;position:relative}
-.hbg{position:absolute;inset:0;background-image:linear-gradient(rgba(184,150,90,.016) 1px,transparent 1px),linear-gradient(90deg,rgba(184,150,90,.016) 1px,transparent 1px);background-size:54px 54px}
-.hglow{position:absolute;inset:0;background:radial-gradient(ellipse 85% 48% at 50% 18%,rgba(184,150,90,.09) 0%,transparent 55%)}
+.hbg{position:absolute;inset:0;background-image:linear-gradient(rgba(184,150,90,.016) 1px,transparent 1px),linear-gradient(90deg,rgba(184,150,90,.016) 1px,transparent 1px);background-size:54px 54px;pointer-events:none}
+.hglow{position:absolute;inset:0;background:radial-gradient(ellipse 85% 48% at 50% 18%,rgba(184,150,90,.09) 0%,transparent 55%);pointer-events:none}
 .hero{position:relative;z-index:2;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:56px 24px 28px}
 .eyebrow{font-size:8px;letter-spacing:.44em;color:var(--gold);margin-bottom:17px;opacity:.78;display:flex;align-items:center;gap:12px}
 .eyebrow::before,.eyebrow::after{content:'';flex:1;max-width:26px;height:1px;background:linear-gradient(to right,transparent,rgba(184,150,90,.48))}
@@ -50,7 +53,7 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction
 .hd{width:5px;height:5px;background:var(--gold);transform:rotate(45deg)}
 .htag{font-family:'Cormorant Garamond',serif;font-size:clamp(15px,3.1vw,18px);font-weight:300;color:rgba(255,255,255,.22);line-height:1.45;margin-bottom:40px}
 .hbtns{position:relative;z-index:2;align-self:center;width:100%;max-width:355px;padding:0 20px 20px;display:flex;flex-direction:column;gap:9px}
-.hbtn{width:100%;padding:15px 20px;font-family:'Tajawal',sans-serif;font-size:12px;letter-spacing:.13em;cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:all .17s;border:none;line-height:1;border-radius:var(--brad)}
+.hbtn{width:100%;padding:15px 20px;font-family:'Tajawal',sans-serif;font-size:12px;letter-spacing:0;cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:all .17s;border:none;line-height:1;border-radius:var(--brad)}
 .hbtn.primary{background:var(--gold);color:var(--ink);font-weight:500}
 .hbtn.primary:hover{background:var(--gold2)}
 .hbtn.outline{background:transparent;border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.5)}
@@ -318,6 +321,7 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction
 .overlay.on{display:flex;animation:fo .2s ease}
 @keyframes fo{from{opacity:0}to{opacity:1}}
 .popup{background:var(--cream);width:100%;max-width:520px;border-radius:18px 18px 0 0;padding:24px 18px 36px;animation:su .28s cubic-bezier(.4,0,.2,1)}
+.pay-popup{padding:20px 18px 0;max-height:92dvh;overflow:hidden}
 @keyframes su{from{transform:translateY(100%)}to{transform:translateY(0)}}
 .popup-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
 .popup-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;color:var(--text);letter-spacing:.06em}
@@ -512,13 +516,23 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction
 </div>
 
 <!-- PAYMENT POPUP -->
-<div class="overlay" id="payOverlay" onclick="if(event.target===this)closePopup()">
-  <div class="popup">
-    <div class="popup-hd"><span class="popup-title">إتمام الدفع</span><button class="popup-x" onclick="closePopup()">×</button></div>
-    <div class="popup-amt"><div class="popup-amt-lbl">المبلغ المستحق</div><div class="popup-amt-val"><span style="font-family:'Tajawal',sans-serif;font-size:14px;color:var(--muted)">SAR </span><span id="popAmt">0</span></div></div>
-    <div class="popup-safe"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>دفع آمن ومشفر بالكامل</div>
-    <button class="popup-paybtn" onclick="doPayRedirect()">الدفع الآن ←</button>
-    <button class="popup-secbtn" onclick="doPayNewTab()">فتح في نافذة جديدة</button>
+<div class="overlay" id="payOverlay">
+  <div class="popup pay-popup" id="payPopupInner">
+    <div class="popup-hd">
+      <span class="popup-title">إتمام الدفع</span>
+      <button class="popup-x" onclick="closePopup()">×</button>
+    </div>
+    <!-- Loading state -->
+    <div id="pay-loading" style="text-align:center;padding:32px 16px">
+      <div class="popup-amt"><div class="popup-amt-lbl">المبلغ المستحق</div><div class="popup-amt-val"><span style="font-family:'Tajawal',sans-serif;font-size:14px;color:var(--muted)">SAR </span><span id="popAmt">0</span></div></div>
+      <div class="popup-safe"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>دفع آمن ومشفر بالكامل</div>
+      <button class="popup-paybtn" id="pay-open-btn" onclick="openPayFrame()">الدفع الآن ←</button>
+      <button class="popup-secbtn" onclick="doPayNewTab()">فتح في نافذة جديدة</button>
+    </div>
+    <!-- iframe container -->
+    <div id="pay-frame-wrap" style="display:none">
+      <iframe id="pay-iframe" style="width:100%;height:520px;border:none;display:block" allowpaymentrequest></iframe>
+    </div>
   </div>
 </div>
 
@@ -721,15 +735,45 @@ function buildSvcFromMenu(cats){
     var cid='cat_'+cat.id.replace(/[^a-zA-Z0-9]/g,'');
     tabsH+='<button class="tab'+(first?' on':'')+'" data-cid="'+cid+'" onclick="swTab(this.dataset.cid,this)">'+esc(cat.nameAr)+'</button>';
     bodyH+='<div class="cpanel'+(first?' on':'')+'" id="'+cid+'">';
-    // Sub-section header
-    if(cat.subLabel){
+
+    var subSections=cat.subSections||[];
+    // Check if we have named sub-sections from admin
+    if(subSections.length>0 && subSections.some(function(s){return s.name;})){
+      // Render each sub-section with its services
+      // Build a map: priceId → svc
+      var svcByPrice={};
+      cat.services.forEach(function(svc){svcByPrice[svc.rekazPriceId]=svc;});
+
+      subSections.forEach(function(sub){
+        if(!sub.name&&(!sub.services||!sub.services.length))return;
+        // Sub-section header — centered beautiful design
+        var parts=(sub.name||'').split(' · ');
+        var enPart=parts[0]||'';
+        var arPart=parts[1]||'';
+        if(enPart||arPart){
+          bodyH+='<div class="sub-sec"><div class="sub-hd">';
+          if(enPart)bodyH+='<span class="sub-en">'+esc(enPart)+'</span>';
+          if(arPart)bodyH+='<span class="sub-ar">'+esc(arPart)+'</span>';
+          bodyH+='<div class="sub-line"></div></div>';
+        }
+        bodyH+='<div class="sub-cards">';
+        // Show services in this sub-section
+        var subSvcs=(sub.services||[]).map(function(pid){return svcByPrice[pid];}).filter(Boolean);
+        // Fallback: show all cat services if sub has no specific services
+        if(!subSvcs.length && subSections.length===1) subSvcs=cat.services;
+        subSvcs.forEach(function(svc){bodyH+=buildCard(svc);});
+        bodyH+='</div>';
+      });
+    } else if(cat.subLabel){
+      // Legacy single sub-label
       var sp=cat.subLabel.split(' · ');
       bodyH+='<div class="sub-sec"><div class="sub-hd"><span class="sub-en">'+(sp[0]||cat.subLabel)+'</span>';
       if(sp[1])bodyH+='<span class="sub-ar">'+esc(sp[1])+'</span>';
       bodyH+='<div class="sub-line"></div></div><div class="sub-cards">';
       cat.services.forEach(function(svc){bodyH+=buildCard(svc);});
-      bodyH+='</div></div>';
-    }else{
+      bodyH+='</div>';
+    } else {
+      // No sub-sections — show all services directly
       bodyH+='<div class="sub-cards" style="padding-top:10px">';
       cat.services.forEach(function(svc){bodyH+=buildCard(svc);});
       bodyH+='</div>';
@@ -1015,8 +1059,8 @@ async function doBook(){
     document.getElementById('sucref').textContent='';
     document.getElementById('sucref').parentElement.style.display='none';
     if(S.payUrl){
+      // Show payment popup first — go to success AFTER payment
       document.getElementById('sucpay').style.display='block';
-      // Auto-open payment popup immediately
       openPayPopup();
     } else {
       go('suc');
@@ -1029,17 +1073,49 @@ async function doBook(){
 function openPayPopup(){
   if(!S.payUrl)return;
   document.getElementById('popAmt').textContent=calcTotal().toLocaleString('en');
+  // Reset to loading state
+  document.getElementById('pay-loading').style.display='block';
+  document.getElementById('pay-frame-wrap').style.display='none';
+  document.getElementById('pay-iframe').src='';
   document.getElementById('payOverlay').classList.add('on');
 }
-function closePopup(){document.getElementById('payOverlay').classList.remove('on');}
-function doPayRedirect(){
-  if(!S.payUrl)return;
-  // Open in same window — Rekaz will redirect back (ideally)
-  window.open(S.payUrl,'_blank');
-  closePopup();
+function openPayFrame(){
+  // Load payment in iframe
+  var fw=document.getElementById('pay-frame-wrap');
+  var fr=document.getElementById('pay-iframe');
+  var loading=document.getElementById('pay-loading');
+  loading.style.display='none';
+  fw.style.display='block';
+  fr.src=S.payUrl;
+  // Listen for iframe navigation (payment complete)
+  fr.onload=function(){
+    try{
+      var iUrl=fr.contentWindow.location.href;
+      if(iUrl&&iUrl!=='about:blank'&&iUrl!==S.payUrl){
+        // Payment done or redirected
+        closePopup();
+        showSuccess();
+      }
+    }catch(e){
+      // Cross-origin — payment is processing, go to success after delay
+      setTimeout(function(){closePopup();showSuccess();},3000);
+    }
+  };
+}
+function showSuccess(){
+  document.getElementById('payOverlay').classList.remove('on');
   go('suc');
 }
-function doPayNewTab(){if(S.payUrl)window.open(S.payUrl,'_blank');closePopup();}
+function closePopup(){
+  document.getElementById('payOverlay').classList.remove('on');
+  document.getElementById('pay-iframe').src='';
+}
+function doPayNewTab(){
+  if(S.payUrl){window.open(S.payUrl,'_blank');}
+  closePopup();
+  // Show success after opening payment
+  setTimeout(function(){go('suc');},500);
+}
 
 // ── NAV ──
 function go(id){
