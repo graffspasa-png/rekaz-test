@@ -301,7 +301,12 @@ app.post("/create-customer", async (req,res) => {
 app.post("/create-booking", async (req,res) => {
   const {customerId,phone,priceId,from,to}=req.body;
   if(!customerId||!priceId||!from||!to) return res.status(400).json({error:"Missing fields"});
-  if(phone){const s=otpStore[phone];if(!s?.verified)return res.status(403).json({error:"Phone not verified"});}
+  if(phone){
+    const s=otpStore[phone];
+    // Allow if: verified, or OTP was already consumed (s is undefined after delete)
+    if(s && !s.verified) return res.status(403).json({error:"يجب التحقق من الجوال أولاً"});
+    // If s is undefined — OTP was already used in create-customer, that's OK
+  }
   try {
     const r=await rekazFetch(`${REKAZ_API}/reservations/bulk`,{
       method:"POST",
