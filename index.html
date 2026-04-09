@@ -1084,7 +1084,7 @@ function openPayPopup(){
   // Reset to loading state
   document.getElementById('pay-loading').style.display='block';
   document.getElementById('pay-frame-wrap').style.display='none';
-  document.getElementById('pay-iframe').src='';
+  var fr=document.getElementById('pay-iframe');if(fr)fr.src='';
   document.getElementById('payOverlay').classList.add('on');
 }
 function openPayFrame(){
@@ -1108,7 +1108,8 @@ function showSuccess(){
 }
 function closePopup(){
   document.getElementById('payOverlay').classList.remove('on');
-  document.getElementById('pay-iframe').src='';
+  var fr=document.getElementById('pay-iframe');
+  if(fr)fr.src='';
 }
 function doPayNewTab(){
   if(S.payUrl){window.open(S.payUrl,'_blank');}
