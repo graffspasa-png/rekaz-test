@@ -68,7 +68,7 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction
 .fdesc{font-size:11px;color:rgba(255,255,255,.18);line-height:1.82;margin-bottom:16px;max-width:255px;margin-left:auto;margin-right:auto}
 .fdiv{height:1px;background:rgba(184,150,90,.08);margin-bottom:15px}
 .fsocial{display:flex;justify-content:center;gap:10px;margin-bottom:16px}
-.fsoc{width:37px;height:37px;border:1px solid rgba(255,255,255,.08);border-radius:9px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;text-decoration:none;color:rgba(255,255,255,.34);background:rgba(255,255,255,.03)}
+.fsoc{width:37px;height:37px;border:1px solid rgba(255,255,255,.08);border-radius:9px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;text-decoration:none;color:rgba(255,255,255,.34);background:rgba(255,255,255,.03);pointer-events:all;-webkit-user-select:none;user-select:none}
 .fsoc:hover{border-color:rgba(184,150,90,.36);color:var(--gold)}
 .payrow{display:flex;justify-content:center;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:14px}
 .paychip{height:32px;padding:0 10px;border-radius:5px;background:#fff;display:flex;align-items:center;justify-content:center;min-width:52px}
@@ -577,9 +577,19 @@ function applyConfig(){
     var p=txt.split(' ');
     el.innerHTML=p.length>1?p[0]+' <b style="color:'+(t.logoAccent||'var(--gold)')+'">'+p.slice(1).join(' ')+'</b>':txt;
   });
-  if(l.heroTagline){var el=document.getElementById('home-tagline');if(el)el.textContent=l.heroTagline;}
-  if(l.heroCity){var el=document.getElementById('home-city');if(el)el.textContent=l.heroCity;}
-  if(l.vatNumber){var el=document.getElementById('vat-num');if(el)el.textContent='الرقم الضريبي: '+l.vatNumber;}
+  // Apply texts from texts field (authoritative)
+  var tx=CFG.texts||{};
+  var applyTxt=function(id,val){var el=document.getElementById(id);if(el&&val)el.textContent=val;};
+  applyTxt('home-tagline',tx.homeTagline||l.heroTagline);
+  applyTxt('home-city',tx.homeCity||l.heroCity);
+  applyTxt('vat-num',tx.vatNumber?('الرقم الضريبي: '+tx.vatNumber):(l.vatNumber?'الرقم الضريبي: '+l.vatNumber:''));
+  applyTxt('gift-h1',tx.giftTitle);
+  applyTxt('gift-sub',tx.giftSubtitle);
+  // Update eyebrow
+  var eyeEl=document.querySelector('.eyebrow');if(eyeEl&&tx.homeEyebrow)eyeEl.textContent=tx.homeEyebrow;
+  // Update footer desc and copy
+  var fdesc=document.querySelector('.fdesc');if(fdesc&&tx.footerDesc)fdesc.textContent=tx.footerDesc;
+  var fcopy=document.querySelector('.fcopy');if(fcopy&&tx.footerCopy)fcopy.textContent=tx.footerCopy;
   // Gift
   var gc=(CFG.pages&&CFG.pages.gift)||{};
   if(gc.title){var el=document.getElementById('gift-h1');if(el)el.textContent=gc.title;}
@@ -1001,10 +1011,16 @@ async function doBook(){
       '<div class="sucrow"><span class="suclbl">التاريخ</span><span class="sucval">'+dl+'</span></div>'+
       '<div class="sucrow"><span class="suclbl">الوقت</span><span class="sucval">'+S.slotLbl+'</span></div>'+
       '<div class="sucrow"><span class="suclbl">الإجمالي</span><span class="sucval">SAR '+tot.toLocaleString('en')+'</span></div>';
-    document.getElementById('sucref').textContent=ref;
-    if(S.payUrl)document.getElementById('sucpay').style.display='block';
-    go('suc');
-    if(S.payUrl)setTimeout(openPayPopup,800);
+    // No order number shown
+    document.getElementById('sucref').textContent='';
+    document.getElementById('sucref').parentElement.style.display='none';
+    if(S.payUrl){
+      document.getElementById('sucpay').style.display='block';
+      // Auto-open payment popup immediately
+      openPayPopup();
+    } else {
+      go('suc');
+    }
   }catch(e){showErr('errconf',e.message);}
   btn.classList.remove('ld');btn.disabled=false;
 }
@@ -1016,7 +1032,13 @@ function openPayPopup(){
   document.getElementById('payOverlay').classList.add('on');
 }
 function closePopup(){document.getElementById('payOverlay').classList.remove('on');}
-function doPayRedirect(){if(S.payUrl)window.location.href=S.payUrl;}
+function doPayRedirect(){
+  if(!S.payUrl)return;
+  // Open in same window — Rekaz will redirect back (ideally)
+  window.open(S.payUrl,'_blank');
+  closePopup();
+  go('suc');
+}
 function doPayNewTab(){if(S.payUrl)window.open(S.payUrl,'_blank');closePopup();}
 
 // ── NAV ──
@@ -1027,7 +1049,7 @@ function go(id){
   if(id==='confirm')buildConfirm();
 }
 function openWA(){
-  var num=(CFG&&CFG.social&&CFG.social.whatsapp)||'966500000000';
+  var num=(CFG&&CFG.texts&&CFG.texts.whatsappNumber)||(CFG&&CFG.social&&CFG.social.whatsapp)||'966500000000';
   window.open('https://wa.me/'+num.replace(/\D/g,''),'_blank');
 }
 function resetAll(){
