@@ -769,9 +769,18 @@ function buildSvcFromMenu(cats){
       subSections.forEach(function(sub){
         if(!sub.name&&(!sub.services||!sub.services.length))return;
         // Sub-section header — centered beautiful design
-        var parts=(sub.name||'').split(' · ');
-        var enPart=parts[0]||'';
-        var arPart=parts[1]||'';
+        var rawName=sub.name||'';
+        var enPart='',arPart='';
+        if(rawName.indexOf(' · ')>-1){
+          var parts=rawName.split(' · ');
+          enPart=parts[0]||'';arPart=parts[1]||'';
+        } else {
+          var tokens=rawName.split(' ');
+          var enTokens=[],arTokens=[];
+          tokens.forEach(function(t){/[\u0600-\u06FF]/.test(t)?arTokens.push(t):enTokens.push(t);});
+          enPart=enTokens.join(' ').trim();
+          arPart=arTokens.join(' ').trim();
+        }
         if(enPart||arPart){
           bodyH+='<div class="subcategory-title">';
           if(enPart)bodyH+='<div class="title-en">'+esc(enPart)+'</div>';
