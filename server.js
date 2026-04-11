@@ -290,7 +290,7 @@ app.get("/menu", async (req,res) => {
                 id: s.id,
                 rekazProductId: pid,
                 rekazPriceId: s.rekazPriceId,
-                nameAr: s.nameAr || (p.nameAr || p.name || "").split(" - ")[0].trim(),
+                nameAr: (p.nameAr || p.name || "").split(" - ")[0].trim(),
                 description: (p.description || p.shortDescription || ""),
                 options: [],
                 addOns: (p.addOns || [])
@@ -308,12 +308,10 @@ app.get("/menu", async (req,res) => {
             // Rekaz pricing name format: "بسيط - Minimal" — extract Arabic part only
             if (rd.pricing) {
               const pricingRawName = rd.pricing.nameAr || rd.pricing.name || "";
-              const pricingNameAr = pricingRawName.includes(" - ")
-                ? pricingRawName.split(" - ")[0].trim()
-                : pricingRawName.trim();
-              const pricingNameEn = pricingRawName.includes(" - ")
-                ? pricingRawName.split(" - ").slice(1).join(" - ").trim()
-                : "";
+              // Handle both " - " and " – " separators from Rekaz
+              const pricingSep = pricingRawName.includes(" – ") ? " – " : (pricingRawName.includes(" - ") ? " - " : null);
+              const pricingNameAr = pricingSep ? pricingRawName.split(pricingSep)[0].trim() : pricingRawName.trim();
+              const pricingNameEn = pricingSep ? pricingRawName.split(pricingSep).slice(1).join(pricingSep).trim() : "";
               existing.options.push({
                 id: rd.pricing.id,
                 nameAr: pricingNameAr,
