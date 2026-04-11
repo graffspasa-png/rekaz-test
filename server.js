@@ -379,7 +379,7 @@ app.post("/create-customer", async (req,res) => {
   } catch(e){res.status(500).json({error:e.message});}
 });
 app.post("/create-booking", async (req,res) => {
-  const {customerId,phone,priceId,from,to}=req.body;
+  const {customerId,phone,priceId,from,to,addons}=req.body;
   if(!customerId||!priceId||!from||!to) return res.status(400).json({error:"Missing fields"});
   if(phone){
     const s=otpStore[phone];
@@ -388,9 +388,17 @@ app.post("/create-booking", async (req,res) => {
     // If s is undefined — OTP was already used in create-customer, that's OK
   }
   try {
+    // Build items: main service + addons as separate items
+    const items = [{priceId, quantity:1, from, to}];
+    if (addons && addons.length) {
+      addons.forEach(ao => {
+        if (ao.id) items.push({priceId: ao.id, quantity:1, from, to});
+      });
+    }
+    console.log("[Booking] items:", JSON.stringify(items));
     const r=await rekazFetch(`${REKAZ_API}/reservations/bulk`,{
       method:"POST",
-      body:JSON.stringify({customerDetails:null,customerId,branchId:BRANCH_ID,items:[{priceId,quantity:1,from,to}]})
+      body:JSON.stringify({customerDetails:null,customerId,branchId:BRANCH_ID,items})
     });
     if(!r.ok) return res.status(r.status).json({error:"فشل الحجز",details:r.text});
     const result=r.json();
