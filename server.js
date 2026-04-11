@@ -388,10 +388,15 @@ app.post("/create-booking", async (req,res) => {
     // If s is undefined — OTP was already used in create-customer, that's OK
   }
   try {
-    // Rekaz bulk booking: addons are addOnIds on the item, not separate items
+    // Rekaz bulk booking: addons sent as addOns array on the item
     const addOnIds = (addons||[]).filter(a=>a.id).map(a=>a.id);
-    const items = [{priceId, quantity:1, from, to, addOnIds: addOnIds.length ? addOnIds : undefined}];
-    console.log("[Booking] items:", JSON.stringify(items));
+    const item = {priceId, quantity:1, from, to};
+    if(addOnIds.length){
+      // Try both field names — Rekaz API uses addOns:[{id}]
+      item.addOns = addOnIds.map(id=>({id}));
+    }
+    const items = [item];
+    console.log("[Booking] payload:", JSON.stringify({customerId,branchId:BRANCH_ID,items}));
     const r=await rekazFetch(`${REKAZ_API}/reservations/bulk`,{
       method:"POST",
       body:JSON.stringify({customerDetails:null,customerId,branchId:BRANCH_ID,items})
@@ -471,10 +476,19 @@ app.put("/admin/categories/:id/services",adminAuth,(req,res)=>{
   });
   writeDB(db); res.json({success:true,count:(req.body.priceIds||[]).length});
 });
-// ── DEBUG: raw Rekaz data (temporary) ──
+// ── DEBUG endpoints (temporary) ──
 app.get("/debug-rekaz",async(req,res)=>{
   try{const data=await getProds();res.json(data);}
   catch(e){res.status(500).json({error:e.message});}
+});
+// Debug: show what a product's addOns look like
+app.get("/debug-addons/:productId",async(req,res)=>{
+  try{
+    const data=await getProds();
+    const p=data.items.find(x=>x.id===req.params.productId);
+    if(!p) return res.json({error:"not found"});
+    res.json({id:p.id,name:p.name,nameAr:p.nameAr,addOns:p.addOns,pricing:p.pricing});
+  }catch(e){res.status(500).json({error:e.message});}
 });
 
 app.get("/admin/rekaz-products",adminAuth,async(req,res)=>{
