@@ -479,6 +479,20 @@ app.put("/admin/categories/:id/services",adminAuth,(req,res)=>{
   writeDB(db); res.json({success:true,count:(req.body.priceIds||[]).length});
 });
 // ── DEBUG endpoints (temporary) ──
+// Test what Rekaz returns for a bulk booking with addOns
+app.post("/debug-booking-test", async(req,res)=>{
+  try{
+    const {priceId,from,to,addOnIds,customerId}=req.body;
+    const item={priceId,quantity:1,from,to};
+    if(addOnIds&&addOnIds.length) item.addOns=addOnIds.map(id=>({id}));
+    console.log("[DEBUG-BOOKING] payload:", JSON.stringify({customerId,branchId:BRANCH_ID,items:[item]}));
+    const r=await rekazFetch(`${REKAZ_API}/reservations/bulk`,{
+      method:"POST",
+      body:JSON.stringify({customerDetails:null,customerId,branchId:BRANCH_ID,items:[item]})
+    });
+    res.json({status:r.status,body:r.text});
+  }catch(e){res.status(500).json({error:e.message});}
+});
 app.get("/debug-rekaz",async(req,res)=>{
   try{const data=await getProds();res.json(data);}
   catch(e){res.status(500).json({error:e.message});}
