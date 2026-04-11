@@ -167,6 +167,20 @@ body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-r
 .vrow.sel .vchkd{opacity:1}
 .adwrap{background:rgba(184,150,90,.04);border-top:1px solid rgba(184,150,90,.1);padding:11px 12px;display:none}
 .sc.sel .adwrap{display:block}
+/* OPTIONS (radio) */
+.opts-wrap{border-top:1px solid rgba(198,191,180,.45);background:var(--cream2);padding:4px 0}
+.opts-lbl{font-size:9px;letter-spacing:.14em;color:var(--gold);padding:9px 14px 5px;text-transform:uppercase}
+.opt-row{display:flex;align-items:center;padding:10px 12px 10px 14px;border-bottom:1px solid rgba(198,191,180,.3);cursor:pointer;transition:background .1s;gap:10px}
+.opt-row:last-child{border:none}
+.opt-row:hover{background:var(--cream3)}
+.opt-row.sel{background:rgba(184,150,90,.07)}
+.opt-radio{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .14s}
+.opt-row.sel .opt-radio{border-color:var(--ink);background:var(--ink)}
+.opt-dot{width:7px;height:7px;border-radius:50%;background:#fff;opacity:0;transform:scale(0);transition:all .14s}
+.opt-row.sel .opt-dot{opacity:1;transform:scale(1)}
+.opt-info{flex:1}
+.opt-name{font-size:13px;color:var(--text);margin-bottom:2px}
+.opt-price{font-family:'Cormorant Garamond',serif;font-size:17px;color:var(--text);white-space:nowrap}
 .adtitle{font-size:9px;letter-spacing:.14em;color:var(--gold);margin-bottom:9px;text-transform:uppercase}
 .adrow{display:flex;align-items:center;padding:8px 0;border-bottom:1px solid rgba(198,191,180,.25);gap:9px;cursor:pointer}
 .adrow:last-child{border:none}
@@ -751,6 +765,56 @@ async function loadProducts(){
   }
 }
 
+function groupServices(svcs){
+  // Group by rekazProductId → one card per product, options = price variants
+  var map={},order=[];
+  (svcs||[]).forEach(function(svc){
+    var pid=svc.rekazProductId||svc.id;
+    if(!map[pid]){
+      map[pid]={
+        id:pid,
+        rekazProductId:pid,
+        nameAr:svc.nameAr||'',
+        description:svc.description||'',
+        addOns:[],
+        options:[]
+      };
+      order.push(pid);
+    }
+    var g=map[pid];
+    // Merge add-ons (unique by id)
+    (svc.addOns||[]).forEach(function(ao){
+      if(!g.addOns.find(function(x){return x.id===ao.id;}))g.addOns.push(ao);
+    });
+    // Each svc entry is one selectable option
+    g.options.push({
+      id:svc.rekazPriceId||svc.id,
+      label:svc.optionNameAr||svc.optionName||svc.variantNameAr||svc.variantName||'',
+      duration:svc.duration||0,
+      amount:svc.amount||0
+    });
+  });
+  return order.map(function(pid){return map[pid];});
+}
+
+function renderSubHeader(rawName){
+  var enPart='',arPart='';
+  if(rawName.indexOf(' · ')>-1){
+    var parts=rawName.split(' · ');
+    enPart=parts[0]||'';arPart=parts[1]||'';
+  } else {
+    var tokens=rawName.split(' ');
+    var enT=[],arT=[];
+    tokens.forEach(function(t){/[\u0600-\u06FF]/.test(t)?arT.push(t):enT.push(t);});
+    enPart=enT.join(' ').trim();arPart=arT.join(' ').trim();
+  }
+  var h='<div class="subcategory-title">';
+  if(enPart)h+='<div class="title-en">'+esc(enPart)+'</div>';
+  if(arPart)h+='<div class="title-ar">'+esc(arPart)+'</div>';
+  h+='<div class="title-line"></div></div>';
+  return h;
+}
+
 function buildSvcFromMenu(cats){
   var tabsH='',bodyH='',first=true;
   cats.forEach(function(cat){
@@ -759,54 +823,28 @@ function buildSvcFromMenu(cats){
     bodyH+='<div class="cpanel'+(first?' on':'')+'" id="'+cid+'">';
 
     var subSections=cat.subSections||[];
-    // Check if we have named sub-sections from admin
-    if(subSections.length>0 && subSections.some(function(s){return s.name;})){
-      // Render each sub-section with its services
-      // Build a map: priceId → svc
+    if(subSections.length>0&&subSections.some(function(s){return s.name;})){
+      // Build map: priceId → svc for subsection lookup
       var svcByPrice={};
       cat.services.forEach(function(svc){svcByPrice[svc.rekazPriceId]=svc;});
 
       subSections.forEach(function(sub){
         if(!sub.name&&(!sub.services||!sub.services.length))return;
-        // Sub-section header — centered beautiful design
-        var rawName=sub.name||'';
-        var enPart='',arPart='';
-        if(rawName.indexOf(' · ')>-1){
-          var parts=rawName.split(' · ');
-          enPart=parts[0]||'';arPart=parts[1]||'';
-        } else {
-          var tokens=rawName.split(' ');
-          var enTokens=[],arTokens=[];
-          tokens.forEach(function(t){/[\u0600-\u06FF]/.test(t)?arTokens.push(t):enTokens.push(t);});
-          enPart=enTokens.join(' ').trim();
-          arPart=arTokens.join(' ').trim();
-        }
-        if(enPart||arPart){
-          bodyH+='<div class="subcategory-title">';
-          if(enPart)bodyH+='<div class="title-en">'+esc(enPart)+'</div>';
-          if(arPart)bodyH+='<div class="title-ar">'+esc(arPart)+'</div>';
-          bodyH+='<div class="title-line"></div></div>';
-        }
+        bodyH+=renderSubHeader(sub.name||'');
         bodyH+='<div class="sub-cards">';
-        // Show services in this sub-section
-        var subSvcs=(sub.services||[]).map(function(pid){return svcByPrice[pid];}).filter(Boolean);
-        // Fallback: show all cat services if sub has no specific services
-        if(!subSvcs.length && subSections.length===1) subSvcs=cat.services;
-        subSvcs.forEach(function(svc){bodyH+=buildCard(svc);});
+        var rawSvcs=(sub.services||[]).map(function(pid){return svcByPrice[pid];}).filter(Boolean);
+        if(!rawSvcs.length&&subSections.length===1)rawSvcs=cat.services;
+        groupServices(rawSvcs).forEach(function(g){bodyH+=buildCard(g);});
         bodyH+='</div>';
       });
     } else if(cat.subLabel){
-      // Legacy single sub-label
-      var sp=cat.subLabel.split(' · ');
-      bodyH+='<div class="subcategory-title"><div class="title-en">'+esc(sp[0]||cat.subLabel)+'</div>';
-      if(sp[1])bodyH+='<div class="title-ar">'+esc(sp[1])+'</div>';
-      bodyH+='<div class="title-line"></div></div><div class="sub-cards">';
-      cat.services.forEach(function(svc){bodyH+=buildCard(svc);});
+      bodyH+=renderSubHeader(cat.subLabel);
+      bodyH+='<div class="sub-cards">';
+      groupServices(cat.services).forEach(function(g){bodyH+=buildCard(g);});
       bodyH+='</div>';
     } else {
-      // No sub-sections — show all services directly
       bodyH+='<div class="sub-cards" style="padding-top:10px">';
-      cat.services.forEach(function(svc){bodyH+=buildCard(svc);});
+      groupServices(cat.services).forEach(function(g){bodyH+=buildCard(g);});
       bodyH+='</div>';
     }
     bodyH+='</div>';
@@ -818,59 +856,74 @@ function buildSvcFromMenu(cats){
 
 function buildCard(svc){
   var pid='sc_'+svc.id.replace(/[^a-zA-Z0-9]/g,'');
-  var hasV=svc.hasVariants&&svc.variants&&svc.variants.length>1;
+  var opts=svc.options||[];
+  var hasOpts=opts.length>1;
+  var singleOpt=opts.length===1?opts[0]:null;
   var name=svc.nameAr||'';
   var desc=(svc.description||'').replace(/<[^>]*>/g,'').replace(/&amp;/g,'&').replace(/&nbsp;/g,' ').trim();
   if(desc.length>160)desc=desc.substring(0,160)+'...';
-  var dur=svc.duration||0;
-  var amt=svc.amount||0;
-  // Use data attributes — zero quote escaping issues
+  // For single option: use its duration/amount directly
+  var dur=singleOpt?singleOpt.duration:0;
+  var amt=singleOpt?singleOpt.amount:(hasOpts?Math.min.apply(null,opts.map(function(o){return o.amount;})):0);
+  var priceId=singleOpt?singleOpt.id:'';
+
   var h='<div class="sc" id="'+pid+'"'
     +' data-pid="'+pid+'"'
     +' data-prod="'+esc2(svc.rekazProductId||'')+'"'
-    +' data-price="'+esc2(svc.rekazPriceId||'')+'"'
+    +' data-price="'+esc2(priceId)+'"'
     +' data-name="'+esc2(name)+'"'
     +' data-dur="'+dur+'"'
     +' data-amt="'+amt+'"'
-    +' data-hasv="'+(hasV?1:0)+'"'
+    +' data-hasopts="'+(hasOpts?1:0)+'"'
     +' onclick="onCardClick(this)">';
   h+='<div class="scbar"></div>';
   h+='<div class="scbody"><div class="scinfo"><div class="scname">'+esc(name)+'</div>';
   if(desc)h+='<div class="scdesc">'+esc(desc)+'</div>';
   if(dur)h+='<div class="scdur"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>'+dur+' دقيقة</div>';
   h+='</div><div class="scright">';
-  h+='<div><div class="scprice"><span class="scsr">SAR </span>'+(hasV?'من ':'')+amt+'</div><div class="scvat">شامل VAT</div></div>';
-  if(hasV)h+='<div class="varbtn" id="vb_'+svc.id.replace(/[^a-zA-Z0-9]/g,'')+'">خيارات <span class="vchev"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></span></div>';
-  else h+='<div class="scchk"><div class="chkd"></div></div>';
+  h+='<div><div class="scprice"><span class="scsr">SAR </span>'+(hasOpts?'من ':'')+amt+'</div><div class="scvat">شامل VAT</div></div>';
+  if(!hasOpts)h+='<div class="scchk"><div class="chkd"></div></div>';
   h+='</div></div>';
-  if(hasV){
-    h+='<div class="vwrap" id="vw_'+svc.id.replace(/[^a-zA-Z0-9]/g,'')+'"">';
-    svc.variants.forEach(function(vr){
-      var vn=(vr.name||'');
-      h+='<div class="vrow" id="vr_'+vr.id.replace(/-/g,'')+'"'
+
+  // Options (radio buttons) — shown always expanded inside card
+  if(hasOpts){
+    h+='<div class="opts-wrap" id="ow_'+pid+'">';
+    h+='<div class="opts-lbl">اختاري الخيار</div>';
+    opts.forEach(function(opt){
+      var optLabel=opt.label||'';
+      h+='<div class="opt-row" id="opt_'+opt.id.replace(/[^a-zA-Z0-9]/g,'')+'"'
         +' data-prod="'+esc2(svc.rekazProductId||'')+'"'
-        +' data-price="'+esc2(vr.id)+'"'
-        +' data-name="'+esc2(vn)+'"'
-        +' data-dur="'+(vr.duration||0)+'"'
-        +' data-amt="'+vr.amount+'"'
+        +' data-price="'+esc2(opt.id)+'"'
+        +' data-name="'+esc2(name)+'"'
+        +' data-optlabel="'+esc2(optLabel)+'"'
+        +' data-dur="'+opt.duration+'"'
+        +' data-amt="'+opt.amount+'"'
         +' data-card="'+pid+'"'
-        +' onclick="event.stopPropagation();onVarClick(this)">';
-      h+='<div class="vdot"></div><div class="vinfo"><div class="vname">'+esc(vn)+'</div>';
-      if(vr.duration)h+='<div class="vdur"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>'+vr.duration+' دقيقة</div>';
-      h+='</div><div class="vprice"><span class="vsr">SAR </span>'+vr.amount+'</div><div class="vchk"><div class="vchkd"></div></div></div>';
+        +' onclick="event.stopPropagation();onOptClick(this)">';
+      h+='<div class="opt-radio"><div class="opt-dot"></div></div>';
+      h+='<div class="opt-info">';
+      if(optLabel)h+='<div class="opt-name">'+esc(optLabel)+'</div>';
+      if(opt.duration)h+='<div class="vdur"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>'+opt.duration+' دقيقة</div>';
+      h+='</div>';
+      h+='<div class="opt-price"><span class="vsr">SAR </span>'+opt.amount+'</div>';
+      h+='</div>';
     });
     h+='</div>';
   }
+
+  // Add-ons (checkboxes)
   if(svc.addOns&&svc.addOns.length){
-    h+='<div class="adwrap"><div class="adtitle">ADD-ONS · الإضافات</div>';
+    h+='<div class="adwrap" id="aw_'+pid+'"><div class="adtitle">الإضافات</div>';
     svc.addOns.forEach(function(ao){
-      h+='<div class="adrow" id="ao_'+ao.id.replace(/-/g,'')+'"'
+      var aoName=ao.nameAr||ao.name||'';
+      if(!aoName)return; // skip if no name
+      h+='<div class="adrow" id="ao_'+ao.id.replace(/[^a-zA-Z0-9]/g,'')+'"'
         +' data-aoid="'+esc2(ao.id)+'"'
-        +' data-name="'+esc2(ao.nameAr||'')+'"'
+        +' data-name="'+esc2(aoName)+'"'
         +' data-amt="'+(ao.amount||0)+'"'
         +' onclick="event.stopPropagation();onAddonClick(this)">';
       h+='<div class="adchk"><div class="adchki"></div></div>';
-      h+='<span class="adname">'+esc(ao.nameAr||'')+'</span>';
+      h+='<span class="adname">'+esc(aoName)+'</span>';
       h+='<span class="adprice"><span class="adpsr">+ SAR </span>'+(ao.amount||0)+'</span></div>';
     });
     h+='</div>';
@@ -881,32 +934,35 @@ function buildCard(svc){
 
 // Click handlers using data attributes
 function onCardClick(el){
-  var hasV=el.dataset.hasv==='1';
-  if(hasV){
-    var rid=el.id.replace(/^sc_?/,'');
-    var vw=document.getElementById('vw_'+rid);
-    var vb=document.getElementById('vb_'+rid);
-    var open=el.classList.toggle('has-open');
-    if(vw)vw.classList.toggle('open',open);
-    if(vb)vb.classList.toggle('open',open);
-  }else{
-    var pid=el.id;
-    if(S.cart&&S.cart.pid===pid){clearSel();S.cart=null;updCart();return;}
-    clearSel();
-    S.cart={id:el.dataset.prod,priceId:el.dataset.price,name:el.dataset.name,
-            dur:parseInt(el.dataset.dur)||0,amount:parseFloat(el.dataset.amt)||0,pid:pid};
-    el.classList.add('sel');updCart();
+  var hasOpts=el.dataset.hasopts==='1';
+  if(hasOpts){
+    // Card with options: selecting the card itself does nothing — user must pick an option
+    return;
   }
+  var pid=el.id;
+  if(S.cart&&S.cart.pid===pid){clearSel();S.cart=null;updCart();return;}
+  clearSel();
+  S.cart={id:el.dataset.prod,priceId:el.dataset.price,name:el.dataset.name,
+          dur:parseInt(el.dataset.dur)||0,amount:parseFloat(el.dataset.amt)||0,pid:pid};
+  el.classList.add('sel');updCart();
 }
-function onVarClick(el){
+function onOptClick(el){
   var pid=el.dataset.card;
   var priceId=el.dataset.price;
-  if(S.cart&&S.cart.priceId===priceId){clearSel();S.cart=null;if(pid)document.getElementById(pid).classList.remove('sel');updCart();return;}
+  // Deselect other options in same card
+  var card=document.getElementById(pid);
+  if(card)card.querySelectorAll('.opt-row.sel').forEach(function(r){r.classList.remove('sel');});
+  if(S.cart&&S.cart.priceId===priceId){
+    clearSel();S.cart=null;
+    if(card)card.classList.remove('sel');
+    updCart();return;
+  }
   clearSel();
   el.classList.add('sel');
-  S.cart={id:el.dataset.prod,priceId:priceId,name:el.dataset.name,
+  var label=el.dataset.optlabel?el.dataset.name+' — '+el.dataset.optlabel:el.dataset.name;
+  S.cart={id:el.dataset.prod,priceId:priceId,name:label,
           dur:parseInt(el.dataset.dur)||0,amount:parseFloat(el.dataset.amt)||0,pid:pid};
-  if(pid)document.getElementById(pid).classList.add('sel');
+  if(card)card.classList.add('sel');
   updCart();
 }
 function onAddonClick(el){
@@ -919,7 +975,7 @@ function onAddonClick(el){
 function clearSel(){
   if(S.cart){
     var old=document.getElementById(S.cart.pid);if(old)old.classList.remove('sel');
-    document.querySelectorAll('.vrow.sel,.adrow.sel').forEach(function(v){v.classList.remove('sel');});
+    document.querySelectorAll('.opt-row.sel,.adrow.sel').forEach(function(v){v.classList.remove('sel');});
   }
   S.addons=[];
 }
