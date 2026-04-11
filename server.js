@@ -220,6 +220,57 @@ app.get("/menu", async (req,res) => {
       (p.pricing||[]).forEach(pr => { byPriceId[pr.id] = {product:p, pricing:pr}; });
       if (!p.pricing?.length) byPriceId[p.id] = {product:p, pricing:null};
     });
+    // Group db.services by rekazProductId → one entry per product with all its pricing options
+    // Step 1: build a map productId → {product, dbService, pricingOptions[]}
+    const productMap = {};
+    const productOrder = [];
+    db.services
+      .filter(s => s.categoryId !== undefined) // will be filtered per-cat below
+      .forEach(s => {
+        const rd = byPriceId[s.rekazPriceId] || (s.rekazProductId ? {product:byProductId[s.rekazProductId],pricing:null} : null);
+        if (!rd?.product) return;
+        const p = rd.product;
+        const pid = p.id;
+        if (!productMap[pid]) {
+          productMap[pid] = {
+            rekazProductId: pid,
+            dbService: s,
+            product: p,
+            pricingOptions: [],
+            addOns: [],
+            categoryId: s.categoryId,
+            order: s.order,
+            visible: s.visible
+          };
+          productOrder.push(pid);
+        }
+        const pm = productMap[pid];
+        // Add this pricing option
+        if (rd.pricing) {
+          pm.pricingOptions.push({
+            id: rd.pricing.id,
+            nameAr: rd.pricing.nameAr || rd.pricing.name || "",
+            amount: rd.pricing.amount,
+            duration: rd.pricing.duration || p.duration || 0
+          });
+        } else if (!pm.pricingOptions.length) {
+          // No specific pricing — use product directly as single option
+          pm.pricingOptions.push({
+            id: s.rekazPriceId || pid,
+            nameAr: "",
+            amount: p.amount || 0,
+            duration: p.duration || 0
+          });
+        }
+        // Merge add-ons (unique by id, resolve name from rekaz)
+        (p.addOns || []).forEach(ao => {
+          if (!pm.addOns.find(x => x.id === ao.id)) {
+            const aoName = (ao.nameAr || ao.name || "").trim();
+            if (aoName) pm.addOns.push({ id: ao.id, nameAr: aoName, amount: ao.amount || 0 });
+          }
+        });
+      });
+
     const cats = db.categories
       .filter(c => c.visible !== false)
       .sort((a,b) => a.order - b.order)
@@ -227,31 +278,48 @@ app.get("/menu", async (req,res) => {
         const svcs = db.services
           .filter(s => s.categoryId === cat.id && s.visible !== false)
           .sort((a,b) => a.order - b.order)
-          .map(s => {
+          .reduce((acc, s) => {
             const rd = byPriceId[s.rekazPriceId] || (s.rekazProductId ? {product:byProductId[s.rekazProductId],pricing:null} : null);
-            if (!rd?.product) return null;
+            if (!rd?.product) return acc;
             const p = rd.product;
-            const nameClean = n => (n||"").split(" - ")[0].trim();
-            return {
-              id: s.id, rekazPriceId: s.rekazPriceId, rekazProductId: p.id,
-              nameAr: s.nameAr || nameClean(p.nameAr||p.name||""),
-              amount: rd.pricing ? rd.pricing.amount : (p.amount||0),
-              duration: rd.pricing ? (rd.pricing.duration||p.duration||0) : (p.duration||0),
-              description: (p.description||p.shortDescription||""),
-              hasVariants: p.pricing?.length > 1,
-              variants: p.pricing?.length > 1 ? p.pricing.map(pr=>({
-                id:pr.id, name:pr.name||"", amount:pr.amount, duration:pr.duration||p.duration||0
-              })) : [],
-              addOns: (p.addOns||[]).map(ao=>({
-                id:ao.id,
-                nameAr: nameClean(ao.nameAr||ao.name||""),
-                amount: ao.amount||0
-              }))
-            };
-          }).filter(Boolean);
+            const pid = p.id;
+            // Check if we already added this product to this category
+            let existing = acc.find(x => x.rekazProductId === pid);
+            if (!existing) {
+              existing = {
+                id: s.id,
+                rekazProductId: pid,
+                rekazPriceId: s.rekazPriceId,
+                nameAr: s.nameAr || (p.nameAr || p.name || "").split(" - ")[0].trim(),
+                description: (p.description || p.shortDescription || ""),
+                options: [],
+                addOns: (p.addOns || [])
+                  .map(ao => ({ id: ao.id, nameAr: (ao.nameAr || ao.name || "").trim(), amount: ao.amount || 0 }))
+                  .filter(ao => ao.nameAr)
+              };
+              acc.push(existing);
+            }
+            // Add pricing option
+            if (rd.pricing) {
+              existing.options.push({
+                id: rd.pricing.id,
+                nameAr: (rd.pricing.nameAr || rd.pricing.name || "").trim(),
+                amount: rd.pricing.amount,
+                duration: rd.pricing.duration || p.duration || 0
+              });
+            } else if (!existing.options.length) {
+              existing.options.push({
+                id: s.rekazPriceId || pid,
+                nameAr: "",
+                amount: p.amount || 0,
+                duration: p.duration || 0
+              });
+            }
+            return acc;
+          }, []);
         return {
           id:cat.id, nameAr:cat.nameAr, nameEn:cat.nameEn||"",
-          subSections: cat.subSections || [], // NEW: multiple sub-sections
+          subSections: cat.subSections || [],
           services: svcs
         };
       }).filter(c => c.services.length > 0);
