@@ -395,15 +395,16 @@ app.post("/create-booking", async (req,res) => {
     // Rekaz bulk API: addOns sent directly on item as addOns:[{id, quantity}]
     // Source: Rekaz addOns have showInCheckout:true and id field
     const addOnList = (addons||[]).filter(a=>a.id);
-    // Rekaz public API does not expose addOns on bulk reservation endpoint
-    // Send addOns as a readable note in customFields for staff visibility
-    const addOnsNote = addOnList.map(ao=>`${ao.name} (+${ao.amount} SAR)`).join(', ');
+    // Send addOns using productAddOns[].id — this is the correct Rekaz addOn id
     const item = {
       priceId, quantity:1, from, to,
       providerIds:[],
-      customFields: addOnsNote ? {addOns: addOnsNote} : {},
+      customFields:{},
       discount:{type:"percentage",value:0}
     };
+    if(addOnList.length){
+      item.addOns = addOnList.map(ao=>({id: ao.id, quantity:1}));
+    }
     const items = [item];
     console.log("[Booking] payload:", JSON.stringify({customerId,branchId:BRANCH_ID,items}));
     const r=await rekazFetch(`${REKAZ_API}/reservations/bulk`,{
@@ -417,12 +418,8 @@ app.post("/create-booking", async (req,res) => {
     console.log("[Booking] SUCCESS response:", r.text.slice(0,500));
     const result=r.json();
 
-    // ── addOns: Rekaz public API does not support addOns on reservations ──
-    // They are tracked internally and shown to staff in the dashboard
-    // We log them for reference
     if(addOnList.length){
-      console.log("[Booking] Selected addOns (for staff reference):", 
-        addOnList.map(ao=>ao.name||ao.id).join(', '));
+      console.log("[Booking] addOns sent:", addOnList.map(ao=>({id:ao.id,name:ao.name})));
     }
 
     if(phone) delete otpStore[phone];
