@@ -28,19 +28,13 @@ const RH = () => ({
 const BRANCH_ID  = process.env.REKAZ_BRANCH_ID;
 const ADMIN_PASS = process.env.ADMIN_PASSWORD || "graff2026";
 
-// ── Persistent Storage Strategy ──
-// Primary: /var/data (Render persistent disk if mounted)
-// Fallback: /tmp (resets on restart — Render free tier)
-// Backup: process memory (survives sleep but not restart)
-// Recovery: INITIAL_DB env var (base64 encoded, set manually for disaster recovery)
 const DISK_PATHS = ["/var/data/graff_db.json", "/tmp/graff_db.json"];
-let MEM_DB = null; // in-memory backup
+let MEM_DB = null;
 
 const DEFAULT_DB = {
   categories: [],
   services: [],
   texts: {
-    // All editable texts in one place
     homeTagline: "حيث تلتقي العناية بالفخامة · في أدق تفاصيلها",
     homeCity: "R I Y A D H",
     logoText: "GRAFF SPA",
@@ -122,7 +116,6 @@ function deepMerge(target, source) {
 }
 
 function readDB() {
-  // 1. Try persistent paths
   for (const p of DISK_PATHS) {
     try {
       if (existsSync(p)) {
@@ -132,9 +125,7 @@ function readDB() {
       }
     } catch(e) { console.log(`Read ${p} failed:`, e.message); }
   }
-  // 2. Use memory backup if available
   if (MEM_DB) return MEM_DB;
-  // 3. Try env var recovery
   if (process.env.INITIAL_DB) {
     try {
       const raw = JSON.parse(Buffer.from(process.env.INITIAL_DB, "base64").toString());
@@ -142,14 +133,12 @@ function readDB() {
       return MEM_DB;
     } catch(e) {}
   }
-  // 4. Default
   MEM_DB = JSON.parse(JSON.stringify(DEFAULT_DB));
   return MEM_DB;
 }
 
 function writeDB(db) {
-  MEM_DB = db; // Always keep in memory
-  // Try to write to disk
+  MEM_DB = db;
   for (const p of DISK_PATHS) {
     try {
       const dir = p.substring(0, p.lastIndexOf("/"));
@@ -164,7 +153,6 @@ function writeDB(db) {
 
 function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
 
-// Rekaz cache
 let rCache = null, rCacheTime = 0;
 const CACHE_TTL = 10 * 60 * 1000;
 const otpStore = {};
@@ -177,6 +165,7 @@ async function rekazFetch(url, opts = {}) {
   if (!text) throw new Error("Empty Rekaz response");
   return { ok:r.ok, status:r.status, text, json:()=>JSON.parse(text) };
 }
+
 async function getProds() {
   if (rCache && Date.now()-rCacheTime < CACHE_TTL) return rCache;
   const r = await rekazFetch(`${REKAZ_API}/products`);
@@ -194,7 +183,6 @@ function auth(req, res, next) {
 // ── PUBLIC ──
 app.get("/", (req,res) => res.send("GRAFF SPA API ✅"));
 
-// Full site data for frontend
 app.get("/site", (req,res) => {
   const db = readDB();
   res.json({
@@ -208,7 +196,7 @@ app.get("/site", (req,res) => {
   });
 });
 
-// Booking menu: categories + services merged with Rekaz
+// ── MENU ──
 app.get("/menu", async (req,res) => {
   try {
     const db = readDB();
@@ -220,56 +208,6 @@ app.get("/menu", async (req,res) => {
       (p.pricing||[]).forEach(pr => { byPriceId[pr.id] = {product:p, pricing:pr}; });
       if (!p.pricing?.length) byPriceId[p.id] = {product:p, pricing:null};
     });
-    // Group db.services by rekazProductId → one entry per product with all its pricing options
-    // Step 1: build a map productId → {product, dbService, pricingOptions[]}
-    const productMap = {};
-    const productOrder = [];
-    db.services
-      .filter(s => s.categoryId !== undefined) // will be filtered per-cat below
-      .forEach(s => {
-        const rd = byPriceId[s.rekazPriceId] || (s.rekazProductId ? {product:byProductId[s.rekazProductId],pricing:null} : null);
-        if (!rd?.product) return;
-        const p = rd.product;
-        const pid = p.id;
-        if (!productMap[pid]) {
-          productMap[pid] = {
-            rekazProductId: pid,
-            dbService: s,
-            product: p,
-            pricingOptions: [],
-            addOns: [],
-            categoryId: s.categoryId,
-            order: s.order,
-            visible: s.visible
-          };
-          productOrder.push(pid);
-        }
-        const pm = productMap[pid];
-        // Add this pricing option
-        if (rd.pricing) {
-          pm.pricingOptions.push({
-            id: rd.pricing.id,
-            nameAr: rd.pricing.nameAr || rd.pricing.name || "",
-            amount: rd.pricing.amount,
-            duration: rd.pricing.duration || p.duration || 0
-          });
-        } else if (!pm.pricingOptions.length) {
-          // No specific pricing — use product directly as single option
-          pm.pricingOptions.push({
-            id: s.rekazPriceId || pid,
-            nameAr: "",
-            amount: p.amount || 0,
-            duration: p.duration || 0
-          });
-        }
-        // Merge add-ons (unique by id, resolve name from rekaz)
-        (p.addOns || []).forEach(ao => {
-          if (!pm.addOns.find(x => x.id === ao.id)) {
-            const aoName = (ao.label || (ao.localizedLabel&&ao.localizedLabel.OtherLanguages&&ao.localizedLabel.OtherLanguages.ar) || "").trim();
-            if (aoName) pm.addOns.push({ id: ao.id, nameAr: aoName, amount: ao.amount || 0 });
-          }
-        });
-      });
 
     const cats = db.categories
       .filter(c => c.visible !== false)
@@ -283,7 +221,6 @@ app.get("/menu", async (req,res) => {
             if (!rd?.product) return acc;
             const p = rd.product;
             const pid = p.id;
-            // Check if we already added this product to this category
             let existing = acc.find(x => x.rekazProductId === pid);
             if (!existing) {
               existing = {
@@ -293,33 +230,29 @@ app.get("/menu", async (req,res) => {
                 nameAr: (p.nameAr || p.name || "").split(" - ")[0].trim(),
                 description: (p.description || p.shortDescription || ""),
                 options: [],
-                addOns: (p.addOns || [])
-                  .map(ao => {
-                    // Rekaz: label = Arabic name, name = UUID (ignore), localizedLabel for fallback
-                    const aoName = (
-                      ao.label ||
-                      (ao.localizedLabel && ao.localizedLabel.OtherLanguages && ao.localizedLabel.OtherLanguages.ar) ||
-                      ""
-                    ).trim();
-                    if (!aoName) return null;
-                    return { id: ao.id, nameAr: aoName, amount: ao.amount || 0 };
-                  })
-                  .filter(Boolean)
+                // addOns from product level (productAddOns)
+                addOns: (p.addOns || []).map(ao => {
+                  const aoName = (
+                    ao.label ||
+                    (ao.localizedLabel?.OtherLanguages?.ar) ||
+                    ""
+                  ).trim();
+                  if (!aoName) return null;
+                  return { id: ao.id, nameAr: aoName, amount: ao.amount || 0 };
+                }).filter(Boolean)
               };
               acc.push(existing);
             }
             // Add pricing option
-            // Rekaz pricing name format: "بسيط - Minimal" — extract Arabic part only
             if (rd.pricing) {
-              const pricingRawName = rd.pricing.nameAr || rd.pricing.name || "";
-              // Handle both " - " and " – " separators from Rekaz
-              const pricingSep = pricingRawName.includes(" – ") ? " – " : (pricingRawName.includes(" - ") ? " - " : null);
-              const pricingNameAr = pricingSep ? pricingRawName.split(pricingSep)[0].trim() : pricingRawName.trim();
-              const pricingNameEn = pricingSep ? pricingRawName.split(pricingSep).slice(1).join(pricingSep).trim() : "";
+              const rawName = rd.pricing.nameAr || rd.pricing.name || "";
+              const sep = rawName.includes(" – ") ? " – " : rawName.includes(" - ") ? " - " : null;
+              const nameAr = sep ? rawName.split(sep)[0].trim() : rawName.trim();
+              const nameEn = sep ? rawName.split(sep).slice(1).join(sep).trim() : "";
               existing.options.push({
                 id: rd.pricing.id,
-                nameAr: pricingNameAr,
-                nameEn: pricingNameEn,
+                nameAr,
+                nameEn,
                 amount: rd.pricing.amount,
                 duration: rd.pricing.duration || p.duration || 0
               });
@@ -327,6 +260,7 @@ app.get("/menu", async (req,res) => {
               existing.options.push({
                 id: s.rekazPriceId || pid,
                 nameAr: "",
+                nameEn: "",
                 amount: p.amount || 0,
                 duration: p.duration || 0
               });
@@ -334,11 +268,12 @@ app.get("/menu", async (req,res) => {
             return acc;
           }, []);
         return {
-          id:cat.id, nameAr:cat.nameAr, nameEn:cat.nameEn||"",
+          id: cat.id, nameAr: cat.nameAr, nameEn: cat.nameEn||"",
           subSections: cat.subSections || [],
           services: svcs
         };
       }).filter(c => c.services.length > 0);
+
     res.json({ categories: cats });
   } catch(e) {
     console.error("[/menu]", e.message);
@@ -346,7 +281,7 @@ app.get("/menu", async (req,res) => {
   }
 });
 
-// Slots, OTP, Customer, Booking (unchanged)
+// ── SLOTS ──
 app.get("/slots", async (req,res) => {
   try {
     const q = new URLSearchParams(req.query).toString();
@@ -354,25 +289,33 @@ app.get("/slots", async (req,res) => {
     res.status(r.status).send(r.text);
   } catch(e) { res.status(500).json({error:e.message}); }
 });
+
+// ── OTP ──
 app.post("/send-otp", (req,res) => {
-  const {phone}=req.body; if(!phone) return res.status(400).json({error:"Phone required"});
+  const {phone}=req.body;
+  if(!phone) return res.status(400).json({error:"Phone required"});
   const otp=Math.floor(1000+Math.random()*9000).toString();
   otpStore[phone]={otp,expires:Date.now()+5*60*1000,verified:false};
   console.log(`[OTP] ${phone}: ${otp}`);
   res.json({success:true,debug_otp:otp});
 });
+
 app.post("/verify-otp", (req,res) => {
   const {phone,otp}=req.body;
   const s=otpStore[phone];
   if(!s) return res.status(400).json({error:"أرسلي رمزاً جديداً"});
   if(Date.now()>s.expires){delete otpStore[phone];return res.status(400).json({error:"انتهت صلاحية الرمز"});}
   if(s.otp!==otp.toString()) return res.status(400).json({error:"الرمز غير صحيح"});
-  otpStore[phone].verified=true; res.json({success:true});
+  otpStore[phone].verified=true;
+  res.json({success:true});
 });
+
+// ── CUSTOMER ──
 app.post("/create-customer", async (req,res) => {
   const {name,phone}=req.body;
   if(!name||!phone) return res.status(400).json({error:"Name and phone required"});
-  const s=otpStore[phone]; if(!s?.verified) return res.status(403).json({error:"يجب التحقق من الجوال أولاً"});
+  const s=otpStore[phone];
+  if(!s?.verified) return res.status(403).json({error:"يجب التحقق من الجوال أولاً"});
   try {
     const mobile=phone.startsWith("+966")?phone:"+966"+phone.replace(/^0/,"");
     const chk=await rekazFetch(`${REKAZ_API}/customers?mobileNumber=${encodeURIComponent(mobile)}`);
@@ -382,54 +325,44 @@ app.post("/create-customer", async (req,res) => {
     res.json({customerId:r.json()});
   } catch(e){res.status(500).json({error:e.message});}
 });
+
+// ── BOOKING ──
 app.post("/create-booking", async (req,res) => {
   const {customerId,phone,priceId,from,to,addons}=req.body;
   if(!customerId||!priceId||!from||!to) return res.status(400).json({error:"Missing fields"});
   if(phone){
     const s=otpStore[phone];
-    // Allow if: verified, or OTP was already consumed (s is undefined after delete)
     if(s && !s.verified) return res.status(403).json({error:"يجب التحقق من الجوال أولاً"});
-    // If s is undefined — OTP was already used in create-customer, that's OK
   }
   try {
-    // Rekaz bulk API: addOns sent directly on item as addOns:[{id, quantity}]
-    // Source: Rekaz addOns have showInCheckout:true and id field
     const addOnList = (addons||[]).filter(a=>a.id);
     const payload = {
       customerId,
       branchId: BRANCH_ID,
-      items: [
-        {
-          priceId,
-          quantity: 1,
-          from,
-          to,
-          providerIds: [],
-          addOns: addOnList.map(a => ({ addOnId: a.id, quantity: 1 }))
-        }
-      ]
+      items: [{
+        priceId,
+        quantity: 1,
+        from,
+        to,
+        providerIds: [],
+        addOns: addOnList.map(a => ({ addOnId: a.id, quantity: 1 }))
+      }]
     };
-    console.log(JSON.stringify(payload, null, 2));
-    const items = payload.items;
-    const r=await rekazFetch(`${REKAZ_API}/reservations/bulk`,{
-      method:"POST",
-      body:JSON.stringify(payload)
+    console.log("[Booking] payload:", JSON.stringify(payload, null, 2));
+    const r = await rekazFetch(`${REKAZ_API}/reservations/bulk`, {
+      method: "POST",
+      body: JSON.stringify(payload)
     });
     if(!r.ok){
       console.log("[Booking] FAILED:", r.text);
-      return res.status(r.status).json({error:"فشل الحجز",details:r.text});
+      return res.status(r.status).json({error:"فشل الحجز", details:r.text});
     }
-    console.log("[Booking] SUCCESS response:", r.text.slice(0,500));
-    const result=r.json();
-
-    if(addOnList.length){
-      console.log("[Booking] addOns sent:", addOnList.map(ao=>({id:ao.id,name:ao.name})));
-    }
-
+    console.log("[Booking] SUCCESS:", r.text.slice(0,300));
+    const result = r.json();
     if(phone) delete otpStore[phone];
-    const payPath=result.paymentLink||result.payment_link||result.payUrl||"";
-    const payUrl=payPath?(payPath.startsWith("http")?payPath:`${REKAZ_BASE}${payPath}`):null;
-    console.log(`[Booking] Pay:${payUrl}`);
+    const payPath = result.paymentLink || "";
+    const payUrl = payPath ? (payPath.startsWith("http") ? payPath : `${REKAZ_BASE}${payPath}`) : null;
+    console.log(`[Booking] payUrl: ${payUrl}`);
     res.json({success:true, payUrl});
   } catch(e){res.status(500).json({error:e.message});}
 });
@@ -449,7 +382,6 @@ app.put("/admin/db",adminAuth,(req,res)=>{
   try{writeDB(req.body);res.json({success:true});}
   catch(e){res.status(500).json({error:e.message});}
 });
-// Export DB as base64 (for env var backup)
 app.get("/admin/db-export",adminAuth,(req,res)=>{
   const db=readDB();
   const b64=Buffer.from(JSON.stringify(db)).toString("base64");
@@ -460,7 +392,7 @@ app.post("/admin/categories",adminAuth,(req,res)=>{
   const db=readDB();
   const cat={
     id:"cat_"+uid(), nameAr:req.body.nameAr||"قسم جديد", nameEn:req.body.nameEn||"",
-    subSections: req.body.subSections||[], // array of {name, serviceIds}
+    subSections: req.body.subSections||[],
     order:db.categories.length+1, visible:true
   };
   db.categories.push(cat); writeDB(db); res.json(cat);
@@ -498,83 +430,16 @@ app.put("/admin/categories/:id/services",adminAuth,(req,res)=>{
   });
   writeDB(db); res.json({success:true,count:(req.body.priceIds||[]).length});
 });
-// ── DEBUG endpoints (temporary) ──
-// Test 3 ways to send addOns to Rekaz
-app.post("/debug-booking-test", async(req,res)=>{
-  try{
-    const {priceId,from,to,addOnIds,customerId,method}=req.body;
-    let item={priceId,quantity:1,from,to};
-    
-    // Method 1: addOns as [{id}]
-    if(method===1 && addOnIds?.length) item.addOns=addOnIds.map(id=>({id}));
-    // Method 2: addOns as [id] strings
-    if(method===2 && addOnIds?.length) item.addOns=addOnIds;
-    // Method 3: addOnIds as string array
-    if(method===3 && addOnIds?.length) item.addOnIds=addOnIds;
-    // Method 4: separate items per addOn (each addOn as its own priceId)
-    let items=[item];
-    if(method===4 && addOnIds?.length) items=[...items,...addOnIds.map(id=>({priceId:id,quantity:1,from,to}))];
-
-    const payload={customerDetails:null,customerId,branchId:BRANCH_ID,items};
-    console.log("[DEBUG-BOOKING] method",method,"payload:", JSON.stringify(payload));
-    const r=await rekazFetch(`${REKAZ_API}/reservations/bulk`,{
-      method:"POST",
-      body:JSON.stringify(payload)
-    });
-    res.json({status:r.status, method, body:JSON.parse(r.text||'{}')});
-  }catch(e){res.status(500).json({error:e.message});}
-});
-app.get("/debug-rekaz",async(req,res)=>{
-  try{const data=await getProds();res.json(data);}
-  catch(e){res.status(500).json({error:e.message});}
-});
-// Debug: explore Rekaz order after booking
-app.get("/debug-order/:orderId", async(req,res)=>{
-  try{
-    const oid=req.params.orderId;
-    // Try multiple endpoints to find the right one
-    const results={};
-    const endpoints=[
-      `/orders/${oid}`,
-      `/orders/${oid}/items`,
-      `/reservations/${oid}`,
-    ];
-    for(const ep of endpoints){
-      try{
-        const r=await rekazFetch(`${REKAZ_API}${ep}`);
-        results[ep]={status:r.status,body:JSON.parse(r.text||'{}')};
-      }catch(e){results[ep]={error:e.message};}
-    }
-    res.json(results);
-  }catch(e){res.status(500).json({error:e.message});}
-});
-
-// Debug: full product structure including pricing[].addOns if any
-app.get("/debug-product/:productId",async(req,res)=>{
-  try{
-    const data=await getProds();
-    const p=data.items.find(x=>x.id===req.params.productId);
-    if(!p) return res.json({error:"not found",available:data.items.map(x=>x.id)});
-    // Show full structure
-    res.json({
-      id:p.id, nameAr:p.nameAr, name:p.name,
-      productAddOns: p.addOns||[],
-      pricing: (p.pricing||[]).map(pr=>({
-        id:pr.id, name:pr.name, amount:pr.amount, duration:pr.duration,
-        addOns: pr.addOns||[], // check if pricing has its own addOns
-        customFields: pr.customFields||[]
-      })),
-      customFields: p.customFields||[]
-    });
-  }catch(e){res.status(500).json({error:e.message});}
-});
-
 app.get("/admin/rekaz-products",adminAuth,async(req,res)=>{
   try{res.json(await getProds());}catch(e){res.status(500).json({error:e.message});}
 });
 
-// Debug: proxy direct Rekaz product call
-app.get("/debug-product/:id", async(req,res)=>{
+// ── DEBUG ──
+app.get("/debug-rekaz",async(req,res)=>{
+  try{const data=await getProds();res.json(data);}
+  catch(e){res.status(500).json({error:e.message});}
+});
+app.get("/debug-product/:id",async(req,res)=>{
   try{
     const r=await rekazFetch(`${REKAZ_API}/products/${req.params.id}`);
     res.send(r.text);
@@ -584,5 +449,5 @@ app.get("/debug-product/:id", async(req,res)=>{
 const PORT=process.env.PORT||3000;
 app.listen(PORT,()=>{
   console.log(`[GRAFF SPA] Server on port ${PORT}`);
-  readDB(); // Pre-load DB into memory on start
+  readDB();
 });
