@@ -336,6 +336,8 @@ app.post("/create-booking", async (req,res) => {
   }
   try {
     const addOnList = (addons||[]).filter(a=>a.id);
+
+    // STEP 1: Create booking without addOns
     const payload = {
       customerId,
       branchId: BRANCH_ID,
@@ -343,22 +345,36 @@ app.post("/create-booking", async (req,res) => {
         priceId,
         quantity: 1,
         from,
-        to,
-        providerIds: [],
-        addOns: addOnList.map(a => ({ addOnId: a.id, quantity: 1 }))
+        to
       }]
     };
-    console.log("[Booking] payload:", JSON.stringify(payload, null, 2));
+    console.log("[Booking] STEP1 payload:", JSON.stringify(payload, null, 2));
     const r = await rekazFetch(`${REKAZ_API}/reservations/bulk`, {
       method: "POST",
       body: JSON.stringify(payload)
     });
     if(!r.ok){
-      console.log("[Booking] FAILED:", r.text);
+      console.log("[Booking] STEP1 FAILED:", r.text);
       return res.status(r.status).json({error:"فشل الحجز", details:r.text});
     }
-    console.log("[Booking] SUCCESS:", r.text.slice(0,300));
+    console.log("[Booking] STEP1 SUCCESS:", r.text.slice(0,300));
     const result = r.json();
+    const reservationId = (result.reservationIds||[])[0];
+
+    // STEP 2: Add addOns to reservation
+    if(addOnList.length && reservationId){
+      const addOnsPayload = {
+        startDate: from,
+        addOns: addOnList.map(a => ({ addOnId: a.id, quantity: 1 }))
+      };
+      console.log("[Booking] STEP2 addOns payload:", JSON.stringify(addOnsPayload, null, 2));
+      const r2 = await rekazFetch(`${REKAZ_API}/reservations/${reservationId}`, {
+        method: "PUT",
+        body: JSON.stringify(addOnsPayload)
+      });
+      console.log("[Booking] STEP2 result:", r2.status, r2.text.slice(0,200));
+    }
+
     if(phone) delete otpStore[phone];
     const payPath = result.paymentLink || "";
     const payUrl = payPath ? (payPath.startsWith("http") ? payPath : `${REKAZ_BASE}${payPath}`) : null;
