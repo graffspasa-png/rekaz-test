@@ -537,21 +537,29 @@ body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-r
 </div>
 
 <!-- PAYMENT OVERLAY -->
-<!-- PAYMENT PAGE (replaces entire screen) -->
-<div id="payOverlay" style="display:none;position:fixed;inset:0;z-index:999;background:var(--ink);flex-direction:column">
-  <!-- Top bar -->
-  <div style="height:52px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:rgba(8,8,7,.97);border-bottom:1px solid rgba(184,150,90,.13)">
-    <button onclick="closePopup()" style="background:none;border:none;color:rgba(255,255,255,.4);font-family:'Tajawal',sans-serif;font-size:11px;cursor:pointer;display:flex;align-items:center;gap:4px">← رجوع</button>
-    <div style="font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:300;letter-spacing:.15em;color:#fff">إتمام الدفع</div>
-    <div style="min-width:52px;text-align:left;font-family:'Cormorant Garamond',serif;font-size:15px;color:var(--gold)">SAR <span id="popAmt">0</span></div>
-  </div>
-  <!-- iFrame -->
-  <iframe id="payFrame" src="" style="flex:1;border:none;width:100%;background:#fff"></iframe>
-  <!-- Fallback bar (shown if iframe blocked) -->
-  <div id="payFallback" style="display:none;padding:14px 16px;background:rgba(8,8,7,.97);border-top:1px solid rgba(184,150,90,.13);text-align:center">
-    <div style="font-size:11px;color:rgba(255,255,255,.45);margin-bottom:10px">إذا لم تظهر صفحة الدفع، اضغطي على الزر أدناه</div>
-    <button onclick="reopenPay()" style="padding:11px 28px;background:var(--gold);color:var(--ink);border:none;font-family:'Tajawal',sans-serif;font-size:12px;font-weight:500;border-radius:8px;cursor:pointer;margin-left:8px">فتح صفحة الدفع ←</button>
-    <button onclick="confirmPayDone()" style="padding:11px 20px;background:transparent;border:1.5px solid rgba(184,150,90,.4);color:rgba(255,255,255,.6);font-family:'Tajawal',sans-serif;font-size:11px;border-radius:8px;cursor:pointer">تم الدفع ✓</button>
+<!-- PAYMENT OVERLAY — waiting screen while user pays in new tab -->
+<div id="payOverlay" style="display:none;position:fixed;inset:0;z-index:999;background:rgba(8,8,7,.96);align-items:center;justify-content:center;padding:20px;animation:fo .2s ease">
+  <div style="background:var(--cream);width:100%;max-width:400px;border-radius:18px;padding:36px 28px;text-align:center;animation:su .3s cubic-bezier(.4,0,.2,1)">
+    <div style="width:60px;height:60px;border-radius:50%;background:rgba(184,150,90,.12);border:1px solid rgba(184,150,90,.28);display:flex;align-items:center;justify-content:center;margin:0 auto 20px">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><rect x="1" y="4" width="22" height="16" rx="3"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+    </div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;color:var(--text);letter-spacing:.05em;margin-bottom:6px">إتمام الدفع</div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:38px;font-weight:300;color:var(--gold);margin-bottom:4px;line-height:1">
+      <span style="font-family:'Tajawal',sans-serif;font-size:13px;color:var(--muted)">SAR </span><span id="popAmt">0</span>
+    </div>
+    <div style="font-size:12px;color:var(--muted);line-height:1.9;margin-bottom:26px">
+      تم فتح صفحة الدفع في نافذة جديدة<br>
+      <span style="font-size:11px;color:rgba(24,21,14,.35)">أكملي الدفع ثم عودي هنا</span>
+    </div>
+    <button onclick="confirmPayDone()" style="width:100%;padding:15px;background:var(--gold);color:var(--ink);border:none;font-family:'Tajawal',sans-serif;font-size:13px;font-weight:500;border-radius:10px;cursor:pointer;margin-bottom:9px;transition:background .15s">
+      ✓ تم الدفع — إكمال الحجز
+    </button>
+    <button onclick="reopenPay()" style="width:100%;padding:13px;background:transparent;border:1.5px solid var(--border);color:var(--text);font-family:'Tajawal',sans-serif;font-size:12px;border-radius:10px;cursor:pointer;margin-bottom:9px">
+      إعادة فتح صفحة الدفع ↗
+    </button>
+    <button onclick="closePopup()" style="background:none;border:none;font-family:'Tajawal',sans-serif;font-size:11px;color:rgba(24,21,14,.3);cursor:pointer;padding:4px">
+      إلغاء
+    </button>
   </div>
 </div>
 
@@ -1116,26 +1124,12 @@ async function doBook(){
 // ── PAYMENT ──
 function openPayPopup(){
   if(!S.payUrl)return;
+  // Open payment in new tab
+  window.open(S.payUrl,'_blank');
+  // Show waiting overlay
   document.getElementById('popAmt').textContent=calcTotal().toLocaleString('en');
-  var frame=document.getElementById('payFrame');
-  var overlay=document.getElementById('payOverlay');
-  var fallback=document.getElementById('payFallback');
-  // Try iframe first
-  frame.src=S.payUrl;
-  overlay.style.display='flex';
-  overlay.style.flexDirection='column';
+  document.getElementById('payOverlay').style.display='flex';
   document.body.style.overflow='hidden';
-  // If iframe fails to load (X-Frame-Options), show fallback bar
-  frame.onerror=function(){fallback.style.display='block';};
-  // Also show fallback after 4s if blank (some payment gateways block iframes)
-  setTimeout(function(){
-    try{
-      var doc=frame.contentDocument||frame.contentWindow.document;
-      if(!doc||doc.body.innerHTML==='')fallback.style.display='block';
-    }catch(e){
-      // Cross-origin — iframe loaded something, likely OK
-    }
-  },4000);
 }
 function reopenPay(){
   if(S.payUrl)window.open(S.payUrl,'_blank');
@@ -1145,10 +1139,7 @@ function confirmPayDone(){
   go('suc');
 }
 function closePopup(){
-  var frame=document.getElementById('payFrame');
-  if(frame)frame.src='';
   document.getElementById('payOverlay').style.display='none';
-  document.getElementById('payFallback').style.display='none';
   document.body.style.overflow='';
 }
 
