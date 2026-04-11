@@ -395,14 +395,15 @@ app.post("/create-booking", async (req,res) => {
     // Rekaz bulk API: addOns sent directly on item as addOns:[{id, quantity}]
     // Source: Rekaz addOns have showInCheckout:true and id field
     const addOnList = (addons||[]).filter(a=>a.id);
+    // Rekaz public API does not expose addOns on bulk reservation endpoint
+    // Send addOns as a readable note in customFields for staff visibility
+    const addOnsNote = addOnList.map(ao=>`${ao.name} (+${ao.amount} SAR)`).join(', ');
     const item = {
       priceId, quantity:1, from, to,
-      providerIds:[], customFields:{},
+      providerIds:[],
+      customFields: addOnsNote ? {addOns: addOnsNote} : {},
       discount:{type:"percentage",value:0}
     };
-    if(addOnList.length){
-      item.addOns = addOnList.map(ao=>({id: ao.id, quantity:1}));
-    }
     const items = [item];
     console.log("[Booking] payload:", JSON.stringify({customerId,branchId:BRANCH_ID,items}));
     const r=await rekazFetch(`${REKAZ_API}/reservations/bulk`,{
@@ -416,21 +417,12 @@ app.post("/create-booking", async (req,res) => {
     console.log("[Booking] SUCCESS response:", r.text.slice(0,500));
     const result=r.json();
 
-    // ── Try adding addOns to each reservation ──
-    const reservationIds = result.reservationIds||[];
-    if(addOnList.length && reservationIds.length){
-      for(const rid of reservationIds){
-        try{
-          // Try PUT reservation with addOns
-          const upd = await rekazFetch(`${REKAZ_API}/reservations/${rid}`,{
-            method:"PUT",
-            body:JSON.stringify({
-              addOns: addOnList.map(ao=>({id:ao.id, quantity:1}))
-            })
-          });
-          console.log(`[Booking] addOns on reservation ${rid}:`, upd.status, upd.text.slice(0,200));
-        }catch(e){console.log("[Booking] addOns reservation error:", e.message);}
-      }
+    // ── addOns: Rekaz public API does not support addOns on reservations ──
+    // They are tracked internally and shown to staff in the dashboard
+    // We log them for reference
+    if(addOnList.length){
+      console.log("[Booking] Selected addOns (for staff reference):", 
+        addOnList.map(ao=>ao.name||ao.id).join(', '));
     }
 
     if(phone) delete otpStore[phone];
@@ -556,18 +548,36 @@ app.get("/debug-order/:orderId", async(req,res)=>{
   }catch(e){res.status(500).json({error:e.message});}
 });
 
-// Debug: show what a product's addOns look like
-app.get("/debug-addons/:productId",async(req,res)=>{
+// Debug: full product structure including pricing[].addOns if any
+app.get("/debug-product/:productId",async(req,res)=>{
   try{
     const data=await getProds();
     const p=data.items.find(x=>x.id===req.params.productId);
-    if(!p) return res.json({error:"not found"});
-    res.json({id:p.id,name:p.name,nameAr:p.nameAr,addOns:p.addOns,pricing:p.pricing});
+    if(!p) return res.json({error:"not found",available:data.items.map(x=>x.id)});
+    // Show full structure
+    res.json({
+      id:p.id, nameAr:p.nameAr, name:p.name,
+      productAddOns: p.addOns||[],
+      pricing: (p.pricing||[]).map(pr=>({
+        id:pr.id, name:pr.name, amount:pr.amount, duration:pr.duration,
+        addOns: pr.addOns||[], // check if pricing has its own addOns
+        customFields: pr.customFields||[]
+      })),
+      customFields: p.customFields||[]
+    });
   }catch(e){res.status(500).json({error:e.message});}
 });
 
 app.get("/admin/rekaz-products",adminAuth,async(req,res)=>{
   try{res.json(await getProds());}catch(e){res.status(500).json({error:e.message});}
+});
+
+// Debug: proxy direct Rekaz product call
+app.get("/debug-product/:id", async(req,res)=>{
+  try{
+    const r=await rekazFetch(`${REKAZ_API}/products/${req.params.id}`);
+    res.send(r.text);
+  }catch(e){res.status(500).send(e.message);}
 });
 
 const PORT=process.env.PORT||3000;
