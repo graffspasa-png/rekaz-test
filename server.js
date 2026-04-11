@@ -294,16 +294,30 @@ app.get("/menu", async (req,res) => {
                 description: (p.description || p.shortDescription || ""),
                 options: [],
                 addOns: (p.addOns || [])
-                  .map(ao => ({ id: ao.id, nameAr: (ao.nameAr || ao.name || "").trim(), amount: ao.amount || 0 }))
-                  .filter(ao => ao.nameAr)
+                  .map(ao => {
+                    const aoName = (ao.label || ao.name || ao.nameAr || "").trim();
+                    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-/i.test(aoName);
+                    if (!aoName || isUUID) return null;
+                    return { id: ao.id, nameAr: aoName, amount: ao.amount || 0 };
+                  })
+                  .filter(Boolean)
               };
               acc.push(existing);
             }
             // Add pricing option
+            // Rekaz pricing name format: "بسيط - Minimal" — extract Arabic part only
             if (rd.pricing) {
+              const pricingRawName = rd.pricing.nameAr || rd.pricing.name || "";
+              const pricingNameAr = pricingRawName.includes(" - ")
+                ? pricingRawName.split(" - ")[0].trim()
+                : pricingRawName.trim();
+              const pricingNameEn = pricingRawName.includes(" - ")
+                ? pricingRawName.split(" - ").slice(1).join(" - ").trim()
+                : "";
               existing.options.push({
                 id: rd.pricing.id,
-                nameAr: (rd.pricing.nameAr || rd.pricing.name || "").trim(),
+                nameAr: pricingNameAr,
+                nameEn: pricingNameEn,
                 amount: rd.pricing.amount,
                 duration: rd.pricing.duration || p.duration || 0
               });
