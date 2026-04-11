@@ -264,6 +264,13 @@ body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-r
 /* SUMMARY */
 .sumcard{background:var(--w);border:1px solid var(--border);margin-bottom:9px;border-radius:var(--brad)}
 .sumrow{display:flex;justify-content:space-between;align-items:center;padding:10px 13px;border-bottom:1px solid var(--border);font-size:12px;gap:8px}
+.inv-section{background:var(--w);border:1px solid var(--border);border-radius:var(--brad);overflow:hidden;margin-bottom:0}
+.inv-lbl{font-size:8px;letter-spacing:.18em;color:var(--muted);padding:9px 13px 5px;text-transform:uppercase;border-bottom:1px solid var(--border);background:rgba(24,21,14,.025)}
+.addon-lbl{color:var(--ok)!important}
+.addon-val{color:var(--ok)!important}
+.muted-lbl{color:var(--muted)!important}
+.muted-val{color:var(--muted)!important}
+.sum-divider{border-top:2px solid var(--border)!important;margin-top:2px}
 .sumrow:last-child{border:none}
 .suml{color:var(--muted);font-size:11px;white-space:nowrap}
 .sumv{color:var(--text);font-weight:500;text-align:left}
@@ -479,7 +486,7 @@ body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-r
     <div class="pms" id="pms"></div>
     <div class="errbox" id="errconf"></div>
   </div>
-  <div class="botbar"><button class="botbtn" id="btnconf" onclick="doBook()">تأكيد الحجز والدفع ←</button></div>
+  <div class="botbar"><button class="botbtn" id="btnconf" onclick="doBook()">الدفع وتأكيد الحجز ←</button></div>
 </div>
 
 <!-- SUCCESS -->
@@ -551,13 +558,14 @@ body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-r
       تم فتح صفحة الدفع في نافذة جديدة<br>
       <span style="font-size:11px;color:rgba(24,21,14,.35)">أكملي الدفع ثم عودي هنا</span>
     </div>
-    <button onclick="confirmPayDone()" style="width:100%;padding:15px;background:var(--gold);color:var(--ink);border:none;font-family:'Tajawal',sans-serif;font-size:13px;font-weight:500;border-radius:10px;cursor:pointer;margin-bottom:9px;transition:background .15s">
-      ✓ تم الدفع — إكمال الحجز
+    <button id="btnPayDone" onclick="confirmPayDone()" style="width:100%;padding:15px;background:var(--gold);color:var(--ink);border:none;font-family:'Tajawal',sans-serif;font-size:13px;font-weight:500;border-radius:10px;cursor:pointer;margin-bottom:9px;transition:background .15s">
+      ✓ لقد أتممت الدفع — تأكيد الحجز
     </button>
     <button onclick="reopenPay()" style="width:100%;padding:13px;background:transparent;border:1.5px solid var(--border);color:var(--text);font-family:'Tajawal',sans-serif;font-size:12px;border-radius:10px;cursor:pointer;margin-bottom:9px">
-      إعادة فتح صفحة الدفع ↗
+      ↗ إعادة فتح صفحة الدفع
     </button>
-    <button onclick="closePopup()" style="background:none;border:none;font-family:'Tajawal',sans-serif;font-size:11px;color:rgba(24,21,14,.3);cursor:pointer;padding:4px">
+    <div style="font-size:10px;color:rgba(24,21,14,.35);margin-bottom:6px">يرجى إتمام الدفع في النافذة المفتوحة ثم الضغط على الزر أعلاه</div>
+    <button onclick="closePopup()" style="background:none;border:none;font-family:'Tajawal',sans-serif;font-size:11px;color:rgba(24,21,14,.25);cursor:pointer;padding:4px">
       إلغاء
     </button>
   </div>
@@ -1061,16 +1069,26 @@ function buildConfirm(){
   var d=S.date,dl=DA[new Date(d.y,d.m,d.d).getDay()]+' '+d.d+' '+MO[d.m];
   var at=S.addons.reduce(function(s,a){return s+a.price;},0);
   var sub=S.cart.amount+at,disc=S.disc||0,tot=sub-disc,base=Math.round(tot/1.15),vat=tot-base;
-  var h='<div class="sumrow"><span class="suml">الخدمة</span><span class="sumv">'+esc(S.cart.name)+'</span></div>';
-  h+='<div class="sumrow"><span class="suml">المدة</span><span class="sumv">'+S.cart.dur+' دقيقة</span></div>';
+  // ── Booking details ──
+  var h='<div class="inv-section">';
+  h+='<div class="inv-lbl">تفاصيل الحجز</div>';
   h+='<div class="sumrow"><span class="suml">التاريخ</span><span class="sumv">'+dl+'</span></div>';
   h+='<div class="sumrow"><span class="suml">الوقت</span><span class="sumv">'+(S.slotLbl||'—')+'</span></div>';
-  S.addons.forEach(function(a){h+='<div class="sumrow"><span class="suml" style="color:var(--ok)">+ '+esc(a.name)+'</span><span class="sumv" style="color:var(--ok)">SAR '+a.price+'</span></div>';});
-  if(disc>0)h+='<div class="sumrow"><span class="suml" style="color:var(--ok)">خصم</span><span class="sumv" style="color:var(--ok)">— SAR '+disc.toLocaleString('en')+'</span></div>';
-  h+='<div class="sumrow"><span class="suml">قبل الضريبة</span><span class="sumv">SAR '+base.toLocaleString('en')+'</span></div>';
-  h+='<div class="sumrow"><span class="suml">ضريبة 15%</span><span class="sumv">SAR '+vat.toLocaleString('en')+'</span></div>';
+  if(S.cart.dur)h+='<div class="sumrow"><span class="suml">المدة</span><span class="sumv">'+S.cart.dur+' دقيقة</span></div>';
+  h+='</div>';
+  // ── Price breakdown ──
+  h+='<div class="inv-section" style="margin-top:10px">';
+  h+='<div class="inv-lbl">تفاصيل السعر</div>';
+  h+='<div class="sumrow"><span class="suml">'+esc(S.cart.name)+'</span><span class="sumv">SAR '+S.cart.amount.toLocaleString('en')+'</span></div>';
+  S.addons.forEach(function(a){
+    h+='<div class="sumrow"><span class="suml addon-lbl">+ '+esc(a.name)+'</span><span class="sumv addon-val">SAR '+a.price.toLocaleString('en')+'</span></div>';
+  });
+  if(disc>0)h+='<div class="sumrow"><span class="suml" style="color:var(--ok)">خصم</span><span class="sumv" style="color:var(--ok)">− SAR '+disc.toLocaleString('en')+'</span></div>';
+  h+='<div class="sumrow sum-divider"><span class="suml muted-lbl">قبل الضريبة</span><span class="sumv muted-val">SAR '+base.toLocaleString('en')+'</span></div>';
+  h+='<div class="sumrow"><span class="suml muted-lbl">ضريبة القيمة المضافة 15%</span><span class="sumv muted-val">SAR '+vat.toLocaleString('en')+'</span></div>';
+  h+='</div>';
   document.getElementById('confsumm').innerHTML=h;
-  document.getElementById('conftot').innerHTML='<span class="sumtotl">الإجمالي</span><span class="sumtotv">SAR '+tot.toLocaleString('en')+'</span>';
+  document.getElementById('conftot').innerHTML='<span class="sumtotl">الإجمالي شامل الضريبة</span><span class="sumtotv">SAR '+tot.toLocaleString('en')+'</span>';
 }
 function selPay(el){el.closest('.pms').querySelectorAll('.pmrow').forEach(function(r){r.classList.remove('on');});el.classList.add('on');}
 function applyDisc(){
@@ -1112,7 +1130,9 @@ async function doBook(){
     document.getElementById('sucref').textContent='';
     document.getElementById('sucref').parentElement.style.display='none';
     if(S.payUrl){
-      // Open payment directly in same page (iframe)
+      // Open payment in new tab, show waiting overlay
+      // Store booking info for success page
+      S.bookName=name;
       openPayPopup();
     } else {
       go('suc');
