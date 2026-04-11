@@ -265,7 +265,7 @@ app.get("/menu", async (req,res) => {
         // Merge add-ons (unique by id, resolve name from rekaz)
         (p.addOns || []).forEach(ao => {
           if (!pm.addOns.find(x => x.id === ao.id)) {
-            const aoName = (ao.nameAr || ao.name || "").trim();
+            const aoName = (ao.label || (ao.localizedLabel&&ao.localizedLabel.OtherLanguages&&ao.localizedLabel.OtherLanguages.ar) || "").trim();
             if (aoName) pm.addOns.push({ id: ao.id, nameAr: aoName, amount: ao.amount || 0 });
           }
         });
@@ -295,9 +295,13 @@ app.get("/menu", async (req,res) => {
                 options: [],
                 addOns: (p.addOns || [])
                   .map(ao => {
-                    const aoName = (ao.label || ao.name || ao.nameAr || "").trim();
-                    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-/i.test(aoName);
-                    if (!aoName || isUUID) return null;
+                    // Rekaz: label = Arabic name, name = UUID (ignore), localizedLabel for fallback
+                    const aoName = (
+                      ao.label ||
+                      (ao.localizedLabel && ao.localizedLabel.OtherLanguages && ao.localizedLabel.OtherLanguages.ar) ||
+                      ""
+                    ).trim();
+                    if (!aoName) return null;
                     return { id: ao.id, nameAr: aoName, amount: ao.amount || 0 };
                   })
                   .filter(Boolean)
@@ -388,13 +392,11 @@ app.post("/create-booking", async (req,res) => {
     // If s is undefined — OTP was already used in create-customer, that's OK
   }
   try {
-    // Rekaz bulk booking: addons sent as addOns array on the item
+    // Rekaz bulk booking: addOns sent as [{id}] on the item
+    // ao.id from our menu response is the correct Rekaz addOn id (3a208f5e-...)
     const addOnIds = (addons||[]).filter(a=>a.id).map(a=>a.id);
     const item = {priceId, quantity:1, from, to};
-    if(addOnIds.length){
-      // Try both field names — Rekaz API uses addOns:[{id}]
-      item.addOns = addOnIds.map(id=>({id}));
-    }
+    if(addOnIds.length) item.addOns = addOnIds.map(id=>({id}));
     const items = [item];
     console.log("[Booking] payload:", JSON.stringify({customerId,branchId:BRANCH_ID,items}));
     const r=await rekazFetch(`${REKAZ_API}/reservations/bulk`,{
