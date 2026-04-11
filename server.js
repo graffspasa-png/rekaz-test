@@ -395,15 +395,14 @@ app.post("/create-booking", async (req,res) => {
     // Rekaz bulk API: addOns sent directly on item as addOns:[{id, quantity}]
     // Source: Rekaz addOns have showInCheckout:true and id field
     const addOnList = (addons||[]).filter(a=>a.id);
-    // Send addOns using productAddOns[].id — this is the correct Rekaz addOn id
     const item = {
       priceId, quantity:1, from, to,
       providerIds:[],
-      customFields:{},
+      customFields:[],
       discount:{type:"percentage",value:0}
     };
     if(addOnList.length){
-      item.addOns = addOnList.map(ao=>({addOnId: ao.id, quantity:1}));
+      item.customFields = addOnList.map(a=>({id: a.id, value:"true"}));
     }
     const items = [item];
     console.log("[Booking] payload:", JSON.stringify({customerId,branchId:BRANCH_ID,items}));
