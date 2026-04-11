@@ -392,11 +392,17 @@ app.post("/create-booking", async (req,res) => {
     // If s is undefined — OTP was already used in create-customer, that's OK
   }
   try {
-    // Rekaz bulk booking: addOns sent as [{id}] on the item
-    // ao.id from our menu response is the correct Rekaz addOn id (3a208f5e-...)
-    const addOnIds = (addons||[]).filter(a=>a.id).map(a=>a.id);
-    const item = {priceId, quantity:1, from, to};
-    if(addOnIds.length) item.addOns = addOnIds.map(id=>({id}));
+    // Rekaz bulk API: addOns sent directly on item as addOns:[{id, quantity}]
+    // Source: Rekaz addOns have showInCheckout:true and id field
+    const addOnList = (addons||[]).filter(a=>a.id);
+    const item = {
+      priceId, quantity:1, from, to,
+      providerIds:[], customFields:{},
+      discount:{type:"percentage",value:0}
+    };
+    if(addOnList.length){
+      item.addOns = addOnList.map(ao=>({id: ao.id, quantity:1}));
+    }
     const items = [item];
     console.log("[Booking] payload:", JSON.stringify({customerId,branchId:BRANCH_ID,items}));
     const r=await rekazFetch(`${REKAZ_API}/reservations/bulk`,{
@@ -409,6 +415,24 @@ app.post("/create-booking", async (req,res) => {
     }
     console.log("[Booking] SUCCESS response:", r.text.slice(0,500));
     const result=r.json();
+
+    // ── Try adding addOns to each reservation ──
+    const reservationIds = result.reservationIds||[];
+    if(addOnList.length && reservationIds.length){
+      for(const rid of reservationIds){
+        try{
+          // Try PUT reservation with addOns
+          const upd = await rekazFetch(`${REKAZ_API}/reservations/${rid}`,{
+            method:"PUT",
+            body:JSON.stringify({
+              addOns: addOnList.map(ao=>({id:ao.id, quantity:1}))
+            })
+          });
+          console.log(`[Booking] addOns on reservation ${rid}:`, upd.status, upd.text.slice(0,200));
+        }catch(e){console.log("[Booking] addOns reservation error:", e.message);}
+      }
+    }
+
     if(phone) delete otpStore[phone];
     const payPath=result.paymentLink||result.payment_link||result.payUrl||"";
     const payUrl=payPath?(payPath.startsWith("http")?payPath:`${REKAZ_BASE}${payPath}`):null;
@@ -511,6 +535,27 @@ app.get("/debug-rekaz",async(req,res)=>{
   try{const data=await getProds();res.json(data);}
   catch(e){res.status(500).json({error:e.message});}
 });
+// Debug: explore Rekaz order after booking
+app.get("/debug-order/:orderId", async(req,res)=>{
+  try{
+    const oid=req.params.orderId;
+    // Try multiple endpoints to find the right one
+    const results={};
+    const endpoints=[
+      `/orders/${oid}`,
+      `/orders/${oid}/items`,
+      `/reservations/${oid}`,
+    ];
+    for(const ep of endpoints){
+      try{
+        const r=await rekazFetch(`${REKAZ_API}${ep}`);
+        results[ep]={status:r.status,body:JSON.parse(r.text||'{}')};
+      }catch(e){results[ep]={error:e.message};}
+    }
+    res.json(results);
+  }catch(e){res.status(500).json({error:e.message});}
+});
+
 // Debug: show what a product's addOns look like
 app.get("/debug-addons/:productId",async(req,res)=>{
   try{
