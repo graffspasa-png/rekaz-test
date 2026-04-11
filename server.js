@@ -395,20 +395,25 @@ app.post("/create-booking", async (req,res) => {
     // Rekaz bulk API: addOns sent directly on item as addOns:[{id, quantity}]
     // Source: Rekaz addOns have showInCheckout:true and id field
     const addOnList = (addons||[]).filter(a=>a.id);
-    const item = {
-      priceId, quantity:1, from, to,
-      providerIds:[],
-      customFields:[],
-      discount:{type:"percentage",value:0}
+    const payload = {
+      customerId,
+      branchId: BRANCH_ID,
+      items: [
+        {
+          priceId,
+          quantity: 1,
+          from,
+          to,
+          providerIds: [],
+          addOns: addOnList.map(a => ({ id: a.id, quantity: 1 }))
+        }
+      ]
     };
-    if(addOnList.length){
-      item.customFields = addOnList.map(a=>({id: a.id, value:"true"}));
-    }
-    const items = [item];
-    console.log("[Booking] payload:", JSON.stringify({customerId,branchId:BRANCH_ID,items}));
+    console.log(JSON.stringify(payload, null, 2));
+    const items = payload.items;
     const r=await rekazFetch(`${REKAZ_API}/reservations/bulk`,{
       method:"POST",
-      body:JSON.stringify({customerDetails:null,customerId,branchId:BRANCH_ID,items})
+      body:JSON.stringify(payload)
     });
     if(!r.ok){
       console.log("[Booking] FAILED:", r.text);
