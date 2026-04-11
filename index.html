@@ -167,7 +167,6 @@ body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-r
 .vrow.sel .vchkd{opacity:1}
 .adwrap{background:rgba(184,150,90,.04);border-top:1px solid rgba(184,150,90,.1);padding:11px 12px;display:none}
 .sc.sel .adwrap{display:block}
-.sc[data-hasopts="1"].sel .adwrap{display:block}
 /* OPTIONS (radio) */
 .opts-wrap{border-top:1px solid rgba(198,191,180,.45);background:var(--cream2);padding:4px 0}
 .opts-lbl{font-size:9px;letter-spacing:.14em;color:var(--gold);padding:9px 14px 5px;text-transform:uppercase}
@@ -181,6 +180,8 @@ body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-r
 .opt-row.sel .opt-dot{opacity:1;transform:scale(1)}
 .opt-info{flex:1}
 .opt-name{font-size:13px;color:var(--text);margin-bottom:2px}
+.opts-arrow{width:22px;height:22px;border-radius:50%;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--muted);transition:transform .2s,border-color .15s;flex-shrink:0}
+.sc.has-open .opts-arrow{border-color:var(--gold);color:var(--gold)}
 .opt-name-en{font-size:11px;color:var(--muted);font-family:'Cormorant Garamond',serif;letter-spacing:.04em}
 .opt-price{font-family:'Cormorant Garamond',serif;font-size:17px;color:var(--text);white-space:nowrap}
 .adtitle{font-size:9px;letter-spacing:.14em;color:var(--gold);margin-bottom:9px;text-transform:uppercase}
@@ -856,11 +857,12 @@ function buildCard(svc){
   h+='</div><div class="scright">';
   h+='<div><div class="scprice"><span class="scsr">SAR </span>'+(hasOpts?'من ':'')+amt+'</div><div class="scvat">شامل VAT</div></div>';
   if(!hasOpts)h+='<div class="scchk"><div class="chkd"></div></div>';
+  if(hasOpts)h+='<div class="opts-arrow" id="oa_'+pid+'"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div>';
   h+='</div></div>';
 
-  // Options — radio buttons, always visible
+  // Options — hidden by default, shown on card click
   if(hasOpts){
-    h+='<div class="opts-wrap">';
+    h+='<div class="opts-wrap" id="ow_'+pid+'" style="display:none">';
     h+='<div class="opts-lbl">اختاري الخيار</div>';
     opts.forEach(function(opt){
       var optLabel=opt.nameAr||opt.label||'';
@@ -910,7 +912,24 @@ function buildCard(svc){
 function onCardClick(el){
   var hasOpts=el.dataset.hasopts==='1';
   if(hasOpts){
-    // Card with options: selecting the card itself does nothing — user must pick an option
+    // Toggle options panel open/closed
+    var pid=el.id;
+    var ow=document.getElementById('ow_'+pid);
+    var oa=document.getElementById('oa_'+pid);
+    var isOpen=el.classList.contains('has-open');
+    // Close all other open cards
+    document.querySelectorAll('.sc.has-open').forEach(function(x){
+      if(x!==el){
+        x.classList.remove('has-open');
+        var xow=document.getElementById('ow_'+x.id);
+        var xoa=document.getElementById('oa_'+x.id);
+        if(xow)xow.style.display='none';
+        if(xoa)xoa.style.transform='';
+      }
+    });
+    el.classList.toggle('has-open',!isOpen);
+    if(ow)ow.style.display=isOpen?'none':'block';
+    if(oa)oa.style.transform=isOpen?'':'rotate(180deg)';
     return;
   }
   var pid=el.id;
@@ -923,9 +942,10 @@ function onCardClick(el){
 function onOptClick(el){
   var pid=el.dataset.card;
   var priceId=el.dataset.price;
-  // Deselect other options in same card
   var card=document.getElementById(pid);
+  // Deselect other options in same card
   if(card)card.querySelectorAll('.opt-row.sel').forEach(function(r){r.classList.remove('sel');});
+  // Toggle: click same option again to deselect
   if(S.cart&&S.cart.priceId===priceId){
     clearSel();S.cart=null;
     if(card)card.classList.remove('sel');
@@ -933,10 +953,14 @@ function onOptClick(el){
   }
   clearSel();
   el.classList.add('sel');
-  var label=el.dataset.optlabel?el.dataset.name+' — '+el.dataset.optlabel:el.dataset.name;
-  S.cart={id:el.dataset.prod,priceId:priceId,name:label,
+  // Name = service name only (clean)
+  var svcName=el.dataset.name;
+  var optLabel=el.dataset.optlabel;
+  var displayName=optLabel?svcName+' — '+optLabel:svcName;
+  S.cart={id:el.dataset.prod,priceId:priceId,name:displayName,
           dur:parseInt(el.dataset.dur)||0,amount:parseFloat(el.dataset.amt)||0,pid:pid};
   if(card)card.classList.add('sel');
+  // Keep options panel open after selection
   updCart();
 }
 function onAddonClick(el){
@@ -948,7 +972,11 @@ function onAddonClick(el){
 }
 function clearSel(){
   if(S.cart){
-    var old=document.getElementById(S.cart.pid);if(old)old.classList.remove('sel');
+    var old=document.getElementById(S.cart.pid);
+    if(old){
+      old.classList.remove('sel');
+      // Don't close options panel — keep it open so user can change selection
+    }
     document.querySelectorAll('.opt-row.sel,.adrow.sel').forEach(function(v){v.classList.remove('sel');});
   }
   S.addons=[];
