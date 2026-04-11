@@ -546,31 +546,34 @@ body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-r
 
 <!-- PAYMENT OVERLAY -->
 <!-- PAYMENT OVERLAY — waiting screen while user pays in new tab -->
-<div id="payOverlay" style="display:none;position:fixed;inset:0;z-index:999;background:rgba(8,8,7,.96);align-items:center;justify-content:center;padding:20px;animation:fo .2s ease">
-  <div style="background:var(--cream);width:100%;max-width:400px;border-radius:18px;padding:36px 28px;text-align:center;animation:su .3s cubic-bezier(.4,0,.2,1)">
-    <div style="width:60px;height:60px;border-radius:50%;background:rgba(184,150,90,.12);border:1px solid rgba(184,150,90,.28);display:flex;align-items:center;justify-content:center;margin:0 auto 20px">
-      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><rect x="1" y="4" width="22" height="16" rx="3"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+<!-- PAYMENT REDIRECT PAGE -->
+<div id="pay-pg" class="pg">
+  <div class="bar">
+    <button class="back" onclick="closePopup()">← رجوع</button>
+    <div class="logo-txt" onclick="go('home')">GRAFF <b>SPA</b></div>
+    <div style="min-width:52px;text-align:left;font-family:'Cormorant Garamond',serif;font-size:14px;color:var(--gold)">SAR <span id="popAmt">0</span></div>
+  </div>
+  <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;text-align:center;background:var(--cream)">
+    <div style="width:72px;height:72px;border-radius:50%;background:rgba(184,150,90,.1);border:1px solid rgba(184,150,90,.25);display:flex;align-items:center;justify-content:center;margin-bottom:22px">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><rect x="1" y="4" width="22" height="16" rx="3"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
     </div>
-    <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;color:var(--text);letter-spacing:.05em;margin-bottom:6px">إتمام الدفع</div>
-    <div style="font-family:'Cormorant Garamond',serif;font-size:38px;font-weight:300;color:var(--gold);margin-bottom:4px;line-height:1">
-      <span style="font-family:'Tajawal',sans-serif;font-size:13px;color:var(--muted)">SAR </span><span id="popAmt">0</span>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:300;color:var(--text);margin-bottom:8px">إتمام الدفع</div>
+    <div style="font-size:13px;color:var(--muted);line-height:1.9;margin-bottom:32px;max-width:280px">
+      اضغطي الزر أدناه لفتح صفحة الدفع الآمنة<br>
+      <span style="font-size:11px;color:rgba(24,21,14,.35)">بعد إتمام الدفع ستُعادين تلقائياً</span>
     </div>
-    <div style="font-size:12px;color:var(--muted);line-height:1.9;margin-bottom:26px">
-      تم فتح صفحة الدفع في نافذة جديدة<br>
-      <span style="font-size:11px;color:rgba(24,21,14,.35)">أكملي الدفع ثم عودي هنا</span>
-    </div>
-    <button id="btnPayDone" onclick="confirmPayDone()" style="width:100%;padding:15px;background:var(--gold);color:var(--ink);border:none;font-family:'Tajawal',sans-serif;font-size:13px;font-weight:500;border-radius:10px;cursor:pointer;margin-bottom:9px;transition:background .15s">
-      ✓ لقد أتممت الدفع — تأكيد الحجز
+    <a id="payLink" href="#" target="_self" style="display:block;width:100%;max-width:320px;padding:16px;background:var(--gold);color:var(--ink);border:none;font-family:'Tajawal',sans-serif;font-size:14px;font-weight:500;border-radius:var(--brad);cursor:pointer;margin-bottom:12px;text-decoration:none;text-align:center;transition:background .15s">
+      الدفع الآن ←
+    </a>
+    <button onclick="confirmPayDone()" style="width:100%;max-width:320px;padding:14px;background:transparent;border:1.5px solid var(--border);color:var(--text);font-family:'Tajawal',sans-serif;font-size:13px;border-radius:var(--brad);cursor:pointer;margin-bottom:8px">
+      ✓ لقد أتممت الدفع
     </button>
-    <button onclick="reopenPay()" style="width:100%;padding:13px;background:transparent;border:1.5px solid var(--border);color:var(--text);font-family:'Tajawal',sans-serif;font-size:12px;border-radius:10px;cursor:pointer;margin-bottom:9px">
-      ↗ إعادة فتح صفحة الدفع
-    </button>
-    <div style="font-size:10px;color:rgba(24,21,14,.35);margin-bottom:6px">يرجى إتمام الدفع في النافذة المفتوحة ثم الضغط على الزر أعلاه</div>
-    <button onclick="closePopup()" style="background:none;border:none;font-family:'Tajawal',sans-serif;font-size:11px;color:rgba(24,21,14,.25);cursor:pointer;padding:4px">
+    <button onclick="closePopup()" style="background:none;border:none;font-family:'Tajawal',sans-serif;font-size:11px;color:rgba(24,21,14,.3);cursor:pointer;padding:6px">
       إلغاء
     </button>
   </div>
 </div>
+<div id="payOverlay" style="display:none"></div>
 
 <script>
 var B='https://rekaz-test.onrender.com';
@@ -1172,23 +1175,20 @@ async function doBook(){
 // ── PAYMENT ──
 function openPayPopup(){
   if(!S.payUrl)return;
-  // Open payment in new tab
-  window.open(S.payUrl,'_blank');
-  // Show waiting overlay
   document.getElementById('popAmt').textContent=calcTotal().toLocaleString('en');
-  document.getElementById('payOverlay').style.display='flex';
-  document.body.style.overflow='hidden';
+  // Set the payment link
+  var link=document.getElementById('payLink');
+  if(link)link.href=S.payUrl;
+  go('pay-pg');
 }
 function reopenPay(){
-  if(S.payUrl)window.open(S.payUrl,'_blank');
+  if(S.payUrl)window.location.href=S.payUrl;
 }
 function confirmPayDone(){
-  closePopup();
   go('suc');
 }
 function closePopup(){
-  document.getElementById('payOverlay').style.display='none';
-  document.body.style.overflow='';
+  go('confirm');
 }
 
 // ── NAV ──
