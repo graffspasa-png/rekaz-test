@@ -433,6 +433,10 @@ body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-r
     <div class="seclbl">اختاري التاريخ</div>
     <div class="cal"><div class="calnav"><button class="calbtn" onclick="chM(-1)">›</button><div class="calmo" id="callbl"></div><button class="calbtn" onclick="chM(1)">‹</button></div><div class="calhd"><div class="calhl">أح</div><div class="calhl">إث</div><div class="calhl">ث</div><div class="calhl">أر</div><div class="calhl">خ</div><div class="calhl">ج</div><div class="calhl">س</div></div><div class="calgrid" id="calgrid"></div></div>
     <div id="slotsec" style="display:none"><div class="seclbl">الأوقات المتاحة</div><div id="slotsbox"></div></div>
+    <div id="addonssec" style="display:none">
+      <div class="seclbl">الإضافات</div>
+      <div id="addonsbox"></div>
+    </div>
   </div>
   <div class="dtfoot" id="dtfoot">
     <div class="dtmeta"><div class="dtm"><span class="dtml">التاريخ</span><span class="dtmv" id="seldate">—</span></div><div class="dtm" style="text-align:left"><span class="dtml">الوقت</span><span class="dtmv" id="seltime">—</span></div></div>
@@ -844,6 +848,7 @@ function buildCard(svc){
   var amt=singleOpt?singleOpt.amount:(hasOpts?Math.min.apply(null,opts.map(function(o){return o.amount;})):0);
   var priceId=singleOpt?singleOpt.id:'';
 
+  var addOnsJson=esc2(JSON.stringify(svc.addOns||[]));
   var h='<div class="sc" id="'+pid+'"'
     +' data-pid="'+pid+'"'
     +' data-prod="'+esc2(svc.rekazProductId||'')+'"'
@@ -852,6 +857,7 @@ function buildCard(svc){
     +' data-dur="'+dur+'"'
     +' data-amt="'+amt+'"'
     +' data-hasopts="'+(hasOpts?1:0)+'"'
+    +' data-addons="'+addOnsJson+'"'
     +' onclick="onCardClick(this)">';
   h+='<div class="scbar"></div>';
   h+='<div class="scbody"><div class="scinfo"><div class="scname">'+esc(name)+'</div>';
@@ -877,6 +883,7 @@ function buildCard(svc){
         +' data-dur="'+opt.duration+'"'
         +' data-amt="'+opt.amount+'"'
         +' data-card="'+pid+'"'
+        +' data-addons="'+addOnsJson+'"'
         +' onclick="event.stopPropagation();onOptClick(this)">';
       h+='<div class="opt-radio"><div class="opt-dot"></div></div>';
       h+='<div class="opt-info">';
@@ -890,23 +897,7 @@ function buildCard(svc){
     h+='</div>';
   }
 
-  // Add-ons — checkboxes, visible after card selected
-  var validAddOns=(svc.addOns||[]).filter(function(ao){return (ao.nameAr||ao.name||'').trim();});
-  if(validAddOns.length){
-    h+='<div class="adwrap" id="aw_'+pid+'"><div class="adtitle">الإضافات</div>';
-    validAddOns.forEach(function(ao){
-      var aoName=(ao.nameAr||ao.name||'').trim();
-      h+='<div class="adrow" id="ao_'+ao.id.replace(/[^a-zA-Z0-9]/g,'')+'"'
-        +' data-aoid="'+esc2(ao.id)+'"'
-        +' data-name="'+esc2(aoName)+'"'
-        +' data-amt="'+(ao.amount||0)+'"'
-        +' onclick="event.stopPropagation();onAddonClick(this)">';
-      h+='<div class="adchk"><div class="adchki"></div></div>';
-      h+='<span class="adname">'+esc(aoName)+'</span>';
-      h+='<span class="adprice"><span class="adpsr">+ SAR </span>'+(ao.amount||0)+'</span></div>';
-    });
-    h+='</div>';
-  }
+  // addOns shown in datetime page after slot selection — not here
   h+='</div>';
   return h;
 }
@@ -939,7 +930,8 @@ function onCardClick(el){
   if(S.cart&&S.cart.pid===pid){clearSel();S.cart=null;updCart();return;}
   clearSel();
   S.cart={id:el.dataset.prod,priceId:el.dataset.price,name:el.dataset.name,
-          dur:parseInt(el.dataset.dur)||0,amount:parseFloat(el.dataset.amt)||0,pid:pid};
+          dur:parseInt(el.dataset.dur)||0,amount:parseFloat(el.dataset.amt)||0,pid:pid,
+          addOns:el.dataset.addons?JSON.parse(el.dataset.addons):[]};
   el.classList.add('sel');updCart();
 }
 function onOptClick(el){
@@ -961,9 +953,9 @@ function onOptClick(el){
   var optLabel=el.dataset.optlabel;
   var displayName=optLabel?svcName+' — '+optLabel:svcName;
   S.cart={id:el.dataset.prod,priceId:priceId,name:displayName,
-          dur:parseInt(el.dataset.dur)||0,amount:parseFloat(el.dataset.amt)||0,pid:pid};
+          dur:parseInt(el.dataset.dur)||0,amount:parseFloat(el.dataset.amt)||0,pid:pid,
+          addOns:el.dataset.addons?JSON.parse(el.dataset.addons):[]};
   if(card)card.classList.add('sel');
-  // Keep options panel open after selection
   updCart();
 }
 function onAddonClick(el){
@@ -1016,7 +1008,8 @@ function renderCal(){
 }
 function chM(d){calM+=d;if(calM<0){calM=11;calY--;}if(calM>11){calM=0;calY++;}renderCal();}
 function pickDate(y,m,d){
-  S.date={y:y,m:m,d:d};S.slot=null;S.slotLbl=null;renderCal();
+  S.date={y:y,m:m,d:d};S.slot=null;S.slotLbl=null;S.addons=[];renderCal();
+  document.getElementById('addonssec').style.display='none';
   document.getElementById('slotsec').style.display='block';
   document.getElementById('dtfoot').style.display='block';
   document.getElementById('btndt').disabled=true;
@@ -1053,6 +1046,28 @@ function pickSlot(i,lbl){
   document.getElementById('seltime').textContent=lbl;
   document.getElementById('btndt').disabled=false;
   document.getElementById('btndt').textContent=lbl+' — متابعة ←';
+  renderAddOns();
+}
+
+function renderAddOns(){
+  var addOns=S.cart&&S.cart.addOns?S.cart.addOns:[];
+  var sec=document.getElementById('addonssec');
+  var box=document.getElementById('addonsbox');
+  if(!addOns.length){sec.style.display='none';return;}
+  sec.style.display='block';
+  var h='';
+  addOns.forEach(function(ao){
+    var sel=S.addons.find(function(a){return a.id===ao.id;})?true:false;
+    h+='<div class="adrow'+(sel?' sel':'')+'" id="adt_'+ao.id.replace(/[^a-zA-Z0-9]/g,'')+'"'
+      +' data-aoid="'+esc2(ao.id)+'"'
+      +' data-name="'+esc2(ao.nameAr||'')+'"'
+      +' data-amt="'+(ao.amount||0)+'"'
+      +' onclick="onAddonClick(this)">';
+    h+='<div class="adchk"><div class="adchki"></div></div>';
+    h+='<span class="adname">'+esc(ao.nameAr||'')+'</span>';
+    h+='<span class="adprice"><span class="adpsr">+ SAR </span>'+(ao.amount||0)+'</span></div>';
+  });
+  box.innerHTML=h;
 }
 
 // ── OTP ──
