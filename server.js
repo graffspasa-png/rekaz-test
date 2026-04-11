@@ -388,13 +388,9 @@ app.post("/create-booking", async (req,res) => {
     // If s is undefined — OTP was already used in create-customer, that's OK
   }
   try {
-    // Build items: main service + addons as separate items
-    const items = [{priceId, quantity:1, from, to}];
-    if (addons && addons.length) {
-      addons.forEach(ao => {
-        if (ao.id) items.push({priceId: ao.id, quantity:1, from, to});
-      });
-    }
+    // Rekaz bulk booking: addons are addOnIds on the item, not separate items
+    const addOnIds = (addons||[]).filter(a=>a.id).map(a=>a.id);
+    const items = [{priceId, quantity:1, from, to, addOnIds: addOnIds.length ? addOnIds : undefined}];
     console.log("[Booking] items:", JSON.stringify(items));
     const r=await rekazFetch(`${REKAZ_API}/reservations/bulk`,{
       method:"POST",
