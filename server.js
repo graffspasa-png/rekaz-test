@@ -361,18 +361,17 @@ app.post("/create-booking", async (req,res) => {
     const result = r.json();
     const reservationId = (result.reservationIds||[])[0];
 
-    // STEP 2: Add addOns to reservation
+    // STEP 2: Add addOns using correct endpoint
     if(addOnList.length && reservationId){
       const addOnsPayload = {
-        startDate: from,
         addOns: addOnList.map(a => ({ addOnId: a.id, quantity: 1 }))
       };
-      console.log("[Booking] STEP2 addOns payload:", JSON.stringify(addOnsPayload, null, 2));
-      const r2 = await rekazFetch(`${REKAZ_API}/reservations/${reservationId}`, {
+      console.log("[Booking] STEP2 payload:", JSON.stringify(addOnsPayload, null, 2));
+      const r2 = await rekazFetch(`${REKAZ_API}/reservations/${reservationId}/add-ons`, {
         method: "PUT",
         body: JSON.stringify(addOnsPayload)
       });
-      console.log("[Booking] STEP2 result:", r2.status, r2.text.slice(0,200));
+      console.log("[Booking] STEP2 status:", r2.status, "response:", r2.text.slice(0,300));
     }
 
     if(phone) delete otpStore[phone];
