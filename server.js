@@ -405,7 +405,7 @@ app.post("/create-booking", async (req,res) => {
           from,
           to,
           providerIds: [],
-          addOns: addOnList.map(a => ({ id: a.id, quantity: 1 }))
+          addOns: addOnList.map(a => ({ addOnId: a.id, quantity: 1 }))
         }
       ]
     };
