@@ -403,12 +403,15 @@ app.post("/create-booking", async (req,res) => {
       method:"POST",
       body:JSON.stringify({customerDetails:null,customerId,branchId:BRANCH_ID,items})
     });
-    if(!r.ok) return res.status(r.status).json({error:"فشل الحجز",details:r.text});
+    if(!r.ok){
+      console.log("[Booking] FAILED:", r.text);
+      return res.status(r.status).json({error:"فشل الحجز",details:r.text});
+    }
+    console.log("[Booking] SUCCESS response:", r.text.slice(0,500));
     const result=r.json();
     if(phone) delete otpStore[phone];
-    const payPath=result.paymentLink||"";
+    const payPath=result.paymentLink||result.payment_link||result.payUrl||"";
     const payUrl=payPath?(payPath.startsWith("http")?payPath:`${REKAZ_BASE}${payPath}`):null;
-    // Remove orderNumber — use payUrl only
     console.log(`[Booking] Pay:${payUrl}`);
     res.json({success:true, payUrl});
   } catch(e){res.status(500).json({error:e.message});}
@@ -479,18 +482,29 @@ app.put("/admin/categories/:id/services",adminAuth,(req,res)=>{
   writeDB(db); res.json({success:true,count:(req.body.priceIds||[]).length});
 });
 // ── DEBUG endpoints (temporary) ──
-// Test what Rekaz returns for a bulk booking with addOns
+// Test 3 ways to send addOns to Rekaz
 app.post("/debug-booking-test", async(req,res)=>{
   try{
-    const {priceId,from,to,addOnIds,customerId}=req.body;
-    const item={priceId,quantity:1,from,to};
-    if(addOnIds&&addOnIds.length) item.addOns=addOnIds.map(id=>({id}));
-    console.log("[DEBUG-BOOKING] payload:", JSON.stringify({customerId,branchId:BRANCH_ID,items:[item]}));
+    const {priceId,from,to,addOnIds,customerId,method}=req.body;
+    let item={priceId,quantity:1,from,to};
+    
+    // Method 1: addOns as [{id}]
+    if(method===1 && addOnIds?.length) item.addOns=addOnIds.map(id=>({id}));
+    // Method 2: addOns as [id] strings
+    if(method===2 && addOnIds?.length) item.addOns=addOnIds;
+    // Method 3: addOnIds as string array
+    if(method===3 && addOnIds?.length) item.addOnIds=addOnIds;
+    // Method 4: separate items per addOn (each addOn as its own priceId)
+    let items=[item];
+    if(method===4 && addOnIds?.length) items=[...items,...addOnIds.map(id=>({priceId:id,quantity:1,from,to}))];
+
+    const payload={customerDetails:null,customerId,branchId:BRANCH_ID,items};
+    console.log("[DEBUG-BOOKING] method",method,"payload:", JSON.stringify(payload));
     const r=await rekazFetch(`${REKAZ_API}/reservations/bulk`,{
       method:"POST",
-      body:JSON.stringify({customerDetails:null,customerId,branchId:BRANCH_ID,items:[item]})
+      body:JSON.stringify(payload)
     });
-    res.json({status:r.status,body:r.text});
+    res.json({status:r.status, method, body:JSON.parse(r.text||'{}')});
   }catch(e){res.status(500).json({error:e.message});}
 });
 app.get("/debug-rekaz",async(req,res)=>{
