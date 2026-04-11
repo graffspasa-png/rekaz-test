@@ -403,7 +403,7 @@ app.post("/create-booking", async (req,res) => {
       discount:{type:"percentage",value:0}
     };
     if(addOnList.length){
-      item.addOns = addOnList.map(ao=>({id: ao.id, quantity:1}));
+      item.addOns = addOnList.map(ao=>({addOnId: ao.id, quantity:1}));
     }
     const items = [item];
     console.log("[Booking] payload:", JSON.stringify({customerId,branchId:BRANCH_ID,items}));
