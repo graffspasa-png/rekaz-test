@@ -167,6 +167,7 @@ body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-r
 .vrow.sel .vchkd{opacity:1}
 .adwrap{background:rgba(184,150,90,.04);border-top:1px solid rgba(184,150,90,.1);padding:11px 12px;display:none}
 .sc.sel .adwrap{display:block}
+.sc[data-hasopts="1"].sel .adwrap{display:block}
 /* OPTIONS (radio) */
 .opts-wrap{border-top:1px solid rgba(198,191,180,.45);background:var(--cream2);padding:4px 0}
 .opts-lbl{font-size:9px;letter-spacing:.14em;color:var(--gold);padding:9px 14px 5px;text-transform:uppercase}
@@ -535,40 +536,21 @@ body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-r
 </div>
 
 <!-- PAYMENT OVERLAY -->
-<div id="payOverlay" style="display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.78);align-items:center;justify-content:center;padding:20px;animation:fo .2s ease">
-  <div style="background:var(--cream);width:100%;max-width:420px;border-radius:20px;padding:32px 28px;text-align:center;animation:su .3s cubic-bezier(.4,0,.2,1)">
-
-    <!-- Icon -->
-    <div style="width:64px;height:64px;border-radius:50%;background:rgba(184,150,90,.12);border:1px solid rgba(184,150,90,.25);display:flex;align-items:center;justify-content:center;margin:0 auto 18px">
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><rect x="1" y="4" width="22" height="16" rx="3"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-    </div>
-
-    <!-- Title -->
-    <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;color:var(--text);letter-spacing:.06em;margin-bottom:8px">تم فتح صفحة الدفع</div>
-
-    <!-- Amount -->
-    <div style="font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:300;color:var(--gold);margin-bottom:6px;line-height:1"><span style="font-family:'Tajawal',sans-serif;font-size:14px;color:var(--muted)">SAR </span><span id="popAmt">0</span></div>
-
-    <!-- Description -->
-    <div style="font-size:13px;color:var(--muted);line-height:1.8;margin-bottom:24px">
-      تم فتح صفحة الدفع في نافذة جديدة<br>
-      <span style="font-size:11px;color:rgba(24,21,14,.38)">يرجى إتمام عملية الدفع ثم العودة لإكمال الحجز</span>
-    </div>
-
-    <!-- Primary button: payment done -->
-    <button onclick="confirmPayDone()" style="width:100%;padding:15px;background:var(--gold);color:var(--ink);border:none;font-family:'Tajawal',sans-serif;font-size:13px;font-weight:500;border-radius:12px;cursor:pointer;margin-bottom:10px;transition:background .15s">
-      ✓ تم الدفع — إتمام الحجز
-    </button>
-
-    <!-- Secondary button: reopen -->
-    <button onclick="reopenPay()" style="width:100%;padding:13px;background:transparent;border:1.5px solid var(--border);color:var(--text);font-family:'Tajawal',sans-serif;font-size:12px;border-radius:12px;cursor:pointer;margin-bottom:10px;transition:all .15s">
-      إعادة فتح صفحة الدفع
-    </button>
-
-    <!-- Cancel -->
-    <button onclick="closePopup()" style="background:none;border:none;font-family:'Tajawal',sans-serif;font-size:11px;color:rgba(24,21,14,.35);cursor:pointer;padding:4px">
-      إلغاء
-    </button>
+<!-- PAYMENT PAGE (replaces entire screen) -->
+<div id="payOverlay" style="display:none;position:fixed;inset:0;z-index:999;background:var(--ink);flex-direction:column">
+  <!-- Top bar -->
+  <div style="height:52px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:rgba(8,8,7,.97);border-bottom:1px solid rgba(184,150,90,.13)">
+    <button onclick="closePopup()" style="background:none;border:none;color:rgba(255,255,255,.4);font-family:'Tajawal',sans-serif;font-size:11px;cursor:pointer;display:flex;align-items:center;gap:4px">← رجوع</button>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:300;letter-spacing:.15em;color:#fff">إتمام الدفع</div>
+    <div style="min-width:52px;text-align:left;font-family:'Cormorant Garamond',serif;font-size:15px;color:var(--gold)">SAR <span id="popAmt">0</span></div>
+  </div>
+  <!-- iFrame -->
+  <iframe id="payFrame" src="" style="flex:1;border:none;width:100%;background:#fff"></iframe>
+  <!-- Fallback bar (shown if iframe blocked) -->
+  <div id="payFallback" style="display:none;padding:14px 16px;background:rgba(8,8,7,.97);border-top:1px solid rgba(184,150,90,.13);text-align:center">
+    <div style="font-size:11px;color:rgba(255,255,255,.45);margin-bottom:10px">إذا لم تظهر صفحة الدفع، اضغطي على الزر أدناه</div>
+    <button onclick="reopenPay()" style="padding:11px 28px;background:var(--gold);color:var(--ink);border:none;font-family:'Tajawal',sans-serif;font-size:12px;font-weight:500;border-radius:8px;cursor:pointer;margin-left:8px">فتح صفحة الدفع ←</button>
+    <button onclick="confirmPayDone()" style="padding:11px 20px;background:transparent;border:1.5px solid rgba(184,150,90,.4);color:rgba(255,255,255,.6);font-family:'Tajawal',sans-serif;font-size:11px;border-radius:8px;cursor:pointer">تم الدفع ✓</button>
   </div>
 </div>
 
@@ -765,38 +747,6 @@ async function loadProducts(){
   }
 }
 
-function groupServices(svcs){
-  // Group by rekazProductId → one card per product, options = price variants
-  var map={},order=[];
-  (svcs||[]).forEach(function(svc){
-    var pid=svc.rekazProductId||svc.id;
-    if(!map[pid]){
-      map[pid]={
-        id:pid,
-        rekazProductId:pid,
-        nameAr:svc.nameAr||'',
-        description:svc.description||'',
-        addOns:[],
-        options:[]
-      };
-      order.push(pid);
-    }
-    var g=map[pid];
-    // Merge add-ons (unique by id)
-    (svc.addOns||[]).forEach(function(ao){
-      if(!g.addOns.find(function(x){return x.id===ao.id;}))g.addOns.push(ao);
-    });
-    // Each svc entry is one selectable option
-    g.options.push({
-      id:svc.rekazPriceId||svc.id,
-      label:svc.optionNameAr||svc.optionName||svc.variantNameAr||svc.variantName||'',
-      duration:svc.duration||0,
-      amount:svc.amount||0
-    });
-  });
-  return order.map(function(pid){return map[pid];});
-}
-
 function renderSubHeader(rawName){
   var enPart='',arPart='';
   if(rawName.indexOf(' · ')>-1){
@@ -821,30 +771,37 @@ function buildSvcFromMenu(cats){
     var cid='cat_'+cat.id.replace(/[^a-zA-Z0-9]/g,'');
     tabsH+='<button class="tab'+(first?' on':'')+'" data-cid="'+cid+'" onclick="swTab(this.dataset.cid,this)">'+esc(cat.nameAr)+'</button>';
     bodyH+='<div class="cpanel'+(first?' on':'')+'" id="'+cid+'">';
-
     var subSections=cat.subSections||[];
     if(subSections.length>0&&subSections.some(function(s){return s.name;})){
-      // Build map: priceId → svc for subsection lookup
-      var svcByPrice={};
-      cat.services.forEach(function(svc){svcByPrice[svc.rekazPriceId]=svc;});
-
+      var svcById={};
+      cat.services.forEach(function(svc){
+        // index by rekazPriceId (first option) and rekazProductId
+        svcById[svc.rekazProductId]=svc;
+        if(svc.rekazPriceId)svcById[svc.rekazPriceId]=svc;
+        (svc.options||[]).forEach(function(o){svcById[o.id]=svc;});
+      });
       subSections.forEach(function(sub){
         if(!sub.name&&(!sub.services||!sub.services.length))return;
         bodyH+=renderSubHeader(sub.name||'');
         bodyH+='<div class="sub-cards">';
-        var rawSvcs=(sub.services||[]).map(function(pid){return svcByPrice[pid];}).filter(Boolean);
-        if(!rawSvcs.length&&subSections.length===1)rawSvcs=cat.services;
-        groupServices(rawSvcs).forEach(function(g){bodyH+=buildCard(g);});
+        var seen={};
+        var subSvcs=(sub.services||[]).map(function(pid){return svcById[pid];}).filter(function(s){
+          if(!s)return false;
+          if(seen[s.rekazProductId])return false;
+          seen[s.rekazProductId]=true;return true;
+        });
+        if(!subSvcs.length&&subSections.length===1)subSvcs=cat.services;
+        subSvcs.forEach(function(svc){bodyH+=buildCard(svc);});
         bodyH+='</div>';
       });
     } else if(cat.subLabel){
       bodyH+=renderSubHeader(cat.subLabel);
       bodyH+='<div class="sub-cards">';
-      groupServices(cat.services).forEach(function(g){bodyH+=buildCard(g);});
+      cat.services.forEach(function(svc){bodyH+=buildCard(svc);});
       bodyH+='</div>';
     } else {
       bodyH+='<div class="sub-cards" style="padding-top:10px">';
-      groupServices(cat.services).forEach(function(g){bodyH+=buildCard(g);});
+      cat.services.forEach(function(svc){bodyH+=buildCard(svc);});
       bodyH+='</div>';
     }
     bodyH+='</div>';
@@ -855,15 +812,14 @@ function buildSvcFromMenu(cats){
 }
 
 function buildCard(svc){
-  var pid='sc_'+svc.id.replace(/[^a-zA-Z0-9]/g,'');
+  var pid='sc_'+svc.rekazProductId.replace(/[^a-zA-Z0-9]/g,'');
   var opts=svc.options||[];
   var hasOpts=opts.length>1;
   var singleOpt=opts.length===1?opts[0]:null;
   var name=svc.nameAr||'';
   var desc=(svc.description||'').replace(/<[^>]*>/g,'').replace(/&amp;/g,'&').replace(/&nbsp;/g,' ').trim();
   if(desc.length>160)desc=desc.substring(0,160)+'...';
-  // For single option: use its duration/amount directly
-  var dur=singleOpt?singleOpt.duration:0;
+  var dur=singleOpt?singleOpt.duration:(hasOpts?0:0);
   var amt=singleOpt?singleOpt.amount:(hasOpts?Math.min.apply(null,opts.map(function(o){return o.amount;})):0);
   var priceId=singleOpt?singleOpt.id:'';
 
@@ -879,18 +835,18 @@ function buildCard(svc){
   h+='<div class="scbar"></div>';
   h+='<div class="scbody"><div class="scinfo"><div class="scname">'+esc(name)+'</div>';
   if(desc)h+='<div class="scdesc">'+esc(desc)+'</div>';
-  if(dur)h+='<div class="scdur"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>'+dur+' دقيقة</div>';
+  if(dur&&!hasOpts)h+='<div class="scdur"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>'+dur+' دقيقة</div>';
   h+='</div><div class="scright">';
   h+='<div><div class="scprice"><span class="scsr">SAR </span>'+(hasOpts?'من ':'')+amt+'</div><div class="scvat">شامل VAT</div></div>';
   if(!hasOpts)h+='<div class="scchk"><div class="chkd"></div></div>';
   h+='</div></div>';
 
-  // Options (radio buttons) — shown always expanded inside card
+  // Options — radio buttons, always visible
   if(hasOpts){
-    h+='<div class="opts-wrap" id="ow_'+pid+'">';
+    h+='<div class="opts-wrap">';
     h+='<div class="opts-lbl">اختاري الخيار</div>';
     opts.forEach(function(opt){
-      var optLabel=opt.label||'';
+      var optLabel=opt.nameAr||'';
       h+='<div class="opt-row" id="opt_'+opt.id.replace(/[^a-zA-Z0-9]/g,'')+'"'
         +' data-prod="'+esc2(svc.rekazProductId||'')+'"'
         +' data-price="'+esc2(opt.id)+'"'
@@ -911,12 +867,12 @@ function buildCard(svc){
     h+='</div>';
   }
 
-  // Add-ons (checkboxes)
-  if(svc.addOns&&svc.addOns.length){
+  // Add-ons — checkboxes, visible after card selected
+  var validAddOns=(svc.addOns||[]).filter(function(ao){return (ao.nameAr||ao.name||'').trim();});
+  if(validAddOns.length){
     h+='<div class="adwrap" id="aw_'+pid+'"><div class="adtitle">الإضافات</div>';
-    svc.addOns.forEach(function(ao){
-      var aoName=ao.nameAr||ao.name||'';
-      if(!aoName)return; // skip if no name
+    validAddOns.forEach(function(ao){
+      var aoName=(ao.nameAr||ao.name||'').trim();
       h+='<div class="adrow" id="ao_'+ao.id.replace(/[^a-zA-Z0-9]/g,'')+'"'
         +' data-aoid="'+esc2(ao.id)+'"'
         +' data-name="'+esc2(aoName)+'"'
@@ -1146,8 +1102,7 @@ async function doBook(){
     document.getElementById('sucref').textContent='';
     document.getElementById('sucref').parentElement.style.display='none';
     if(S.payUrl){
-      // Show payment popup first — go to success AFTER payment
-      document.getElementById('sucpay').style.display='block';
+      // Open payment directly in same page (iframe)
       openPayPopup();
     } else {
       go('suc');
@@ -1156,15 +1111,29 @@ async function doBook(){
   btn.classList.remove('ld');btn.disabled=false;
 }
 
-// ── POPUP ──
+// ── PAYMENT ──
 function openPayPopup(){
   if(!S.payUrl)return;
-  // 1. Open Rekaz payment in new tab
-  window.open(S.payUrl,'_blank');
-  // 2. Show overlay on current page
   document.getElementById('popAmt').textContent=calcTotal().toLocaleString('en');
-  document.getElementById('payOverlay').style.display='flex';
+  var frame=document.getElementById('payFrame');
+  var overlay=document.getElementById('payOverlay');
+  var fallback=document.getElementById('payFallback');
+  // Try iframe first
+  frame.src=S.payUrl;
+  overlay.style.display='flex';
+  overlay.style.flexDirection='column';
   document.body.style.overflow='hidden';
+  // If iframe fails to load (X-Frame-Options), show fallback bar
+  frame.onerror=function(){fallback.style.display='block';};
+  // Also show fallback after 4s if blank (some payment gateways block iframes)
+  setTimeout(function(){
+    try{
+      var doc=frame.contentDocument||frame.contentWindow.document;
+      if(!doc||doc.body.innerHTML==='')fallback.style.display='block';
+    }catch(e){
+      // Cross-origin — iframe loaded something, likely OK
+    }
+  },4000);
 }
 function reopenPay(){
   if(S.payUrl)window.open(S.payUrl,'_blank');
@@ -1174,7 +1143,10 @@ function confirmPayDone(){
   go('suc');
 }
 function closePopup(){
+  var frame=document.getElementById('payFrame');
+  if(frame)frame.src='';
   document.getElementById('payOverlay').style.display='none';
+  document.getElementById('payFallback').style.display='none';
   document.body.style.overflow='';
 }
 
