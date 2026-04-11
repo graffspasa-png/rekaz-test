@@ -162,8 +162,8 @@ async function rekazFetch(url, opts = {}) {
   const r = await fetch(url, { ...opts, headers: { ...RH(), ...(opts.headers||{}) } });
   const text = await r.text();
   console.log(`[Rekaz] ${r.status}: ${text.slice(0,200)}`);
-  if (!text) throw new Error("Empty Rekaz response");
-  return { ok:r.ok, status:r.status, text, json:()=>JSON.parse(text) };
+  // 204 No Content = success with empty body (e.g. PUT reservation)
+  return { ok:r.ok, status:r.status, text:text||"", json:()=>text?JSON.parse(text):{} };
 }
 
 async function getProds() {
