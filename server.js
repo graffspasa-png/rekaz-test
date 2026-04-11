@@ -455,6 +455,12 @@ app.put("/admin/categories/:id/services",adminAuth,(req,res)=>{
   });
   writeDB(db); res.json({success:true,count:(req.body.priceIds||[]).length});
 });
+// ── DEBUG: raw Rekaz data (temporary) ──
+app.get("/debug-rekaz",async(req,res)=>{
+  try{const data=await getProds();res.json(data);}
+  catch(e){res.status(500).json({error:e.message});}
+});
+
 app.get("/admin/rekaz-products",adminAuth,async(req,res)=>{
   try{res.json(await getProds());}catch(e){res.status(500).json({error:e.message});}
 });
