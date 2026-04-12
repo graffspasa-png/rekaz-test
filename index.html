@@ -1159,7 +1159,7 @@ async function doBook(){
     var cr=await fetch(B+'/create-customer',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:name,phone:S.phone})});
     var cd=await cr.json();if(!cr.ok)throw new Error(cd.error||'فشل إنشاء العميل');
     S.cid=cd.customerId;
-    var br=await fetch(B+'/create-booking',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({customerId:S.cid,phone:S.phone,priceId:S.cart.priceId,from:S.slot.from,to:S.slot.to,addons:S.addons.map(function(a){return{id:a.id,name:a.name,amount:a.price};})})});
+    var br=await fetch(B+'/create-booking',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({customerId:S.cid,phone:S.phone,priceId:S.cart.priceId,from:S.slot.from,to:S.slot.to,addons:S.addons.map(function(a){return{id:a.id};})})});
     var bd=await br.json();if(!br.ok)throw new Error(bd.error||'فشل الحجز');
     S.payUrl=bd.payUrl||null;
     var ref=bd.orderNumber||'—';
