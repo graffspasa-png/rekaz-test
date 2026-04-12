@@ -337,11 +337,11 @@ app.post("/create-booking", async (req,res) => {
   try {
     const addOnList = (addons||[]).filter(a=>a.id);
 
-    // Log for verification
-    console.log("[Booking] priceId:", priceId);
-    console.log("[Booking] service.addons:", JSON.stringify(addOnList));
+    // Rekaz uses CustomFields for addOns: key=addOn.id, value=true
+    // Source: Rekaz network tab shows CustomFields[addonId]=true
+    const customFields = {};
+    addOnList.forEach(a => { customFields[a.id] = true; });
 
-    // STEP 1: Create booking — addOns: [{id, quantity}] only
     const payload = {
       customerId,
       branchId: BRANCH_ID,
@@ -350,34 +350,20 @@ app.post("/create-booking", async (req,res) => {
         quantity: 1,
         from,
         to,
-        addOns: addOnList.map(a => ({ id: a.id, quantity: 1 }))
+        customFields
       }]
     };
-    console.log("[Booking] STEP1 payload:", JSON.stringify(payload, null, 2));
+    console.log("[Booking] payload:", JSON.stringify(payload, null, 2));
     const r = await rekazFetch(`${REKAZ_API}/reservations/bulk`, {
       method: "POST",
       body: JSON.stringify(payload)
     });
     if(!r.ok){
-      console.log("[Booking] STEP1 FAILED:", r.text);
+      console.log("[Booking] FAILED:", r.text);
       return res.status(r.status).json({error:"فشل الحجز", details:r.text});
     }
-    console.log("[Booking] STEP1 SUCCESS:", r.text.slice(0,300));
+    console.log("[Booking] SUCCESS:", r.text.slice(0,300));
     const result = r.json();
-    const reservationId = (result.reservationIds||[])[0];
-
-    // STEP 2: Add addOns using correct endpoint
-    if(addOnList.length && reservationId){
-      const addOnsPayload = {
-        addOns: addOnList.map(a => ({ addOnId: a.id, quantity: 1 }))
-      };
-      console.log("[Booking] STEP2 payload:", JSON.stringify(addOnsPayload, null, 2));
-      const r2 = await rekazFetch(`${REKAZ_API}/reservations/${reservationId}/add-ons`, {
-        method: "PUT",
-        body: JSON.stringify(addOnsPayload)
-      });
-      console.log("[Booking] STEP2 status:", r2.status, "response:", r2.text.slice(0,300));
-    }
 
     if(phone) delete otpStore[phone];
     const payPath = result.paymentLink || "";
