@@ -340,7 +340,7 @@ app.post("/create-booking", async (req,res) => {
     // Rekaz uses CustomFields for addOns: key=addOn.id, value=true
     // Source: Rekaz network tab shows CustomFields[addonId]=true
     const customFields = {};
-    addOnList.forEach(a => { customFields[a.id] = true; });
+    addOnList.forEach(a => { customFields[a.id] = "true"; });
 
     const payload = {
       customerId,
