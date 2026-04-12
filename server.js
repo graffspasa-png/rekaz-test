@@ -238,7 +238,9 @@ app.get("/menu", async (req,res) => {
                     ""
                   ).trim();
                   if (!aoName) return null;
-                  return { id: ao.id, nameAr: aoName, amount: ao.amount || 0 };
+                  // Rekaz uses immutableId as the customFields key (not id)
+                  const customFieldKey = ao.immutableId || ao.id;
+                  return { id: customFieldKey, nameAr: aoName, amount: ao.amount || 0 };
                 }).filter(Boolean)
               };
               acc.push(existing);
