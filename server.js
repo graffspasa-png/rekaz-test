@@ -337,7 +337,7 @@ app.post("/create-booking", async (req,res) => {
   try {
     const addOnList = (addons||[]).filter(a=>a.id);
 
-    // STEP 1: Create booking without addOns
+    // STEP 1: Create booking with addOns inside items
     const payload = {
       customerId,
       branchId: BRANCH_ID,
@@ -345,7 +345,8 @@ app.post("/create-booking", async (req,res) => {
         priceId,
         quantity: 1,
         from,
-        to
+        to,
+        addOns: addOnList.map(a => ({ id: a.id, quantity: 1, price: a.amount||0 }))
       }]
     };
     console.log("[Booking] STEP1 payload:", JSON.stringify(payload, null, 2));
