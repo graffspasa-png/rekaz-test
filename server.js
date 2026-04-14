@@ -184,7 +184,16 @@ function adminAuth(req,res,next) {
 }
 
 // ── PUBLIC ──
+import { readFileSync as _rfs } from "fs";
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
 app.get("/", (req,res) => res.send("GRAFF SPA API ✅"));
+app.get("/admin", (req,res) => {
+  try { res.send(_rfs(join(__dirname,"admin.html"),"utf8")); }
+  catch(e){ res.status(404).send("admin.html not found — upload it to server"); }
+});
 
 app.get("/site", (req,res) => {
   const db = readDB();
