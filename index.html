@@ -119,10 +119,10 @@ body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-r
 .cpanel.on{display:flex}
 
 /* ── SUB-SECTION HEADER ── */
-.subcategory-title{text-align:center;margin-bottom:24px;margin-top:32px;padding:0 16px}
-.title-en{display:block;font-size:26px;letter-spacing:.18em;text-transform:uppercase;font-family:'Cormorant Garamond',serif;color:var(--text);line-height:1.2;font-weight:300}
-.title-ar{display:block;font-size:22px;margin-top:4px;font-family:'Tajawal',sans-serif;direction:rtl;color:var(--muted);letter-spacing:0;font-weight:400;line-height:1.4}
-.title-line{width:36px;height:2px;background:#c5a46d;margin:12px auto 0;border-radius:1px}
+.subcategory-title{text-align:center;margin-bottom:16px;margin-top:22px;padding:0 16px}
+.title-en{display:block;font-size:16px;letter-spacing:.18em;text-transform:uppercase;font-family:'Cormorant Garamond',serif;color:var(--text);line-height:1.2;font-weight:300}
+.title-ar{display:block;font-size:14px;margin-top:3px;font-family:'Tajawal',sans-serif;direction:rtl;color:var(--muted);letter-spacing:0;font-weight:400;line-height:1.4}
+.title-line{width:28px;height:1.5px;background:#c5a46d;margin:8px auto 0;border-radius:1px}
 .sub-cards{display:flex;flex-direction:column;gap:7px;padding-bottom:4px}
 
 /* SERVICE CARD */
@@ -421,8 +421,36 @@ body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-r
   <div class="svcbody" id="svcbody"></div>
   <div class="cartbar" id="cartbar">
     <div class="cartinfo"><div class="cartcnt" id="cartcnt">لم يتم الاختيار بعد</div><div class="cartprice"><span class="cartsr">SAR </span><span id="carttot">0</span></div><div id="carttag"></div></div>
-    <button class="cartcta" onclick="go('dt')">متابعة ←</button>
+    <button class="cartcta" onclick="goToAddons()">متابعة الحجز ←</button>
   </div>
+</div>
+
+<!-- ADDONS PAGE -->
+<div id="addons-pg" class="pg">
+  <div class="bar"><button class="back" onclick="go('svcs')">← رجوع</button><div class="logo-txt" onclick="go('home')">GRAFF <b>SPA</b></div><div class="barr"><div class="sdot done"></div><div class="sdot on"></div><div class="sdot"></div></div></div>
+  <div class="prog"><b style="width:40%"></b></div>
+  <div class="svchd" style="background:var(--ink)">
+    <div class="svcttl"><p class="svceye">STEP 1.5 OF 3</p><h2 class="svch1">إضافات اختيارية</h2><p class="svcsub">أضيفي خدمات إضافية لتجربة أكمل</p></div>
+  </div>
+  <div style="flex:1;overflow-y:auto;padding:16px 12px 100px;background:var(--cream)">
+    <div id="addons-list" class="sub-cards" style="padding-top:8px"></div>
+    <div id="addons-empty" style="display:none;text-align:center;padding:40px 20px;color:var(--muted);font-size:13px">لا توجد إضافات متاحة لهذه الخدمة</div>
+  </div>
+  <div class="botbar">
+    <button class="botbtn" onclick="go('dt')">متابعة لاختيار الموعد ←</button>
+  </div>
+</div>
+
+<!-- QUESTIONS PAGE -->
+<div id="questions-pg" class="pg fmpg">
+  <div class="bar"><button class="back" onclick="go('phone')">← رجوع</button><div class="logo-txt" onclick="go('home')">GRAFF <b>SPA</b></div><div class="barr"><div class="sdot done"></div><div class="sdot done"></div><div class="sdot on"></div></div></div>
+  <div class="prog"><b style="width:85%"></b></div>
+  <div class="fmbody">
+    <div class="fmhd"><p class="fmeye">STEP 3 · INFO</p><h2 class="fmh1">معلومات إضافية</h2><p class="fmsub">ساعدينا لتقديم تجربة أفضل</p></div>
+    <div id="questions-form"></div>
+    <div class="errbox" id="errq"></div>
+  </div>
+  <div class="botbar"><button class="botbtn" onclick="goConfirm()">متابعة للتأكيد ←</button></div>
 </div>
 
 <!-- DATETIME -->
@@ -491,7 +519,15 @@ body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-r
     <div class="pms" id="pms"></div>
     <div class="errbox" id="errconf"></div>
   </div>
-  <div class="botbar"><button class="botbtn" id="btnconf" onclick="doBook()">الدفع وتأكيد الحجز ←</button></div>
+  <div class="fcard" id="policies-card" style="display:none">
+    <div class="fctitl">السياسات والشروط</div>
+    <div id="policies-text" style="font-size:11px;color:var(--muted);line-height:1.9;white-space:pre-line"></div>
+    <label style="display:flex;align-items:center;gap:10px;margin-top:12px;cursor:pointer">
+      <input type="checkbox" id="policies-agree" onchange="checkPolicies()" style="width:16px;height:16px;accent-color:var(--ink)">
+      <span style="font-size:12px;color:var(--text)">أوافق على السياسات والشروط</span>
+    </label>
+  </div>
+  <div class="botbar"><button class="botbtn" id="btnconf" onclick="doBook()" disabled>الدفع وتأكيد الحجز ←</button></div>
 </div>
 
 <!-- SUCCESS -->
@@ -849,6 +885,7 @@ function buildCard(svc){
   var priceId=singleOpt?singleOpt.id:'';
 
   var addOnsJson=esc2(JSON.stringify(svc.addOns||[]));
+  var mappedJson=esc2(JSON.stringify(svc.mappedAddons||[]));
   var h='<div class="sc" id="'+pid+'"'
     +' data-pid="'+pid+'"'
     +' data-prod="'+esc2(svc.rekazProductId||'')+'"'
@@ -858,6 +895,7 @@ function buildCard(svc){
     +' data-amt="'+amt+'"'
     +' data-hasopts="'+(hasOpts?1:0)+'"'
     +' data-addons="'+addOnsJson+'"'
+    +' data-mapped="'+mappedJson+'"'
     +' onclick="onCardClick(this)">';
   h+='<div class="scbar"></div>';
   h+='<div class="scbody"><div class="scinfo"><div class="scname">'+esc(name)+'</div>';
@@ -884,6 +922,7 @@ function buildCard(svc){
         +' data-amt="'+opt.amount+'"'
         +' data-card="'+pid+'"'
         +' data-addons="'+addOnsJson+'"'
+        +' data-mapped="'+mappedJson+'"'
         +' onclick="event.stopPropagation();onOptClick(this)">';
       h+='<div class="opt-radio"><div class="opt-dot"></div></div>';
       h+='<div class="opt-info">';
@@ -929,9 +968,11 @@ function onCardClick(el){
   var pid=el.id;
   if(S.cart&&S.cart.pid===pid){clearSel();S.cart=null;updCart();return;}
   clearSel();
+  var parsedAddOns=[];try{parsedAddOns=el.dataset.addons?JSON.parse(el.dataset.addons):[];}catch(e){}
+  var parsedMapped=[];try{parsedMapped=el.dataset.mapped?JSON.parse(el.dataset.mapped):[];}catch(e){}
   S.cart={id:el.dataset.prod,priceId:el.dataset.price,name:el.dataset.name,
           dur:parseInt(el.dataset.dur)||0,amount:parseFloat(el.dataset.amt)||0,pid:pid,
-          addOns:el.dataset.addons?JSON.parse(el.dataset.addons):[]};
+          addOns:parsedAddOns,mappedAddons:parsedMapped};
   el.classList.add('sel');updCart();
 }
 function onOptClick(el){
@@ -952,9 +993,11 @@ function onOptClick(el){
   var svcName=el.dataset.name;
   var optLabel=el.dataset.optlabel;
   var displayName=optLabel?svcName+' — '+optLabel:svcName;
+  var parsedAddOns2=[];try{parsedAddOns2=el.dataset.addons?JSON.parse(el.dataset.addons):[];}catch(e){}
+  var parsedMapped2=[];try{parsedMapped2=el.dataset.mapped?JSON.parse(el.dataset.mapped):[];}catch(e){}
   S.cart={id:el.dataset.prod,priceId:priceId,name:displayName,
           dur:parseInt(el.dataset.dur)||0,amount:parseFloat(el.dataset.amt)||0,pid:pid,
-          addOns:el.dataset.addons?JSON.parse(el.dataset.addons):[]};
+          addOns:parsedAddOns2,mappedAddons:parsedMapped2};
   if(card)card.classList.add('sel');
   updCart();
 }
@@ -987,6 +1030,110 @@ function updCart(){
   document.getElementById('carttot').textContent=tot.toLocaleString('en');
   document.getElementById('carttag').innerHTML=has?'<span class="carttag">'+esc(S.cart.name)+(S.addons.length?' +'+S.addons.length+' إضافة':'')+'</span>':'';
   document.getElementById('cartbar').classList.toggle('up',has);
+}
+
+// ── ADDONS PAGE ──
+function goToAddons(){
+  var addons=S.cart&&S.cart.mappedAddons?S.cart.mappedAddons:[];
+  if(!addons||!addons.length){go('dt');return;}
+  renderAddonsList(addons);
+  go('addons-pg');
+}
+
+function renderAddonsList(addons){
+  var box=document.getElementById('addons-list');
+  var empty=document.getElementById('addons-empty');
+  var visible=addons.filter(function(a){return a.visible!==false;}).sort(function(a,b){return (a.order||0)-(b.order||0);});
+  if(!visible.length){box.innerHTML='';empty.style.display='block';return;}
+  empty.style.display='none';
+  var h='';
+  visible.forEach(function(ao){
+    var sel=S.addons.find(function(a){return a.id===ao.rekazPriceId;});
+    h+='<div class="sc'+(sel?' sel':'')+'" id="ao_card_'+ao.rekazPriceId.replace(/[^a-zA-Z0-9]/g,'')+'"'
+      +' onclick="toggleMappedAddon(this)" data-pid="'+esc2(ao.rekazPriceId)+'"'
+      +' data-name="'+esc2(ao.nameAr||'')+'" data-amt="'+(ao.amount||0)+'">';
+    h+='<div class="scbar"></div>';
+    h+='<div class="scbody"><div class="scinfo"><div class="scname">'+esc(ao.nameAr||'')+'</div>';
+    if(ao.desc)h+='<div class="scdesc">'+esc(ao.desc)+'</div>';
+    if(ao.duration)h+='<div class="scdur"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>'+ao.duration+' دقيقة</div>';
+    h+='</div><div class="scright">';
+    h+='<div><div class="scprice"><span class="scsr">SAR </span>'+(ao.amount||0)+'</div><div class="scvat">شامل VAT</div></div>';
+    h+='<div class="scchk"><div class="chkd"></div></div>';
+    h+='</div></div></div>';
+  });
+  box.innerHTML=h;
+}
+
+function toggleMappedAddon(el){
+  var pid=el.dataset.pid;
+  var was=el.classList.contains('sel');
+  if(was){
+    el.classList.remove('sel');
+    S.addons=S.addons.filter(function(a){return a.id!==pid;});
+  } else {
+    el.classList.add('sel');
+    S.addons.push({id:pid,priceId:pid,name:el.dataset.name,price:parseFloat(el.dataset.amt)||0});
+  }
+  updCart();
+}
+
+// ── QUESTIONS PAGE ──
+var questionAnswers={};
+
+function renderQuestionsForm(questions){
+  var box=document.getElementById('questions-form');
+  if(!questions||!questions.length){box.innerHTML='';return;}
+  var h='';
+  questions.forEach(function(q){
+    h+='<div class="fcard" style="margin-bottom:10px">';
+    h+='<div class="fctitl">'+(q.required?'* ':'')+esc(q.label)+'</div>';
+    var qid=q.id;
+    if(q.type==='text'){
+      h+='<input class="finp" id="q_'+qid+'" placeholder="'+esc(q.placeholder||'')+'" oninput="questionAnswers[this.dataset.qid]=this.value" data-qid="'+qid+'">';
+    } else if(q.type==='textarea'){
+      h+='<textarea class="finp" id="q_'+qid+'" rows="3" placeholder="'+esc(q.placeholder||'')+'" style="resize:none" oninput="questionAnswers[this.dataset.qid]=this.value" data-qid="'+qid+'"></textarea>';
+    } else if(q.type==='checkbox'){
+      h+='<label style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:8px 0">';
+      h+='<input type="checkbox" id="q_'+qid+'" onchange="questionAnswers[this.dataset.qid]=this.checked?String.fromCharCode(1606,1593,1605):String.fromCharCode(1604,1575)" data-qid="'+qid+'" style="width:18px;height:18px;accent-color:var(--ink)">';
+      h+='<span style="font-size:13px">'+esc(q.checkLabel||q.label)+'</span></label>';
+    } else if(q.type==='radio'&&q.options){
+      q.options.forEach(function(opt){
+        h+='<label style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:6px 0">';
+        h+='<input type="radio" name="q_'+qid+'" value="'+esc(opt)+'" onchange="questionAnswers[this.dataset.qid]=this.value" data-qid="'+qid+'" style="width:16px;height:16px;accent-color:var(--ink)">';
+        h+='<span style="font-size:13px">'+esc(opt)+'</span></label>';
+      });
+    }
+    h+='</div>';
+  });
+  box.innerHTML=h;
+}
+
+function goConfirm(){
+  var questions=(CFG&&CFG.questions)||[];
+  var required=questions.filter(function(q){return q.required;});
+  for(var i=0;i<required.length;i++){
+    if(!questionAnswers[required[i].id]){
+      showErr('errq','يرجى الإجابة على السؤال: '+required[i].label);return;
+    }
+  }
+  showErr('errq','');
+  renderPoliciesInConfirm();
+  go('confirm');
+}
+
+// ── POLICIES ──
+function checkPolicies(){
+  var agreed=document.getElementById('policies-agree');
+  var btn=document.getElementById('btnconf');
+  if(btn) btn.disabled=!agreed||!agreed.checked;
+}
+
+function renderPoliciesInConfirm(){
+  var pol=CFG&&CFG.policies?CFG.policies:{};
+  var text=pol.ar||'';
+  var card=document.getElementById('policies-card');
+  var textEl=document.getElementById('policies-text');
+  if(card&&text){card.style.display='block';if(textEl)textEl.textContent=text;}
 }
 
 // ── CALENDAR ──
@@ -1104,7 +1251,10 @@ async function verOTP(){
   try{
     var r=await fetch(B+'/verify-otp',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone:S.phone,otp:getOTP()})});
     var d=await r.json();if(!r.ok)throw new Error(d.error||'رمز غير صحيح');
-    clearInterval(otpTimer);go('confirm');
+    clearInterval(otpTimer);
+    var qs=(CFG&&CFG.questions)||[];
+    if(qs.length>0){renderQuestionsForm(qs);go('questions-pg');}
+    else{renderPoliciesInConfirm();go('confirm');}
   }catch(e){showErr('errotp',e.message);}
   btn.classList.remove('ld');btn.disabled=false;
 }
@@ -1134,6 +1284,14 @@ function buildConfirm(){
   h+='<div class="sumrow"><span class="suml muted-lbl">ضريبة القيمة المضافة 15%</span><span class="sumv muted-val">SAR '+vat.toLocaleString('en')+'</span></div>';
   h+='</div>';
   document.getElementById('confsumm').innerHTML=h;
+  // Add question answers to summary
+  var qs=(CFG&&CFG.questions)||[];
+  if(qs.length&&Object.keys(questionAnswers).length){
+    h+='<div class="inv-section" style="margin-top:10px"><div class="inv-lbl">معلومات إضافية</div>';
+    qs.forEach(function(q){var ans=questionAnswers[q.id];if(ans)h+='<div class="sumrow"><span class="suml">'+esc(q.label)+'</span><span class="sumv">'+esc(ans)+'</span></div>';});
+    h+='</div>';
+  }
+  document.getElementById('confsumm').innerHTML=h;
   document.getElementById('conftot').innerHTML='<span class="sumtotl">الإجمالي شامل الضريبة</span><span class="sumtotv">SAR '+tot.toLocaleString('en')+'</span>';
 }
 function selPay(el){el.closest('.pms').querySelectorAll('.pmrow').forEach(function(r){r.classList.remove('on');});el.classList.add('on');}
@@ -1159,7 +1317,7 @@ async function doBook(){
     var cr=await fetch(B+'/create-customer',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:name,phone:S.phone})});
     var cd=await cr.json();if(!cr.ok)throw new Error(cd.error||'فشل إنشاء العميل');
     S.cid=cd.customerId;
-    var br=await fetch(B+'/create-booking',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({customerId:S.cid,phone:S.phone,priceId:S.cart.priceId,from:S.slot.from,to:S.slot.to,addons:S.addons.map(function(a){return{id:a.id};})})});
+    var br=await fetch(B+'/create-booking',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({customerId:S.cid,phone:S.phone,priceId:S.cart.priceId,from:S.slot.from,to:S.slot.to,addons:S.addons.map(function(a){return{id:a.id,priceId:a.priceId||null};}),questions:questionAnswers})});
     var bd=await br.json();if(!br.ok)throw new Error(bd.error||'فشل الحجز');
     S.payUrl=bd.payUrl||null;
     var ref=bd.orderNumber||'—';
@@ -1219,6 +1377,7 @@ function openWA(){
 }
 function resetAll(){
   S={cart:null,addons:[],date:null,slot:null,slotLbl:null,phone:null,cid:null,payUrl:null,disc:0};
+  questionAnswers={};
   allSlots=[];
   document.querySelectorAll('.sc.sel,.sc.has-open').forEach(function(c){c.classList.remove('sel','has-open');});
   document.querySelectorAll('.vrow.sel,.adrow.sel').forEach(function(v){v.classList.remove('sel');});
