@@ -27,13 +27,18 @@ const RH = () => ({
 });
 const BRANCH_ID  = process.env.REKAZ_BRANCH_ID;
 const ADMIN_PASS = process.env.ADMIN_PASSWORD || "graff2026";
-
 const DISK_PATHS = ["/var/data/graff_db.json", "/tmp/graff_db.json"];
 let MEM_DB = null;
 
 const DEFAULT_DB = {
   categories: [],
   services: [],
+  addonsMap: {},   // { serviceProductId: [{ rekazPriceId, nameAr, order, visible }] }
+  questions: [],   // custom booking questions
+  policies: {
+    ar: `السياسات العامة:\n• يمكن تعديل الموعد أو تغيير وقته فقط في حال توفر إمكانية في نفس يوم الموعد، فيما عدا ذلك، الموعد غير قابل للتعديل بعد الحجز.\n• في حال التأخر 15 دقيقة، يتم إلغاء الموعد تلقائياً.\n• عند إلغاء الموعد قبل 4 ساعات من وقت الخدمة، يتم إضافة المبلغ كرصيد في حسابك بصلاحية شهرين.\n• في حال عدم الحضور أو الإلغاء قبل أقل من 4 ساعات، يكون المبلغ غير قابل للاسترجاع.\n\nسياسات القسائم:\n• عند الحجز باستخدام قسيمة، يجب إبلاغنا قبل 4 ساعات في حال الرغبة بإلغاء الموعد أو تغييره.\n• في حال عدم الحضور بدون إشعار مسبق، تصبح القسيمة غير صالحة.\n• في حال التأخر 15 دقيقة، يتم إلغاء الموعد ويعتبر الفاوتشر غير صالح.`,
+    en: `General Policies:\n• Appointments can only be rescheduled if availability exists on the same day. Otherwise, appointments are non-modifiable after booking.\n• A 15-minute late arrival results in automatic cancellation.\n• Cancellations made 4+ hours before service time will be added as credit valid for 2 months.\n• No-shows or cancellations less than 4 hours before service are non-refundable.\n\nVoucher Policies:\n• Voucher bookings require 4-hour advance notice for cancellations or changes.\n• No-shows without prior notice render the voucher invalid.\n• 15-minute late arrivals result in cancellation and voucher invalidation.`
+  },
   texts: {
     homeTagline: "حيث تلتقي العناية بالفخامة · في أدق تفاصيلها",
     homeCity: "R I Y A D H",
@@ -93,10 +98,7 @@ const DEFAULT_DB = {
     {id:"tamara",label:"tamara",visible:true,order:6,customImage:""}
   ],
   pages: {
-    gift: {
-      title:"بطاقة الإهداء", subtitle:"اهدي تجربة لا تُنسى",
-      amounts:[200,300,500,1000], sections:[]
-    },
+    gift: { title:"بطاقة الإهداء", subtitle:"اهدي تجربة لا تُنسى", amounts:[200,300,500,1000], sections:[] },
     memberships: { items:[
       {name:"Classic",price:4000,featured:false,visits:12,features:["مناكير روسي كامل","علاج فيشيال للبشرة","12 زيارة / 12 شهراً"]},
       {name:"VIP",price:8000,featured:true,visits:12,features:["جل اكستنشن أو بياب","مناكير روسي","علاج فيشيال","12 زيارة / 12 شهراً"]},
@@ -139,16 +141,18 @@ function readDB() {
 
 function writeDB(db) {
   MEM_DB = db;
+  // Always write to both paths for maximum persistence
+  let saved = false;
   for (const p of DISK_PATHS) {
     try {
       const dir = p.substring(0, p.lastIndexOf("/"));
       if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
       writeFileSync(p, JSON.stringify(db, null, 2), "utf8");
       console.log(`[DB] Saved to ${p}`);
-      return;
+      saved = true;
     } catch(e) { console.log(`Write ${p} failed:`, e.message); }
   }
-  console.warn("[DB] WARNING: Could not save to disk! Data in memory only.");
+  if (!saved) console.warn("[DB] WARNING: Add Render Disk at /var/data for persistence!");
 }
 
 function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
@@ -162,7 +166,6 @@ async function rekazFetch(url, opts = {}) {
   const r = await fetch(url, { ...opts, headers: { ...RH(), ...(opts.headers||{}) } });
   const text = await r.text();
   console.log(`[Rekaz] ${r.status}: ${text.slice(0,200)}`);
-  // 204 No Content = success with empty body (e.g. PUT reservation)
   return { ok:r.ok, status:r.status, text:text||"", json:()=>text?JSON.parse(text):{} };
 }
 
@@ -174,9 +177,9 @@ async function getProds() {
   return rCache;
 }
 
-function auth(req, res, next) {
-  if ((req.headers.authorization||"").replace("Bearer ","") !== ADMIN_PASS)
-    return res.status(401).json({ error:"Unauthorized" });
+function adminAuth(req,res,next) {
+  if((req.headers.authorization||"").replace("Bearer ","")!==ADMIN_PASS)
+    return res.status(401).json({error:"Unauthorized"});
   next();
 }
 
@@ -186,13 +189,11 @@ app.get("/", (req,res) => res.send("GRAFF SPA API ✅"));
 app.get("/site", (req,res) => {
   const db = readDB();
   res.json({
-    theme:    db.theme,
-    layout:   db.layout,
-    texts:    db.texts,
-    social:   db.social,
-    buttons:  db.buttons.filter(b=>b.visible!==false).sort((a,b)=>a.order-b.order),
-    payments: db.payments.filter(p=>p.visible!==false).sort((a,b)=>a.order-b.order),
-    pages:    db.pages
+    theme:db.theme, layout:db.layout, texts:db.texts, social:db.social,
+    buttons:db.buttons.filter(b=>b.visible!==false).sort((a,b)=>a.order-b.order),
+    payments:db.payments.filter(p=>p.visible!==false).sort((a,b)=>a.order-b.order),
+    pages:db.pages, policies:db.policies,
+    questions:(db.questions||[]).filter(q=>q.visible!==false)
   });
 });
 
@@ -230,50 +231,29 @@ app.get("/menu", async (req,res) => {
                 nameAr: (p.nameAr || p.name || "").split(" - ")[0].trim(),
                 description: (p.description || p.shortDescription || ""),
                 options: [],
-                // addOns from product level (productAddOns)
-                addOns: (p.addOns || []).map(ao => {
-                  const aoName = (
-                    ao.label ||
-                    (ao.localizedLabel?.OtherLanguages?.ar) ||
-                    ""
-                  ).trim();
-                  if (!aoName) return null;
-                  // Rekaz uses immutableId as the customFields key (not id)
+                addOns: (p.addOns||[]).map(ao=>{
+                  const aoName=(ao.label||(ao.localizedLabel?.OtherLanguages?.ar)||"").trim();
+                  if(!aoName) return null;
                   const customFieldKey = ao.immutableId || ao.id;
-                  return { id: customFieldKey, nameAr: aoName, amount: ao.amount || 0 };
-                }).filter(Boolean)
+                  return {id:customFieldKey,nameAr:aoName,amount:ao.amount||0};
+                }).filter(Boolean),
+                // Mapped addons from admin (separate priceIds)
+                mappedAddons: (db.addonsMap||{})[pid] || []
               };
               acc.push(existing);
             }
-            // Add pricing option
             if (rd.pricing) {
               const rawName = rd.pricing.nameAr || rd.pricing.name || "";
               const sep = rawName.includes(" – ") ? " – " : rawName.includes(" - ") ? " - " : null;
               const nameAr = sep ? rawName.split(sep)[0].trim() : rawName.trim();
               const nameEn = sep ? rawName.split(sep).slice(1).join(sep).trim() : "";
-              existing.options.push({
-                id: rd.pricing.id,
-                nameAr,
-                nameEn,
-                amount: rd.pricing.amount,
-                duration: rd.pricing.duration || p.duration || 0
-              });
+              existing.options.push({ id:rd.pricing.id, nameAr, nameEn, amount:rd.pricing.amount, duration:rd.pricing.duration||p.duration||0 });
             } else if (!existing.options.length) {
-              existing.options.push({
-                id: s.rekazPriceId || pid,
-                nameAr: "",
-                nameEn: "",
-                amount: p.amount || 0,
-                duration: p.duration || 0
-              });
+              existing.options.push({ id:s.rekazPriceId||pid, nameAr:"", nameEn:"", amount:p.amount||0, duration:p.duration||0 });
             }
             return acc;
           }, []);
-        return {
-          id: cat.id, nameAr: cat.nameAr, nameEn: cat.nameEn||"",
-          subSections: cat.subSections || [],
-          services: svcs
-        };
+        return { id:cat.id, nameAr:cat.nameAr, nameEn:cat.nameEn||"", subSections:cat.subSections||[], services:svcs };
       }).filter(c => c.services.length > 0);
 
     res.json({ categories: cats });
@@ -330,57 +310,50 @@ app.post("/create-customer", async (req,res) => {
 
 // ── BOOKING ──
 app.post("/create-booking", async (req,res) => {
-  const {customerId,phone,priceId,from,to,addons}=req.body;
+  const {customerId,phone,priceId,from,to,addons,questions}=req.body;
   if(!customerId||!priceId||!from||!to) return res.status(400).json({error:"Missing fields"});
   if(phone){
     const s=otpStore[phone];
     if(s && !s.verified) return res.status(403).json({error:"يجب التحقق من الجوال أولاً"});
   }
   try {
-    const addOnList = (addons||[]).filter(a=>a.id);
-
-    // Rekaz uses CustomFields for addOns: key=addOn.id, value=true
-    // Source: Rekaz network tab shows CustomFields[addonId]=true
+    // Build customFields: addons as customFields keys
     const customFields = {};
-    addOnList.forEach(a => { customFields[a.id] = "true"; });
+    (addons||[]).filter(a=>a.id).forEach(a=>{ customFields[a.id]="true"; });
 
-    const payload = {
-      customerId,
-      branchId: BRANCH_ID,
-      items: [{
-        priceId,
-        quantity: 1,
-        from,
-        to,
-        customFields
-      }]
-    };
+    // Add question answers as customFields too
+    if(questions && typeof questions==="object") {
+      Object.entries(questions).forEach(([k,v])=>{ if(v) customFields[`q_${k}`]=String(v); });
+    }
+
+    // Main item
+    const items = [{ priceId, quantity:1, from, to, customFields }];
+
+    // Mapped addons = separate priceIds as additional items
+    (addons||[]).filter(a=>a.priceId).forEach(a=>{
+      items.push({ priceId:a.priceId, quantity:1, from, to });
+    });
+
+    const payload = { customerId, branchId:BRANCH_ID, items };
     console.log("[Booking] payload:", JSON.stringify(payload, null, 2));
-    const r = await rekazFetch(`${REKAZ_API}/reservations/bulk`, {
-      method: "POST",
-      body: JSON.stringify(payload)
+
+    const r = await rekazFetch(`${REKAZ_API}/reservations/bulk`,{
+      method:"POST", body:JSON.stringify(payload)
     });
     if(!r.ok){
       console.log("[Booking] FAILED:", r.text);
-      return res.status(r.status).json({error:"فشل الحجز", details:r.text});
+      return res.status(r.status).json({error:"فشل الحجز",details:r.text});
     }
     console.log("[Booking] SUCCESS:", r.text.slice(0,300));
     const result = r.json();
-
     if(phone) delete otpStore[phone];
-    const payPath = result.paymentLink || "";
-    const payUrl = payPath ? (payPath.startsWith("http") ? payPath : `${REKAZ_BASE}${payPath}`) : null;
-    console.log(`[Booking] payUrl: ${payUrl}`);
+    const payPath = result.paymentLink||"";
+    const payUrl = payPath?(payPath.startsWith("http")?payPath:`${REKAZ_BASE}${payPath}`):null;
     res.json({success:true, payUrl});
   } catch(e){res.status(500).json({error:e.message});}
 });
 
 // ── ADMIN ──
-function adminAuth(req,res,next) {
-  if((req.headers.authorization||"").replace("Bearer ","")!==ADMIN_PASS)
-    return res.status(401).json({error:"Unauthorized"});
-  next();
-}
 app.post("/admin/login",(req,res)=>{
   if(req.body.password===ADMIN_PASS) res.json({success:true,token:ADMIN_PASS});
   else res.status(401).json({error:"كلمة المرور غير صحيحة"});
@@ -392,66 +365,70 @@ app.put("/admin/db",adminAuth,(req,res)=>{
 });
 app.get("/admin/db-export",adminAuth,(req,res)=>{
   const db=readDB();
-  const b64=Buffer.from(JSON.stringify(db)).toString("base64");
-  res.json({base64:b64,hint:"Set INITIAL_DB env var to this value for disaster recovery"});
+  res.json({base64:Buffer.from(JSON.stringify(db)).toString("base64"),hint:"Set INITIAL_DB env var"});
 });
 app.get("/admin/categories",adminAuth,(req,res)=>res.json(readDB().categories));
 app.post("/admin/categories",adminAuth,(req,res)=>{
   const db=readDB();
-  const cat={
-    id:"cat_"+uid(), nameAr:req.body.nameAr||"قسم جديد", nameEn:req.body.nameEn||"",
-    subSections: req.body.subSections||[],
-    order:db.categories.length+1, visible:true
-  };
-  db.categories.push(cat); writeDB(db); res.json(cat);
+  const cat={id:"cat_"+uid(),nameAr:req.body.nameAr||"قسم جديد",nameEn:req.body.nameEn||"",subSections:req.body.subSections||[],order:db.categories.length+1,visible:true};
+  db.categories.push(cat);writeDB(db);res.json(cat);
 });
 app.put("/admin/categories/:id",adminAuth,(req,res)=>{
-  const db=readDB(); const i=db.categories.findIndex(c=>c.id===req.params.id);
+  const db=readDB();const i=db.categories.findIndex(c=>c.id===req.params.id);
   if(i<0) return res.status(404).json({error:"Not found"});
   db.categories[i]={...db.categories[i],...req.body,id:req.params.id};
-  writeDB(db); res.json(db.categories[i]);
+  writeDB(db);res.json(db.categories[i]);
 });
 app.delete("/admin/categories/:id",adminAuth,(req,res)=>{
   const db=readDB();
   db.categories=db.categories.filter(c=>c.id!==req.params.id);
   db.services=db.services.filter(s=>s.categoryId!==req.params.id);
-  writeDB(db); res.json({success:true});
+  writeDB(db);res.json({success:true});
 });
 app.put("/admin/categories-order",adminAuth,(req,res)=>{
   const db=readDB();
-  (req.body.order||[]).forEach((id,idx)=>{
-    const i=db.categories.findIndex(c=>c.id===id);
-    if(i>=0) db.categories[i].order=idx+1;
-  });
-  writeDB(db); res.json({success:true});
+  (req.body.order||[]).forEach((id,idx)=>{const i=db.categories.findIndex(c=>c.id===id);if(i>=0)db.categories[i].order=idx+1;});
+  writeDB(db);res.json({success:true});
 });
 app.put("/admin/categories/:id/services",adminAuth,(req,res)=>{
-  const db=readDB(); const catId=req.params.id;
+  const db=readDB();const catId=req.params.id;
   db.services=db.services.filter(s=>s.categoryId!==catId);
   (req.body.priceIds||[]).forEach((item,idx)=>{
-    db.services.push({
-      id:"srv_"+uid(), rekazPriceId:item.rekazPriceId,
-      rekazProductId:item.rekazProductId||null,
-      categoryId:catId, nameAr:item.nameAr||"",
-      order:idx+1, visible:true
-    });
+    db.services.push({id:"srv_"+uid(),rekazPriceId:item.rekazPriceId,rekazProductId:item.rekazProductId||null,categoryId:catId,nameAr:item.nameAr||"",order:idx+1,visible:true});
   });
-  writeDB(db); res.json({success:true,count:(req.body.priceIds||[]).length});
+  writeDB(db);res.json({success:true,count:(req.body.priceIds||[]).length});
 });
+
+// ── ADDON MAPPING ──
+app.get("/admin/addons-map",adminAuth,(req,res)=>res.json(readDB().addonsMap||{}));
+app.put("/admin/addons-map",adminAuth,(req,res)=>{
+  const db=readDB();
+  db.addonsMap=req.body;
+  writeDB(db);res.json({success:true});
+});
+
+// ── QUESTIONS ──
+app.get("/admin/questions",adminAuth,(req,res)=>res.json(readDB().questions||[]));
+app.put("/admin/questions",adminAuth,(req,res)=>{
+  const db=readDB();db.questions=req.body;writeDB(db);res.json({success:true});
+});
+
+// ── POLICIES ──
+app.get("/admin/policies",adminAuth,(req,res)=>res.json(readDB().policies||{}));
+app.put("/admin/policies",adminAuth,(req,res)=>{
+  const db=readDB();db.policies=req.body;writeDB(db);res.json({success:true});
+});
+
 app.get("/admin/rekaz-products",adminAuth,async(req,res)=>{
   try{res.json(await getProds());}catch(e){res.status(500).json({error:e.message});}
 });
 
 // ── DEBUG ──
 app.get("/debug-rekaz",async(req,res)=>{
-  try{const data=await getProds();res.json(data);}
-  catch(e){res.status(500).json({error:e.message});}
+  try{const data=await getProds();res.json(data);}catch(e){res.status(500).json({error:e.message});}
 });
 app.get("/debug-product/:id",async(req,res)=>{
-  try{
-    const r=await rekazFetch(`${REKAZ_API}/products/${req.params.id}`);
-    res.send(r.text);
-  }catch(e){res.status(500).send(e.message);}
+  try{const r=await rekazFetch(`${REKAZ_API}/products/${req.params.id}`);res.send(r.text);}catch(e){res.status(500).send(e.message);}
 });
 
 const PORT=process.env.PORT||3000;
