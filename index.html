@@ -1082,8 +1082,32 @@ var questionAnswers={};
 
 function renderQuestionsForm(questions){
   var box=document.getElementById('questions-form');
-  if(!questions||!questions.length){box.innerHTML='';return;}
   var h='';
+  // Fixed questions always shown
+  h+='<div class="fcard" style="margin-bottom:10px">';
+  h+='<div class="fctitl">هل لديك حساسية من أي مواد؟</div>';
+  h+='<label style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:6px 0">';
+  h+='<input type="checkbox" id="fixed_allergy" onchange="questionAnswers[this.dataset.qid]=this.checked?String.fromCharCode(1606,1593,1605,1548,32,1604,1583,1610,32,1581,1587,1575,1587,1610,1577):String.fromCharCode(1604,1575)" data-qid="allergy" style="width:18px;height:18px;accent-color:var(--ink)">';
+  h+='<span style="font-size:13px">نعم، لدي حساسية</span></label>';
+  h+='<div id="allergy-detail-wrap" style="display:none;margin-top:8px">';
+  h+='<textarea class="finp" id="allergy_detail" rows="2" placeholder="يرجى ذكر نوع الحساسية..." oninput="questionAnswers[this.dataset.qid]=this.value" data-qid="allergy_detail" style="resize:none"></textarea>';
+  h+='</div></div>';
+
+  h+='<div class="fcard" style="margin-bottom:10px">';
+  h+='<div class="fctitl">ملاحظات إضافية</div>';
+  h+='<textarea class="finp" id="fixed_notes" rows="3" placeholder="أي طلبات خاصة أو ملاحظات تودين إضافتها..." oninput="questionAnswers[this.dataset.qid]=this.value" data-qid="notes" style="resize:none"></textarea>';
+  h+='</div>';
+
+  // Show allergy detail when checkbox checked
+  setTimeout(function(){
+    var cb=document.getElementById('fixed_allergy');
+    if(cb){cb.addEventListener('change',function(){
+      var wrap=document.getElementById('allergy-detail-wrap');
+      if(wrap)wrap.style.display=this.checked?'block':'none';
+    });}
+  },50);
+
+  if(!questions||!questions.length){box.innerHTML=h;return;}
   questions.forEach(function(q){
     h+='<div class="fcard" style="margin-bottom:10px">';
     h+='<div class="fctitl">'+(q.required?'* ':'')+esc(q.label)+'</div>';
