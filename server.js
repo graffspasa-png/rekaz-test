@@ -2,8 +2,11 @@ import express from "express";
 import fetch from "node-fetch";
 import dotenv from "dotenv";
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from "fs";
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
 dotenv.config();
 
+const __dirname = dirname(fileURLToPath(import.meta.url));
 const app = express();
 app.use(express.json({ limit: "20mb" }));
 app.use((req, res, next) => {
@@ -33,11 +36,15 @@ let MEM_DB = null;
 const DEFAULT_DB = {
   categories: [],
   services: [],
-  addonsMap: {},   // { serviceProductId: [{ rekazPriceId, nameAr, order, visible }] }
-  questions: [],   // custom booking questions
+  addonsMap: {},
+  questions: [
+    { id: "allergy", label: "هل لديك حساسية من أي مواد؟", type: "checkbox", required: false, visible: true, fixed: true },
+    { id: "allergy_detail", label: "تفاصيل الحساسية", type: "text", placeholder: "يرجى ذكر نوع الحساسية...", required: false, visible: true, conditional: "allergy", fixed: true },
+    { id: "notes", label: "ملاحظات إضافية", type: "textarea", placeholder: "أي طلبات خاصة أو ملاحظات تودين إضافتها...", required: false, visible: true, fixed: true }
+  ],
   policies: {
-    ar: `السياسات العامة:\n• يمكن تعديل الموعد أو تغيير وقته فقط في حال توفر إمكانية في نفس يوم الموعد، فيما عدا ذلك، الموعد غير قابل للتعديل بعد الحجز.\n• في حال التأخر 15 دقيقة، يتم إلغاء الموعد تلقائياً.\n• عند إلغاء الموعد قبل 4 ساعات من وقت الخدمة، يتم إضافة المبلغ كرصيد في حسابك بصلاحية شهرين.\n• في حال عدم الحضور أو الإلغاء قبل أقل من 4 ساعات، يكون المبلغ غير قابل للاسترجاع.\n\nسياسات القسائم:\n• عند الحجز باستخدام قسيمة، يجب إبلاغنا قبل 4 ساعات في حال الرغبة بإلغاء الموعد أو تغييره.\n• في حال عدم الحضور بدون إشعار مسبق، تصبح القسيمة غير صالحة.\n• في حال التأخر 15 دقيقة، يتم إلغاء الموعد ويعتبر الفاوتشر غير صالح.`,
-    en: `General Policies:\n• Appointments can only be rescheduled if availability exists on the same day. Otherwise, appointments are non-modifiable after booking.\n• A 15-minute late arrival results in automatic cancellation.\n• Cancellations made 4+ hours before service time will be added as credit valid for 2 months.\n• No-shows or cancellations less than 4 hours before service are non-refundable.\n\nVoucher Policies:\n• Voucher bookings require 4-hour advance notice for cancellations or changes.\n• No-shows without prior notice render the voucher invalid.\n• 15-minute late arrivals result in cancellation and voucher invalidation.`
+    ar: "السياسات العامة:\n• يمكن تعديل الموعد أو تغيير وقته فقط في حال توفر إمكانية في نفس يوم الموعد، فيما عدا ذلك، الموعد غير قابل للتعديل بعد الحجز.\n• في حال التأخر 15 دقيقة، يتم إلغاء الموعد تلقائياً.\n• عند إلغاء الموعد قبل 4 ساعات من وقت الخدمة، يتم إضافة المبلغ كرصيد في حسابك بصلاحية شهرين.\n• في حال عدم الحضور أو الإلغاء قبل أقل من 4 ساعات، يكون المبلغ غير قابل للاسترجاع.\n\nسياسات القسائم (الفاوتشر):\n• عند الحجز باستخدام قسيمة، يجب إبلاغنا قبل 4 ساعات في حال الرغبة بإلغاء الموعد أو تغييره.\n• في حال عدم الحضور بدون إشعار مسبق، تصبح القسيمة غير صالحة ولا يمكن استخدامها مرة أخرى.\n• في حال التأخر 15 دقيقة، يتم إلغاء الموعد ويعتبر الفاوتشر غير صالح.",
+    en: "General Policies:\n• Appointments can only be rescheduled if availability exists on the same day. Otherwise, appointments are non-modifiable after booking.\n• A 15-minute late arrival results in automatic cancellation.\n• Cancellations made 4+ hours before service time will be added as credit valid for 2 months.\n• No-shows or cancellations less than 4 hours before service are non-refundable.\n\nVoucher Policies:\n• Voucher bookings require 4-hour advance notice for cancellations or changes.\n• No-shows without prior notice render the voucher invalid.\n• 15-minute late arrivals result in cancellation and voucher invalidation."
   },
   texts: {
     homeTagline: "حيث تلتقي العناية بالفخامة · في أدق تفاصيلها",
@@ -141,22 +148,19 @@ function readDB() {
 
 function writeDB(db) {
   MEM_DB = db;
-  // Always write to both paths for maximum persistence
-  let saved = false;
   for (const p of DISK_PATHS) {
     try {
       const dir = p.substring(0, p.lastIndexOf("/"));
       if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
       writeFileSync(p, JSON.stringify(db, null, 2), "utf8");
       console.log(`[DB] Saved to ${p}`);
-      saved = true;
+      return;
     } catch(e) { console.log(`Write ${p} failed:`, e.message); }
   }
-  if (!saved) console.warn("[DB] WARNING: Add Render Disk at /var/data for persistence!");
+  console.warn("[DB] WARNING: Add Render Disk at /var/data for persistence!");
 }
 
 function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
-
 let rCache = null, rCacheTime = 0;
 const CACHE_TTL = 10 * 60 * 1000;
 const otpStore = {};
@@ -184,25 +188,25 @@ function adminAuth(req,res,next) {
 }
 
 // ── PUBLIC ──
-import { readFileSync as _rfs } from "fs";
-import { fileURLToPath } from "url";
-import { dirname, join } from "path";
-const __dirname = dirname(fileURLToPath(import.meta.url));
-
 app.get("/", (req,res) => res.send("GRAFF SPA API ✅"));
+
 app.get("/admin", (req,res) => {
-  try { res.send(_rfs(join(__dirname,"admin.html"),"utf8")); }
-  catch(e){ res.status(404).send("admin.html not found — upload it to server"); }
+  try { res.send(readFileSync(join(__dirname,"admin.html"),"utf8")); }
+  catch(e) { res.status(404).send("admin.html not found — upload it to the server root folder"); }
 });
 
 app.get("/site", (req,res) => {
   const db = readDB();
   res.json({
-    theme:db.theme, layout:db.layout, texts:db.texts, social:db.social,
-    buttons:db.buttons.filter(b=>b.visible!==false).sort((a,b)=>a.order-b.order),
-    payments:db.payments.filter(p=>p.visible!==false).sort((a,b)=>a.order-b.order),
-    pages:db.pages, policies:db.policies,
-    questions:(db.questions||[]).filter(q=>q.visible!==false)
+    theme: db.theme,
+    layout: db.layout,
+    texts: db.texts,
+    social: db.social,
+    buttons: db.buttons.filter(b=>b.visible!==false).sort((a,b)=>a.order-b.order),
+    payments: db.payments.filter(p=>p.visible!==false).sort((a,b)=>a.order-b.order),
+    pages: db.pages,
+    policies: db.policies,
+    questions: (db.questions||[]).filter(q=>q.visible!==false)
   });
 });
 
@@ -238,15 +242,13 @@ app.get("/menu", async (req,res) => {
                 rekazProductId: pid,
                 rekazPriceId: s.rekazPriceId,
                 nameAr: (p.nameAr || p.name || "").split(" - ")[0].trim(),
-                description: (p.description || p.shortDescription || ""),
+                description: p.description || p.shortDescription || "",
                 options: [],
                 addOns: (p.addOns||[]).map(ao=>{
                   const aoName=(ao.label||(ao.localizedLabel?.OtherLanguages?.ar)||"").trim();
                   if(!aoName) return null;
-                  const customFieldKey = ao.immutableId || ao.id;
-                  return {id:customFieldKey,nameAr:aoName,amount:ao.amount||0};
+                  return { id: ao.immutableId||ao.id, nameAr:aoName, amount:ao.amount||0 };
                 }).filter(Boolean),
-                // Mapped addons from admin (separate priceIds)
                 mappedAddons: (db.addonsMap||{})[pid] || []
               };
               acc.push(existing);
@@ -319,26 +321,22 @@ app.post("/create-customer", async (req,res) => {
 
 // ── BOOKING ──
 app.post("/create-booking", async (req,res) => {
-  const {customerId,phone,priceId,from,to,addons,questions}=req.body;
+  const {customerId,phone,priceId,from,to,addons,answers}=req.body;
   if(!customerId||!priceId||!from||!to) return res.status(400).json({error:"Missing fields"});
-  if(phone){
-    const s=otpStore[phone];
-    if(s && !s.verified) return res.status(403).json({error:"يجب التحقق من الجوال أولاً"});
-  }
+  if(phone){const s=otpStore[phone];if(s&&!s.verified)return res.status(403).json({error:"يجب التحقق من الجوال أولاً"});}
   try {
-    // Build customFields: addons as customFields keys
+    // Build customFields from answers
     const customFields = {};
-    (addons||[]).filter(a=>a.id).forEach(a=>{ customFields[a.id]="true"; });
-
-    // Add question answers as customFields too
-    if(questions && typeof questions==="object") {
-      Object.entries(questions).forEach(([k,v])=>{ if(v) customFields[`q_${k}`]=String(v); });
+    if(answers && typeof answers==="object") {
+      Object.entries(answers).forEach(([k,v])=>{ if(v) customFields[`q_${k}`]=String(v); });
     }
+    // Rekaz addons (immutableId)
+    (addons||[]).filter(a=>a.id&&!a.priceId).forEach(a=>{ customFields[a.id]="true"; });
 
-    // Main item
+    // Main service item
     const items = [{ priceId, quantity:1, from, to, customFields }];
 
-    // Mapped addons = separate priceIds as additional items
+    // Mapped addons = separate priceId items
     (addons||[]).filter(a=>a.priceId).forEach(a=>{
       items.push({ priceId:a.priceId, quantity:1, from, to });
     });
@@ -346,13 +344,8 @@ app.post("/create-booking", async (req,res) => {
     const payload = { customerId, branchId:BRANCH_ID, items };
     console.log("[Booking] payload:", JSON.stringify(payload, null, 2));
 
-    const r = await rekazFetch(`${REKAZ_API}/reservations/bulk`,{
-      method:"POST", body:JSON.stringify(payload)
-    });
-    if(!r.ok){
-      console.log("[Booking] FAILED:", r.text);
-      return res.status(r.status).json({error:"فشل الحجز",details:r.text});
-    }
+    const r = await rekazFetch(`${REKAZ_API}/reservations/bulk`,{method:"POST",body:JSON.stringify(payload)});
+    if(!r.ok){console.log("[Booking] FAILED:", r.text);return res.status(r.status).json({error:"فشل الحجز",details:r.text});}
     console.log("[Booking] SUCCESS:", r.text.slice(0,300));
     const result = r.json();
     if(phone) delete otpStore[phone];
@@ -407,29 +400,20 @@ app.put("/admin/categories/:id/services",adminAuth,(req,res)=>{
   });
   writeDB(db);res.json({success:true,count:(req.body.priceIds||[]).length});
 });
-
-// ── ADDON MAPPING ──
+app.get("/admin/rekaz-products",adminAuth,async(req,res)=>{
+  try{res.json(await getProds());}catch(e){res.status(500).json({error:e.message});}
+});
 app.get("/admin/addons-map",adminAuth,(req,res)=>res.json(readDB().addonsMap||{}));
 app.put("/admin/addons-map",adminAuth,(req,res)=>{
-  const db=readDB();
-  db.addonsMap=req.body;
-  writeDB(db);res.json({success:true});
+  const db=readDB();db.addonsMap=req.body;writeDB(db);res.json({success:true});
 });
-
-// ── QUESTIONS ──
 app.get("/admin/questions",adminAuth,(req,res)=>res.json(readDB().questions||[]));
 app.put("/admin/questions",adminAuth,(req,res)=>{
   const db=readDB();db.questions=req.body;writeDB(db);res.json({success:true});
 });
-
-// ── POLICIES ──
 app.get("/admin/policies",adminAuth,(req,res)=>res.json(readDB().policies||{}));
 app.put("/admin/policies",adminAuth,(req,res)=>{
   const db=readDB();db.policies=req.body;writeDB(db);res.json({success:true});
-});
-
-app.get("/admin/rekaz-products",adminAuth,async(req,res)=>{
-  try{res.json(await getProds());}catch(e){res.status(500).json({error:e.message});}
 });
 
 // ── DEBUG ──
