@@ -1174,6 +1174,19 @@ function buildConfirm(){
   h+='<div class="sumrow sum-divider"><span class="suml muted-lbl">قبل الضريبة</span><span class="sumv muted-val">SAR '+base.toLocaleString('en')+'</span></div>';
   h+='<div class="sumrow"><span class="suml muted-lbl">ضريبة القيمة المضافة 15%</span><span class="sumv muted-val">SAR '+vat.toLocaleString('en')+'</span></div>';
   h+='</div>';
+  // أضف ملخص الأسئلة
+  var hasAns = (ANS.allergy==='yes') || (ANS.notes&&ANS.notes.trim());
+  if(hasAns){
+    h+='<div class="inv-section" style="margin-top:10px">';
+    h+='<div class="inv-lbl">معلومات إضافية</div>';
+    if(ANS.allergy==='yes'){
+      h+='<div class="sumrow"><span class="suml">حساسية</span><span class="sumv">نعم'+(ANS.allergy_detail?' — '+esc(ANS.allergy_detail):'')+'</span></div>';
+    }
+    if(ANS.notes&&ANS.notes.trim()){
+      h+='<div class="sumrow"><span class="suml">ملاحظات</span><span class="sumv" style="font-size:11px;line-height:1.6;text-align:right;max-width:180px">'+esc(ANS.notes)+'</span></div>';
+    }
+    h+='</div>';
+  }
   document.getElementById('confsumm').innerHTML=h;
   document.getElementById('conftot').innerHTML='<span class="sumtotl">الإجمالي شامل الضريبة</span><span class="sumtotv">SAR '+tot.toLocaleString('en')+'</span>';
 }
