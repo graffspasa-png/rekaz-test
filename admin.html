@@ -147,7 +147,7 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink2);color:#fff;directio
     <div class="ni" onclick="show('social')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>السوشيال ميديا</div>
     <div class="ni" onclick="show('payment')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>بوابات الدفع</div>
     <div class="sl-sec">الحجز</div>
-    <div class="ni" onclick="show('addons')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 5v14M5 12h14"/></svg>الإضافات</div>
+    <div class="ni" onclick="show('addons')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 5v14M5 12h14"/></svg>الإضافات المرتبطة</div>
     <div class="ni" onclick="show('questions')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3M12 17h.01"/></svg>أسئلة الحجز</div>
     <div class="ni" onclick="show('policies')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>السياسات</div>
     <div class="sl-foot"><button class="lout-btn" onclick="doLogout()">تسجيل الخروج</button></div>
@@ -305,23 +305,30 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink2);color:#fff;directio
 </div>
 
 <!-- CAT MODAL -->
-<!-- ADDON MAP MODAL -->
+<!-- ADDON MODAL -->
 <div class="overlay" id="ov-addon">
-  <div class="modal" style="max-width:480px">
+  <div class="modal" style="max-width:500px">
     <div class="modal-ttl">ربط إضافة بخدمة <button class="modal-x" onclick="g('ov-addon').classList.remove('on')">×</button></div>
-    <input type="hidden" id="addon-modal-idx">
+    <input type="hidden" id="ao-idx" value="-1">
+    <input type="hidden" id="ao-prodid" value="">
     <div class="f">
-      <label>الخدمة الأساسية</label>
-      <select id="addon-modal-prod" class="f input" style="width:100%;padding:9px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#fff;font-family:Tajawal,sans-serif;font-size:13px;outline:none"></select>
+      <label>الخدمة الأساسية (من ركاز)</label>
+      <select id="ao-prod" style="width:100%;padding:9px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#fff;font-family:Tajawal,sans-serif;font-size:13px;outline:none">
+        <option value="">اختاري الخدمة...</option>
+      </select>
     </div>
-    <div class="f"><label>اسم الإضافة (عربي)</label><input id="addon-modal-name" placeholder="مثال: استشوار"></div>
-    <div class="f"><label>priceId من ركاز (مطلوب)</label><input id="addon-modal-priceid" placeholder="3a20..."></div>
-    <div class="f"><label>السعر SAR</label><input type="number" id="addon-modal-amount" value="0"></div>
-    <div class="f"><label>المدة (دقيقة)</label><input type="number" id="addon-modal-dur" value="0"></div>
-    <div class="f"><label>وصف مختصر (اختياري)</label><input id="addon-modal-desc" placeholder="وصف الإضافة"></div>
+    <div class="gr2">
+      <div class="f"><label>اسم الإضافة (عربي) *</label><input id="ao-name" placeholder="مثال: استشوار"></div>
+      <div class="f"><label>priceId من ركاز *</label><input id="ao-priceid" placeholder="3a20..."></div>
+    </div>
+    <div class="gr2">
+      <div class="f"><label>السعر SAR</label><input type="number" id="ao-amount" value="0" min="0"></div>
+      <div class="f"><label>المدة (دقيقة)</label><input type="number" id="ao-dur" value="0" min="0"></div>
+    </div>
+    <div class="f"><label>وصف مختصر</label><input id="ao-desc" placeholder="وصف اختياري للإضافة"></div>
     <div class="modal-btns">
       <button class="btn-s" onclick="g('ov-addon').classList.remove('on')">إلغاء</button>
-      <button class="btn-p" onclick="saveAddonEntry()">حفظ الإضافة</button>
+      <button class="btn-p" onclick="saveAddon()">حفظ الإضافة</button>
     </div>
   </div>
 </div>
@@ -329,27 +336,27 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink2);color:#fff;directio
 <!-- QUESTION MODAL -->
 <div class="overlay" id="ov-question">
   <div class="modal" style="max-width:440px">
-    <div class="modal-ttl">إضافة / تعديل سؤال <button class="modal-x" onclick="g('ov-question').classList.remove('on')">×</button></div>
-    <input type="hidden" id="q-modal-idx">
-    <div class="f"><label>نص السؤال (عربي)</label><input id="q-modal-label" placeholder="مثال: هل لديك حساسية من أي مواد؟"></div>
+    <div class="modal-ttl">سؤال مخصص <button class="modal-x" onclick="g('ov-question').classList.remove('on')">×</button></div>
+    <input type="hidden" id="q-idx" value="-1">
+    <div class="f"><label>نص السؤال *</label><input id="q-label" placeholder="مثال: ما هو لون الجل المفضل لديك؟"></div>
     <div class="f">
       <label>نوع السؤال</label>
-      <select id="q-modal-type" onchange="toggleQOptions()" style="width:100%;padding:9px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#fff;font-family:Tajawal,sans-serif;font-size:13px;outline:none">
+      <select id="q-type" onchange="toggleQOpts()" style="width:100%;padding:9px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#fff;font-family:Tajawal,sans-serif;font-size:13px;outline:none">
         <option value="text">نص قصير</option>
         <option value="textarea">نص طويل</option>
         <option value="checkbox">صح / خطأ</option>
         <option value="radio">اختيار من متعدد</option>
       </select>
     </div>
-    <div class="f"><label>placeholder (اختياري)</label><input id="q-modal-placeholder" placeholder="اكتبي هنا..."></div>
-    <div id="q-options-row" class="f" style="display:none">
-      <label>خيارات (كل سطر خيار)</label>
-      <textarea id="q-modal-options" rows="4" placeholder="خيار 1&#10;خيار 2&#10;خيار 3"></textarea>
+    <div class="f"><label>placeholder</label><input id="q-placeholder" placeholder="اكتبي هنا..."></div>
+    <div id="q-opts-wrap" class="f" style="display:none">
+      <label>الخيارات (كل سطر خيار)</label>
+      <textarea id="q-options" rows="4" placeholder="خيار 1&#10;خيار 2&#10;خيار 3"></textarea>
     </div>
-    <div class="f" style="display:flex;align-items:center;gap:10px;padding:6px 0">
-      <input type="checkbox" id="q-modal-required" style="width:16px;height:16px;accent-color:var(--gold)">
-      <label style="font-size:12px;color:rgba(255,255,255,.7);margin:0;cursor:pointer">سؤال إلزامي</label>
-    </div>
+    <label style="display:flex;align-items:center;gap:10px;padding:8px 0;cursor:pointer">
+      <input type="checkbox" id="q-required" style="width:16px;height:16px;accent-color:var(--gold)">
+      <span style="font-size:12px;color:rgba(255,255,255,.7)">سؤال إلزامي</span>
+    </label>
     <div class="modal-btns">
       <button class="btn-s" onclick="g('ov-question').classList.remove('on')">إلغاء</button>
       <button class="btn-p" onclick="saveQuestion()">حفظ السؤال</button>
@@ -374,59 +381,6 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink2);color:#fff;directio
     <div class="modal-btns">
       <button class="btn-p" onclick="saveCat()">حفظ القسم</button>
       <button class="btn-s" onclick="closeModal()">إلغاء</button>
-
-      <!-- ADDONS -->
-      <div class="panel" id="p-addons">
-        <div class="card">
-          <div class="card-ttl">الإضافات المرتبطة بالخدمات</div>
-          <p style="font-size:11px;color:rgba(255,255,255,.4);margin-bottom:16px;line-height:1.7">اربطي إضافات (خدمات مستقلة من ركاز) بكل خدمة رئيسية. ستظهر للعميل بعد اختيار الخدمة.</p>
-          <div id="addons-map-list"></div>
-          <button class="add-btn" onclick="openAddonMapModal()">+ ربط إضافة جديدة</button>
-        </div>
-      </div>
-
-      <!-- QUESTIONS -->
-      <div class="panel" id="p-questions">
-        <div class="card">
-          <div class="card-ttl">أسئلة الحجز</div>
-          <p style="font-size:11px;color:rgba(255,255,255,.4);margin-bottom:16px;line-height:1.7">أضيفي أسئلة تُعرض على العميل بعد التحقق من الجوال — مثل الحساسية والملاحظات.</p>
-          <div id="questions-list"></div>
-          <button class="add-btn" onclick="openQuestionModal()">+ إضافة سؤال جديد</button>
-        </div>
-        <div class="card">
-          <div class="card-ttl">أسئلة ثابتة (مدمجة)</div>
-          <div style="display:flex;flex-direction:column;gap:10px;font-size:12px;color:rgba(255,255,255,.55);line-height:1.8">
-            <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06)">
-              <span>هل لديك حساسية؟ (checkbox)</span>
-              <span style="color:var(--gold);font-size:10px">مدمج دائماً</span>
-            </div>
-            <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0">
-              <span>ملاحظات إضافية (textarea)</span>
-              <span style="color:var(--gold);font-size:10px">مدمج دائماً</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- POLICIES -->
-      <div class="panel" id="p-policies">
-        <div class="card">
-          <div class="card-ttl">السياسات العامة — عربي</div>
-          <div class="f">
-            <label>النص بالعربي (يظهر في صفحة التأكيد)</label>
-            <textarea id="pol-ar" style="min-height:200px;font-size:12px;line-height:1.8"></textarea>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-ttl">السياسات — إنجليزي</div>
-          <div class="f">
-            <label>النص بالإنجليزي</label>
-            <textarea id="pol-en" style="min-height:200px;font-size:12px;line-height:1.8;direction:ltr;text-align:left"></textarea>
-          </div>
-        </div>
-        <button class="sbtn" onclick="savePolicies()">حفظ السياسات</button>
-      </div>
-
     </div>
   </div>
 </div>
@@ -474,13 +428,16 @@ async function loadDB(){
 }
 
 // ── PANELS ──
-const TITLES={overview:'نظرة عامة',menu:'الأقسام والخدمات',texts:'جميع النصوص',design:'التصميم والألوان',logo:'الشعار',buttons:'الأزرار',gift:'بطاقة الإهداء',memberships:'العضويات',social:'التواصل الاجتماعي',payment:'بوابات الدفع'};
+const TITLES={overview:'نظرة عامة',menu:'الأقسام والخدمات',texts:'جميع النصوص',design:'التصميم والألوان',logo:'الشعار',buttons:'الأزرار',gift:'بطاقة الإهداء',memberships:'العضويات',social:'التواصل الاجتماعي',payment:'بوابات الدفع',addons:'الإضافات المرتبطة',questions:'أسئلة الحجز',policies:'السياسات'};
 function show(id){
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
   document.querySelectorAll('.ni').forEach(n=>n.classList.remove('on'));
-  g('p-'+id).classList.add('on');
-  document.querySelector(`.ni[onclick="show('${id}')"]`).classList.add('on');
-  g('tb-title').textContent=TITLES[id]||id;
+  const el=g('p-'+id);if(el)el.classList.add('on');
+  const ni=document.querySelector(`.ni[onclick*="'${id}'"]`);if(ni)ni.classList.add('on');
+  if(g('tb-title'))g('tb-title').textContent=TITLES[id]||id;
+  if(id==='addons')renderAddonsMap();
+  if(id==='questions')renderQuestions();
+  if(id==='policies')renderPolicies();
 }
 function renderAll(){renderOverview();renderMenu();renderTexts();renderDesign();renderLogo();renderButtons();renderGift();renderMems();renderSocial();renderPayment();renderQuestions();renderPolicies();}
 
@@ -867,204 +824,175 @@ function uploadPay(i,input){const f=input.files[0];if(!f)return;const r=new File
 function clearPay(i){DB.payments[i].customImage='';renderPayment();}
 
 // ── ADDONS MAP ──
-var addonMapData = {}; // { productId: [{rekazPriceId, nameAr, desc, amount, duration, order, visible}] }
-var addonMapModal_prodId = null;
-var allRekazProds = [];
+var ADDONS_MAP = {}; // { productId: [{rekazPriceId,nameAr,desc,amount,duration,order,visible}] }
+var REKAZ_PRODS = [];
+
+async function loadRekazProds(){
+  if(REKAZ_PRODS.length) return;
+  try{
+    const d = await api('GET','/admin/rekaz-products');
+    REKAZ_PRODS = d.items||[];
+  }catch(e){console.log('rekaz prods',e);}
+}
 
 async function renderAddonsMap(){
-  addonMapData = DB.addonsMap || {};
-  // Load rekaz products for display
-  try {
-    if(!allRekazProds.length){
-      const r = await fetch(B+'/admin/rekaz-products',{headers:{Authorization:'Bearer '+TOK}});
-      const d = await r.json();
-      allRekazProds = d.items||[];
-    }
-  } catch(e){}
-
-  const box = g('addons-map-list');
-  const entries = Object.entries(addonMapData);
-
+  ADDONS_MAP = DB.addonsMap||{};
+  await loadRekazProds();
+  const box=g('addons-map-list');if(!box)return;
+  const entries=Object.entries(ADDONS_MAP);
   if(!entries.length){
-    box.innerHTML='<div style="font-size:12px;color:rgba(255,255,255,.3);padding:12px 0">لا توجد إضافات مرتبطة بعد</div>';
+    box.innerHTML='<div style="font-size:12px;color:rgba(255,255,255,.3);padding:12px 0">لا توجد إضافات مرتبطة بعد — اضغطي إضافة جديدة</div>';
     return;
   }
-
-  box.innerHTML = entries.map(([prodId, addons])=>{
-    const prod = allRekazProds.find(p=>p.id===prodId);
-    const prodName = prod ? (prod.nameAr||prod.name||prodId) : prodId;
-    const addonRows = (addons||[]).map((ao,ai)=>`
-      <div class="li" style="margin-bottom:5px">
+  box.innerHTML = entries.map(([prodId,addons])=>{
+    const prod=REKAZ_PRODS.find(p=>p.id===prodId);
+    const prodName=prod?(prod.nameAr||prod.name||prodId):prodId;
+    const rows=(addons||[]).map((ao,ai)=>`
+      <div class="li">
         <div class="li-info">
           <div class="li-name">${e(ao.nameAr||'')}</div>
-          <div class="li-sub">SAR ${ao.amount||0} · priceId: ${ao.rekazPriceId||'—'}</div>
+          <div class="li-sub">SAR ${ao.amount||0}${ao.duration?' · '+ao.duration+' دقيقة':''}</div>
         </div>
         <div class="li-acts">
-          <button class="lb" onclick="editAddonEntry('${prodId}',${ai})">تعديل</button>
-          <button class="lb del" onclick="delAddonEntry('${prodId}',${ai})">×</button>
+          <button class="lb" onclick="editAddon('${prodId}',${ai})">تعديل</button>
+          <button class="lb del" onclick="delAddon('${prodId}',${ai})">×</button>
         </div>
       </div>`).join('');
     return `<div class="card" style="margin-bottom:10px">
-      <div class="card-ttl">${e(prodName)}</div>
-      ${addonRows}
-      <button class="add-btn" style="margin-top:6px" onclick="addAddonEntry('${prodId}')">+ إضافة</button>
+      <div class="card-ttl" style="cursor:pointer" onclick="addAddonToService('${prodId}')">${e(prodName)} <span style="font-size:10px;color:var(--gold);margin-right:8px">+ إضافة</span></div>
+      ${rows}
     </div>`;
   }).join('');
 }
 
-function openAddonMapModal(){
-  // Open modal to choose which product to map
-  if(!allRekazProds.length){alert('جاري تحميل المنتجات...');renderAddonsMap();return;}
-  const prods = allRekazProds;
-  g('addon-modal-prod').innerHTML = '<option value="">اختاري الخدمة الأساسية</option>' +
-    prods.map(p=>`<option value="${p.id}">${e(p.nameAr||p.name||p.id)}</option>`).join('');
-  resetAddonForm();
+function openAddonModal(prodId,idx){
+  g('ao-idx').value=idx!==undefined?idx:'-1';
+  g('ao-prodid').value=prodId||'';
+  // Populate product dropdown
+  g('ao-prod').innerHTML='<option value="">اختاري الخدمة...</option>'+
+    REKAZ_PRODS.map(p=>`<option value="${p.id}"${prodId===p.id?' selected':''}>${e(p.nameAr||p.name||p.id)}</option>`).join('');
+  if(prodId)g('ao-prod').disabled=true; else g('ao-prod').disabled=false;
+  // Fill form if editing
+  if(idx!==undefined&&prodId){
+    const ao=ADDONS_MAP[prodId][idx];
+    g('ao-name').value=ao.nameAr||'';
+    g('ao-priceid').value=ao.rekazPriceId||'';
+    g('ao-amount').value=ao.amount||0;
+    g('ao-dur').value=ao.duration||0;
+    g('ao-desc').value=ao.desc||'';
+  } else {
+    ['ao-name','ao-priceid','ao-desc'].forEach(id=>{g(id).value='';});
+    g('ao-amount').value='0';g('ao-dur').value='0';
+  }
   g('ov-addon').classList.add('on');
 }
 
-function addAddonEntry(prodId){
-  addonMapModal_prodId = prodId;
-  const prods = allRekazProds;
-  g('addon-modal-prod').value = prodId;
-  g('addon-modal-prod').disabled = true;
-  resetAddonForm();
-  g('ov-addon').classList.add('on');
-}
-
-function editAddonEntry(prodId, idx){
-  addonMapModal_prodId = prodId;
-  const ao = addonMapData[prodId][idx];
-  g('addon-modal-prod').value = prodId;
-  g('addon-modal-prod').disabled = true;
-  g('addon-modal-priceid').value = ao.rekazPriceId||'';
-  g('addon-modal-name').value = ao.nameAr||'';
-  g('addon-modal-desc').value = ao.desc||'';
-  g('addon-modal-amount').value = ao.amount||0;
-  g('addon-modal-dur').value = ao.duration||0;
-  g('addon-modal-idx').value = idx;
-  g('ov-addon').classList.add('on');
-}
-
-function delAddonEntry(prodId, idx){
-  if(!confirm('حذف هذه الإضافة؟')) return;
-  addonMapData[prodId].splice(idx,1);
-  if(!addonMapData[prodId].length) delete addonMapData[prodId];
-  DB.addonsMap = addonMapData;
+function addAddonToService(prodId){openAddonModal(prodId);}
+function editAddon(prodId,idx){openAddonModal(prodId,idx);}
+function delAddon(prodId,idx){
+  if(!confirm('حذف هذه الإضافة؟'))return;
+  ADDONS_MAP[prodId].splice(idx,1);
+  if(!ADDONS_MAP[prodId].length)delete ADDONS_MAP[prodId];
+  DB.addonsMap=ADDONS_MAP;
   renderAddonsMap();
 }
 
-function resetAddonForm(){
-  ['addon-modal-priceid','addon-modal-name','addon-modal-desc','addon-modal-amount','addon-modal-dur'].forEach(id=>{
-    const el=g(id);if(el)el.value='';
-  });
-  g('addon-modal-idx').value = '-1';
-  if(g('addon-modal-prod'))g('addon-modal-prod').disabled=false;
-}
-
-function saveAddonEntry(){
-  const prodId = g('addon-modal-prod').value;
+async function saveAddon(){
+  const prodId=g('ao-prod').value;
   if(!prodId){alert('اختاري الخدمة أولاً');return;}
-  const priceId = g('addon-modal-priceid').value.trim();
-  if(!priceId){alert('أدخلي priceId الخاص بالإضافة من ركاز');return;}
-  const nameAr = g('addon-modal-name').value.trim();
+  const priceId=g('ao-priceid').value.trim();
+  if(!priceId){alert('أدخلي priceId الإضافة من ركاز');return;}
+  const nameAr=g('ao-name').value.trim();
   if(!nameAr){alert('أدخلي اسم الإضافة');return;}
-  const amount = parseFloat(g('addon-modal-amount').value)||0;
-  const desc = g('addon-modal-desc').value.trim();
-  const duration = parseInt(g('addon-modal-dur').value)||0;
-  const idx = parseInt(g('addon-modal-idx').value);
-
-  if(!addonMapData[prodId]) addonMapData[prodId]=[];
-  const entry = {rekazPriceId:priceId,nameAr,desc,amount,duration,order:idx>-1?addonMapData[prodId][idx].order||(idx+1):(addonMapData[prodId].length+1),visible:true};
-
-  if(idx>-1){ addonMapData[prodId][idx]=entry; }
-  else { addonMapData[prodId].push(entry); }
-
-  DB.addonsMap = addonMapData;
+  const amount=parseFloat(g('ao-amount').value)||0;
+  const duration=parseInt(g('ao-dur').value)||0;
+  const desc=g('ao-desc').value.trim();
+  const idx=parseInt(g('ao-idx').value);
+  if(!ADDONS_MAP[prodId])ADDONS_MAP[prodId]=[];
+  const entry={rekazPriceId:priceId,nameAr,desc,amount,duration,order:ADDONS_MAP[prodId].length+1,visible:true};
+  if(idx>-1)ADDONS_MAP[prodId][idx]=entry;
+  else ADDONS_MAP[prodId].push(entry);
+  DB.addonsMap=ADDONS_MAP;
+  // Save immediately
+  try{await api('PUT','/admin/addons-map',ADDONS_MAP);flash();}catch(e){alert('خطأ في الحفظ');}
   g('ov-addon').classList.remove('on');
   renderAddonsMap();
 }
 
-async function saveAddonsMap(){
-  try{
-    await fetch(B+'/admin/addons-map',{method:'PUT',headers:{Authorization:'Bearer '+TOK,'Content-Type':'application/json'},body:JSON.stringify(addonMapData)});
-    flash();
-  }catch(e){alert('خطأ: '+e.message);}
-}
-
 // ── QUESTIONS ──
-var questionsData = [];
+var QUESTIONS = [];
 
 function renderQuestions(){
-  questionsData = DB.questions||[];
-  const box = g('questions-list');
-  if(!questionsData.length){
+  QUESTIONS=DB.questions||[];
+  // Only show non-fixed
+  const custom=QUESTIONS.filter(q=>!q.fixed);
+  const box=g('questions-list');if(!box)return;
+  if(!custom.length){
     box.innerHTML='<div style="font-size:12px;color:rgba(255,255,255,.3);padding:12px 0">لا توجد أسئلة مخصصة بعد</div>';
     return;
   }
-  box.innerHTML = questionsData.map((q,i)=>`
-    <div class="li">
+  box.innerHTML=custom.map((q,i)=>{
+    const realIdx=QUESTIONS.indexOf(q);
+    return `<div class="li">
       <div class="li-info">
         <div class="li-name">${e(q.label)}</div>
-        <div class="li-sub">${q.type==='text'?'نص':q.type==='textarea'?'نص طويل':q.type==='checkbox'?'صح/خطأ':'اختيار'} ${q.required?'· مطلوب':''}</div>
+        <div class="li-sub">${q.type==='text'?'نص':q.type==='textarea'?'نص طويل':q.type==='checkbox'?'صح/خطأ':'اختيار متعدد'}${q.required?' · إلزامي':''}</div>
       </div>
       <div class="li-acts">
-        <div class="tog ${q.visible!==false?'on':''}" onclick="togQ(${i})"></div>
-        <button class="lb" onclick="editQ(${i})">تعديل</button>
-        <button class="lb del" onclick="delQ(${i})">×</button>
+        <div class="tog ${q.visible!==false?'on':''}" onclick="togQ(${realIdx})"></div>
+        <button class="lb" onclick="editQ(${realIdx})">تعديل</button>
+        <button class="lb del" onclick="delQ(${realIdx})">×</button>
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 
-function togQ(i){questionsData[i].visible=!(questionsData[i].visible!==false);DB.questions=questionsData;renderQuestions();}
-function delQ(i){if(!confirm('حذف هذا السؤال؟'))return;questionsData.splice(i,1);DB.questions=questionsData;renderQuestions();}
+function togQ(i){QUESTIONS[i].visible=!(QUESTIONS[i].visible!==false);DB.questions=QUESTIONS;renderQuestions();}
+function delQ(i){if(!confirm('حذف هذا السؤال؟'))return;QUESTIONS.splice(i,1);DB.questions=QUESTIONS;renderQuestions();}
+function editQ(i){openQuestionModal(i);}
 
 function openQuestionModal(idx){
-  g('q-modal-idx').value = idx!==undefined?idx:'-1';
+  g('q-idx').value=idx!==undefined?idx:'-1';
   if(idx!==undefined){
-    const q=questionsData[idx];
-    g('q-modal-label').value=q.label||'';
-    g('q-modal-type').value=q.type||'text';
-    g('q-modal-placeholder').value=q.placeholder||'';
-    g('q-modal-required').checked=!!q.required;
-    g('q-modal-options').value=(q.options||[]).join('\n');
-    toggleQOptions();
+    const q=QUESTIONS[idx];
+    g('q-label').value=q.label||'';
+    g('q-type').value=q.type||'text';
+    g('q-placeholder').value=q.placeholder||'';
+    g('q-required').checked=!!q.required;
+    g('q-options').value=(q.options||[]).join('\n');
+    toggleQOpts();
   } else {
-    g('q-modal-label').value='';
-    g('q-modal-type').value='text';
-    g('q-modal-placeholder').value='';
-    g('q-modal-required').checked=false;
-    g('q-modal-options').value='';
+    g('q-label').value='';g('q-type').value='text';
+    g('q-placeholder').value='';g('q-required').checked=false;
+    g('q-options').value='';
   }
   g('ov-question').classList.add('on');
 }
-function editQ(i){openQuestionModal(i);}
 
-function toggleQOptions(){
-  const t=g('q-modal-type').value;
-  g('q-options-row').style.display=t==='radio'?'block':'none';
+function toggleQOpts(){
+  const t=g('q-type').value;
+  const wrap=g('q-opts-wrap');
+  if(wrap)wrap.style.display=t==='radio'?'block':'none';
 }
 
-function saveQuestion(){
-  const label=g('q-modal-label').value.trim();
+async function saveQuestion(){
+  const label=g('q-label').value.trim();
   if(!label){alert('أدخلي نص السؤال');return;}
-  const type=g('q-modal-type').value;
-  const placeholder=g('q-modal-placeholder').value.trim();
-  const required=g('q-modal-required').checked;
-  const options=type==='radio'?g('q-modal-options').value.split('\n').map(s=>s.trim()).filter(Boolean):[];
-  const idx=parseInt(g('q-modal-idx').value);
-  const id='q_'+Date.now();
-  const entry={id:idx>-1?questionsData[idx].id:id,label,type,placeholder,required,options,visible:true};
-  if(idx>-1){questionsData[idx]=entry;}else{questionsData.push(entry);}
-  DB.questions=questionsData;
+  const type=g('q-type').value;
+  const placeholder=g('q-placeholder').value.trim();
+  const required=g('q-required').checked;
+  const options=type==='radio'?g('q-options').value.split('\n').map(s=>s.trim()).filter(Boolean):[];
+  const idx=parseInt(g('q-idx').value);
+  const entry={
+    id:idx>-1?QUESTIONS[idx].id:('q_'+Date.now()),
+    label,type,placeholder,required,options,visible:true,fixed:false
+  };
+  if(idx>-1)QUESTIONS[idx]=entry;
+  else QUESTIONS.push(entry);
+  DB.questions=QUESTIONS;
+  try{await api('PUT','/admin/questions',QUESTIONS);flash();}catch(e){alert('خطأ في الحفظ');}
   g('ov-question').classList.remove('on');
   renderQuestions();
-}
-
-async function saveQuestions(){
-  try{
-    await fetch(B+'/admin/questions',{method:'PUT',headers:{Authorization:'Bearer '+TOK,'Content-Type':'application/json'},body:JSON.stringify(questionsData)});
-    flash();
-  }catch(e){alert('خطأ: '+e.message);}
 }
 
 // ── POLICIES ──
@@ -1076,11 +1004,9 @@ function renderPolicies(){
 }
 
 async function savePolicies(){
-  DB.policies={ar:g('pol-ar').value,en:g('pol-en').value};
-  try{
-    await fetch(B+'/admin/policies',{method:'PUT',headers:{Authorization:'Bearer '+TOK,'Content-Type':'application/json'},body:JSON.stringify(DB.policies)});
-    flash();
-  }catch(e){alert('خطأ: '+e.message);}
+  const pol={ar:g('pol-ar').value,en:g('pol-en').value};
+  DB.policies=pol;
+  try{await api('PUT','/admin/policies',pol);flash();}catch(e){alert('خطأ: '+e.message);}
 }
 
 </script>
