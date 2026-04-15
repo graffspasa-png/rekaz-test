@@ -571,16 +571,18 @@ async function loadDB(){
   DB.texts=DB.texts||{};DB.theme=DB.theme||{};DB.layout=DB.layout||{};
   DB.social=DB.social||{};DB.buttons=DB.buttons||[];
   DB.payments=DB.payments||[];DB.pages=DB.pages||{};
+  DB.policies=DB.policies||{ar:'',en:''};
 }
 
 // ── PANELS ──
-const TITLES={overview:'نظرة عامة',menu:'الأقسام والخدمات',texts:'جميع النصوص',design:'التصميم والألوان',logo:'الشعار',buttons:'الأزرار',gift:'بطاقة الإهداء',memberships:'العضويات',social:'التواصل الاجتماعي',payment:'بوابات الدفع'};
+const TITLES={overview:'نظرة عامة',menu:'الأقسام والخدمات',texts:'جميع النصوص',design:'التصميم والألوان',logo:'الشعار',buttons:'الأزرار',gift:'بطاقة الإهداء',memberships:'العضويات',social:'التواصل الاجتماعي',payment:'بوابات الدفع',policies:'السياسات'};
 function show(id){
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
   document.querySelectorAll('.ni').forEach(n=>n.classList.remove('on'));
-  g('p-'+id).classList.add('on');
-  document.querySelector(\`.ni[onclick="show('\${id}')"]\`).classList.add('on');
-  g('tb-title').textContent=TITLES[id]||id;
+  const el=g('p-'+id);if(el)el.classList.add('on');
+  const ni=document.querySelector(\`.ni[onclick="show('\${id}')"]\`);if(ni)ni.classList.add('on');
+  if(g('tb-title'))g('tb-title').textContent=TITLES[id]||id;
+  if(id==='policies')renderPolicies();
 }
 function renderAll(){renderOverview();renderMenu();renderTexts();renderDesign();renderLogo();renderButtons();renderGift();renderMems();renderSocial();renderPayment();}
 
@@ -972,17 +974,6 @@ function clearPay(i){DB.payments[i].customImage='';renderPayment();}
 
 
 // ── POLICIES ──
-// Override show() to support policies panel
-const _origShow = show;
-function show(id){
-  document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('on');});
-  document.querySelectorAll('.ni').forEach(function(n){n.classList.remove('on');});
-  var el=document.getElementById('p-'+id);if(el)el.classList.add('on');
-  var _sel='.ni[onclick*="\\''+id+'\\'"';var ni=document.querySelector(_sel+']');if(ni)ni.classList.add('on');
-  var TITLES={overview:'نظرة عامة',menu:'الأقسام والخدمات',texts:'النصوص',design:'التصميم',logo:'الشعار',buttons:'الأزرار',gift:'بطاقة الإهداء',memberships:'العضويات',social:'السوشيال ميديا',payment:'بوابات الدفع',policies:'السياسات'};
-  if(document.getElementById('tb-title'))document.getElementById('tb-title').textContent=TITLES[id]||id;
-  if(id==='policies')renderPolicies();
-}
 
 function renderPolicies(){
   var pol=DB.policies||{};
@@ -996,12 +987,7 @@ async function savePolicies(){
   flash();
 }
 
-// Override loadDB to include policies
-const _origLoadDB2 = loadDB;
-async function loadDB(){
-  await _origLoadDB2();
-  DB.policies=DB.policies||{ar:'',en:''};
-}
+
 
 </script>
 </body>
