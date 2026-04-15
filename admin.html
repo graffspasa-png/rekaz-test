@@ -323,11 +323,10 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink2);color:#fff;directio
       <button class="btn-p" onclick="saveCat()">حفظ القسم</button>
       <button class="btn-s" onclick="closeModal()">إلغاء</button>
 
-
       <!-- ADDONS PANEL -->
       <div class="panel" id="p-addons">
         <div class="card"><div class="card-ttl">الإضافات المرتبطة بالخدمات</div>
-          <p style="font-size:11px;color:rgba(255,255,255,.4);margin-bottom:16px;line-height:1.8">ربطي خدمة من ركاز بكل خدمة أساسية — ستظهر للعميل كإضافات اختيارية.</p>
+          <p style="font-size:11px;color:rgba(255,255,255,.4);margin-bottom:16px;line-height:1.8">ربطي خدمة ركاز كإضافة اختيارية لكل خدمة أساسية.</p>
           <div id="addons-map-list"></div>
           <button class="add-btn" onclick="openAddonModal()">+ ربط إضافة جديدة</button>
         </div>
@@ -350,18 +349,17 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink2);color:#fff;directio
       <div class="panel" id="p-policies">
         <div class="card"><div class="card-ttl">السياسات — عربي</div>
           <div class="f"><label>النص بالعربي</label>
-            <textarea id="pol-ar" style="min-height:220px;font-size:12px;line-height:1.9"></textarea>
+            <textarea id="pol-ar" style="min-height:200px;font-size:12px;line-height:1.9"></textarea>
           </div>
         </div>
         <div class="card"><div class="card-ttl">Policies — English</div>
           <div class="f"><label>English Text</label>
-            <textarea id="pol-en" style="min-height:220px;font-size:12px;line-height:1.9;direction:ltr;text-align:left"></textarea>
+            <textarea id="pol-en" style="min-height:200px;font-size:12px;line-height:1.9;direction:ltr;text-align:left"></textarea>
           </div>
         </div>
         <button class="sbtn" onclick="savePolicies()" style="margin-bottom:24px">حفظ السياسات</button>
       </div>
 
-<!-- /new panels -->
     </div>
   </div>
 </div>
@@ -807,7 +805,6 @@ function clearPay(i){DB.payments[i].customImage='';renderPayment();}
   <div class="modal" style="max-width:500px">
     <div class="modal-ttl">ربط إضافة <button class="modal-x" onclick="g('ov-addon').classList.remove('on')">×</button></div>
     <input type="hidden" id="ao-idx" value="-1">
-    <input type="hidden" id="ao-prodid" value="">
     <div class="f"><label>الخدمة الأساسية</label>
       <select id="ao-prod" style="width:100%;padding:9px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#fff;font-family:Tajawal,sans-serif;font-size:13px;outline:none">
         <option value="">اختاري الخدمة...</option>
@@ -844,7 +841,8 @@ function clearPay(i){DB.payments[i].customImage='';renderPayment();}
       </select>
     </div>
     <div class="f"><label>placeholder</label><input id="q-placeholder"></div>
-    <div id="q-opts-wrap" class="f" style="display:none"><label>الخيارات (كل سطر خيار)</label>
+    <div id="q-opts-wrap" class="f" style="display:none">
+      <label>الخيارات (كل سطر خيار)</label>
       <textarea id="q-options" rows="4" placeholder="خيار 1&#10;خيار 2&#10;خيار 3"></textarea>
     </div>
     <label style="display:flex;align-items:center;gap:10px;padding:8px 0;cursor:pointer">
@@ -859,31 +857,33 @@ function clearPay(i){DB.payments[i].customImage='';renderPayment();}
 </div>
 
 <script>
-// ── NEW SECTIONS: Addons, Questions, Policies ──
+// ─── NEW: Addons / Questions / Policies ───
 
-// Fix show() to handle new panels
+// Override show() to support new panels
 const _origShow = show;
 function show(id){
-  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
-  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('on'));
-  const el=g('p-'+id);if(el)el.classList.add('on');
-  const ni=document.querySelector(`.ni[onclick*="'${id}'"]`);if(ni)ni.classList.add('on');
-  if(g('tb-title'))g('tb-title').textContent=({overview:'نظرة عامة',menu:'الأقسام والخدمات',texts:'النصوص',design:'التصميم',logo:'الشعار',buttons:'الأزرار',gift:'بطاقة الإهداء',memberships:'العضويات',social:'السوشيال ميديا',payment:'بوابات الدفع',addons:'الإضافات المرتبطة',questions:'أسئلة الحجز',policies:'السياسات'})[id]||id;
-  if(id==='addons')renderAddonsMap();
-  if(id==='questions')renderQuestions();
-  if(id==='policies')renderPolicies();
+  document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('on');});
+  document.querySelectorAll('.ni').forEach(function(n){n.classList.remove('on');});
+  var el=g('p-'+id); if(el) el.classList.add('on');
+  var _onic=".ni[onclick*=\"\'";
+var ni=document.querySelector(_onic+id+"'\"]"); if(ni) ni.classList.add('on');
+  var TITLES={overview:'نظرة عامة',menu:'الأقسام والخدمات',texts:'النصوص',design:'التصميم',logo:'الشعار',buttons:'الأزرار',gift:'بطاقة الإهداء',memberships:'العضويات',social:'السوشيال ميديا',payment:'بوابات الدفع',addons:'الإضافات المرتبطة',questions:'أسئلة الحجز',policies:'السياسات'};
+  if(g('tb-title')) g('tb-title').textContent = TITLES[id]||id;
+  if(id==='addons') renderAddonsMap();
+  if(id==='questions') renderQuestions();
+  if(id==='policies') renderPolicies();
 }
 
-// Fix loadDB to include new fields
+// Override loadDB to include new fields
 const _origLoadDB = loadDB;
 async function loadDB(){
   await _origLoadDB();
-  DB.addonsMap=DB.addonsMap||{};
-  DB.questions=DB.questions||[];
-  DB.policies=DB.policies||{ar:'',en:''};
+  DB.addonsMap = DB.addonsMap||{};
+  DB.questions = DB.questions||[];
+  DB.policies  = DB.policies||{ar:'',en:''};
 }
 
-// Fix renderAll to include new panels
+// Override renderAll to include new panels
 const _origRenderAll = renderAll;
 function renderAll(){
   _origRenderAll();
@@ -891,119 +891,158 @@ function renderAll(){
   renderPolicies();
 }
 
-// ── ADDONS MAP ──
-async function renderAddonsMap(){
-  const box=g('addons-map-list');if(!box)return;
-  const map=DB.addonsMap||{};
-  const entries=Object.entries(map);
-  if(!entries.length){box.innerHTML='<div style="font-size:12px;color:rgba(255,255,255,.3);padding:12px 0">لا توجد إضافات — اضغطي إضافة جديدة</div>';return;}
-  box.innerHTML=entries.map(([pid,addons])=>{
-    const prod=rekazProds.find(p=>p.id===pid);
-    const name=prod?(prod.nameAr||prod.name||pid):pid;
-    const rows=(addons||[]).map((ao,i)=>`
-      <div class="li">
-        <div class="li-info"><div class="li-name">${e(ao.nameAr||'')}</div><div class="li-sub">SAR ${ao.amount||0}${ao.duration?' · '+ao.duration+' د':''}</div></div>
-        <div class="li-acts">
-          <button class="lb" onclick="editAddon('${pid}',${i})">تعديل</button>
-          <button class="lb del" onclick="delAddon('${pid}',${i})">×</button>
-        </div>
-      </div>`).join('');
-    return `<div class="card" style="margin-bottom:10px"><div class="card-ttl">${e(name)}</div>${rows}<button class="add-btn" style="margin-top:6px" onclick="openAddonModal('${pid}')">+ إضافة</button></div>`;
+// ─── ADDONS MAP ───
+function renderAddonsMap(){
+  var box=g('addons-map-list'); if(!box) return;
+  var map=DB.addonsMap||{};
+  var entries=Object.entries(map);
+  if(!entries.length){
+    box.innerHTML='<div style="font-size:12px;color:rgba(255,255,255,.3);padding:12px 0">لا توجد إضافات — اضغطي إضافة جديدة</div>';
+    return;
+  }
+  box.innerHTML=entries.map(function(entry){
+    var pid=entry[0], addons=entry[1];
+    var prod=rekazProds.find(function(p){return p.id===pid;});
+    var name=prod?(prod.nameAr||prod.name||pid):pid;
+    var rows=(addons||[]).map(function(ao,i){
+      return '<div class="li">'
+        +'<div class="li-info"><div class="li-name">'+e(ao.nameAr||'')+'</div>'
+        +'<div class="li-sub">SAR '+(ao.amount||0)+(ao.duration?' · '+ao.duration+' د':'')+'</div></div>'
+        +'<div class="li-acts">'
+        +'<button class="lb" onclick="editAddon(\''+pid+'\','+i+')">تعديل</button>'
+        +'<button class="lb del" onclick="delAddon(\''+pid+'\','+i+')">×</button>'
+        +'</div></div>';
+    }).join('');
+    return '<div class="card" style="margin-bottom:10px">'
+      +'<div class="card-ttl">'+e(name)+'</div>'
+      +rows
+      +'<button class="add-btn" style="margin-top:6px" onclick="openAddonModal(\''+pid+'\')">+ إضافة</button>'
+      +'</div>';
   }).join('');
 }
 
-function openAddonModal(prodId,idx){
-  g('ao-idx').value=idx!==undefined?idx:'-1';
-  g('ao-prodid').value=prodId||'';
-  g('ao-prod').innerHTML='<option value="">اختاري الخدمة...</option>'+
-    rekazProds.map(p=>`<option value="${p.id}"${prodId===p.id?' selected':''}>${e(p.nameAr||p.name||p.id)}</option>`).join('');
+function openAddonModal(prodId, idx){
+  g('ao-idx').value = idx!==undefined?idx:'-1';
+  g('ao-prod').innerHTML='<option value="">اختاري الخدمة...</option>'
+    +rekazProds.map(function(p){return '<option value="'+p.id+'"'+(prodId===p.id?' selected':'')+'>'+(p.nameAr||p.name||p.id)+'</option>';}).join('');
   g('ao-prod').disabled=!!prodId;
-  if(idx!==undefined&&prodId){
-    const ao=(DB.addonsMap[prodId]||[])[idx]||{};
-    g('ao-name').value=ao.nameAr||'';g('ao-priceid').value=ao.rekazPriceId||'';
-    g('ao-amount').value=ao.amount||0;g('ao-dur').value=ao.duration||0;g('ao-desc').value=ao.desc||'';
+  if(prodId) g('ao-prod').value=prodId;
+  if(idx!==undefined && prodId){
+    var ao=(DB.addonsMap[prodId]||[])[idx]||{};
+    g('ao-name').value=ao.nameAr||'';
+    g('ao-priceid').value=ao.rekazPriceId||'';
+    g('ao-amount').value=ao.amount||0;
+    g('ao-dur').value=ao.duration||0;
+    g('ao-desc').value=ao.desc||'';
   } else {
-    ['ao-name','ao-priceid','ao-desc'].forEach(id=>{const el=g(id);if(el)el.value='';});
-    g('ao-amount').value='0';g('ao-dur').value='0';
+    ['ao-name','ao-priceid','ao-desc'].forEach(function(id){var el=g(id);if(el)el.value='';});
+    g('ao-amount').value='0'; g('ao-dur').value='0';
   }
   g('ov-addon').classList.add('on');
 }
 
 function editAddon(pid,idx){openAddonModal(pid,idx);}
 async function delAddon(pid,idx){
-  if(!confirm('حذف هذه الإضافة؟'))return;
+  if(!confirm('حذف هذه الإضافة؟')) return;
   DB.addonsMap[pid].splice(idx,1);
-  if(!DB.addonsMap[pid].length)delete DB.addonsMap[pid];
+  if(!DB.addonsMap[pid].length) delete DB.addonsMap[pid];
   await api('PUT','/admin/addons-map',DB.addonsMap);
-  flash();renderAddonsMap();
+  flash(); renderAddonsMap();
 }
 async function saveAddon(){
-  const pid=g('ao-prod').value;if(!pid){alert('اختاري الخدمة');return;}
-  const priceId=g('ao-priceid').value.trim();if(!priceId){alert('أدخلي priceId');return;}
-  const nameAr=g('ao-name').value.trim();if(!nameAr){alert('أدخلي الاسم');return;}
-  const amount=parseFloat(g('ao-amount').value)||0;
-  const duration=parseInt(g('ao-dur').value)||0;
-  const desc=g('ao-desc').value.trim();
-  const idx=parseInt(g('ao-idx').value);
-  if(!DB.addonsMap[pid])DB.addonsMap[pid]=[];
-  const entry={rekazPriceId:priceId,nameAr,desc,amount,duration,order:DB.addonsMap[pid].length+1,visible:true};
-  if(idx>-1)DB.addonsMap[pid][idx]=entry;else DB.addonsMap[pid].push(entry);
+  var pid=g('ao-prod').value; if(!pid){alert('اختاري الخدمة');return;}
+  var priceId=(g('ao-priceid').value||'').trim(); if(!priceId){alert('أدخلي priceId');return;}
+  var nameAr=(g('ao-name').value||'').trim(); if(!nameAr){alert('أدخلي الاسم');return;}
+  var amount=parseFloat(g('ao-amount').value)||0;
+  var duration=parseInt(g('ao-dur').value)||0;
+  var desc=(g('ao-desc').value||'').trim();
+  var idx=parseInt(g('ao-idx').value);
+  if(!DB.addonsMap[pid]) DB.addonsMap[pid]=[];
+  var entry={rekazPriceId:priceId,nameAr:nameAr,desc:desc,amount:amount,duration:duration,order:DB.addonsMap[pid].length+1,visible:true};
+  if(idx>-1) DB.addonsMap[pid][idx]=entry; else DB.addonsMap[pid].push(entry);
   await api('PUT','/admin/addons-map',DB.addonsMap);
-  flash();g('ov-addon').classList.remove('on');renderAddonsMap();
+  flash(); g('ov-addon').classList.remove('on'); renderAddonsMap();
 }
 
-// ── QUESTIONS ──
+// ─── QUESTIONS ───
 function renderQuestions(){
-  const box=g('questions-list');if(!box)return;
-  const qs=(DB.questions||[]).filter(q=>!q.fixed);
+  var box=g('questions-list'); if(!box) return;
+  var qs=(DB.questions||[]).filter(function(q){return !q.fixed;});
   if(!qs.length){box.innerHTML='<div style="font-size:12px;color:rgba(255,255,255,.3);padding:12px 0">لا توجد أسئلة مخصصة</div>';return;}
-  box.innerHTML=qs.map((q,i)=>{
-    const ri=(DB.questions||[]).indexOf(q);
-    return `<div class="li">
-      <div class="li-info"><div class="li-name">${e(q.label)}</div><div class="li-sub">${{text:'نص',textarea:'نص طويل',checkbox:'صح/خطأ',radio:'اختيار'}[q.type]||q.type}${q.required?' · إلزامي':''}</div></div>
-      <div class="li-acts">
-        <div class="tog ${q.visible!==false?'on':''}" onclick="togQ(${ri})"></div>
-        <button class="lb" onclick="editQ(${ri})">تعديل</button>
-        <button class="lb del" onclick="delQ(${ri})">×</button>
-      </div></div>`;
+  var typeLabels={text:'نص',textarea:'نص طويل',checkbox:'صح/خطأ',radio:'اختيار'};
+  box.innerHTML=qs.map(function(q){
+    var ri=(DB.questions||[]).indexOf(q);
+    return '<div class="li">'
+      +'<div class="li-info"><div class="li-name">'+e(q.label)+'</div>'
+      +'<div class="li-sub">'+(typeLabels[q.type]||q.type)+(q.required?' · إلزامي':'')+'</div></div>'
+      +'<div class="li-acts">'
+      +'<div class="tog '+(q.visible!==false?'on':'')+'" onclick="togQ('+ri+')"></div>'
+      +'<button class="lb" onclick="editQ('+ri+')">تعديل</button>'
+      +'<button class="lb del" onclick="delQ('+ri+')">×</button>'
+      +'</div></div>';
   }).join('');
 }
-async function togQ(i){DB.questions[i].visible=!(DB.questions[i].visible!==false);await api('PUT','/admin/questions',DB.questions);renderQuestions();}
-async function delQ(i){if(!confirm('حذف؟'))return;DB.questions.splice(i,1);await api('PUT','/admin/questions',DB.questions);flash();renderQuestions();}
+
+async function togQ(i){
+  DB.questions[i].visible=!(DB.questions[i].visible!==false);
+  await api('PUT','/admin/questions',DB.questions);
+  renderQuestions();
+}
+async function delQ(i){
+  if(!confirm('حذف؟')) return;
+  DB.questions.splice(i,1);
+  await api('PUT','/admin/questions',DB.questions);
+  flash(); renderQuestions();
+}
 function editQ(i){openQuestionModal(i);}
+
 function openQuestionModal(idx){
   g('q-idx').value=idx!==undefined?idx:'-1';
   if(idx!==undefined){
-    const q=DB.questions[idx];
-    g('q-label').value=q.label||'';g('q-type').value=q.type||'text';
-    g('q-placeholder').value=q.placeholder||'';g('q-required').checked=!!q.required;
+    var q=DB.questions[idx];
+    g('q-label').value=q.label||'';
+    g('q-type').value=q.type||'text';
+    g('q-placeholder').value=q.placeholder||'';
+    g('q-required').checked=!!q.required;
     g('q-options').value=(q.options||[]).join('\n');
-  }else{
-    ['q-label','q-placeholder','q-options'].forEach(id=>{const el=g(id);if(el)el.value='';});
-    g('q-type').value='text';if(g('q-required'))g('q-required').checked=false;
+  } else {
+    ['q-label','q-placeholder','q-options'].forEach(function(id){var el=g(id);if(el)el.value='';});
+    if(g('q-type'))g('q-type').value='text';
+    if(g('q-required'))g('q-required').checked=false;
   }
-  toggleQOpts();g('ov-question').classList.add('on');
+  toggleQOpts();
+  g('ov-question').classList.add('on');
 }
-function toggleQOpts(){const t=g('q-type').value;const w=g('q-opts-wrap');if(w)w.style.display=t==='radio'?'block':'none';}
+function toggleQOpts(){
+  var t=g('q-type')?g('q-type').value:'';
+  var w=g('q-opts-wrap');
+  if(w) w.style.display=t==='radio'?'block':'none';
+}
 async function saveQuestion(){
-  const label=(g('q-label').value||'').trim();if(!label){alert('أدخلي نص السؤال');return;}
-  const type=g('q-type').value;
-  const options=type==='radio'?g('q-options').value.split('\n').map(s=>s.trim()).filter(Boolean):[];
-  const idx=parseInt(g('q-idx').value);
-  const entry={id:idx>-1?DB.questions[idx].id:('q_'+Date.now()),label,type,placeholder:(g('q-placeholder').value||'').trim(),required:g('q-required').checked,options,visible:true,fixed:false};
-  if(idx>-1)DB.questions[idx]=entry;else DB.questions.push(entry);
+  var label=(g('q-label').value||'').trim(); if(!label){alert('أدخلي نص السؤال');return;}
+  var type=g('q-type').value;
+  var options=type==='radio'?g('q-options').value.split('\n').map(function(s){return s.trim();}).filter(Boolean):[];
+  var idx=parseInt(g('q-idx').value);
+  var entry={
+    id: idx>-1?DB.questions[idx].id:('q_'+Date.now()),
+    label:label, type:type,
+    placeholder:(g('q-placeholder').value||'').trim(),
+    required:g('q-required').checked,
+    options:options, visible:true, fixed:false
+  };
+  if(idx>-1) DB.questions[idx]=entry; else DB.questions.push(entry);
   await api('PUT','/admin/questions',DB.questions);
-  flash();g('ov-question').classList.remove('on');renderQuestions();
+  flash(); g('ov-question').classList.remove('on'); renderQuestions();
 }
 
-// ── POLICIES ──
+// ─── POLICIES ───
 function renderPolicies(){
-  const pol=DB.policies||{};
-  if(g('pol-ar'))g('pol-ar').value=pol.ar||'';
-  if(g('pol-en'))g('pol-en').value=pol.en||'';
+  var pol=DB.policies||{};
+  if(g('pol-ar')) g('pol-ar').value=pol.ar||'';
+  if(g('pol-en')) g('pol-en').value=pol.en||'';
 }
 async function savePolicies(){
-  DB.policies={ar:(g('pol-ar').value||''),en:(g('pol-en').value||'')};
+  DB.policies={ar:(g('pol-ar').value||''), en:(g('pol-en').value||'')};
   await api('PUT','/admin/policies',DB.policies);
   flash();
 }
