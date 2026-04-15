@@ -183,6 +183,15 @@ function auth(req, res, next) {
 
 // ── PUBLIC ──
 app.get("/", (req,res) => res.send("GRAFF SPA API ✅"));
+app.get("/admin", (req,res) => {
+  try {
+    const html = readFileSync(process.cwd()+"/admin.html","utf8");
+    res.setHeader("Content-Type","text/html");
+    res.send(html);
+  } catch(e) {
+    res.status(404).send("admin.html not found. Make sure admin.html is in the same folder as server.js");
+  }
+});
 
 app.get("/site", (req,res) => {
   const db = readDB();
