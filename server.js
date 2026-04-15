@@ -334,6 +334,8 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink2);color:#fff;directio
     <div class="ni" onclick="show('memberships')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>العضويات</div>
     <div class="ni" onclick="show('social')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>السوشيال ميديا</div>
     <div class="ni" onclick="show('payment')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>بوابات الدفع</div>
+    <div class="sl-sec">الحجز</div>
+    <div class="ni" onclick="show('policies')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>السياسات</div>
     <div class="sl-foot"><button class="lout-btn" onclick="doLogout()">تسجيل الخروج</button></div>
   </div>
 
@@ -511,6 +513,20 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink2);color:#fff;directio
     <div class="modal-btns">
       <button class="btn-p" onclick="saveCat()">حفظ القسم</button>
       <button class="btn-s" onclick="closeModal()">إلغاء</button>
+
+      <!-- POLICIES PANEL -->
+      <div class="panel" id="p-policies">
+        <div class="card">
+          <div class="card-ttl">السياسات — تظهر في صفحة التأكيد</div>
+          <p style="font-size:11px;color:rgba(255,255,255,.4);margin-bottom:14px;line-height:1.8">هذا النص يظهر للعميل في صفحة التأكيد ويجب الموافقة عليه قبل الدفع.</p>
+          <div class="f">
+            <label>نص السياسات بالعربي</label>
+            <textarea id="pol-ar" style="min-height:200px;font-size:12px;line-height:1.9"></textarea>
+          </div>
+        </div>
+        <button class="sbtn" onclick="savePolicies()" style="margin-bottom:20px">حفظ السياسات</button>
+      </div>
+
     </div>
   </div>
 </div>
@@ -953,6 +969,40 @@ function delPay(i){DB.payments.splice(i,1);renderPayment();}
 function addPay(){DB.payments.push({id:'pay_'+Date.now(),label:'بوابة جديدة',visible:true,order:DB.payments.length+1,customImage:''});renderPayment();}
 function uploadPay(i,input){const f=input.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{DB.payments[i].customImage=ev.target.result;renderPayment();};r.readAsDataURL(f);}
 function clearPay(i){DB.payments[i].customImage='';renderPayment();}
+
+
+// ── POLICIES ──
+// Override show() to support policies panel
+const _origShow = show;
+function show(id){
+  document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('on');});
+  document.querySelectorAll('.ni').forEach(function(n){n.classList.remove('on');});
+  var el=document.getElementById('p-'+id);if(el)el.classList.add('on');
+  var _sel='.ni[onclick*="\\''+id+'\\'"';var ni=document.querySelector(_sel+']');if(ni)ni.classList.add('on');
+  var TITLES={overview:'نظرة عامة',menu:'الأقسام والخدمات',texts:'النصوص',design:'التصميم',logo:'الشعار',buttons:'الأزرار',gift:'بطاقة الإهداء',memberships:'العضويات',social:'السوشيال ميديا',payment:'بوابات الدفع',policies:'السياسات'};
+  if(document.getElementById('tb-title'))document.getElementById('tb-title').textContent=TITLES[id]||id;
+  if(id==='policies')renderPolicies();
+}
+
+function renderPolicies(){
+  var pol=DB.policies||{};
+  var el=document.getElementById('pol-ar');
+  if(el)el.value=pol.ar||'';
+}
+
+async function savePolicies(){
+  DB.policies={ar:(document.getElementById('pol-ar').value||''),en:''};
+  await api('PUT','/admin/policies',DB.policies);
+  flash();
+}
+
+// Override loadDB to include policies
+const _origLoadDB2 = loadDB;
+async function loadDB(){
+  await _origLoadDB2();
+  DB.policies=DB.policies||{ar:'',en:''};
+}
+
 </script>
 </body>
 </html>
