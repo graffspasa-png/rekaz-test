@@ -93,6 +93,10 @@ const DEFAULT_DB = {
     {id:"tabby",label:"tabby",visible:true,order:5,customImage:""},
     {id:"tamara",label:"tamara",visible:true,order:6,customImage:""}
   ],
+  policies: {
+    ar: "السياسات العامة:\n• يمكن تعديل الموعد أو تغيير وقته فقط في حال توفر إمكانية في نفس يوم الموعد، فيما عدا ذلك، الموعد غير قابل للتعديل بعد الحجز.\n• في حال التأخر 15 دقيقة، يتم إلغاء الموعد تلقائياً.\n• عند إلغاء الموعد قبل 4 ساعات من وقت الخدمة، يتم إضافة المبلغ كرصيد في حسابك بصلاحية شهرين.\n• في حال عدم الحضور أو الإلغاء قبل أقل من 4 ساعات، يكون المبلغ غير قابل للاسترجاع.\n\nسياسات القسائم:\n• عند الحجز باستخدام قسيمة، يجب إبلاغنا قبل 4 ساعات في حال الرغبة بإلغاء الموعد أو تغييره.\n• في حال عدم الحضور بدون إشعار مسبق، تصبح القسيمة غير صالحة.\n• في حال التأخر 15 دقيقة، يتم إلغاء الموعد ويعتبر الفاوتشر غير صالح.",
+    en: ""
+  },
   pages: {
     gift: {
       title:"بطاقة الإهداء", subtitle:"اهدي تجربة لا تُنسى",
@@ -182,7 +186,6 @@ function auth(req, res, next) {
 }
 
 // ── PUBLIC ──
-app.get("/", (req,res) => res.send("GRAFF SPA API ✅"));
 const ADMIN_HTML = `<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -954,9 +957,16 @@ function clearPay(i){DB.payments[i].customImage='';renderPayment();}
 </body>
 </html>
 `;
+app.get("/", (req,res) => res.send("GRAFF SPA API ✅"));
+app.get("/admin", (req,res) => { res.setHeader("Content-Type","text/html; charset=utf-8"); res.send(ADMIN_HTML); });
 app.get("/admin", (req,res) => {
-  res.setHeader("Content-Type","text/html; charset=utf-8");
-  res.send(ADMIN_HTML);
+  try {
+    const html = readFileSync(process.cwd()+"/admin.html","utf8");
+    res.setHeader("Content-Type","text/html");
+    res.send(html);
+  } catch(e) {
+    res.status(404).send("admin.html not found. Make sure admin.html is in the same folder as server.js");
+  }
 });
 
 app.get("/site", (req,res) => {
@@ -968,7 +978,8 @@ app.get("/site", (req,res) => {
     social:   db.social,
     buttons:  db.buttons.filter(b=>b.visible!==false).sort((a,b)=>a.order-b.order),
     payments: db.payments.filter(p=>p.visible!==false).sort((a,b)=>a.order-b.order),
-    pages:    db.pages
+    pages:    db.pages,
+    policies: db.policies||{ar:'',en:''}
   });
 });
 
@@ -1216,6 +1227,12 @@ app.put("/admin/categories/:id/services",adminAuth,(req,res)=>{
 });
 app.get("/admin/rekaz-products",adminAuth,async(req,res)=>{
   try{res.json(await getProds());}catch(e){res.status(500).json({error:e.message});}
+});
+
+// ── POLICIES ──
+app.get("/admin/policies", adminAuth, (req,res) => res.json(readDB().policies||{}));
+app.put("/admin/policies", adminAuth, (req,res) => {
+  const db=readDB(); db.policies=req.body; writeDB(db); res.json({success:true});
 });
 
 // ── DEBUG ──
