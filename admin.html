@@ -421,10 +421,18 @@ async function init(){
 }
 async function loadDB(){
   DB=await api('GET','/admin/db');
-  DB.categories=DB.categories||[];DB.services=DB.services||[];
-  DB.texts=DB.texts||{};DB.theme=DB.theme||{};DB.layout=DB.layout||{};
-  DB.social=DB.social||{};DB.buttons=DB.buttons||[];
-  DB.payments=DB.payments||[];DB.pages=DB.pages||{};
+  DB.categories=DB.categories||[];
+  DB.services=DB.services||[];
+  DB.texts=DB.texts||{};
+  DB.theme=DB.theme||{};
+  DB.layout=DB.layout||{};
+  DB.social=DB.social||{};
+  DB.buttons=DB.buttons||[];
+  DB.payments=DB.payments||[];
+  DB.pages=DB.pages||{};
+  DB.addonsMap=DB.addonsMap||{};
+  DB.questions=DB.questions||[];
+  DB.policies=DB.policies||{ar:'',en:''};
 }
 
 // ── PANELS ──
@@ -465,8 +473,13 @@ function checkRekaz(){
   fetch(B+'/').then(r=>{g('rdot').classList.toggle('live',r.ok);g('rstatus').innerHTML=(r.ok?'<span class="st-dot live"></span>متصل':'<span class="st-dot"></span>خطأ');}).catch(()=>g('rstatus').textContent='غير متصل');
 }
 async function loadRekazProds(){
-  try{const d=await api('GET','/admin/rekaz-products');rekazProds=d.items||[];g('ov-rekaz').textContent=rekazProds.length+' خدمة';}
-  catch(e){g('ov-rekaz').textContent='خطأ';}
+  if(REKAZ_PRODS.length){if(g('ov-rekaz'))g('ov-rekaz').textContent=REKAZ_PRODS.length+' خدمة';return;}
+  try{
+    const d=await api('GET','/admin/rekaz-products');
+    REKAZ_PRODS=d.items||[];
+    rekazProds=REKAZ_PRODS; // backward compat
+    if(g('ov-rekaz'))g('ov-rekaz').textContent=REKAZ_PRODS.length+' خدمة';
+  }catch(e){if(g('ov-rekaz'))g('ov-rekaz').textContent='خطأ';}
 }
 
 // ── TEXTS ──
@@ -827,14 +840,6 @@ function clearPay(i){DB.payments[i].customImage='';renderPayment();}
 var ADDONS_MAP = {}; // { productId: [{rekazPriceId,nameAr,desc,amount,duration,order,visible}] }
 var REKAZ_PRODS = [];
 
-async function loadRekazProds(){
-  if(REKAZ_PRODS.length) return;
-  try{
-    const d = await api('GET','/admin/rekaz-products');
-    REKAZ_PRODS = d.items||[];
-  }catch(e){console.log('rekaz prods',e);}
-}
-
 async function renderAddonsMap(){
   ADDONS_MAP = DB.addonsMap||{};
   await loadRekazProds();
@@ -845,7 +850,7 @@ async function renderAddonsMap(){
     return;
   }
   box.innerHTML = entries.map(([prodId,addons])=>{
-    const prod=REKAZ_PRODS.find(p=>p.id===prodId);
+    const prod=REKAZ_PRODS.find(p=>p.id===prodId)||rekazProds.find(p=>p.id===prodId);
     const prodName=prod?(prod.nameAr||prod.name||prodId):prodId;
     const rows=(addons||[]).map((ao,ai)=>`
       <div class="li">
@@ -870,7 +875,7 @@ function openAddonModal(prodId,idx){
   g('ao-prodid').value=prodId||'';
   // Populate product dropdown
   g('ao-prod').innerHTML='<option value="">اختاري الخدمة...</option>'+
-    REKAZ_PRODS.map(p=>`<option value="${p.id}"${prodId===p.id?' selected':''}>${e(p.nameAr||p.name||p.id)}</option>`).join('');
+    (REKAZ_PRODS.length?REKAZ_PRODS:rekazProds).map(p=>`<option value="${p.id}"${prodId===p.id?' selected':''}>${e(p.nameAr||p.name||p.id)}</option>`).join('');
   if(prodId)g('ao-prod').disabled=true; else g('ao-prod').disabled=false;
   // Fill form if editing
   if(idx!==undefined&&prodId){
