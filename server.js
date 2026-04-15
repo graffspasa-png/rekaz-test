@@ -580,7 +580,7 @@ function show(id){
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
   document.querySelectorAll('.ni').forEach(n=>n.classList.remove('on'));
   const el=g('p-'+id);if(el)el.classList.add('on');
-  const ni=document.querySelector(\`.ni[onclick="show('\${id}')"]\`);if(ni)ni.classList.add('on');
+  const ni=document.querySelector('.ni[onclick="show(\\''+id+'\\')"');if(ni)ni.classList.add('on');
   if(g('tb-title'))g('tb-title').textContent=TITLES[id]||id;
   if(id==='policies')renderPolicies();
 }
