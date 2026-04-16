@@ -695,7 +695,7 @@ function applyConfig(){
 
 function renderHomeButtons(){
   var btns=CFG&&CFG.buttons?CFG.buttons:null;if(!btns||!btns.length)return;
-  var actions={booking:function(){go('svcs');},gift:function(){window.location.href='/gift';},memberships:function(){window.location.href='/membership';},whatsapp:openWA};
+  var actions={booking:function(){go('svcs');},gift:function(){window.location.href=B+'/gift';},memberships:function(){window.location.href=B+'/membership';},whatsapp:openWA};
   var html=btns.filter(function(b){return b.visible!==false;}).map(function(b,i){
     return '<button class="hbtn '+(i===0?'primary':'outline')+'" data-action="'+esc(b.action||'')+'"><span>'+esc(b.textAr||'')+'</span><span class="harr">←</span></button>';
   }).join('');
