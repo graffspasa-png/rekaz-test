@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>GRAFF SPA — عضوية النخبة</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='12' fill='%23080807'/><text y='48' x='32' text-anchor='middle' font-size='44' font-family='Georgia,serif' fill='%23b8965a'>G</text></svg>">
+<link id="gfont" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --gold:#b8965a;--gold2:#c8a66a;
+  --ink:#080807;--ink2:#0f0d0a;--ink3:#181410;
+  --cream:#f3ede3;--cream2:#ebe3d5;
+  --w:#fff;--text:#17150e;--muted:#78706a;--border:#d8d0c0;
+  --err:#b33;--brad:0px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction:rtl;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+[dir=rtl]*{letter-spacing:0!important;word-spacing:0}
+.ls{letter-spacing:.18em!important}
+.ls-sm{letter-spacing:.1em!important}
+.cf{font-family:'Cormorant Garamond',serif!important}
+
+.bar{position:sticky;top:0;z-index:200;height:54px;padding:0 18px;display:flex;align-items:center;justify-content:space-between;background:rgba(8,8,7,.95);backdrop-filter:blur(24px);border-bottom:1px solid rgba(184,150,90,.1)}
+.logo-wrap{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:300;color:#fff;text-decoration:none;display:flex;gap:4px}
+.logo-wrap b{color:var(--gold);font-weight:300}
+.back-btn{background:none;border:none;color:rgba(255,255,255,.36);font-family:'Tajawal',sans-serif;font-size:11px;cursor:pointer;display:flex;align-items:center;gap:5px;min-width:52px;transition:color .14s;text-decoration:none;padding:6px 0}
+.back-btn:hover{color:var(--gold)}
+.bar-cta{padding:7px 15px;background:var(--gold);color:var(--ink);border:none;font-family:'Tajawal',sans-serif;font-size:10px;font-weight:500;cursor:pointer;border-radius:var(--brad);transition:background .14s;white-space:nowrap}
+.bar-cta:hover{background:var(--gold2)}
+
+/* ════════════════════════════════════
+   LANDING PAGE
+════════════════════════════════════ */
+.landing{background:var(--ink)}
+
+/* HERO */
+.hero-sec{position:relative;overflow:hidden;padding:56px 20px 50px;text-align:center;display:flex;flex-direction:column;align-items:center}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 100% 70% at 50% 0%,rgba(184,150,90,.1),transparent 55%)}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(184,150,90,.013) 1px,transparent 1px),linear-gradient(90deg,rgba(184,150,90,.013) 1px,transparent 1px);background-size:52px 52px}
+.hero-line{position:absolute;top:0;left:50%;transform:translateX(-50%);width:320px;height:1px;background:linear-gradient(90deg,transparent,rgba(184,150,90,.45),transparent)}
+.h-eye{font-size:8px;letter-spacing:.44em!important;color:rgba(184,150,90,.65);margin-bottom:16px;display:flex;align-items:center;justify-content:center;gap:12px;position:relative;z-index:2}
+.h-eye::before,.h-eye::after{content:'';width:24px;height:1px;background:rgba(184,150,90,.35)}
+.hero-h1{font-family:'Cormorant Garamond',serif;font-size:clamp(36px,9vw,58px);font-weight:300;color:#fff;line-height:1.08;margin-bottom:10px;position:relative;z-index:2}
+.hero-h1 em{color:var(--gold);font-style:normal}
+.hero-h1-ar{font-family:'Tajawal',sans-serif;font-size:clamp(18px,4.5vw,28px);font-weight:300;color:rgba(255,255,255,.55);margin-bottom:28px;position:relative;z-index:2}
+.h-divider{display:flex;align-items:center;gap:12px;margin-bottom:28px;position:relative;z-index:2;width:100%;max-width:220px}
+.h-div-line{flex:1;height:1px;background:linear-gradient(to right,transparent,rgba(184,150,90,.28))}
+.h-diamond{width:5px;height:5px;background:var(--gold);transform:rotate(45deg);flex-shrink:0}
+
+/* ── THE MEMBERSHIP CARD (matching the photo exactly) ── */
+.mem-card-hero{
+  width:min(400px,92vw);
+  aspect-ratio:1.66/1;
+  border-radius:12px;
+  position:relative;
+  overflow:hidden;
+  margin:0 auto;
+  z-index:2;
+  box-shadow:0 28px 70px rgba(0,0,0,.65),0 4px 16px rgba(184,150,90,.08);
+  cursor:default;
+  user-select:none;
+}
+/* Background: very dark, warm black — matches the photo */
+.mc-bg{
+  position:absolute;inset:0;
+  background:linear-gradient(160deg,#1e1810 0%,#0d0b08 25%,#151109 50%,#0a0806 75%,#0d0b08 100%);
+}
+/* Top gradient highlight */
+.mc-gradient{
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse 90% 60% at 55% -10%,rgba(60,40,20,.45) 0%,transparent 50%);
+}
+/* The flowing curved ribbons — signature GRAFF SPA design */
+.mc-curves{position:absolute;inset:0;overflow:hidden}
+.mc-border{position:absolute;inset:0;border-radius:12px;border:1px solid rgba(184,150,90,.22)}
+.mc-inner{position:absolute;inset:0;padding:7% 8%;display:flex;flex-direction:column;justify-content:space-between;z-index:3}
+.mc-top{display:flex;align-items:flex-start;justify-content:space-between}
+.mc-logo{font-family:'Cormorant Garamond',serif;font-size:clamp(11px,2.8vw,18px);font-weight:300;letter-spacing:.24em!important;color:rgba(255,255,255,.82);line-height:1}
+.mc-right-block{text-align:left}
+.mc-badge-en{font-family:'Cormorant Garamond',serif;font-size:clamp(8px,2vw,13px);font-weight:400;color:var(--gold);letter-spacing:.06em!important;line-height:1.3}
+.mc-badge-ar{font-family:'Tajawal',sans-serif;font-size:clamp(9px,2.2vw,14px);font-weight:600;color:var(--gold);letter-spacing:0!important;line-height:1.3;margin-top:1px}
+/* Large membership number — center of card */
+.mc-number{font-family:'Cormorant Garamond',serif;font-size:clamp(16px,4.2vw,28px);font-weight:300;color:rgba(255,255,255,.78);letter-spacing:.16em!important;text-align:center;padding:4% 0}
+.mc-bot{display:flex;justify-content:space-between;align-items:flex-end}
+.mc-name{font-family:'Cormorant Garamond',serif;font-size:clamp(11px,2.6vw,17px);font-weight:300;color:rgba(255,255,255,.75);letter-spacing:.1em!important}
+.mc-date-block{text-align:left}
+.mc-date-ar{font-family:'Tajawal',sans-serif;font-size:clamp(8px,2vw,11px);color:var(--gold);letter-spacing:0!important;line-height:1.5}
+.mc-date-en{font-family:'Cormorant Garamond',serif;font-size:clamp(8px,2vw,11px);color:rgba(184,150,90,.65);letter-spacing:.06em!important;line-height:1.5}
+
+/* Services Section */
+.services-sec{border-top:1px solid rgba(184,150,90,.08);background:var(--ink2)}
+.sec-wrap{max-width:520px;margin:0 auto;padding:48px 20px}
+.sec-eye{font-size:7px;letter-spacing:.42em!important;color:rgba(184,150,90,.55);margin-bottom:10px;text-align:center}
+.sec-h1{font-family:'Cormorant Garamond',serif;font-size:clamp(24px,6vw,36px);font-weight:300;color:#fff;text-align:center;margin-bottom:8px;line-height:1.2}
+.sec-sub{font-size:12px;color:rgba(255,255,255,.3);text-align:center;line-height:1.75;margin-bottom:32px;max-width:310px;margin-left:auto;margin-right:auto}
+.sec-rule{width:36px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:0 auto 28px}
+
+/* Services list — elegant, clean */
+.svc-list{display:flex;flex-direction:column;gap:0}
+.svc-item{display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+.svc-item:last-child{border:none}
+.svc-left{display:flex;align-items:center;gap:12px}
+.svc-diamond{width:5px;height:5px;background:var(--gold);transform:rotate(45deg);flex-shrink:0;opacity:.7}
+.svc-name{font-size:13px;color:rgba(255,255,255,.7);font-weight:400}
+.svc-tag{font-size:9px;color:rgba(184,150,90,.6);background:rgba(184,150,90,.08);border:1px solid rgba(184,150,90,.14);padding:2px 8px}
+
+/* Privileges */
+.priv-sec{border-top:1px solid rgba(184,150,90,.08)}
+.priv-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:rgba(184,150,90,.06)}
+.priv-item{background:var(--ink2);padding:20px 16px;text-align:center}
+.priv-icon-wrap{width:38px;height:38px;border-radius:50%;border:1px solid rgba(184,150,90,.2);display:flex;align-items:center;justify-content:center;margin:0 auto 10px}
+.priv-title{font-size:12px;font-weight:500;color:rgba(255,255,255,.8);margin-bottom:4px}
+.priv-sub{font-size:10px;color:rgba(255,255,255,.3);line-height:1.55}
+
+/* Plans */
+.plans-sec{background:var(--ink3);border-top:1px solid rgba(184,150,90,.08)}
+#plans-anchor{}
+.plan-card{background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07);padding:22px 18px;margin-bottom:11px;position:relative;cursor:pointer;transition:all .18s;border-radius:var(--brad)}
+.plan-card:hover{border-color:rgba(184,150,90,.32);transform:translateY(-1px)}
+.plan-card.featured{border-color:rgba(184,150,90,.42);background:linear-gradient(135deg,rgba(184,150,90,.06),rgba(184,150,90,.02))}
+.plan-best{position:absolute;top:14px;left:14px;font-size:7px;letter-spacing:.12em!important;background:var(--gold);color:var(--ink);padding:3px 9px;font-weight:500}
+.plan-name{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;color:#fff;margin-bottom:4px}
+.plan-price-row{display:flex;align-items:flex-end;gap:6px;margin-bottom:14px}
+.plan-price{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:300;color:var(--gold);line-height:1}
+.plan-price-sr{font-family:'Tajawal',sans-serif;font-size:10px;color:rgba(255,255,255,.3);padding-bottom:4px}
+.plan-visits{display:inline-flex;align-items:center;gap:5px;font-size:10px;color:rgba(184,150,90,.7);background:rgba(184,150,90,.07);border:1px solid rgba(184,150,90,.14);padding:3px 10px;margin-bottom:14px}
+.plan-feats{list-style:none;margin-bottom:16px}
+.plan-feat{display:flex;align-items:flex-start;gap:9px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:12px;color:rgba(255,255,255,.58);line-height:1.5}
+.plan-feat:last-child{border:none}
+.plan-feat-dot{color:var(--gold);font-size:8px;margin-top:3px;flex-shrink:0}
+.plan-btn{width:100%;padding:13px;border:none;font-family:'Tajawal',sans-serif;font-size:11px;font-weight:500;cursor:pointer;transition:all .15s;border-radius:var(--brad);letter-spacing:.08em!important}
+.plan-card:not(.featured) .plan-btn{background:rgba(255,255,255,.07);color:rgba(255,255,255,.65);border:1px solid rgba(255,255,255,.09)}
+.plan-card:not(.featured) .plan-btn:hover{background:rgba(255,255,255,.13);color:#fff}
+.plan-card.featured .plan-btn{background:var(--gold);color:var(--ink)}
+.plan-card.featured .plan-btn:hover{background:var(--gold2)}
+
+/* ════════════════════════════════════
+   PURCHASE FLOW
+════════════════════════════════════ */
+.steps{display:flex;align-items:center;justify-content:center;padding:10px 0;background:rgba(184,150,90,.04);border-bottom:1px solid rgba(184,150,90,.08)}
+.si{display:flex;align-items:center;gap:6px}
+.si-dot{width:25px;height:25px;border-radius:50%;border:1.5px solid rgba(184,150,90,.2);display:flex;align-items:center;justify-content:center;font-size:9px;color:rgba(255,255,255,.2);transition:all .3s}
+.si-dot.on{background:var(--gold);border-color:var(--gold);color:var(--ink);font-weight:600}
+.si-dot.done{background:rgba(184,150,90,.14);border-color:rgba(184,150,90,.4);color:var(--gold)}
+.si-lbl{font-size:9px;color:rgba(255,255,255,.2);transition:color .3s}
+.si.on .si-lbl{color:rgba(255,255,255,.6)}
+.si-line{width:26px;height:1px;background:rgba(184,150,90,.16);margin:0 4px}
+
+.pg{display:none;flex-direction:column;min-height:calc(100dvh - 54px)}
+.pg.on{display:flex;animation:pgi .2s ease}
+@keyframes pgi{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+
+#pg-land.on{display:block}
+
+/* Details page */
+#pg-details{background:var(--cream)}
+.p-body{flex:1;overflow-y:auto;padding:16px 16px 96px;max-width:480px;margin:0 auto;width:100%}
+.sec-lbl{font-size:8px;letter-spacing:.2em!important;color:var(--muted);margin-bottom:11px;display:flex;align-items:center;gap:8px}
+.sec-lbl::after{content:'';flex:1;height:1px;background:var(--border)}
+.sel-plan-box{background:linear-gradient(135deg,var(--ink),var(--ink2));border:1px solid rgba(184,150,90,.2);border-radius:var(--brad);padding:15px;margin-bottom:13px;display:flex;justify-content:space-between;align-items:center}
+.spb-label{font-size:8px;letter-spacing:.18em!important;color:rgba(184,150,90,.5);margin-bottom:4px}
+.spb-name{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:300;color:#fff}
+.spb-price{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:300;color:var(--gold)}
+.spb-sr{font-size:9px;color:rgba(184,150,90,.45);margin-top:1px}
+.fcard{background:var(--w);border:1px solid var(--border);padding:15px;margin-bottom:11px;border-radius:var(--brad)}
+.fc-ttl{font-size:8px;letter-spacing:.18em!important;color:var(--muted);margin-bottom:13px;display:flex;align-items:center;gap:8px}
+.fc-ttl::after{content:'';flex:1;height:1px;background:var(--border)}
+.flbl{font-size:10px;color:var(--muted);display:block;margin-bottom:4px;margin-top:10px}
+.flbl:first-child{margin-top:0}
+.req{color:var(--err)}
+.finp{width:100%;padding:11px 12px;background:var(--cream);border:1px solid var(--border);font-family:'Tajawal',sans-serif;font-size:14px;color:var(--text);outline:none;transition:border-color .14s;border-radius:var(--brad)}
+.finp:focus{border-color:rgba(24,21,14,.28)}
+.finp::placeholder{color:rgba(140,130,118,.32)}
+
+/* Confirm page */
+#pg-confirm{background:var(--cream)}
+.sumcard{background:var(--w);border:1px solid var(--border);border-radius:var(--brad);overflow:hidden;margin-bottom:9px}
+.sr{display:flex;justify-content:space-between;align-items:flex-start;padding:9px 13px;border-bottom:1px solid var(--border);font-size:12px;gap:10px}
+.sr:last-child{border:none}
+.sl{color:var(--muted);font-size:10px;flex-shrink:0}
+.sv{color:var(--text);font-weight:500;text-align:left}
+.sum-tot{background:rgba(184,150,90,.06);border:1px solid rgba(184,150,90,.14);padding:12px 13px;margin-bottom:9px;display:flex;justify-content:space-between;align-items:center;border-radius:var(--brad)}
+.sum-tot-l{font-size:13px;font-weight:500;color:var(--text)}
+.sum-tot-v{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:300;color:var(--gold);display:flex;align-items:baseline;gap:4px}
+.sum-tot-sr{font-family:'Tajawal',sans-serif;font-size:11px;color:var(--muted)}
+.vat{font-size:9px;color:rgba(24,21,14,.28);text-align:center;padding:3px 0;margin-bottom:9px}
+.paysafe{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--muted);background:rgba(42,122,79,.05);border:1px solid rgba(42,122,79,.11);padding:9px 12px;margin-bottom:9px;border-radius:var(--brad)}
+.errbox{background:rgba(180,50,50,.05);border:1px solid rgba(180,50,50,.13);padding:9px 12px;font-size:12px;color:var(--err);display:none;line-height:1.6;border-radius:var(--brad);margin-bottom:9px}
+
+/* Pay / Success */
+#pg-pay,#pg-suc{background:var(--cream);min-height:calc(100dvh - 54px)}
+.center-wrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;text-align:center}
+.suc-ring{width:70px;height:70px;border-radius:50%;background:var(--ink);display:flex;align-items:center;justify-content:center;margin:0 auto 18px;animation:rp .4s cubic-bezier(.4,0,.2,1);box-shadow:0 4px 22px rgba(184,150,90,.17)}
+@keyframes rp{from{transform:scale(.2);opacity:0}to{transform:scale(1);opacity:1}}
+.suc-chk{stroke-dasharray:32;stroke-dashoffset:32;animation:cd .44s .35s ease forwards}
+@keyframes cd{to{stroke-dashoffset:0}}
+.suc-title{font-family:'Cormorant Garamond',serif;font-size:27px;font-weight:300;color:var(--text);margin-bottom:7px}
+.suc-sub-txt{font-size:12px;color:var(--muted);margin-bottom:22px;line-height:1.85;max-width:280px}
+/* Success membership card */
+.suc-mem-card{width:min(320px,88vw);aspect-ratio:1.66/1;border-radius:10px;position:relative;overflow:hidden;margin:0 auto 18px}
+.smc-bg{position:absolute;inset:0;background:linear-gradient(160deg,#1e1810 0%,#0d0b08 25%,#151109 50%,#0a0806 100%)}
+.smc-gradient{position:absolute;inset:0;background:radial-gradient(ellipse 90% 60% at 55% -10%,rgba(60,40,20,.45),transparent 50%)}
+.smc-border{position:absolute;inset:0;border-radius:10px;border:1px solid rgba(184,150,90,.22)}
+.smc-inner{position:absolute;inset:0;padding:7% 8%;display:flex;flex-direction:column;justify-content:space-between;z-index:3}
+.smc-top{display:flex;justify-content:space-between;align-items:flex-start}
+.smc-logo{font-family:'Cormorant Garamond',serif;font-size:clamp(10px,2.5vw,15px);font-weight:300;letter-spacing:.24em!important;color:rgba(255,255,255,.82)}
+.smc-badge-en{font-family:'Cormorant Garamond',serif;font-size:clamp(7px,1.8vw,11px);color:var(--gold);letter-spacing:.06em!important}
+.smc-badge-ar{font-family:'Tajawal',sans-serif;font-size:clamp(8px,2vw,12px);font-weight:600;color:var(--gold);letter-spacing:0!important;margin-top:1px}
+.smc-plan{font-family:'Cormorant Garamond',serif;font-size:clamp(10px,2.5vw,16px);color:rgba(255,255,255,.6);text-align:center;padding:1% 0;letter-spacing:.1em!important}
+.smc-bot{display:flex;justify-content:space-between;align-items:flex-end}
+.smc-name{font-family:'Cormorant Garamond',serif;font-size:clamp(10px,2.5vw,15px);font-weight:300;color:rgba(255,255,255,.75);letter-spacing:.08em!important}
+.smc-date{font-family:'Cormorant Garamond',serif;font-size:clamp(8px,2vw,11px);color:rgba(184,150,90,.6);text-align:left;letter-spacing:.06em!important}
+.suc-ref{font-size:9px;letter-spacing:.12em!important;color:var(--muted);margin-bottom:20px}
+.suc-ref strong{color:var(--gold);font-size:13px;display:block;margin-top:3px}
+
+/* BUTTONS */
+.botbar{position:sticky;bottom:0;z-index:50;background:var(--ink);border-top:1px solid rgba(184,150,90,.1);padding:11px 14px;flex-shrink:0}
+.botbtn{width:100%;padding:14px;background:var(--gold);color:var(--ink);border:none;font-family:'Tajawal',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:all .16s;display:flex;align-items:center;justify-content:center;gap:7px;border-radius:var(--brad)}
+.botbtn:hover{background:var(--gold2)}
+.botbtn:disabled{background:rgba(184,150,90,.09);color:rgba(255,255,255,.13);cursor:not-allowed}
+.botbtn.ld{pointer-events:none;opacity:.7}
+.botbtn.ld::after{content:'';width:13px;height:13px;border:2px solid rgba(0,0,0,.13);border-top-color:rgba(0,0,0,.55);border-radius:50%;animation:sp .8s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.gbtn{width:100%;padding:13px;background:var(--gold);color:var(--ink);border:none;font-family:'Tajawal',sans-serif;font-size:12px;font-weight:500;cursor:pointer;border-radius:var(--brad);display:flex;align-items:center;justify-content:center;gap:7px;transition:background .14s;text-decoration:none}
+.gbtn:hover{background:var(--gold2)}
+.obtn{width:100%;padding:12px;background:transparent;border:1px solid var(--border);color:var(--text);font-family:'Tajawal',sans-serif;font-size:12px;cursor:pointer;border-radius:var(--brad);margin-top:9px}
+.obtn:hover{border-color:rgba(184,150,90,.36)}
+.lnk{font-size:11px;color:rgba(24,21,14,.28);font-family:'Tajawal',sans-serif;cursor:pointer;padding:8px;background:none;border:none;text-decoration:none;display:block;text-align:center;margin-top:6px}
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <a class="back-btn" id="back-btn" href="/">← رجوع</a>
+  <a class="logo-wrap" id="bar-logo" href="/"><span>GRAFF</span> <b>SPA</b></a>
+  <button class="bar-cta" id="bar-cta" onclick="scrollToPlans()">اشتراكي الآن</button>
+</div>
+
+<!-- ════════ LANDING ════════ -->
+<div id="pg-land" class="pg on">
+<div class="landing">
+
+  <!-- HERO -->
+  <div class="hero-sec">
+    <div class="hero-bg"></div><div class="hero-grid"></div><div class="hero-line"></div>
+    <p class="h-eye" id="mem-eye">ELITE MEMBERSHIP</p>
+    <h1 class="hero-h1">Elite <em>Membership</em></h1>
+    <p class="hero-h1-ar" id="mem-sub-ar">عضويـة النخبـة</p>
+    <div class="h-divider"><div class="h-div-line"></div><div class="h-diamond"></div><div class="h-div-line" style="background:linear-gradient(to left,transparent,rgba(184,150,90,.28))"></div></div>
+
+    <!-- MEMBERSHIP CARD — matching the photo -->
+    <div class="mem-card-hero">
+      <div class="mc-bg"></div>
+      <div class="mc-gradient"></div>
+      <!-- SVG Curves — the flowing ribbons from the photo -->
+      <div class="mc-curves">
+        <svg style="position:absolute;inset:0;width:100%;height:100%" viewBox="0 0 400 241" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+          <!-- Main flowing ribbon - warm copper tone -->
+          <path d="M 220 -30 C 260 40, 280 100, 250 160 C 225 210, 260 241, 280 241" fill="none" stroke="rgba(120,80,40,0.55)" stroke-width="55" stroke-linecap="round"/>
+          <!-- Secondary ribbon -->
+          <path d="M 255 -30 C 295 50, 308 110, 275 170 C 250 220, 295 241, 320 241" fill="none" stroke="rgba(80,50,20,0.35)" stroke-width="38" stroke-linecap="round"/>
+          <!-- Thin highlight ribbon -->
+          <path d="M 195 -30 C 232 38, 258 95, 230 155 C 208 205, 240 241, 258 241" fill="none" stroke="rgba(184,150,90,0.25)" stroke-width="18" stroke-linecap="round"/>
+          <!-- Very thin gold line -->
+          <path d="M 185 -30 C 218 36, 248 92, 222 152 C 200 202, 228 241, 246 241" fill="none" stroke="rgba(184,150,90,0.12)" stroke-width="6" stroke-linecap="round"/>
+          <!-- Top edge highlight -->
+          <line x1="0" y1="0" x2="400" y2="0" stroke="rgba(184,150,90,0.18)" stroke-width="1"/>
+        </svg>
+      </div>
+      <div class="mc-border"></div>
+      <div class="mc-inner">
+        <div class="mc-top">
+          <div class="mc-logo" id="mc-logo">G R A F F &nbsp; S P A</div>
+          <div class="mc-right-block">
+            <div class="mc-badge-en">Elite Membership Privilege</div>
+            <div class="mc-badge-ar">عضويـة النخبـة</div>
+          </div>
+        </div>
+        <div class="mc-number" id="mc-number">202 2102 8000 2026</div>
+        <div class="mc-bot">
+          <div class="mc-name" id="mc-name">MEMBER NAME</div>
+          <div class="mc-date-block">
+            <div class="mc-date-ar">تاريخ الانتهاء : ٢٧/٠٤</div>
+            <div class="mc-date-en">Expiry Date: 04/27</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SERVICES -->
+  <div class="services-sec">
+    <div class="sec-wrap">
+      <p class="sec-eye" id="svc-eye">SERVICES INCLUDED</p>
+      <h2 class="sec-h1" id="svc-h1">الخدمات المشمولة</h2>
+      <p class="sec-sub" id="svc-sub">كل زيارة تشمل مجموعة من الخدمات الفاخرة</p>
+      <div class="sec-rule"></div>
+      <div class="svc-list" id="svc-list">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- PRIVILEGES -->
+  <div class="priv-sec" style="background:var(--ink)">
+    <div class="sec-wrap" style="padding-bottom:0;padding-top:48px">
+      <p class="sec-eye">EXCLUSIVE PRIVILEGES</p>
+      <h2 class="sec-h1" id="priv-h1">امتيازات حصرية</h2>
+      <div class="sec-rule"></div>
+    </div>
+    <div class="priv-grid" id="priv-grid">
+      <!-- Rendered by JS -->
+    </div>
+  </div>
+
+  <!-- PLANS -->
+  <div class="plans-sec">
+    <div class="sec-wrap" id="plans-anchor">
+      <p class="sec-eye">CHOOSE YOUR PLAN</p>
+      <h2 class="sec-h1" id="plans-h1">اختاري باقتك</h2>
+      <p class="sec-sub" id="plans-sub">اشتراك سنوي — 12 زيارة بخدمات متكاملة</p>
+      <div class="sec-rule"></div>
+      <div id="plans-list"></div>
+    </div>
+  </div>
+
+</div>
+</div><!-- end pg-land -->
+
+<!-- ════════ DETAILS ════════ -->
+<div id="pg-details" class="pg">
+  <div class="steps"><div class="si on" id="pd-si1"><div class="si-dot on" id="pd-sd1">1</div><span class="si-lbl">البيانات</span></div><div class="si-line"></div><div class="si" id="pd-si2"><div class="si-dot" id="pd-sd2">2</div><span class="si-lbl">التأكيد</span></div></div>
+  <div class="p-body">
+    <div class="sel-plan-box" id="sel-plan-box">
+      <div><div class="spb-label">SELECTED PLAN</div><div class="spb-name" id="spb-name">—</div></div>
+      <div style="text-align:left"><div class="spb-price" id="spb-price">—</div><div class="spb-sr">SAR</div></div>
+    </div>
+    <div class="fcard">
+      <div class="fc-ttl">بياناتك الشخصية</div>
+      <label class="flbl"><span class="req">* </span>الاسم الكامل</label>
+      <input class="finp" id="d-name" placeholder="سارة الأحمدي" maxlength="50" oninput="vd()">
+      <label class="flbl"><span class="req">* </span>رقم الجوال</label>
+      <input class="finp" id="d-phone" type="tel" placeholder="05xxxxxxxx" maxlength="10" oninput="vd()">
+      <label class="flbl">البريد الإلكتروني (اختياري)</label>
+      <input class="finp" id="d-email" type="email" placeholder="sara@example.com">
+    </div>
+    <div class="errbox" id="err-d"></div>
+  </div>
+  <div class="botbar"><button class="botbtn" id="btn-d" onclick="goConf()" disabled>مراجعة وتأكيد ←</button></div>
+</div>
+
+<!-- ════════ CONFIRM ════════ -->
+<div id="pg-confirm" class="pg">
+  <div class="steps"><div class="si" id="pc-si1"><div class="si-dot done" id="pc-sd1">✓</div><span class="si-lbl">البيانات</span></div><div class="si-line"></div><div class="si on" id="pc-si2"><div class="si-dot on" id="pc-sd2">2</div><span class="si-lbl">التأكيد</span></div></div>
+  <div class="p-body">
+    <div class="sec-lbl">ملخص الطلب</div>
+    <div class="sumcard">
+      <div class="sr"><span class="sl">الباقة</span><span class="sv" id="c-plan">—</span></div>
+      <div class="sr"><span class="sl">الزيارات</span><span class="sv" id="c-visits">—</span></div>
+      <div class="sr"><span class="sl">الاسم</span><span class="sv" id="c-name">—</span></div>
+      <div class="sr"><span class="sl">الجوال</span><span class="sv" id="c-phone" style="direction:ltr">—</span></div>
+    </div>
+    <div class="sum-tot"><span class="sum-tot-l">المجموع</span><span class="sum-tot-v"><span class="sum-tot-sr">SAR </span><span id="c-total">—</span></span></div>
+    <div class="vat">الأسعار شاملة ضريبة القيمة المضافة 15%</div>
+    <div class="paysafe"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>دفع آمن ومشفر · سيتم تحويلك لإتمام العملية</div>
+    <div class="errbox" id="err-c"></div>
+  </div>
+  <div class="botbar"><button class="botbtn" id="btn-c" onclick="doPurchase()">شراء العضوية الآن ←</button></div>
+</div>
+
+<!-- ════════ PAY ════════ -->
+<div id="pg-pay" class="pg">
+  <div class="center-wrap">
+    <div style="width:68px;height:68px;border-radius:50%;background:rgba(184,150,90,.08);border:1px solid rgba(184,150,90,.2);display:flex;align-items:center;justify-content:center;margin:0 auto 20px"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><rect x="1" y="4" width="22" height="16" rx="3"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:300;color:var(--text);margin-bottom:7px">إتمام الدفع</div>
+    <div style="font-size:12px;color:var(--muted);line-height:1.85;margin-bottom:30px;max-width:270px">اضغطي الزر أدناه لفتح صفحة الدفع الآمنة<br><span style="font-size:11px;color:rgba(24,21,14,.28)">بعد إتمام الدفع ستُعادين تلقائياً</span></div>
+    <a class="gbtn" id="pay-link" href="#" target="_self" style="max-width:310px">الدفع الآن ←</a>
+    <button class="obtn" style="max-width:310px" onclick="onPayDone()">✓ لقد أتممت الدفع</button>
+    <button class="lnk" onclick="showPage('pg-confirm')">إلغاء والعودة</button>
+  </div>
+</div>
+
+<!-- ════════ SUCCESS ════════ -->
+<div id="pg-suc" class="pg">
+  <div class="center-wrap">
+    <div class="suc-ring"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path class="suc-chk" d="M20 6L9 17l-5-5"/></svg></div>
+    <h2 class="suc-title">أهلاً بك في النخبة!</h2>
+    <p class="suc-sub-txt">تم تفعيل عضويتك بنجاح، ستصلك تفاصيل بطاقتك قريباً</p>
+    <!-- Success card matching the photo design -->
+    <div class="suc-mem-card">
+      <div class="smc-bg"></div>
+      <div class="smc-gradient"></div>
+      <svg style="position:absolute;inset:0;width:100%;height:100%;z-index:1" viewBox="0 0 320 193" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+        <path d="M 176 -24 C 208 32, 224 80, 200 128 C 180 168, 208 193, 224 193" fill="none" stroke="rgba(120,80,40,0.55)" stroke-width="44" stroke-linecap="round"/>
+        <path d="M 204 -24 C 236 40, 246 88, 220 136 C 200 176, 236 193, 256 193" fill="none" stroke="rgba(80,50,20,0.35)" stroke-width="30" stroke-linecap="round"/>
+        <path d="M 156 -24 C 186 30, 206 76, 184 124 C 166 164, 192 193, 206 193" fill="none" stroke="rgba(184,150,90,0.22)" stroke-width="14" stroke-linecap="round"/>
+      </svg>
+      <div class="smc-border"></div>
+      <div class="smc-inner">
+        <div class="smc-top">
+          <div class="smc-logo" id="suc-logo">G R A F F &nbsp; S P A</div>
+          <div style="text-align:left"><div class="smc-badge-en">Elite Membership Privilege</div><div class="smc-badge-ar">عضويـة النخبـة</div></div>
+        </div>
+        <div class="smc-plan" id="suc-plan">— — — — — — — —</div>
+        <div class="smc-bot">
+          <div class="smc-name" id="suc-name">—</div>
+          <div style="text-align:left"><div class="smc-date" id="suc-expiry">Expiry Date: —</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="suc-ref">رقم الطلب: <strong id="suc-ref">—</strong></div>
+    <div style="display:flex;flex-direction:column;width:100%;max-width:290px;gap:0">
+      <a href="/" class="gbtn">العودة للرئيسية</a>
+    </div>
+  </div>
+</div>
+
+<script>
+const B='https://rekaz-test.onrender.com';
+let CFG=null;
+let S={planIdx:null,planName:'',price:0,visits:0,name:'',phone:'',email:'',payUrl:null,orderRef:null};
+
+async function init(){
+  try{const r=await fetch(B+'/site');if(r.ok)CFG=await r.json();}catch(e){}
+  applyConfig();renderAll();
+}
+
+function applyConfig(){
+  if(!CFG)return;
+  const t=CFG.theme||{},l=CFG.layout||{},R=document.documentElement;
+  if(t.primaryColor)R.style.setProperty('--gold',t.primaryColor);
+  if(t.primaryHover)R.style.setProperty('--gold2',t.primaryHover);
+  if(t.bgDark)R.style.setProperty('--ink',t.bgDark);
+  if(t.bgDark2)R.style.setProperty('--ink2',t.bgDark2);
+  if(t.bgLight)R.style.setProperty('--cream',t.bgLight);
+  if(t.textColor)R.style.setProperty('--text',t.textColor);
+  if(t.mutedColor)R.style.setProperty('--muted',t.mutedColor);
+  if(t.borderColor)R.style.setProperty('--border',t.borderColor);
+  if(t.borderRadius!=null)R.style.setProperty('--brad',t.borderRadius+'px');
+  if(t.fontArabic){document.getElementById('gfont').href='https://fonts.googleapis.com/css2?family='+encodeURIComponent(t.fontArabic)+':wght@300;400;500&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300&display=swap';document.body.style.fontFamily="'"+t.fontArabic+"',sans-serif";}
+  const logoTxt=l.logoText||'GRAFF SPA';
+  const lp=logoTxt.split(' ');
+  const lh=lp.length>1?lp[0]+' <b style="color:var(--gold)">'+lp.slice(1).join(' ')+'</b>':logoTxt;
+  document.querySelectorAll('#bar-logo').forEach(el=>el.innerHTML=lh);
+  const mp=(CFG.pages&&CFG.pages.memberships)||{};
+  const tx=CFG.texts||{};
+  if(tx.membershipsEyebrow)set('mem-eye',tx.membershipsEyebrow);
+  if(mp.heroTitle||tx.membershipsTitle){const h=document.querySelector('.hero-h1 em');if(h)h.textContent=mp.heroTitle||tx.membershipsTitle;}
+  if(mp.heroSubtitle)set('mem-sub-ar',mp.heroSubtitle);
+  if(mp.featTitle)set('svc-h1',mp.featTitle);
+  if(mp.featSubtitle)set('svc-sub',mp.featSubtitle);
+  if(mp.plansTitle)set('plans-h1',mp.plansTitle);
+  if(mp.plansSub)set('plans-sub',mp.plansSub);
+  if(mp.privTitle)set('priv-h1',mp.privTitle);
+  if(logoTxt)document.title=logoTxt+' — عضوية النخبة';
+}
+function set(id,v){const el=document.getElementById(id);if(el&&v)el.textContent=v;}
+function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function renderAll(){
+  const mp=(CFG&&CFG.pages&&CFG.pages.memberships)||{};
+  renderServices(mp);renderPrivileges(mp);renderPlans(mp);
+}
+
+function renderServices(mp){
+  const svcs=mp.services||[
+    {name:'مناكير روسي كامل',tag:'يدين وقدمين'},
+    {name:'بياب مع إطالة أو جل اكستنشن',tag:''},
+    {name:'تنظيف بشرة عميق',tag:'30 دقيقة'},
+    {name:'علاج فيشيال مخصص',tag:''},
+    {name:'مساج جزئي',tag:'30 دقيقة'},
+    {name:'رموش كلاسيك',tag:''},
+    {name:'استشوار وقص عند الحاجة',tag:''},
+    {name:'لون جل يدين وأقدام',tag:''},
+  ];
+  document.getElementById('svc-list').innerHTML=svcs.map(s=>`
+    <div class="svc-item">
+      <div class="svc-left">
+        <div class="svc-diamond"></div>
+        <span class="svc-name">${esc(s.name)}</span>
+      </div>
+      ${s.tag?`<span class="svc-tag">${esc(s.tag)}</span>`:''}
+    </div>`).join('');
+}
+
+function renderPrivileges(mp){
+  // Clean SVG icons — no emoji
+  const privIcons={
+    car:`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round"><path d="M5 17H3a2 2 0 01-2-2V9l3-6h12l3 6v6a2 2 0 01-2 2h-2"/><circle cx="7.5" cy="17.5" r="2.5"/><circle cx="16.5" cy="17.5" r="2.5"/></svg>`,
+    calendar:`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`,
+    home:`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>`,
+    star:`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`,
+    gift:`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><path d="M12 22V7M12 7H7.5a2.5 2.5 0 010-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 000-5C13 2 12 7 12 7z"/></svg>`,
+    diamond:`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round"><polyline points="6 3 2 9 12 22 22 9 18 3"/><line x1="2" y1="9" x2="22" y2="9"/><path d="M6 3l3 6M18 3l-3 6"/></svg>`,
+  };
+  const privs=mp.privileges||[
+    {icon:'car',title:'سيارة فاخرة',sub:'BMW أو S500 للزيارة الأولى'},
+    {icon:'calendar',title:'جدول مرن',sub:'مواعيد تناسب وقتك'},
+    {icon:'home',title:'خدمات منزلية',sub:'الخدمة في منزلك أو المركز'},
+    {icon:'star',title:'حفل سنوي VIP',sub:'طاولة خاصة مع ضيوفك'},
+    {icon:'gift',title:'جوائز تلقائية',sub:'سحوبات وعروض حصرية'},
+    {icon:'diamond',title:'تكريم خاص',sub:'معاملة VIP متكاملة'},
+  ];
+  document.getElementById('priv-grid').innerHTML=privs.map(p=>`
+    <div class="priv-item">
+      <div class="priv-icon-wrap">${privIcons[p.icon]||privIcons.diamond}</div>
+      <div class="priv-title">${esc(p.title)}</div>
+      <div class="priv-sub">${esc(p.sub)}</div>
+    </div>`).join('');
+}
+
+function renderPlans(mp){
+  const items=mp.items||[
+    {name:'Classic',price:4000,featured:false,visits:12,features:['مناكير روسي كامل','علاج فيشيال للبشرة','12 زيارة / 12 شهراً']},
+    {name:'VIP',price:8000,featured:true,visits:12,features:['جل اكستنشن أو بياب','مناكير روسي','علاج فيشيال','رموش كلاسيك','12 زيارة / 12 شهراً']},
+    {name:'V-VIP',price:10000,featured:false,visits:12,features:['كل مميزات VIP','30 دقيقة مساج','استشوار وقص','خدمات منزلية','12 زيارة / 12 شهراً']}
+  ];
+  window._plans=items;
+  document.getElementById('plans-list').innerHTML=items.map((m,i)=>`
+    <div class="plan-card${m.featured?' featured':''}">
+      ${m.featured?'<div class="plan-best">الأكثر طلباً</div>':''}
+      <div class="plan-name">${esc(m.name)}</div>
+      <div class="plan-price-row"><div class="plan-price">${Number(m.price).toLocaleString('en')}</div><div class="plan-price-sr">SAR / سنوياً</div></div>
+      ${m.visits?`<div class="plan-visits"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>${m.visits} زيارة / سنة</div>`:''}
+      <ul class="plan-feats">${(m.features||[]).map(f=>`<li class="plan-feat"><span class="plan-feat-dot">◆</span>${esc(f)}</li>`).join('')}</ul>
+      <button class="plan-btn" onclick="selectPlan(${i})">اشتراكي الآن ←</button>
+    </div>`).join('');
+}
+
+function scrollToPlans(){const el=document.getElementById('plans-anchor');if(el)el.scrollIntoView({behavior:'smooth',block:'start'});}
+
+function selectPlan(idx){
+  const m=window._plans&&window._plans[idx];if(!m)return;
+  S.planIdx=idx;S.planName=m.name;S.price=m.price;S.visits=m.visits||12;
+  set('spb-name',m.name);set('spb-price',Number(m.price).toLocaleString('en'));
+  showPage('pg-details');
+}
+
+function vd(){
+  const n=document.getElementById('d-name').value.trim();
+  const p=document.getElementById('d-phone').value.trim();
+  document.getElementById('btn-d').disabled=!(n.length>=2&&p.length>=9);
+}
+function goConf(){
+  const n=document.getElementById('d-name').value.trim();
+  const p=document.getElementById('d-phone').value.trim();
+  if(!n||p.length<9){showErr('err-d','يرجى تعبئة الاسم ورقم الجوال');return;}
+  hideErr('err-d');
+  S.name=n;S.phone=p;S.email=document.getElementById('d-email').value.trim();
+  set('c-plan',S.planName);set('c-visits',S.visits+' زيارة / سنة');
+  set('c-name',n);set('c-phone',p);set('c-total',Number(S.price).toLocaleString('en'));
+  showPage('pg-confirm');
+}
+
+async function doPurchase(){
+  const btn=document.getElementById('btn-c');btn.classList.add('ld');btn.disabled=true;hideErr('err-c');
+  try{
+    const r=await fetch(B+'/membership/purchase',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({planName:S.planName,planIndex:S.planIdx,price:S.price,name:S.name,phone:'+966'+S.phone.replace(/^0/,''),email:S.email})
+    });
+    const d=await r.json();
+    if(!r.ok||d.error)throw new Error(d.error||'فشل إنشاء الطلب');
+    S.payUrl=d.payUrl;S.orderRef=d.orderRef||'—';
+    if(S.payUrl){document.getElementById('pay-link').href=S.payUrl;showPage('pg-pay');}
+    else onPayDone();
+  }catch(e){
+    showErr('err-c',e.message||'حدث خطأ، يرجى المحاولة مرة أخرى');
+    btn.classList.remove('ld');btn.disabled=false;
+  }
+}
+function onPayDone(){
+  set('suc-plan',S.planName);set('suc-name',S.name.toUpperCase());set('suc-ref',S.orderRef||'—');
+  const now=new Date();const yr=String(now.getFullYear()).slice(2);const mo=String(now.getMonth()+13).padStart(2,'0');
+  set('suc-expiry','Expiry Date: '+mo+'/'+yr);
+  showPage('pg-suc');
+}
+
+function showPage(id){
+  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
+  document.getElementById(id).classList.add('on');window.scrollTo(0,0);
+  const back=document.getElementById('back-btn');
+  const cta=document.getElementById('bar-cta');
+  if(id==='pg-land'){back.href='/';back.onclick=null;if(cta)cta.style.display='';}
+  else if(id==='pg-details'){back.href='#';back.onclick=e=>{e.preventDefault();showPage('pg-land');setTimeout(()=>document.getElementById('plans-anchor')?.scrollIntoView({behavior:'smooth'}),60);};if(cta)cta.style.display='none';}
+  else if(id==='pg-confirm'){back.href='#';back.onclick=e=>{e.preventDefault();showPage('pg-details');};if(cta)cta.style.display='none';}
+  else if(id==='pg-pay'){back.href='#';back.onclick=e=>{e.preventDefault();showPage('pg-confirm');};if(cta)cta.style.display='none';}
+  else{back.style.display='none';if(cta)cta.style.display='none';}
+}
+function showErr(id,msg){const el=document.getElementById(id);if(el){el.textContent=msg;el.style.display='block';}}
+function hideErr(id){const el=document.getElementById(id);if(el)el.style.display='none';}
+init();
+</script>
+</body>
+</html>
