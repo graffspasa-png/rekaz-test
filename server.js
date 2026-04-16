@@ -676,85 +676,87 @@ function renderAll(){renderOverview();renderMenu();renderTexts();renderDesign();
 
 // ── GIFT & MEMBERSHIP ORDERS ──
 async function loadGiftOrders(){
-  const el=g('gift-orders-list'),cnt=g('gift-orders-count');
+  var el=g('gift-orders-list'),cnt=g('gift-orders-count');
   if(!el)return;
   try{
-    const orders=await api('GET','/admin/gift-orders');
+    var orders=await api('GET','/admin/gift-orders');
     if(!orders.length){el.innerHTML='<p style="font-size:11px;color:rgba(255,255,255,.3);padding:8px 0">لا توجد طلبات بعد.</p>';return;}
     if(cnt)cnt.textContent='('+orders.length+')';
-    el.innerHTML=orders.map(o=>`
-      <div class="li" style="flex-wrap:wrap;gap:6px">
-        <div class="li-info">
-          <div class="li-name" style="font-size:12px">${e(o.ref)} · ${e(String(o.amount))} SAR</div>
-          <div class="li-sub">من: ${e(o.fromName)} (${e(o.fromPhone)}) | إلى: ${e(o.toName)} — ${e(o.toPhone)}</div>
-          ${o.message?`<div class="li-sub" style="color:rgba(184,150,90,.5)">"${e(o.message)}"</div>`:''}
-          <div class="li-sub">${new Date(o.createdAt).toLocaleString('ar-SA')}</div>
-        </div>
-        <div style="flex-shrink:0">
-          <select style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#fff;font-family:'Tajawal',sans-serif;font-size:10px;padding:4px 6px;outline:none" onchange="api('PUT','/admin/gift-orders/'+encodeURIComponent('${e(o.ref)}'),{status:this.value})">
-            <option value="pending_review"${o.status==='pending_review'?' selected':''}>قيد المراجعة</option>
-            <option value="pending_payment"${o.status==='pending_payment'?' selected':''}>بانتظار الدفع</option>
-            <option value="paid"${o.status==='paid'?' selected':''}>مدفوع ✓</option>
-            <option value="sent"${o.status==='sent'?' selected':''}>تم الإرسال ✓</option>
-          </select>
-        </div>
-      </div>`).join('');
+    el.innerHTML=orders.map(function(o){
+      return '<div class="li" style="flex-wrap:wrap;gap:6px">'+
+        '<div class="li-info">'+
+          '<div class="li-name" style="font-size:12px">'+e(o.ref)+' · '+e(String(o.amount))+' SAR</div>'+
+          '<div class="li-sub">من: '+e(o.fromName)+' ('+e(o.fromPhone)+') | إلى: '+e(o.toName)+' — '+e(o.toPhone)+'</div>'+
+          (o.message?'<div class="li-sub" style="color:rgba(184,150,90,.5)">'+e(o.message)+'</div>':'')+
+          '<div class="li-sub">'+new Date(o.createdAt).toLocaleString('ar-SA')+'</div>'+
+        '</div>'+
+        '<div style="flex-shrink:0">'+
+          '<select style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#fff;font-family:Tajawal,sans-serif;font-size:10px;padding:4px 6px;outline:none" onchange="api(\'PUT\',\'/admin/gift-orders/\'+encodeURIComponent(\''+e(o.ref)+'\'),{status:this.value})">'+
+            '<option value="pending_review"'+(o.status==='pending_review'?' selected':'')+'>قيد المراجعة</option>'+
+            '<option value="pending_payment"'+(o.status==='pending_payment'?' selected':'')+'>بانتظار الدفع</option>'+
+            '<option value="paid"'+(o.status==='paid'?' selected':'')+'>مدفوع ✓</option>'+
+            '<option value="sent"'+(o.status==='sent'?' selected':'')+'>تم الإرسال ✓</option>'+
+          '</select>'+
+        '</div>'+
+      '</div>';
+    }).join('');
   }catch(err){if(el)el.innerHTML='<p style="font-size:11px;color:var(--red)">خطأ في التحميل</p>';}
 }
 
 async function loadMemOrders(){
-  const el=g('mem-orders-list'),cnt=g('mem-orders-count');
+  var el=g('mem-orders-list'),cnt=g('mem-orders-count');
   if(!el)return;
   try{
-    const orders=await api('GET','/admin/membership-orders');
+    var orders=await api('GET','/admin/membership-orders');
     if(!orders.length){el.innerHTML='<p style="font-size:11px;color:rgba(255,255,255,.3);padding:8px 0">لا توجد طلبات بعد.</p>';return;}
     if(cnt)cnt.textContent='('+orders.length+')';
-    el.innerHTML=orders.map(o=>`
-      <div class="li" style="flex-wrap:wrap;gap:6px">
-        <div class="li-info">
-          <div class="li-name" style="font-size:12px">${e(o.ref)} · ${e(o.planName)} · ${Number(o.price).toLocaleString('en')} SAR</div>
-          <div class="li-sub">${e(o.name)} | ${e(o.phone)}${o.email?' | '+e(o.email):''}</div>
-          <div class="li-sub">${new Date(o.createdAt).toLocaleString('ar-SA')}</div>
-        </div>
-        <div style="flex-shrink:0">
-          <select style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#fff;font-family:'Tajawal',sans-serif;font-size:10px;padding:4px 6px;outline:none" onchange="api('PUT','/admin/membership-orders/'+encodeURIComponent('${e(o.ref)}'),{status:this.value})">
-            <option value="pending_review"${o.status==='pending_review'?' selected':''}>قيد المراجعة</option>
-            <option value="pending_payment"${o.status==='pending_payment'?' selected':''}>بانتظار الدفع</option>
-            <option value="paid"${o.status==='paid'?' selected':''}>مدفوع ✓</option>
-            <option value="active"${o.status==='active'?' selected':''}>نشطة ✓</option>
-          </select>
-        </div>
-      </div>`).join('');
+    el.innerHTML=orders.map(function(o){
+      return '<div class="li" style="flex-wrap:wrap;gap:6px">'+
+        '<div class="li-info">'+
+          '<div class="li-name" style="font-size:12px">'+e(o.ref)+' · '+e(o.planName)+' · '+Number(o.price).toLocaleString('en')+' SAR</div>'+
+          '<div class="li-sub">'+e(o.name)+' | '+e(o.phone)+(o.email?' | '+e(o.email):'')+' </div>'+
+          '<div class="li-sub">'+new Date(o.createdAt).toLocaleString('ar-SA')+'</div>'+
+        '</div>'+
+        '<div style="flex-shrink:0">'+
+          '<select style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#fff;font-family:Tajawal,sans-serif;font-size:10px;padding:4px 6px;outline:none" onchange="api(\'PUT\',\'/admin/membership-orders/\'+encodeURIComponent(\''+e(o.ref)+'\'),{status:this.value})">'+
+            '<option value="pending_review"'+(o.status==='pending_review'?' selected':'')+'>قيد المراجعة</option>'+
+            '<option value="pending_payment"'+(o.status==='pending_payment'?' selected':'')+'>بانتظار الدفع</option>'+
+            '<option value="paid"'+(o.status==='paid'?' selected':'')+'>مدفوع ✓</option>'+
+            '<option value="active"'+(o.status==='active'?' selected':'')+'>نشطة ✓</option>'+
+          '</select>'+
+        '</div>'+
+      '</div>';
+    }).join('');
   }catch(err){if(el)el.innerHTML='<p style="font-size:11px;color:var(--red)">خطأ في التحميل</p>';}
 }
 
 async function loadRekazForGift(){
-  const listEl=g('gift-rekaz-list');
+  var listEl=g('gift-rekaz-list');
   if(!listEl)return;
   listEl.style.display='block';
   listEl.innerHTML='<div style="padding:10px;font-size:11px;color:rgba(255,255,255,.3)">جاري التحميل...</div>';
   try{
-    const d=await api('GET','/admin/rekaz-products');
-    const prods=d.items||[];
+    var d=await api('GET','/admin/rekaz-products');
+    var prods=d.items||[];
     if(!prods.length){listEl.innerHTML='<div style="padding:10px;font-size:11px;color:rgba(255,255,255,.3)">لا توجد منتجات</div>';return;}
-    listEl.innerHTML=prods.flatMap(p=>{
-      const name=(p.nameAr||p.name||'').split(' - ')[0].trim();
+    var html='';
+    prods.forEach(function(p){
+      var name=(p.nameAr||p.name||'').split(' - ')[0].trim();
       if(p.pricing&&p.pricing.length>1){
-        return p.pricing.map(pr=>`<div class="rp-item" onclick="g('gc-rekaz-price').value='${pr.id}';listEl.querySelectorAll('.rp-item').forEach(x=>x.classList.remove('sel'));this.classList.add('sel')"><div class="rp-name" style="font-size:11px">${e(name)} — ${e(pr.name||'')}</div><span class="rp-price">SAR ${pr.amount||0} | ${e(pr.id)}</span></div>`);
+        p.pricing.forEach(function(pr){
+          html+='<div class="rp-item" onclick="g(\'gc-rekaz-price\').value=\''+pr.id+'\';this.parentElement.querySelectorAll(\'.rp-item\').forEach(function(x){x.classList.remove(\'sel\')});this.classList.add(\'sel\')">'+
+            '<div class="rp-name" style="font-size:11px">'+e(name)+' — '+e(pr.name||'')+'</div>'+
+            '<span class="rp-price">SAR '+(pr.amount||0)+' | '+e(pr.id)+'</span></div>';
+        });
+      } else {
+        var pid=(p.pricing&&p.pricing[0])?p.pricing[0].id:p.id;
+        html+='<div class="rp-item" onclick="g(\'gc-rekaz-price\').value=\''+pid+'\';this.parentElement.querySelectorAll(\'.rp-item\').forEach(function(x){x.classList.remove(\'sel\')});this.classList.add(\'sel\')">'+
+          '<div class="rp-name" style="font-size:11px">'+e(name)+'</div>'+
+          '<span class="rp-price">SAR '+(p.amount||0)+' | '+e(pid)+'</span></div>';
       }
-      const pid=(p.pricing&&p.pricing[0])?p.pricing[0].id:p.id;
-      return [`<div class="rp-item" onclick="g('gc-rekaz-price').value='${pid}';listEl.querySelectorAll('.rp-item').forEach(x=>x.classList.remove('sel'));this.classList.add('sel')"><div class="rp-name" style="font-size:11px">${e(name)}</div><span class="rp-price">SAR ${p.amount||0} | ${e(pid)}</span></div>`];
-    }).join('');
+    });
+    listEl.innerHTML=html;
   }catch(err){listEl.innerHTML='<div style="padding:10px;font-size:11px;color:var(--red)">خطأ</div>';}
-}
-
-// ── SAVE ──
-async function saveAll(){
-  const btn=g('sbtn');btn.disabled=true;btn.textContent='جاري الحفظ...';
-  collectDesign();collectSocial();collectGift();collectMems();collectLogo();collectTexts();
-  await api('PUT','/admin/db',DB);
-  btn.disabled=false;btn.textContent='حفظ التغييرات';
-  const ok=g('save-ok');ok.classList.add('on');setTimeout(()=>ok.classList.remove('on'),2500);
 }
 async function exportDB(){
   const d=await api('GET','/admin/db-export');
