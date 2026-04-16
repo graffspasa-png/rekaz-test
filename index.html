@@ -445,35 +445,6 @@ body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-r
 </div>
 
 
-<!-- QUESTIONS PAGE -->
-<div id="questions-pg" class="pg fmpg">
-  <div class="bar"><button class="back" onclick="go('otp')">← رجوع</button><div class="logo-txt" onclick="go('home')">GRAFF <b>SPA</b></div><div class="barr"><div class="sdot done"></div><div class="sdot done"></div><div class="sdot on"></div></div></div>
-  <div class="prog"><b style="width:88%"></b></div>
-  <div class="fmbody">
-    <div class="fmhd"><p class="fmeye">STEP 3 · INFO</p><h2 class="fmh1">معلومات إضافية</h2><p class="fmsub">ساعدينا لنقدم لك تجربة أفضل</p></div>
-
-    <div class="fcard">
-      <div class="fctitl">هل لديك حساسية من أي مواد؟</div>
-      <label style="display:flex;align-items:center;gap:12px;cursor:pointer;padding:10px 0">
-        <input type="checkbox" id="q_allergy" onchange="onAllergyChg(this)" style="width:20px;height:20px;accent-color:var(--ink);flex-shrink:0">
-        <span style="font-size:14px;color:var(--text)">نعم، لدي حساسية</span>
-      </label>
-      <div id="allergy-detail-wrap" style="display:none;margin-top:8px">
-        <label class="flbl">يرجى ذكر نوع الحساسية</label>
-        <input class="finp" id="q_allergy_detail" placeholder="مثال: حساسية من اللاتكس...">
-      </div>
-    </div>
-
-    <div class="fcard">
-      <div class="fctitl">ملاحظات إضافية</div>
-      <textarea class="finp" id="q_notes" rows="3" placeholder="أي طلبات خاصة أو ملاحظات تودين إضافتها..." style="resize:none"></textarea>
-    </div>
-
-    <div class="errbox" id="errq"></div>
-  </div>
-  <div class="botbar"><button class="botbtn" onclick="goToConfirm()">متابعة لتأكيد الحجز ←</button></div>
-</div>
-
 <!-- PHONE -->
 <div id="phone" class="pg fmpg">
   <div class="bar"><button class="back" onclick="go('dt')">← رجوع</button><div class="logo-txt" onclick="go('home')">GRAFF <b>SPA</b></div><div class="barr"><div class="sdot done"></div><div class="sdot done"></div><div class="sdot on"></div></div></div>
@@ -521,17 +492,7 @@ body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-r
     <div class="pms" id="pms"></div>
     <div class="errbox" id="errconf"></div>
   </div>
-  <div id="pol-card" style="display:none;margin:0 0 8px">
-    <div class="fcard">
-      <div class="fctitl">السياسات والشروط</div>
-      <div id="pol-text" style="font-size:11px;color:var(--muted);line-height:2;white-space:pre-line;max-height:160px;overflow-y:auto"></div>
-      <label style="display:flex;align-items:center;gap:12px;margin-top:12px;cursor:pointer;padding:10px 0;border-top:1px solid var(--border)">
-        <input type="checkbox" id="pol-agree" onchange="chkPol()" style="width:20px;height:20px;accent-color:var(--ink);flex-shrink:0">
-        <span style="font-size:13px;color:var(--text)">أوافق على السياسات والشروط</span>
-      </label>
-    </div>
-  </div>
-  <div class="botbar"><button class="botbtn" id="btnconf" onclick="doBook()" disabled style="opacity:.45">الدفع وتأكيد الحجز ←</button></div>
+  <div class="botbar"><button class="botbtn" id="btnconf" onclick="doBook()">الدفع وتأكيد الحجز ←</button></div>
 </div>
 
 <!-- SUCCESS -->
@@ -1145,7 +1106,7 @@ async function verOTP(){
     var r=await fetch(B+'/verify-otp',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone:S.phone,otp:getOTP()})});
     var d=await r.json();if(!r.ok)throw new Error(d.error||'رمز غير صحيح');
     clearInterval(otpTimer);
-    go('questions-pg');
+    go('confirm');
   }catch(e){showErr('errotp',e.message);}
   btn.classList.remove('ld');btn.disabled=false;
 }
@@ -1174,19 +1135,7 @@ function buildConfirm(){
   h+='<div class="sumrow sum-divider"><span class="suml muted-lbl">قبل الضريبة</span><span class="sumv muted-val">SAR '+base.toLocaleString('en')+'</span></div>';
   h+='<div class="sumrow"><span class="suml muted-lbl">ضريبة القيمة المضافة 15%</span><span class="sumv muted-val">SAR '+vat.toLocaleString('en')+'</span></div>';
   h+='</div>';
-  // أضف ملخص الأسئلة
-  var hasAns = (ANS.allergy==='yes') || (ANS.notes&&ANS.notes.trim());
-  if(hasAns){
-    h+='<div class="inv-section" style="margin-top:10px">';
-    h+='<div class="inv-lbl">معلومات إضافية</div>';
-    if(ANS.allergy==='yes'){
-      h+='<div class="sumrow"><span class="suml">حساسية</span><span class="sumv">نعم'+(ANS.allergy_detail?' — '+esc(ANS.allergy_detail):'')+'</span></div>';
-    }
-    if(ANS.notes&&ANS.notes.trim()){
-      h+='<div class="sumrow"><span class="suml">ملاحظات</span><span class="sumv" style="font-size:11px;line-height:1.6;text-align:right;max-width:180px">'+esc(ANS.notes)+'</span></div>';
-    }
-    h+='</div>';
-  }
+
   document.getElementById('confsumm').innerHTML=h;
   document.getElementById('conftot').innerHTML='<span class="sumtotl">الإجمالي شامل الضريبة</span><span class="sumtotv">SAR '+tot.toLocaleString('en')+'</span>';
 }
@@ -1213,7 +1162,7 @@ async function doBook(){
     var cr=await fetch(B+'/create-customer',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:name,phone:S.phone})});
     var cd=await cr.json();if(!cr.ok)throw new Error(cd.error||'فشل إنشاء العميل');
     S.cid=cd.customerId;
-    var br=await fetch(B+'/create-booking',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({customerId:S.cid,phone:S.phone,priceId:S.cart.priceId,from:S.slot.from,to:S.slot.to,addons:S.addons.map(function(a){return{id:a.id};}),answers:ANS})});
+    var br=await fetch(B+'/create-booking',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({customerId:S.cid,phone:S.phone,priceId:S.cart.priceId,from:S.slot.from,to:S.slot.to,addons:S.addons.map(function(a){return{id:a.id};})})});
     var bd=await br.json();if(!br.ok)throw new Error(bd.error||'فشل الحجز');
     S.payUrl=bd.payUrl||null;
     var ref=bd.orderNumber||'—';
@@ -1226,9 +1175,13 @@ async function doBook(){
       '<div class="sucrow"><span class="suclbl">التاريخ</span><span class="sucval">'+dl+'</span></div>'+
       '<div class="sucrow"><span class="suclbl">الوقت</span><span class="sucval">'+S.slotLbl+'</span></div>'+
       '<div class="sucrow"><span class="suclbl">الإجمالي</span><span class="sucval">SAR '+tot.toLocaleString('en')+'</span></div>';
-    // No order number shown
-    document.getElementById('sucref').textContent='';
-    document.getElementById('sucref').parentElement.style.display='none';
+    // Show order ref from Rekaz
+    if(bd.orderRef||bd.id){
+      document.getElementById('sucref').textContent=bd.orderRef||bd.id||'—';
+      document.getElementById('sucref').parentElement.style.display='';
+    } else {
+      document.getElementById('sucref').parentElement.style.display='none';
+    }
     if(S.payUrl){
       // Open payment in new tab, show waiting overlay
       // Store booking info for success page
@@ -1273,11 +1226,7 @@ function openWA(){
 }
 function resetAll(){
   S={cart:null,addons:[],date:null,slot:null,slotLbl:null,phone:null,cid:null,payUrl:null,disc:0};
-  ANS={};
-  var _qa=document.getElementById('q_allergy');if(_qa)_qa.checked=false;
-  var _qw=document.getElementById('allergy-detail-wrap');if(_qw)_qw.style.display='none';
-  var _qd=document.getElementById('q_allergy_detail');if(_qd)_qd.value='';
-  var _qn=document.getElementById('q_notes');if(_qn)_qn.value='';
+
   allSlots=[];
   document.querySelectorAll('.sc.sel,.sc.has-open').forEach(function(c){c.classList.remove('sel','has-open');});
   document.querySelectorAll('.vrow.sel,.adrow.sel').forEach(function(v){v.classList.remove('sel');});
@@ -1299,47 +1248,7 @@ renderCal();
 init().then(loadProducts);
 
 
-// ── QUESTIONS & POLICIES (البند 2 و 3) ──
-var ANS = {};
-
-function onAllergyChg(cb){
-  ANS.allergy = cb.checked ? 'yes' : '';
-  var w = document.getElementById('allergy-detail-wrap');
-  if(w) w.style.display = cb.checked ? 'block' : 'none';
-  if(!cb.checked){
-    ANS.allergy_detail = '';
-    var i = document.getElementById('q_allergy_detail');
-    if(i) i.value = '';
-  }
-}
-
-function goToConfirm(){
-  var n = document.getElementById('q_notes');
-  if(n) ANS.notes = n.value;
-  var d = document.getElementById('q_allergy_detail');
-  if(d) ANS.allergy_detail = d.value;
-  showPolicies();
-  go('confirm');
-}
-
-function showPolicies(){
-  var pol = (CFG && CFG.policies) || {};
-  var text = pol.ar || '';
-  var card = document.getElementById('pol-card');
-  var textEl = document.getElementById('pol-text');
-  var cb = document.getElementById('pol-agree');
-  var btn = document.getElementById('btnconf');
-  if(card) card.style.display = text ? 'block' : 'none';
-  if(textEl) textEl.textContent = text;
-  if(cb) cb.checked = false;
-  if(btn){ btn.disabled = !!text; btn.style.opacity = text ? '0.45' : '1'; }
-}
-
-function chkPol(){
-  var cb = document.getElementById('pol-agree');
-  var btn = document.getElementById('btnconf');
-  if(btn){ btn.disabled = !(cb && cb.checked); btn.style.opacity = (cb && cb.checked) ? '1' : '0.45'; }
-}
+// ANS removed
 
 </script>
 </body>
