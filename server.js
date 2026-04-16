@@ -758,6 +758,13 @@ async function loadRekazForGift(){
     listEl.innerHTML=html;
   }catch(err){listEl.innerHTML='<div style="padding:10px;font-size:11px;color:var(--red)">خطأ</div>';}
 }
+async function saveAll(){
+  const btn=g('sbtn');btn.disabled=true;btn.textContent='جاري الحفظ...';
+  collectDesign();collectSocial();collectGift();collectMems();collectLogo();collectTexts();
+  await api('PUT','/admin/db',DB);
+  btn.disabled=false;btn.textContent='حفظ التغييرات';
+  const ok=g('save-ok');ok.classList.add('on');setTimeout(()=>ok.classList.remove('on'),2500);
+}
 async function exportDB(){
   const d=await api('GET','/admin/db-export');
   const blob=new Blob([JSON.stringify({base64:d.base64},null,2)],{type:'application/json'});
@@ -1167,6 +1174,9 @@ function renderPolicies(){
   if(el)el.value=pol.ar||'';
 }
 
+function flash(){
+  const ok=g('save-ok');if(ok){ok.classList.add('on');setTimeout(()=>ok.classList.remove('on'),2500);}
+}
 async function savePolicies(){
   DB.policies={ar:(document.getElementById('pol-ar').value||''),en:''};
   await api('PUT','/admin/policies',DB.policies);
