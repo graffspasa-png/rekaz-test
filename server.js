@@ -99,14 +99,65 @@ const DEFAULT_DB = {
   },
   pages: {
     gift: {
-      title:"بطاقة الإهداء", subtitle:"اهدي تجربة لا تُنسى",
-      amounts:[200,300,500,1000], sections:[]
+      title:"بطاقة الإهداء", subtitle:"اهدي تجربة لا تُنسى لمن تحبين",
+      eyebrow:"GIFT CARD",
+      amounts:[400,500,700,1000],
+      rekazPriceId:""
     },
-    memberships: { items:[
-      {name:"Classic",price:4000,featured:false,visits:12,features:["مناكير روسي كامل","علاج فيشيال للبشرة","12 زيارة / 12 شهراً"]},
-      {name:"VIP",price:8000,featured:true,visits:12,features:["جل اكستنشن أو بياب","مناكير روسي","علاج فيشيال","12 زيارة / 12 شهراً"]},
-      {name:"V-VIP",price:10000,featured:false,visits:12,features:["كل مميزات VIP","رموش كلاسيك","30 دقيقة مساج","12 زيارة / 12 شهراً"]}
-    ]}
+    memberships: {
+      heroTitle:"عضوية النخبة",
+      heroSubtitle:"تجربة فاخرة لا تُنسى — امتيازات حصرية لعضو مميز",
+      featTitle:"الخدمات المشمولة",
+      featSubtitle:"كل زيارة تشمل مجموعة من الخدمات الفاخرة المختارة بعناية",
+      plansTitle:"اختاري باقتك",
+      plansSub:"اشتراك سنوي يشمل 12 زيارة بخدمات متكاملة",
+      howTitle:"كيف تعمل العضوية؟",
+      privTitle:"امتيازات العضوية",
+      statVisits:"12",
+      featureCategories:[
+        {label:"الأظافر",open:true,feats:[
+          {text:"مناكير روسي كامل",sub:"الأظافر والقدمين"},
+          {text:"بياب مع إطالة أو جل اكستنشن"},
+          {text:"رسم وتصميم مميز"}
+        ]},
+        {label:"العناية بالبشرة",open:false,feats:[
+          {text:"تنظيف بشرة عميق",sub:"30 دقيقة"},
+          {text:"علاج فيشيال مخصص"},
+          {text:"قناع مرطب وبرايتنينج"}
+        ]},
+        {label:"المساج والاسترخاء",open:false,feats:[
+          {text:"مساج جزئي 30 دقيقة"},
+          {text:"علاج للرأس والكتفين"}
+        ]},
+        {label:"الامتيازات الإضافية",open:false,feats:[
+          {text:"استشوار وقص عند الحاجة"},
+          {text:"لون جل يدين وأقدام"},
+          {text:"رموش كلاسيك"}
+        ]}
+      ],
+      privileges:[
+        {icon:"🚗",title:"سيارة فاخرة",sub:"توصيل بسيارة BMW أو S500 للزيارة الأولى"},
+        {icon:"📅",title:"جدول مرن",sub:"مواعيد تناسب وقتك دون قيود"},
+        {icon:"🏡",title:"خدمات منزلية",sub:"إمكانية الحصول على الخدمة في منزلك"},
+        {icon:"🏆",title:"حفل سنوي VIP",sub:"طاولة خاصة بك في الحفل السنوي"},
+        {icon:"🎁",title:"هدايا ومفاجآت",sub:"جوائز تلقائية وعروض حصرية"},
+        {icon:"⭐",title:"تكريم خاص",sub:"معاملة VIP واهتمام مخصص"}
+      ],
+      howSteps:[
+        {num:"01",title:"اختاري باقتك",desc:"اختاري الباقة المناسبة واضغطي على اشتراكي الآن"},
+        {num:"02",title:"أدخلي بياناتك",desc:"أدخلي اسمك ورقم جوالك لإتمام التسجيل"},
+        {num:"03",title:"أتمّي الدفع",desc:"دفع آمن ومشفر عبر بوابة الدفع"},
+        {num:"04",title:"استمتعي بعضويتك",desc:"ستصلك تفاصيل عضويتك وبطاقتك الذهبية فوراً"}
+      ],
+      items:[
+        {name:"Classic",price:4000,featured:false,visits:12,rekazPriceId:"",
+         features:["مناكير روسي كامل","علاج فيشيال للبشرة","12 زيارة / 12 شهراً"]},
+        {name:"VIP",price:8000,featured:true,visits:12,rekazPriceId:"",
+         features:["جل اكستنشن أو بياب","مناكير روسي","علاج فيشيال","رموش كلاسيك","12 زيارة / 12 شهراً"]},
+        {name:"V-VIP",price:10000,featured:false,visits:12,rekazPriceId:"",
+         features:["كل مميزات VIP","30 دقيقة مساج","استشوار وقص","خدمات منزلية","12 زيارة / 12 شهراً"]}
+      ]
+    }
   }
 };
 
@@ -452,24 +503,59 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink2);color:#fff;directio
 
       <!-- GIFT -->
       <div class="panel" id="p-gift">
-        <div class="card"><div class="card-ttl">صفحة بطاقة الإهداء</div>
+        <div class="card"><div class="card-ttl">إعدادات بطاقة الإهداء</div>
           <div class="gr2">
             <div class="f"><label>العنوان</label><input type="text" id="gc-title"></div>
             <div class="f"><label>العنوان الفرعي</label><input type="text" id="gc-subtitle"></div>
           </div>
-          <div class="f"><label>المبالغ (مفصولة بفاصلة)</label><input type="text" id="gc-amounts" placeholder="200,300,500,1000" style="direction:ltr;text-align:left"></div>
+          <div class="f"><label>المبالغ المتاحة (مفصولة بفاصلة)</label><input type="text" id="gc-amounts" placeholder="400,500,700,1000" style="direction:ltr;text-align:left"></div>
+          <div class="f"><label>الـ Eyebrow (النص الصغير أعلى الصفحة)</label><input type="text" id="gc-eyebrow" placeholder="GIFT CARD"></div>
+          <div class="f" style="margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,.07)">
+            <label>ربط منتج Rekaz — Price ID للهدية (اختياري)</label>
+            <input type="text" id="gc-rekaz-price" placeholder="price_xxxxxxxx" style="direction:ltr;text-align:left">
+            <p style="font-size:10px;color:rgba(255,255,255,.3);margin-top:5px;line-height:1.7">إذا تركته فارغاً تُسجَّل الطلبات للمراجعة اليدوية.</p>
+          </div>
+          <div style="margin-top:8px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+            <button class="add-btn" style="margin:0;padding:6px 14px" onclick="loadRekazForGift()">تحديث منتجات Rekaz</button>
+            <a href="/gift" target="_blank" style="font-size:11px;color:var(--gold);text-decoration:none;border:1px solid rgba(184,150,90,.3);padding:6px 14px">فتح صفحة الإهداء ↗</a>
+          </div>
+          <div id="gift-rekaz-list" style="margin-top:10px;max-height:200px;overflow-y:auto;border:1px solid rgba(255,255,255,.07);display:none"></div>
+        </div>
+        <div class="card">
+          <div class="card-ttl">طلبات الإهداء الواردة <span id="gift-orders-count" style="color:var(--gold);font-size:11px;font-weight:400;letter-spacing:0;margin-right:6px"></span></div>
+          <div id="gift-orders-list"><p style="font-size:11px;color:rgba(255,255,255,.3)">جاري التحميل...</p></div>
         </div>
       </div>
 
       <!-- MEMBERSHIPS -->
       <div class="panel" id="p-memberships">
-        <div class="card"><div class="card-ttl">باقات العضوية</div>
+        <div class="card">
+          <div class="card-ttl">نصوص صفحة العضوية</div>
+          <div class="gr2">
+            <div class="f"><label>عنوان الـ Hero</label><input type="text" id="mem-hero-title" placeholder="عضوية النخبة"></div>
+            <div class="f"><label>وصف الـ Hero</label><input type="text" id="mem-hero-sub" placeholder="تجربة فاخرة..."></div>
+            <div class="f"><label>عنوان الخدمات</label><input type="text" id="mem-feat-title" placeholder="الخدمات المشمولة"></div>
+            <div class="f"><label>عنوان الباقات</label><input type="text" id="mem-plans-title" placeholder="اختاري باقتك"></div>
+            <div class="f"><label>عنوان الامتيازات</label><input type="text" id="mem-priv-title" placeholder="امتيازات العضوية"></div>
+            <div class="f"><label>عدد الزيارات (stat)</label><input type="text" id="mem-stat-visits" placeholder="12"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-ttl">باقات العضوية</div>
+          <p style="font-size:10px;color:rgba(255,255,255,.35);margin-bottom:12px;line-height:1.7">كل باقة لها Price ID خاص من Rekaz. اتركه فارغاً إذا لم يكن مربوطاً.</p>
           <div id="mems-list"></div>
-          <button class="add-btn" onclick="addMem()">+ إضافة باقة</button>
+          <div style="display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap">
+            <button class="add-btn" style="margin:0" onclick="addMem()">+ إضافة باقة</button>
+            <a href="/membership" target="_blank" style="font-size:11px;color:var(--gold);text-decoration:none;border:1px solid rgba(184,150,90,.3);padding:6px 14px">فتح صفحة العضويات ↗</a>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-ttl">طلبات العضويات الواردة <span id="mem-orders-count" style="color:var(--gold);font-size:11px;font-weight:400;letter-spacing:0;margin-right:6px"></span></div>
+          <div id="mem-orders-list"><p style="font-size:11px;color:rgba(255,255,255,.3)">جاري التحميل...</p></div>
         </div>
       </div>
 
-      <!-- SOCIAL -->
+            <!-- SOCIAL -->
       <div class="panel" id="p-social">
         <div class="card"><div class="card-ttl">التواصل الاجتماعي</div>
           <p style="font-size:11px;color:rgba(255,255,255,.4);margin-bottom:14px">أدخلي اسم المستخدم فقط بدون @ وبدون الرابط الكامل</p>
@@ -583,8 +669,84 @@ function show(id){
   const ni=document.querySelector('.ni[onclick="show(\\''+id+'\\')"');if(ni)ni.classList.add('on');
   if(g('tb-title'))g('tb-title').textContent=TITLES[id]||id;
   if(id==='policies')renderPolicies();
+  if(id==='gift'){collectGift();loadGiftOrders();}
+  if(id==='memberships')loadMemOrders();
 }
 function renderAll(){renderOverview();renderMenu();renderTexts();renderDesign();renderLogo();renderButtons();renderGift();renderMems();renderSocial();renderPayment();}
+
+// ── GIFT & MEMBERSHIP ORDERS ──
+async function loadGiftOrders(){
+  const el=g('gift-orders-list'),cnt=g('gift-orders-count');
+  if(!el)return;
+  try{
+    const orders=await api('GET','/admin/gift-orders');
+    if(!orders.length){el.innerHTML='<p style="font-size:11px;color:rgba(255,255,255,.3);padding:8px 0">لا توجد طلبات بعد.</p>';return;}
+    if(cnt)cnt.textContent='('+orders.length+')';
+    el.innerHTML=orders.map(o=>`
+      <div class="li" style="flex-wrap:wrap;gap:6px">
+        <div class="li-info">
+          <div class="li-name" style="font-size:12px">${e(o.ref)} · ${e(String(o.amount))} SAR</div>
+          <div class="li-sub">من: ${e(o.fromName)} (${e(o.fromPhone)}) | إلى: ${e(o.toName)} — ${e(o.toPhone)}</div>
+          ${o.message?`<div class="li-sub" style="color:rgba(184,150,90,.5)">"${e(o.message)}"</div>`:''}
+          <div class="li-sub">${new Date(o.createdAt).toLocaleString('ar-SA')}</div>
+        </div>
+        <div style="flex-shrink:0">
+          <select style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#fff;font-family:'Tajawal',sans-serif;font-size:10px;padding:4px 6px;outline:none" onchange="api('PUT','/admin/gift-orders/'+encodeURIComponent('${e(o.ref)}'),{status:this.value})">
+            <option value="pending_review"${o.status==='pending_review'?' selected':''}>قيد المراجعة</option>
+            <option value="pending_payment"${o.status==='pending_payment'?' selected':''}>بانتظار الدفع</option>
+            <option value="paid"${o.status==='paid'?' selected':''}>مدفوع ✓</option>
+            <option value="sent"${o.status==='sent'?' selected':''}>تم الإرسال ✓</option>
+          </select>
+        </div>
+      </div>`).join('');
+  }catch(err){if(el)el.innerHTML='<p style="font-size:11px;color:var(--red)">خطأ في التحميل</p>';}
+}
+
+async function loadMemOrders(){
+  const el=g('mem-orders-list'),cnt=g('mem-orders-count');
+  if(!el)return;
+  try{
+    const orders=await api('GET','/admin/membership-orders');
+    if(!orders.length){el.innerHTML='<p style="font-size:11px;color:rgba(255,255,255,.3);padding:8px 0">لا توجد طلبات بعد.</p>';return;}
+    if(cnt)cnt.textContent='('+orders.length+')';
+    el.innerHTML=orders.map(o=>`
+      <div class="li" style="flex-wrap:wrap;gap:6px">
+        <div class="li-info">
+          <div class="li-name" style="font-size:12px">${e(o.ref)} · ${e(o.planName)} · ${Number(o.price).toLocaleString('en')} SAR</div>
+          <div class="li-sub">${e(o.name)} | ${e(o.phone)}${o.email?' | '+e(o.email):''}</div>
+          <div class="li-sub">${new Date(o.createdAt).toLocaleString('ar-SA')}</div>
+        </div>
+        <div style="flex-shrink:0">
+          <select style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#fff;font-family:'Tajawal',sans-serif;font-size:10px;padding:4px 6px;outline:none" onchange="api('PUT','/admin/membership-orders/'+encodeURIComponent('${e(o.ref)}'),{status:this.value})">
+            <option value="pending_review"${o.status==='pending_review'?' selected':''}>قيد المراجعة</option>
+            <option value="pending_payment"${o.status==='pending_payment'?' selected':''}>بانتظار الدفع</option>
+            <option value="paid"${o.status==='paid'?' selected':''}>مدفوع ✓</option>
+            <option value="active"${o.status==='active'?' selected':''}>نشطة ✓</option>
+          </select>
+        </div>
+      </div>`).join('');
+  }catch(err){if(el)el.innerHTML='<p style="font-size:11px;color:var(--red)">خطأ في التحميل</p>';}
+}
+
+async function loadRekazForGift(){
+  const listEl=g('gift-rekaz-list');
+  if(!listEl)return;
+  listEl.style.display='block';
+  listEl.innerHTML='<div style="padding:10px;font-size:11px;color:rgba(255,255,255,.3)">جاري التحميل...</div>';
+  try{
+    const d=await api('GET','/admin/rekaz-products');
+    const prods=d.items||[];
+    if(!prods.length){listEl.innerHTML='<div style="padding:10px;font-size:11px;color:rgba(255,255,255,.3)">لا توجد منتجات</div>';return;}
+    listEl.innerHTML=prods.flatMap(p=>{
+      const name=(p.nameAr||p.name||'').split(' - ')[0].trim();
+      if(p.pricing&&p.pricing.length>1){
+        return p.pricing.map(pr=>`<div class="rp-item" onclick="g('gc-rekaz-price').value='${pr.id}';listEl.querySelectorAll('.rp-item').forEach(x=>x.classList.remove('sel'));this.classList.add('sel')"><div class="rp-name" style="font-size:11px">${e(name)} — ${e(pr.name||'')}</div><span class="rp-price">SAR ${pr.amount||0} | ${e(pr.id)}</span></div>`);
+      }
+      const pid=(p.pricing&&p.pricing[0])?p.pricing[0].id:p.id;
+      return [`<div class="rp-item" onclick="g('gc-rekaz-price').value='${pid}';listEl.querySelectorAll('.rp-item').forEach(x=>x.classList.remove('sel'));this.classList.add('sel')"><div class="rp-name" style="font-size:11px">${e(name)}</div><span class="rp-price">SAR ${p.amount||0} | ${e(pid)}</span></div>`];
+    }).join('');
+  }catch(err){listEl.innerHTML='<div style="padding:10px;font-size:11px;color:var(--red)">خطأ</div>';}
+}
 
 // ── SAVE ──
 async function saveAll(){
@@ -885,17 +1047,28 @@ function collectLogo(){
 function renderGift(){
   const gp=(DB.pages&&DB.pages.gift)||{};
   setv('gc-title',gp.title||'بطاقة الإهداء');setv('gc-subtitle',gp.subtitle||'');
-  setv('gc-amounts',(gp.amounts||[200,300,500,1000]).join(','));
+  setv('gc-amounts',(gp.amounts||[400,500,700,1000]).join(','));
+  setv('gc-rekaz-price',gp.rekazPriceId||'');
+  setv('gc-eyebrow',gp.eyebrow||'');
 }
 function collectGift(){
   DB.pages=DB.pages||{};DB.pages.gift=DB.pages.gift||{};
   DB.pages.gift.title=g('gc-title').value;DB.pages.gift.subtitle=g('gc-subtitle').value;
   DB.pages.gift.amounts=(g('gc-amounts').value||'').split(',').map(x=>parseInt(x.trim())).filter(Boolean);
+  const rp=g('gc-rekaz-price');if(rp)DB.pages.gift.rekazPriceId=rp.value.trim();
+  const ey=g('gc-eyebrow');if(ey)DB.pages.gift.eyebrow=ey.value.trim();
 }
 
 // ── MEMBERSHIPS ──
 function renderMems(){
-  const mems=(DB.pages&&DB.pages.memberships&&DB.pages.memberships.items)||[];
+  const mp=(DB.pages&&DB.pages.memberships)||{};
+  const mems=mp.items||[];
+  setv('mem-hero-title',mp.heroTitle||'');
+  setv('mem-hero-sub',mp.heroSubtitle||'');
+  setv('mem-feat-title',mp.featTitle||'');
+  setv('mem-plans-title',mp.plansTitle||'');
+  setv('mem-priv-title',mp.privTitle||'');
+  setv('mem-stat-visits',mp.statVisits||'');
   g('mems-list').innerHTML=mems.map((m,i)=>\`
     <div class="mem-edit">
       <div class="mem-edit-ttl"><span>\${e(m.name||'باقة')}</span>
@@ -910,6 +1083,7 @@ function renderMems(){
         <div class="f"><label>السعر SAR</label><input type="number" value="\${m.price||0}" onchange="DB.pages.memberships.items[\${i}].price=parseInt(this.value)||0"></div>
         <div class="f"><label>عدد الزيارات</label><input type="number" value="\${m.visits||12}" onchange="DB.pages.memberships.items[\${i}].visits=parseInt(this.value)||12"></div>
       </div>
+      <div class="f"><label>Rekaz Price ID (اختياري — للدفع الفوري)</label><input placeholder="price_xxx" style="direction:ltr;text-align:left" value="${e(m.rekazPriceId||'')}" onchange="DB.pages.memberships.items[${i}].rekazPriceId=this.value.trim()"></div>
       <div class="f"><label>المميزات (كل سطر ميزة)</label>
         <textarea onchange="DB.pages.memberships.items[\${i}].features=this.value.split('\\\\n').filter(Boolean)">\${e((m.features||[]).join('\\n'))}</textarea>
       </div>
@@ -922,7 +1096,17 @@ function addMem(){
   renderMems();
 }
 function delMem(i){DB.pages.memberships.items.splice(i,1);renderMems();}
-function collectMems(){}
+function collectMems(){
+  DB.pages=DB.pages||{};DB.pages.memberships=DB.pages.memberships||{};
+  const mp=DB.pages.memberships;
+  const gv=id=>{const el=g(id);return el?el.value.trim():'';}
+  const ht=gv('mem-hero-title');if(ht)mp.heroTitle=ht;
+  const hs=gv('mem-hero-sub');if(hs)mp.heroSubtitle=hs;
+  const ft=gv('mem-feat-title');if(ft)mp.featTitle=ft;
+  const pt=gv('mem-plans-title');if(pt)mp.plansTitle=pt;
+  const pvt=gv('mem-priv-title');if(pvt)mp.privTitle=pvt;
+  const sv=gv('mem-stat-visits');if(sv)mp.statVisits=sv;
+}
 
 // ── SOCIAL ──
 function renderSocial(){
@@ -1015,7 +1199,7 @@ app.get("/site", (req,res) => {
     buttons:  db.buttons.filter(b=>b.visible!==false).sort((a,b)=>a.order-b.order),
     payments: db.payments.filter(p=>p.visible!==false).sort((a,b)=>a.order-b.order),
     pages:    db.pages,
-    policies: db.policies||{ar:'',en:''}
+    policies: db.policies||{ar:"",en:""}
   });
 });
 
@@ -1269,6 +1453,104 @@ app.get("/admin/rekaz-products",adminAuth,async(req,res)=>{
 app.get("/admin/policies", adminAuth, (req,res) => res.json(readDB().policies||{}));
 app.put("/admin/policies", adminAuth, (req,res) => {
   const db=readDB(); db.policies=req.body; writeDB(db); res.json({success:true});
+});
+
+// ── GIFT PAGE ──
+app.get("/gift",(req,res)=>{
+  try{const html=readFileSync(process.cwd()+"/gift.html","utf8");res.setHeader("Content-Type","text/html; charset=utf-8");res.send(html);}
+  catch(e){res.status(404).send("gift.html not found");}
+});
+
+// ── MEMBERSHIP PAGE ──
+app.get("/membership",(req,res)=>{
+  try{const html=readFileSync(process.cwd()+"/membership.html","utf8");res.setHeader("Content-Type","text/html; charset=utf-8");res.send(html);}
+  catch(e){res.status(404).send("membership.html not found");}
+});
+
+// ── GIFT PURCHASE ──
+app.post("/gift/purchase",async(req,res)=>{
+  const{amount,fromName,fromPhone,toName,toPhone,message}=req.body;
+  if(!amount||!fromName||!fromPhone||!toName||!toPhone)return res.status(400).json({error:"جميع الحقول مطلوبة"});
+  try{
+    const db=readDB();
+    const priceId=(db.pages?.gift?.rekazPriceId)||null;
+    const orderRef="GIFT-"+Date.now().toString(36).toUpperCase();
+    let payUrl=null;
+    if(priceId){
+      const mobile=fromPhone.startsWith("+966")?fromPhone:"+966"+fromPhone.replace(/^0/,"");
+      let customerId=null;
+      try{
+        const chk=await rekazFetch(`${REKAZ_API}/customers?mobileNumber=${encodeURIComponent(mobile)}`);
+        if(chk.ok){const d=chk.json();if(d.items?.length)customerId=d.items[0].id;}
+        if(!customerId){
+          const cr=await rekazFetch(`${REKAZ_API}/customers`,{method:"POST",body:JSON.stringify({name:fromName,mobileNumber:mobile,type:1})});
+          if(cr.ok)customerId=cr.json();
+        }
+      }catch(e){console.log("[Gift] customer:",e.message);}
+      if(customerId){
+        try{
+          const payload={customerId,branchId:BRANCH_ID,items:[{priceId,quantity:1,customFields:{gift_from:fromName,gift_to:toName,gift_to_phone:toPhone,gift_msg:message||"",gift_amount:String(amount)}}]};
+          const r=await rekazFetch(`${REKAZ_API}/reservations/bulk`,{method:"POST",body:JSON.stringify(payload)});
+          if(r.ok){const res2=r.json();const pp=res2.paymentLink||"";payUrl=pp?(pp.startsWith("http")?pp:`${REKAZ_BASE}${pp}`):null;}
+        }catch(e){console.log("[Gift] rekaz:",e.message);}
+      }
+    }
+    if(!db.giftOrders)db.giftOrders=[];
+    db.giftOrders.unshift({ref:orderRef,amount,fromName,fromPhone,toName,toPhone,message:message||"",createdAt:new Date().toISOString(),status:payUrl?"pending_payment":"pending_review"});
+    writeDB(db);
+    res.json({success:true,orderRef,payUrl,giftCode:orderRef});
+  }catch(e){console.error("[Gift]",e.message);res.status(500).json({error:e.message});}
+});
+
+// ── MEMBERSHIP PURCHASE ──
+app.post("/membership/purchase",async(req,res)=>{
+  const{planName,planIndex,price,name,phone,email}=req.body;
+  if(!planName||!price||!name||!phone)return res.status(400).json({error:"جميع الحقول مطلوبة"});
+  try{
+    const db=readDB();
+    const memItems=db.pages?.memberships?.items||[];
+    const plan=typeof planIndex==="number"?memItems[planIndex]:memItems.find(m=>m.name===planName);
+    const priceId=plan?.rekazPriceId||null;
+    const orderRef="MEM-"+Date.now().toString(36).toUpperCase();
+    let payUrl=null;
+    if(priceId){
+      const mobile=phone.startsWith("+966")?phone:"+966"+phone.replace(/^0/,"");
+      let customerId=null;
+      try{
+        const chk=await rekazFetch(`${REKAZ_API}/customers?mobileNumber=${encodeURIComponent(mobile)}`);
+        if(chk.ok){const d=chk.json();if(d.items?.length)customerId=d.items[0].id;}
+        if(!customerId){
+          const cr=await rekazFetch(`${REKAZ_API}/customers`,{method:"POST",body:JSON.stringify({name,mobileNumber:mobile,type:1})});
+          if(cr.ok)customerId=cr.json();
+        }
+      }catch(e){console.log("[Mem] customer:",e.message);}
+      if(customerId){
+        try{
+          const payload={customerId,branchId:BRANCH_ID,items:[{priceId,quantity:1,customFields:{membership_plan:planName}}]};
+          const r=await rekazFetch(`${REKAZ_API}/reservations/bulk`,{method:"POST",body:JSON.stringify(payload)});
+          if(r.ok){const res2=r.json();const pp=res2.paymentLink||"";payUrl=pp?(pp.startsWith("http")?pp:`${REKAZ_BASE}${pp}`):null;}
+        }catch(e){console.log("[Mem] rekaz:",e.message);}
+      }
+    }
+    if(!db.membershipOrders)db.membershipOrders=[];
+    db.membershipOrders.unshift({ref:orderRef,planName,price,name,phone:phone.replace(/^0/,"966"),email:email||"",createdAt:new Date().toISOString(),status:payUrl?"pending_payment":"pending_review"});
+    writeDB(db);
+    res.json({success:true,orderRef,payUrl});
+  }catch(e){console.error("[Mem]",e.message);res.status(500).json({error:e.message});}
+});
+
+// ── ADMIN: ORDERS ──
+app.get("/admin/gift-orders",adminAuth,(req,res)=>{res.json(readDB().giftOrders||[]);});
+app.get("/admin/membership-orders",adminAuth,(req,res)=>{res.json(readDB().membershipOrders||[]);});
+app.put("/admin/gift-orders/:ref",adminAuth,(req,res)=>{
+  const db=readDB();const o=(db.giftOrders||[]).find(x=>x.ref===req.params.ref);
+  if(!o)return res.status(404).json({error:"Not found"});
+  Object.assign(o,req.body);writeDB(db);res.json({success:true});
+});
+app.put("/admin/membership-orders/:ref",adminAuth,(req,res)=>{
+  const db=readDB();const o=(db.membershipOrders||[]).find(x=>x.ref===req.params.ref);
+  if(!o)return res.status(404).json({error:"Not found"});
+  Object.assign(o,req.body);writeDB(db);res.json({success:true});
 });
 
 // ── DEBUG ──
