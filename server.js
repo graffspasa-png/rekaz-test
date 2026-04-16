@@ -679,55 +679,71 @@ async function loadGiftOrders(){
   var el=g('gift-orders-list'),cnt=g('gift-orders-count');
   if(!el)return;
   try{
-    var orders=await api('GET','/admin/gift-orders');
+    window._giftOrders=await api('GET','/admin/gift-orders');
+    var orders=window._giftOrders;
     if(!orders.length){el.innerHTML='<p style="font-size:11px;color:rgba(255,255,255,.3);padding:8px 0">لا توجد طلبات بعد.</p>';return;}
     if(cnt)cnt.textContent='('+orders.length+')';
-    el.innerHTML=orders.map(function(o){
-      return '<div class="li" style="flex-wrap:wrap;gap:6px">'+
-        '<div class="li-info">'+
-          '<div class="li-name" style="font-size:12px">'+e(o.ref)+' · '+e(String(o.amount))+' SAR</div>'+
-          '<div class="li-sub">من: '+e(o.fromName)+' ('+e(o.fromPhone)+') | إلى: '+e(o.toName)+' — '+e(o.toPhone)+'</div>'+
-          (o.message?'<div class="li-sub" style="color:rgba(184,150,90,.5)">'+e(o.message)+'</div>':'')+
-          '<div class="li-sub">'+new Date(o.createdAt).toLocaleString('ar-SA')+'</div>'+
-        '</div>'+
-        '<div style="flex-shrink:0">'+
-          '<select style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#fff;font-family:Tajawal,sans-serif;font-size:10px;padding:4px 6px;outline:none" onchange="api(\'PUT\',\'/admin/gift-orders/\'+encodeURIComponent(\''+e(o.ref)+'\'),{status:this.value})">'+
-            '<option value="pending_review"'+(o.status==='pending_review'?' selected':'')+'>قيد المراجعة</option>'+
-            '<option value="pending_payment"'+(o.status==='pending_payment'?' selected':'')+'>بانتظار الدفع</option>'+
-            '<option value="paid"'+(o.status==='paid'?' selected':'')+'>مدفوع ✓</option>'+
-            '<option value="sent"'+(o.status==='sent'?' selected':'')+'>تم الإرسال ✓</option>'+
-          '</select>'+
-        '</div>'+
-      '</div>';
-    }).join('');
+    var html='';
+    for(var i=0;i<orders.length;i++){
+      var o=orders[i];
+      html+='<div class="li" style="flex-wrap:wrap;gap:6px">';
+      html+='<div class="li-info">';
+      html+='<div class="li-name" style="font-size:12px">'+e(o.ref)+' · '+e(String(o.amount))+' SAR</div>';
+      html+='<div class="li-sub">من: '+e(o.fromName)+' ('+e(o.fromPhone)+') | إلى: '+e(o.toName)+' — '+e(o.toPhone)+'</div>';
+      if(o.message)html+='<div class="li-sub" style="color:rgba(184,150,90,.5)">'+e(o.message)+'</div>';
+      html+='<div class="li-sub">'+new Date(o.createdAt).toLocaleString('ar-SA')+'</div>';
+      html+='</div>';
+      html+='<div style="flex-shrink:0"><select data-idx="'+i+'" onchange="updGiftOrder(this)" style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#fff;font-family:Tajawal,sans-serif;font-size:10px;padding:4px 6px;outline:none">';
+      html+='<option value="pending_review"'+(o.status==='pending_review'?' selected':'')+'>\u0642\u064a\u062f \u0627\u0644\u0645\u0631\u0627\u062c\u0639\u0629</option>';
+      html+='<option value="pending_payment"'+(o.status==='pending_payment'?' selected':'')+'>\u0628\u0627\u0646\u062a\u0638\u0627\u0631 \u0627\u0644\u062f\u0641\u0639</option>';
+      html+='<option value="paid"'+(o.status==='paid'?' selected':'')+'>\u0645\u062f\u0641\u0648\u0639 \u2713</option>';
+      html+='<option value="sent"'+(o.status==='sent'?' selected':'')+'>\u062a\u0645 \u0627\u0644\u0625\u0631\u0633\u0627\u0644 \u2713</option>';
+      html+='</select></div>';
+      html+='</div>';
+    }
+    el.innerHTML=html;
   }catch(err){if(el)el.innerHTML='<p style="font-size:11px;color:var(--red)">خطأ في التحميل</p>';}
+}
+function updGiftOrder(sel){
+  var idx=parseInt(sel.dataset.idx);
+  var o=window._giftOrders&&window._giftOrders[idx];
+  if(!o)return;
+  api('PUT','/admin/gift-orders/'+encodeURIComponent(o.ref),{status:sel.value});
 }
 
 async function loadMemOrders(){
   var el=g('mem-orders-list'),cnt=g('mem-orders-count');
   if(!el)return;
   try{
-    var orders=await api('GET','/admin/membership-orders');
-    if(!orders.length){el.innerHTML='<p style="font-size:11px;color:rgba(255,255,255,.3);padding:8px 0">لا توجد طلبات بعد.</p>';return;}
+    window._memOrders=await api('GET','/admin/membership-orders');
+    var orders=window._memOrders;
+    if(!orders.length){el.innerHTML='<p style="font-size:11px;color:rgba(255,255,255,.3);padding:8px 0">\u0644\u0627 \u062a\u0648\u062c\u062f \u0637\u0644\u0628\u0627\u062a \u0628\u0639\u062f.</p>';return;}
     if(cnt)cnt.textContent='('+orders.length+')';
-    el.innerHTML=orders.map(function(o){
-      return '<div class="li" style="flex-wrap:wrap;gap:6px">'+
-        '<div class="li-info">'+
-          '<div class="li-name" style="font-size:12px">'+e(o.ref)+' · '+e(o.planName)+' · '+Number(o.price).toLocaleString('en')+' SAR</div>'+
-          '<div class="li-sub">'+e(o.name)+' | '+e(o.phone)+(o.email?' | '+e(o.email):'')+' </div>'+
-          '<div class="li-sub">'+new Date(o.createdAt).toLocaleString('ar-SA')+'</div>'+
-        '</div>'+
-        '<div style="flex-shrink:0">'+
-          '<select style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#fff;font-family:Tajawal,sans-serif;font-size:10px;padding:4px 6px;outline:none" onchange="api(\'PUT\',\'/admin/membership-orders/\'+encodeURIComponent(\''+e(o.ref)+'\'),{status:this.value})">'+
-            '<option value="pending_review"'+(o.status==='pending_review'?' selected':'')+'>قيد المراجعة</option>'+
-            '<option value="pending_payment"'+(o.status==='pending_payment'?' selected':'')+'>بانتظار الدفع</option>'+
-            '<option value="paid"'+(o.status==='paid'?' selected':'')+'>مدفوع ✓</option>'+
-            '<option value="active"'+(o.status==='active'?' selected':'')+'>نشطة ✓</option>'+
-          '</select>'+
-        '</div>'+
-      '</div>';
-    }).join('');
+    var html='';
+    for(var i=0;i<orders.length;i++){
+      var o=orders[i];
+      html+='<div class="li" style="flex-wrap:wrap;gap:6px">';
+      html+='<div class="li-info">';
+      html+='<div class="li-name" style="font-size:12px">'+e(o.ref)+' · '+e(o.planName)+' · '+Number(o.price).toLocaleString('en')+' SAR</div>';
+      html+='<div class="li-sub">'+e(o.name)+' | '+e(o.phone)+(o.email?' | '+e(o.email):'')+' </div>';
+      html+='<div class="li-sub">'+new Date(o.createdAt).toLocaleString('ar-SA')+'</div>';
+      html+='</div>';
+      html+='<div style="flex-shrink:0"><select data-idx="'+i+'" onchange="updMemOrder(this)" style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#fff;font-family:Tajawal,sans-serif;font-size:10px;padding:4px 6px;outline:none">';
+      html+='<option value="pending_review"'+(o.status==='pending_review'?' selected':'')+'>\u0642\u064a\u062f \u0627\u0644\u0645\u0631\u0627\u062c\u0639\u0629</option>';
+      html+='<option value="pending_payment"'+(o.status==='pending_payment'?' selected':'')+'>\u0628\u0627\u0646\u062a\u0638\u0627\u0631 \u0627\u0644\u062f\u0641\u0639</option>';
+      html+='<option value="paid"'+(o.status==='paid'?' selected':'')+'>\u0645\u062f\u0641\u0648\u0639 \u2713</option>';
+      html+='<option value="active"'+(o.status==='active'?' selected':'')+'>\u0646\u0634\u0637\u0629 \u2713</option>';
+      html+='</select></div>';
+      html+='</div>';
+    }
+    el.innerHTML=html;
   }catch(err){if(el)el.innerHTML='<p style="font-size:11px;color:var(--red)">خطأ في التحميل</p>';}
+}
+function updMemOrder(sel){
+  var idx=parseInt(sel.dataset.idx);
+  var o=window._memOrders&&window._memOrders[idx];
+  if(!o)return;
+  api('PUT','/admin/membership-orders/'+encodeURIComponent(o.ref),{status:sel.value});
 }
 
 async function loadRekazForGift(){
