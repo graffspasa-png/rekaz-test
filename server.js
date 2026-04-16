@@ -1085,7 +1085,7 @@ function renderMems(){
         <div class="f"><label>السعر SAR</label><input type="number" value="\${m.price||0}" onchange="DB.pages.memberships.items[\${i}].price=parseInt(this.value)||0"></div>
         <div class="f"><label>عدد الزيارات</label><input type="number" value="\${m.visits||12}" onchange="DB.pages.memberships.items[\${i}].visits=parseInt(this.value)||12"></div>
       </div>
-      <div class="f"><label>Rekaz Price ID (اختياري — للدفع الفوري)</label><input placeholder="price_xxx" style="direction:ltr;text-align:left" value="${e(m.rekazPriceId||'')}" onchange="DB.pages.memberships.items[${i}].rekazPriceId=this.value.trim()"></div>
+      <div class="f"><label>Rekaz Price ID (اختياري — للدفع الفوري)</label><input placeholder="price_xxx" style="direction:ltr;text-align:left" value="\${e(m.rekazPriceId||'')}" onchange="DB.pages.memberships.items[\${i}].rekazPriceId=this.value.trim()"></div>
       <div class="f"><label>المميزات (كل سطر ميزة)</label>
         <textarea onchange="DB.pages.memberships.items[\${i}].features=this.value.split('\\\\n').filter(Boolean)">\${e((m.features||[]).join('\\n'))}</textarea>
       </div>
