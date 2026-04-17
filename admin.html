@@ -276,8 +276,10 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink2);color:#fff;directio
             <p style="font-size:10px;color:rgba(255,255,255,.3);margin-top:5px;line-height:1.7">إذا تركته فارغاً تُسجَّل الطلبات للمراجعة اليدوية.</p>
           </div>
           <div style="margin-top:8px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+            <button class="add-btn" style="margin:0;padding:6px 14px" onclick="loadRekazProdsForGift()">← جلب منتجات Rekaz</button>
             <a href="/gift" target="_blank" style="font-size:11px;color:var(--gold);text-decoration:none;border:1px solid rgba(184,150,90,.3);padding:6px 14px">فتح صفحة الإهداء ↗</a>
           </div>
+          <div id="rekaz-gift-list" style="display:none;margin-top:10px;max-height:220px;overflow-y:auto;border:1px solid rgba(255,255,255,.07);border-radius:4px"></div>
         </div>
         <div class="card">
           <div class="card-ttl">طلبات الإهداء الواردة <span id="gift-orders-count" style="color:var(--gold);font-size:11px;font-weight:400;margin-right:6px"></span></div>
@@ -293,8 +295,10 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink2);color:#fff;directio
           <div id="mems-list"></div>
           <div style="display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap">
             <button class="add-btn" style="margin:0" onclick="addMem()">+ إضافة باقة</button>
+            <button class="add-btn" style="margin:0;padding:6px 14px" onclick="loadRekazProdsForMem()">← جلب منتجات Rekaz</button>
             <a href="/membership" target="_blank" style="font-size:11px;color:var(--gold);text-decoration:none;border:1px solid rgba(184,150,90,.3);padding:6px 14px">فتح صفحة العضويات ↗</a>
           </div>
+          <div id="rekaz-mem-list" style="display:none;margin-top:10px;max-height:220px;overflow-y:auto;border:1px solid rgba(255,255,255,.07);border-radius:4px"></div>
         </div>
         <div class="card">
           <div class="card-ttl">طلبات العضويات الواردة <span id="mem-orders-count" style="color:var(--gold);font-size:11px;font-weight:400;margin-right:6px"></span></div>
@@ -898,6 +902,88 @@ function updMemOrder(sel){
   api('PUT','/admin/membership-orders/'+encodeURIComponent(o.ref),{status:sel.value});
 }
 
-</script>
-</body>
-</html>
+// ── REKAZ PRODUCT PICKERS ──
+function makeRekazList(prods, onClickFn){
+  if(!prods.length) return '<div style="padding:10px;font-size:11px;color:rgba(255,255,255,.4)">لا توجد منتجات</div>';
+  var html='';
+  prods.forEach(function(p){
+    var name=(p.nameAr||p.name||'').split(' - ')[0].trim();
+    if(p.pricing&&p.pricing.length>1){
+      p.pricing.forEach(function(pr){
+        html+='<div class="rp-item" data-pid="'+pr.id+'" data-amt="'+(pr.amount||0)+'" data-name="'+e(name)+' — '+e(pr.name||'')+'" onclick="'+onClickFn+'(this)">'+
+          '<div class="rp-chk"><div class="rp-chk-i"></div></div>'+
+          '<span class="rp-name" style="font-size:11px">'+e(name)+' — '+e(pr.name||'')+'</span>'+
+          '<span class="rp-price">SAR '+(pr.amount||0)+'</span></div>';
+      });
+    } else {
+      var pid=(p.pricing&&p.pricing[0])?p.pricing[0].id:p.id;
+      var amt=(p.pricing&&p.pricing[0])?p.pricing[0].amount:(p.amount||0);
+      html+='<div class="rp-item" data-pid="'+pid+'" data-amt="'+amt+'" data-name="'+e(name)+'" onclick="'+onClickFn+'(this)">'+
+        '<div class="rp-chk"><div class="rp-chk-i"></div></div>'+
+        '<span class="rp-name" style="font-size:11px">'+e(name)+'</span>'+
+        '<span class="rp-price">SAR '+amt+'</span></div>';
+    }
+  });
+  return html;
+}
+
+async function loadRekazProdsForGift(){
+  var listEl=g('rekaz-gift-list');
+  if(!listEl)return;
+  listEl.style.display='block';
+  listEl.innerHTML='<div style="padding:10px;font-size:11px;color:rgba(255,255,255,.4)">جاري التحميل...</div>';
+  try{
+    var d=await api('GET','/admin/rekaz-products');
+    listEl.innerHTML=makeRekazList(d.items||[],'selectGiftPrice');
+  }catch(err){listEl.innerHTML='<div style="padding:10px;font-size:11px;color:var(--red)">خطأ في التحميل</div>';}
+}
+function selectGiftPrice(el){
+  var priceId=el.dataset.pid;
+  var inp=g('gc-rekaz-price');
+  if(inp)inp.value=priceId;
+  var list=g('rekaz-gift-list');
+  if(list)list.querySelectorAll('.rp-item').forEach(function(x){x.classList.remove('sel');});
+  el.classList.add('sel');
+}
+
+async function loadRekazProdsForMem(){
+  var listEl=g('rekaz-mem-list');
+  if(!listEl)return;
+  listEl.style.display='block';
+  listEl.innerHTML='<div style="padding:10px;font-size:11px;color:rgba(255,255,255,.4)">جاري التحميل...</div>';
+  try{
+    var d=await api('GET','/admin/rekaz-products');
+    var prods=d.items||[];
+    if(!prods.length){listEl.innerHTML='<div style="padding:10px;font-size:11px;color:rgba(255,255,255,.4)">لا توجد منتجات</div>';return;}
+    var hdr='<div style="padding:8px 10px;font-size:10px;color:rgba(184,150,90,.6);border-bottom:1px solid rgba(255,255,255,.06)">اضغط لنسخ الـ Price ID ثم الصقه في حقل الباقة</div>';
+    var html='';
+    prods.forEach(function(p){
+      var name=(p.nameAr||p.name||'').split(' - ')[0].trim();
+      if(p.pricing&&p.pricing.length>1){
+        p.pricing.forEach(function(pr){
+          html+='<div class="rp-item" data-pid="'+pr.id+'" onclick="copyMemPrice(this)">'+
+            '<div class="rp-chk"><div class="rp-chk-i"></div></div>'+
+            '<span class="rp-name" style="font-size:11px">'+e(name)+' — '+e(pr.name||'')+'</span>'+
+            '<span class="rp-price" id="rp_'+pr.id.replace(/[^a-z0-9]/gi,'')+'">SAR '+(pr.amount||0)+'</span></div>';
+        });
+      } else {
+        var pid=(p.pricing&&p.pricing[0])?p.pricing[0].id:p.id;
+        var amt=(p.pricing&&p.pricing[0])?p.pricing[0].amount:(p.amount||0);
+        html+='<div class="rp-item" data-pid="'+pid+'" onclick="copyMemPrice(this)">'+
+          '<div class="rp-chk"><div class="rp-chk-i"></div></div>'+
+          '<span class="rp-name" style="font-size:11px">'+e(name)+'</span>'+
+          '<span class="rp-price" id="rp_'+pid.replace(/[^a-z0-9]/gi,'')+'">SAR '+amt+'</span></div>';
+      }
+    });
+    listEl.innerHTML=hdr+html;
+  }catch(err){listEl.innerHTML='<div style="padding:10px;font-size:11px;color:var(--red)">خطأ في التحميل</div>';}
+}
+function copyMemPrice(el){
+  var priceId=el.dataset.pid;
+  navigator.clipboard&&navigator.clipboard.writeText(priceId);
+  var list=g('rekaz-mem-list');
+  if(list)list.querySelectorAll('.rp-item').forEach(function(x){x.classList.remove('sel');});
+  el.classList.add('sel');
+  var sp=el.querySelector('.rp-price');
+  if(sp){var old=sp.textContent;sp.textContent='✓ تم نسخ Price ID';setTimeout(function(){sp.textContent=old;},2000);}
+}
