@@ -613,7 +613,7 @@ app.post("/gift/purchase", async (req, res) => {
               const pp = res2.paymentLink || "";
               payUrl = pp ? (pp.startsWith("http") ? pp : `${REKAZ_BASE}${pp}`) : (invoiceId ? `${REKAZ_BASE}/i/${invoiceId}` : null);
             }
-
+          }
       } catch(e) { console.log("[Gift] purchase error:", e.message); }
     }
 
