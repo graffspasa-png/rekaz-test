@@ -527,59 +527,139 @@ app.get("/membership",(req,res)=>{
   try{const html=readFileSync(process.cwd()+"/membership.html","utf8");res.setHeader("Content-Type","text/html; charset=utf-8");res.send(html);}
   catch(e){res.status(404).send("membership.html not found");}
 });
-// ── REKAZ: GIFT PRODUCT PURCHASE ──
-// Fetches the gift product from Rekaz and creates an order
+// ── REKAZ: GIFT CARD PRODUCT INFO ──
+// Fetches gift card pricing IDs from Rekaz (type=Gift products)
+app.get("/gift-products", async (req, res) => {
+  try {
+    // Get all products and filter for Gift type
+    const data = await getProds();
+    const gifts = (data.items || []).filter(p => p.typeString === "Gift" || p.type === 3);
+    res.json({ items: gifts });
+  } catch(e) {
+    // Try direct fetch of gift-card product
+    try {
+      const r = await rekazFetch(`${REKAZ_BASE}/api/app/product/product/gift-card`);
+      if (r.ok) return res.json({ items: [r.json()] });
+    } catch(e2) {}
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// ── REKAZ: MERCHANDISE/GIFT PURCHASE via SUBSCRIPTIONS ──
+// Based on Rekaz API docs: isSubscriptionAvailable=true products use POST /subscriptions
+// Membership (Merchandise) and Gift Card both use this endpoint
+
 app.post("/gift/purchase", async (req, res) => {
-  const { amount, fromName, fromPhone, toName, toPhone, message, showSender } = req.body;
+  const { amount, fromName, fromPhone, toName, toPhone, message, showSender, priceId } = req.body;
   if (!amount || !fromName || !fromPhone || !toName || !toPhone)
     return res.status(400).json({ error: "جميع الحقول مطلوبة" });
   try {
     const db = readDB();
-    const priceId = db.pages?.gift?.rekazPriceId || null;
+    // Hardcoded pricing IDs extracted from Rekaz source
+    const GIFT_PRICE_IDS = {
+      "400": "3a20ab64-fb29-8449-e1ef-c92188e204ed",
+      "500": "3a20ab64-fb29-6a4b-6338-39f7599d1edd",
+      "700": "3a20ab64-fb29-1904-97de-b77afcba741b",
+      "1000": "3a20ab64-fb29-e566-ee8c-b74c462a3d5f"
+    };
+    const dbPrices = db.pages?.gift?.rekazPrices || {};
+    // Use admin-set price first, then hardcoded, then fallback
+    const giftPriceId = priceId
+      || dbPrices[String(amount)]
+      || GIFT_PRICE_IDS[String(amount)]
+      || db.pages?.gift?.rekazPriceId
+      || null;
+    console.log("[Gift] amount:", amount, "priceId:", giftPriceId);
     const orderRef = "GIFT-" + Date.now().toString(36).toUpperCase();
     let payUrl = null;
-    let rekazOrderId = null;
+    let invoiceId = null;
 
-    if (priceId) {
-      // Find or create customer in Rekaz
+    if (giftPriceId) {
       const mobile = fromPhone.startsWith("+966") ? fromPhone : "+966" + fromPhone.replace(/^0/, "");
-      let customerId = null;
-      try {
-        const chk = await rekazFetch(`${REKAZ_API}/customers?mobileNumber=${encodeURIComponent(mobile)}`);
-        if (chk.ok) { const d = chk.json(); if (d.items?.length) customerId = d.items[0].id; }
-        if (!customerId) {
-          const cr = await rekazFetch(`${REKAZ_API}/customers`, { method: "POST", body: JSON.stringify({ name: fromName, mobileNumber: mobile, type: 1 }) });
-          if (cr.ok) customerId = cr.json();
-        }
-      } catch(e) { console.log("[Gift] customer:", e.message); }
+      const toMobile = toPhone.startsWith("+966") ? toPhone : "+966" + toPhone.replace(/^0/, "");
 
-      if (customerId) {
-        try {
-          const toMobile = toPhone.startsWith("+966") ? toPhone : "+966" + toPhone.replace(/^0/, "");
+      // Try POST /api/public/subscriptions (works for Gift & Merchandise)
+      try {
+        // Try subscriptions API (isSubscriptionAvailable=true for Gift)
           const payload = {
-            customerId, branchId: BRANCH_ID,
-            items: [{ priceId, quantity: 1, customFields: {
-              gift_from_name: fromName, gift_to_name: toName,
-              gift_to_phone: toMobile, gift_message: message || "",
-              gift_amount: String(amount), show_sender: showSender ? "true" : "false"
-            }}]
+            customerDetails: { name: fromName, mobileNumber: mobile, type: 1 },
+            branchId: BRANCH_ID,
+            items: [{ priceId: giftPriceId, quantity: 1 }]
           };
-          const r = await rekazFetch(`${REKAZ_API}/reservations/bulk`, { method: "POST", body: JSON.stringify(payload) });
+          const r = await rekazFetch(`${REKAZ_API}/subscriptions`, {
+            method: "POST", body: JSON.stringify(payload)
+          });
           if (r.ok) {
             const result = r.json();
-            rekazOrderId = result.id || result.reservationId || null;
-            const pp = result.paymentLink || "";
-            payUrl = pp ? (pp.startsWith("http") ? pp : `${REKAZ_BASE}${pp}`) : null;
+            invoiceId = result.invoiceId || null;
+            if (invoiceId) payUrl = `${REKAZ_BASE}/i/${invoiceId}`;
           }
-        } catch(e) { console.log("[Gift] rekaz order:", e.message); }
-      }
+          // Fallback: reservations/bulk
+          if (!invoiceId) {
+            const r2 = await rekazFetch(`${REKAZ_API}/reservations/bulk`, {
+              method: "POST",
+              body: JSON.stringify({
+                customerDetails: { name: fromName, mobileNumber: mobile, type: 1 },
+                branchId: BRANCH_ID,
+                items: [{ priceId: giftPriceId, quantity: 1, customFields: {
+                  gift_to_name: toName, gift_to_phone: toMobile,
+                  gift_from_name: showSender ? fromName : "", gift_message: message||""
+                }}]
+              })
+            });
+            if (r2.ok) {
+              const res2 = r2.json();
+              invoiceId = res2.invoiceId || null;
+              const pp = res2.paymentLink || "";
+              payUrl = pp ? (pp.startsWith("http") ? pp : `${REKAZ_BASE}${pp}`) : (invoiceId ? `${REKAZ_BASE}/i/${invoiceId}` : null);
+            }
+          };
+
+        const r = await rekazFetch(`${REKAZ_API}/subscriptions`, {
+          method: "POST",
+          body: JSON.stringify(payload)
+        });
+
+        console.log("[Gift] subscriptions response:", r.status, r.text.slice(0, 300));
+
+        if (r.ok) {
+          const result = r.json();
+          invoiceId = result.invoiceId || null;
+          // Build payment link from invoiceId
+          if (invoiceId) {
+            payUrl = `${REKAZ_BASE}/i/${invoiceId}`;
+          }
+        } else {
+          // Fallback: try reservations/bulk
+          console.log("[Gift] subscriptions failed, trying reservations/bulk");
+          const r2 = await rekazFetch(`${REKAZ_API}/reservations/bulk`, {
+            method: "POST",
+            body: JSON.stringify({
+              customerDetails: { name: fromName, mobileNumber: mobile, type: 1 },
+              branchId: BRANCH_ID,
+              items: [{ priceId: giftPriceId, quantity: 1 }]
+            })
+          });
+          if (r2.ok) {
+            const res2 = r2.json();
+            invoiceId = res2.invoiceId || null;
+            const pp = res2.paymentLink || "";
+            payUrl = pp ? (pp.startsWith("http") ? pp : `${REKAZ_BASE}${pp}`) : (invoiceId ? `${REKAZ_BASE}/i/${invoiceId}` : null);
+          }
+        }
+      } catch(e) { console.log("[Gift] purchase error:", e.message); }
     }
 
     if (!db.giftOrders) db.giftOrders = [];
-    db.giftOrders.unshift({ ref: orderRef, rekazId: rekazOrderId, amount, fromName, fromPhone, toName, toPhone, message: message || "", showSender: !!showSender, createdAt: new Date().toISOString(), status: payUrl ? "pending_payment" : (priceId ? "rekaz_failed" : "pending_review") });
+    db.giftOrders.unshift({
+      ref: orderRef, invoiceId, amount, fromName, fromPhone,
+      toName, toPhone, message: message || "", showSender: !!showSender,
+      createdAt: new Date().toISOString(),
+      status: payUrl ? "pending_payment" : (giftPriceId ? "rekaz_failed" : "pending_review")
+    });
     writeDB(db);
 
-    res.json({ success: true, orderRef, rekazOrderId, payUrl, giftCode: rekazOrderId || orderRef });
+    res.json({ success: true, orderRef, invoiceId, payUrl, giftCode: invoiceId || orderRef });
   } catch(e) {
     console.error("[Gift Purchase]", e.message);
     res.status(500).json({ error: e.message });
@@ -598,41 +678,67 @@ app.post("/membership/purchase", async (req, res) => {
     const priceId = plan?.rekazPriceId || null;
     const orderRef = "MEM-" + Date.now().toString(36).toUpperCase();
     let payUrl = null;
-    let rekazOrderId = null;
+    let invoiceId = null;
 
     if (priceId) {
       const mobile = phone.startsWith("+966") ? phone : "+966" + phone.replace(/^0/, "");
-      let customerId = null;
-      try {
-        const chk = await rekazFetch(`${REKAZ_API}/customers?mobileNumber=${encodeURIComponent(mobile)}`);
-        if (chk.ok) { const d = chk.json(); if (d.items?.length) customerId = d.items[0].id; }
-        if (!customerId) {
-          const cr = await rekazFetch(`${REKAZ_API}/customers`, { method: "POST", body: JSON.stringify({ name, mobileNumber: mobile, email: email || undefined, type: 1 }) });
-          if (cr.ok) customerId = cr.json();
-        }
-      } catch(e) { console.log("[Membership] customer:", e.message); }
 
-      if (customerId) {
-        try {
-          const payload = { customerId, branchId: BRANCH_ID, items: [{ priceId, quantity: 1, customFields: { membership_plan: planName } }] };
-          const r = await rekazFetch(`${REKAZ_API}/reservations/bulk`, { method: "POST", body: JSON.stringify(payload) });
-          if (r.ok) {
-            const result = r.json();
-            rekazOrderId = result.id || result.reservationId || null;
-            const pp = result.paymentLink || "";
-            payUrl = pp ? (pp.startsWith("http") ? pp : `${REKAZ_BASE}${pp}`) : null;
+      // Membership (Merchandise) uses POST /api/public/subscriptions
+      try {
+        const payload = {
+          customerDetails: {
+            name,
+            mobileNumber: mobile,
+            email: email || undefined,
+            type: 1
+          },
+          branchId: BRANCH_ID,
+          items: [{ priceId, quantity: 1 }]
+        };
+
+        const r = await rekazFetch(`${REKAZ_API}/subscriptions`, {
+          method: "POST",
+          body: JSON.stringify(payload)
+        });
+
+        console.log("[Mem] subscriptions response:", r.status, r.text.slice(0, 300));
+
+        if (r.ok) {
+          const result = r.json();
+          invoiceId = result.invoiceId || null;
+          if (invoiceId) payUrl = `${REKAZ_BASE}/i/${invoiceId}`;
+        } else {
+          // Fallback: reservations/bulk
+          const r2 = await rekazFetch(`${REKAZ_API}/reservations/bulk`, {
+            method: "POST",
+            body: JSON.stringify({
+              customerDetails: { name, mobileNumber: mobile, type: 1 },
+              branchId: BRANCH_ID,
+              items: [{ priceId, quantity: 1 }]
+            })
+          });
+          if (r2.ok) {
+            const res2 = r2.json();
+            invoiceId = res2.invoiceId || null;
+            const pp = res2.paymentLink || "";
+            payUrl = pp ? (pp.startsWith("http") ? pp : `${REKAZ_BASE}${pp}`) : (invoiceId ? `${REKAZ_BASE}/i/${invoiceId}` : null);
           }
-        } catch(e) { console.log("[Membership] rekaz order:", e.message); }
-      }
+        }
+      } catch(e) { console.log("[Mem] purchase error:", e.message); }
     }
 
     if (!db.membershipOrders) db.membershipOrders = [];
-    db.membershipOrders.unshift({ ref: orderRef, rekazId: rekazOrderId, planName, price, name, phone: phone.replace(/^0/, "966"), email: email || "", createdAt: new Date().toISOString(), status: payUrl ? "pending_payment" : (priceId ? "rekaz_failed" : "pending_review") });
+    db.membershipOrders.unshift({
+      ref: orderRef, invoiceId, planName, price, name,
+      phone: phone.replace(/^0/, "966"), email: email || "",
+      createdAt: new Date().toISOString(),
+      status: payUrl ? "pending_payment" : (priceId ? "rekaz_failed" : "pending_review")
+    });
     writeDB(db);
 
-    res.json({ success: true, orderRef, rekazOrderId, payUrl });
+    res.json({ success: true, orderRef, invoiceId, payUrl });
   } catch(e) {
-    console.error("[Membership Purchase]", e.message);
+    console.error("[Mem Purchase]", e.message);
     res.status(500).json({ error: e.message });
   }
 });
