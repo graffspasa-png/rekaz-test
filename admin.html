@@ -273,7 +273,26 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink2);color:#fff;directio
           <div class="f" style="margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,.07)">
             <label>ربط منتج Rekaz — Price ID للهدية (اختياري)</label>
             <input type="text" id="gc-rekaz-price" placeholder="price_xxxxxxxx" style="direction:ltr;text-align:left">
-            <p style="font-size:10px;color:rgba(255,255,255,.3);margin-top:5px;line-height:1.7">إذا تركته فارغاً تُسجَّل الطلبات للمراجعة اليدوية.</p>
+            <p style="font-size:10px;color:rgba(255,255,255,.3);margin-top:5px;line-height:1.7">
+              أدخل Price ID لأي مبلغ من بطاقة الإهداء. بما أن كل مبلغ له Price ID مختلف،
+              يمكنك إضافة كل المبالغ أدناه لربطها تلقائياً.
+            </p>
+            <div class="f" style="margin-top:8px">
+              <label>Price ID — 400 SAR</label>
+              <input type="text" id="gc-price-400" placeholder="price_id هنا" style="direction:ltr;text-align:left">
+            </div>
+            <div class="f">
+              <label>Price ID — 500 SAR</label>
+              <input type="text" id="gc-price-500" placeholder="price_id هنا" style="direction:ltr;text-align:left">
+            </div>
+            <div class="f">
+              <label>Price ID — 700 SAR</label>
+              <input type="text" id="gc-price-700" placeholder="price_id هنا" style="direction:ltr;text-align:left">
+            </div>
+            <div class="f">
+              <label>Price ID — 1000 SAR</label>
+              <input type="text" id="gc-price-1000" placeholder="price_id هنا" style="direction:ltr;text-align:left">
+            </div>
           </div>
           <div style="margin-top:8px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
             <button class="add-btn" style="margin:0;padding:6px 14px" onclick="loadRekazProdsForGift()">← جلب منتجات Rekaz</button>
@@ -726,12 +745,22 @@ function renderGift(){
   setv('gc-title',gp.title||'بطاقة الإهداء');setv('gc-subtitle',gp.subtitle||'');
   setv('gc-amounts',(gp.amounts||[400,500,700,1000]).join(','));
   setv('gc-rekaz-price',gp.rekazPriceId||'');
+  var prices=gp.rekazPrices||{};
+  setv('gc-price-400',prices['400']||'3a20ab64-fb29-8449-e1ef-c92188e204ed');
+  setv('gc-price-500',prices['500']||'3a20ab64-fb29-6a4b-6338-39f7599d1edd');
+  setv('gc-price-700',prices['700']||'3a20ab64-fb29-1904-97de-b77afcba741b');
+  setv('gc-price-1000',prices['1000']||'3a20ab64-fb29-e566-ee8c-b74c462a3d5f');
 }
 function collectGift(){
   DB.pages=DB.pages||{};DB.pages.gift=DB.pages.gift||{};
   DB.pages.gift.title=g('gc-title').value;DB.pages.gift.subtitle=g('gc-subtitle').value;
   DB.pages.gift.amounts=(g('gc-amounts').value||'').split(',').map(x=>parseInt(x.trim())).filter(Boolean);
   const rp=g('gc-rekaz-price');if(rp)DB.pages.gift.rekazPriceId=rp.value.trim();
+  DB.pages.gift.rekazPrices={};
+  ['400','500','700','1000'].forEach(function(amt){
+    var el=g('gc-price-'+amt);
+    if(el&&el.value.trim())DB.pages.gift.rekazPrices[amt]=el.value.trim();
+  });
 }
 
 // ── MEMBERSHIPS ──
@@ -933,10 +962,45 @@ async function loadRekazProdsForGift(){
   listEl.style.display='block';
   listEl.innerHTML='<div style="padding:10px;font-size:11px;color:rgba(255,255,255,.4)">جاري التحميل...</div>';
   try{
-    var d=await api('GET','/admin/rekaz-products');
-    listEl.innerHTML=makeRekazList(d.items||[],'selectGiftPrice');
-  }catch(err){listEl.innerHTML='<div style="padding:10px;font-size:11px;color:var(--red)">خطأ في التحميل</div>';}
+    // Try dedicated gift-products endpoint first
+    var d=await api('GET','/gift-products');
+    var prods=d.items||[];
+    
+    // If empty, try all products
+    if(!prods.length){
+      var all=await api('GET','/admin/rekaz-products');
+      prods=(all.items||[]).filter(function(p){return p.typeString==='Gift'||p.type===3;});
+    }
+    
+    if(!prods.length){
+      listEl.innerHTML='<div style="padding:10px;font-size:11px;color:rgba(255,255,255,.4)">لا توجد منتجات Gift. تحقق من منصة Rekaz.</div>';
+      return;
+    }
+    
+    var html='<div style="padding:8px 10px;font-size:10px;color:rgba(184,150,90,.6);border-bottom:1px solid rgba(255,255,255,.06)">اختر الـ Price ID المناسب للمبلغ الافتراضي (أو اختر أي واحد)</div>';
+    prods.forEach(function(p){
+      var name=(p.nameAr||p.name||'').trim();
+      if(p.pricing&&p.pricing.length){
+        p.pricing.forEach(function(pr){
+          html+='<div class="rp-item" data-pid="'+pr.id+'" onclick="selectGiftPrice(this)">'+
+            '<div class="rp-chk"><div class="rp-chk-i"></div></div>'+
+            '<span class="rp-name" style="font-size:11px">'+e(name)+' — SAR '+(pr.amount||pr.discountedAmount||'')+'</span>'+
+            '<span class="rp-price" style="font-size:9px;color:rgba(184,150,90,.6)">'+pr.id+'</span></div>';
+        });
+      } else {
+        html+='<div class="rp-item" data-pid="'+p.id+'" onclick="selectGiftPrice(this)">'+
+          '<div class="rp-chk"><div class="rp-chk-i"></div></div>'+
+          '<span class="rp-name" style="font-size:11px">'+e(name)+'</span>'+
+          '<span class="rp-price">SAR '+(p.amount||0)+'</span></div>';
+      }
+    });
+    listEl.innerHTML=html;
+  }catch(err){
+    console.error('gift products:',err);
+    listEl.innerHTML='<div style="padding:10px;font-size:11px;color:var(--red)">خطأ: '+err.message+'</div>';
+  }
 }
+
 function selectGiftPrice(el){
   var priceId=el.dataset.pid;
   var inp=g('gc-rekaz-price');
