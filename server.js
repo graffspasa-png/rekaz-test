@@ -310,7 +310,7 @@ function auth(req, res, next) {
 // ── PUBLIC ──
 // Admin HTML served from admin.html file
 app.get("/", (req,res) => res.send("GRAFF SPA API ✅"));
-app.get("/admin", (req,res) => {
+app.get("/admin", async(req,res) => {
   try {
     const html = readFileSync(process.cwd()+"/admin.html","utf8");
     res.setHeader("Content-Type","text/html; charset=utf-8");
@@ -321,7 +321,7 @@ app.get("/admin", (req,res) => {
 });
 
 
-app.get("/site", (req,res) => {
+app.get("/site", async(req,res) => {
   const db = await readDB();
   res.json({
     theme:    db.theme,
@@ -432,7 +432,7 @@ app.get("/slots", async (req,res) => {
 });
 
 // ── OTP ──
-app.post("/send-otp", (req,res) => {
+app.post("/send-otp", async(req,res) => {
   const {phone}=req.body;
   if(!phone) return res.status(400).json({error:"Phone required"});
   const otp=Math.floor(1000+Math.random()*9000).toString();
@@ -441,7 +441,7 @@ app.post("/send-otp", (req,res) => {
   res.json({success:true,debug_otp:otp});
 });
 
-app.post("/verify-otp", (req,res) => {
+app.post("/verify-otp", async(req,res) => {
   const {phone,otp}=req.body;
   const s=otpStore[phone];
   if(!s) return res.status(400).json({error:"أرسلي رمزاً جديداً"});
@@ -520,22 +520,22 @@ function adminAuth(req,res,next) {
     return res.status(401).json({error:"Unauthorized"});
   next();
 }
-app.post("/admin/login",(req,res)=>{
+app.post("/admin/login",async(req,res)=>{
   if(req.body.password===ADMIN_PASS) res.json({success:true,token:ADMIN_PASS});
   else res.status(401).json({error:"كلمة المرور غير صحيحة"});
 });
-app.get("/admin/db",adminAuth,(req,res)=>res.json(readDB()));
+app.get("/admin/db",adminAuth,async(req,res)=>res.json(readDB()));
 app.put("/admin/db",adminAuth,async(req,res)=>{
   try{await writeDB(req.body);res.json({success:true});}
   catch(e){res.status(500).json({error:e.message});}
 });
-app.get("/admin/db-export",adminAuth,(req,res)=>{
+app.get("/admin/db-export",adminAuth,async(req,res)=>{
   const db=readDB();
   const b64=Buffer.from(JSON.stringify(db)).toString("base64");
   res.json({base64:b64,hint:"Set INITIAL_DB env var to this value for disaster recovery"});
 });
-app.get("/admin/categories",adminAuth,(req,res)=>res.json(readDB().categories));
-app.post("/admin/categories",adminAuth,(req,res)=>{
+app.get("/admin/categories",adminAuth,async(req,res)=>res.json(readDB().categories));
+app.post("/admin/categories",adminAuth,async(req,res)=>{
   const db=readDB();
   const cat={
     id:"cat_"+uid(), nameAr:req.body.nameAr||"قسم جديد", nameEn:req.body.nameEn||"",
@@ -544,7 +544,7 @@ app.post("/admin/categories",adminAuth,(req,res)=>{
   };
   db.categories.push(cat); await writeDB(db); res.json(cat);
 });
-app.put("/admin/categories/:id",adminAuth,(req,res)=>{
+app.put("/admin/categories/:id",adminAuth,async(req,res)=>{
   const db=readDB(); const i=db.categories.findIndex(c=>c.id===req.params.id);
   if(i<0) return res.status(404).json({error:"Not found"});
   db.categories[i]={...db.categories[i],...req.body,id:req.params.id};
@@ -556,7 +556,7 @@ app.delete("/admin/categories/:id",adminAuth,async(req,res)=>{
   db.services=db.services.filter(s=>s.categoryId!==req.params.id);
   await writeDB(db); res.json({success:true});
 });
-app.put("/admin/categories-order",adminAuth,(req,res)=>{
+app.put("/admin/categories-order",adminAuth,async(req,res)=>{
   const db=readDB();
   (req.body.order||[]).forEach((id,idx)=>{
     const i=db.categories.findIndex(c=>c.id===id);
@@ -564,7 +564,7 @@ app.put("/admin/categories-order",adminAuth,(req,res)=>{
   });
   await writeDB(db); res.json({success:true});
 });
-app.put("/admin/categories/:id/services",adminAuth,(req,res)=>{
+app.put("/admin/categories/:id/services",adminAuth,async(req,res)=>{
   const db=readDB(); const catId=req.params.id;
   db.services=db.services.filter(s=>s.categoryId!==catId);
   (req.body.priceIds||[]).forEach((item,idx)=>{
@@ -582,19 +582,19 @@ app.get("/admin/rekaz-products",adminAuth,async(req,res)=>{
 });
 
 // ── POLICIES ──
-app.get("/admin/policies", adminAuth, (req,res) => res.json(readDB().policies||{}));
-app.put("/admin/policies", adminAuth, (req,res) => {
-  const db=readDB(); db.policies=req.body; await writeDB(db); res.json({success:true});
+app.get("/admin/policies", adminAuth, async(req,res) => { const db=await readDB(); res.json(db.policies||{}); });
+app.put("/admin/policies", adminAuth, async(req,res) => {
+  const db=await readDB(); db.policies=req.body; await writeDB(db); res.json({success:true});
 });
 
 // ── GIFT PAGE ──
-app.get("/gift",(req,res)=>{
+app.get("/gift",async(req,res)=>{
   try{const html=readFileSync(process.cwd()+"/gift.html","utf8");res.setHeader("Content-Type","text/html; charset=utf-8");res.send(html);}
   catch(e){res.status(404).send("gift.html not found");}
 });
 
 // ── MEMBERSHIP PAGE ──
-app.get("/membership",(req,res)=>{
+app.get("/membership",async(req,res)=>{
   try{const html=readFileSync(process.cwd()+"/membership.html","utf8");res.setHeader("Content-Type","text/html; charset=utf-8");res.send(html);}
   catch(e){res.status(404).send("membership.html not found");}
 });
@@ -784,12 +784,12 @@ app.post("/membership/purchase", async (req, res) => {
 // ── ADMIN: ORDERS ──
 app.get("/admin/gift-orders", adminAuth, (req, res) => { res.json(readDB().giftOrders || []); });
 app.get("/admin/membership-orders", adminAuth, (req, res) => { res.json(readDB().membershipOrders || []); });
-app.put("/admin/gift-orders/:ref", adminAuth, (req, res) => {
+app.put("/admin/gift-orders/:ref", adminAuth, async(req, res) => {
   const db = await readDB(); const o = (db.giftOrders || []).find(x => x.ref === req.params.ref);
   if (!o) return res.status(404).json({ error: "Not found" });
   Object.assign(o, req.body); await writeDB(db); res.json({ success: true });
 });
-app.put("/admin/membership-orders/:ref", adminAuth, (req, res) => {
+app.put("/admin/membership-orders/:ref", adminAuth, async(req, res) => {
   const db = await readDB(); const o = (db.membershipOrders || []).find(x => x.ref === req.params.ref);
   if (!o) return res.status(404).json({ error: "Not found" });
   Object.assign(o, req.body); await writeDB(db); res.json({ success: true });
