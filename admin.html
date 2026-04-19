@@ -166,6 +166,9 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink2);color:#fff;directio
         <div class="card"><div class="card-ttl">حالة النظام</div>
           <div style="display:flex;flex-direction:column;gap:10px;font-size:12px">
             <div style="display:flex;justify-content:space-between"><span>Rekaz API</span><span id="rstatus"><span class="st-dot" id="rdot"></span>فحص...</span></div>
+            <div style="display:flex;justify-content:space-between"><span>Supabase DB</span><span id="sbstatus"><span class="st-dot" id="sbdot"></span>فحص...</span></div>
+            <button onclick="migrateToSB()" id="sb-btn" style="width:100%;padding:7px;margin-top:4px;background:rgba(184,150,90,.1);border:1px solid rgba(184,150,90,.25);color:var(--gold);font-family:var(--font);font-size:11px;cursor:pointer">⬆ نقل البيانات إلى Supabase</button>
+            <div id="sb-msg" style="font-size:11px;margin-top:5px;display:none"></div>
             <div style="display:flex;justify-content:space-between"><span>الأقسام</span><span id="ov-cats" style="color:var(--gold)">—</span></div>
             <div style="display:flex;justify-content:space-between"><span>الخدمات المربوطة</span><span id="ov-svcs" style="color:var(--gold)">—</span></div>
             <div style="display:flex;justify-content:space-between"><span>خدمات Rekaz</span><span id="ov-rekaz" style="color:var(--gold)">—</span></div>
@@ -464,8 +467,16 @@ function renderOverview(){
   g('ov-cats').textContent=(DB.categories||[]).length+' قسم';
   g('ov-svcs').textContent=(DB.services||[]).length+' خدمة';
 }
-function checkRekaz(){
+async function checkRekaz(){
   fetch(B+'/').then(r=>{g('rdot').classList.toggle('live',r.ok);g('rstatus').innerHTML=(r.ok?'<span class="st-dot live"></span>متصل':'<span class="st-dot"></span>خطأ');}).catch(()=>g('rstatus').textContent='غير متصل');
+  // Check Supabase
+  try{
+    const sbr=await api('GET','/admin/supabase-status');
+    const ok=sbr.status==='connected';
+    g('sbdot').className='st-dot'+(ok?' live':'');
+    g('sbstatus').innerHTML=(ok?'<span class="st-dot live"></span>متصل ✓':'<span class="st-dot"></span>غير مُهيَّأ');
+    if(ok)g('sb-migrate-btn').textContent='✓ Supabase متصل ومفعّل';
+  }catch(e){g('sbstatus').textContent='خطأ';}
 }
 async function loadRekazProds(){
   try{const d=await api('GET','/admin/rekaz-products');rekazProds=d.items||[];g('ov-rekaz').textContent=rekazProds.length+' خدمة';}
@@ -850,6 +861,24 @@ function renderPolicies(){
   var pol=DB.policies||{};
   var el=document.getElementById('pol-ar');
   if(el)el.value=pol.ar||'';
+}
+
+async function migrateToSB(){
+  const btn=g('sb-migrate-btn');btn.disabled=true;btn.textContent='جاري النقل...';
+  try{
+    const r=await api('POST','/admin/supabase-migrate');
+    const msg=g('sb-msg');
+    if(r.success){
+      msg.style.color='var(--green)';msg.textContent='✓ '+r.msg;
+      btn.textContent='✓ تم النقل بنجاح';
+      g('sbdot').className='st-dot live';
+      g('sbstatus').innerHTML='<span class="st-dot live"></span>متصل ✓';
+    }else{
+      msg.style.color='#c53';msg.textContent='✗ '+r.msg;
+      btn.textContent='إعادة المحاولة';btn.disabled=false;
+    }
+    msg.style.display='block';
+  }catch(e){g('sb-migrate-btn').textContent='خطأ';g('sb-migrate-btn').disabled=false;}
 }
 
 async function savePolicies(){
