@@ -405,18 +405,24 @@ const api = (method,path,body) => fetch(B+path,{
 }).then(r=>r.json());
 
 const B='https://rekaz-test.onrender.com';
-let TOK='',DB={},rekazProds=[],editCatId=null,subSections=[];
+let TOK=sessionStorage.getItem('graff_tok')||'',DB={},rekazProds=[],editCatId=null,subSections=[];
 
 // ── AUTH ──
 function doLogin(){
   const pw=g('linp').value;
   api('POST','/admin/login',{password:pw}).then(d=>{
-    if(d.success){TOK=d.token;g('login').classList.add('hide');g('app').classList.add('on');init();}
+    if(d.success){TOK=d.token;sessionStorage.setItem('graff_tok',TOK);g('login').classList.add('hide');g('app').classList.add('on');init();}
     else g('lerr').textContent=d.error||'خطأ';
   }).catch(()=>g('lerr').textContent='لا يمكن الاتصال بالسيرفر');
 }
-function doLogout(){TOK='';location.reload();}
+function doLogout(){TOK='';sessionStorage.removeItem('graff_tok');location.reload();}
 g('linp').addEventListener('keydown',ev=>{if(ev.key==='Enter')doLogin();});
+// Auto-restore session on refresh
+if(TOK){
+  g('login').classList.add('hide');
+  g('app').classList.add('on');
+  init().catch(()=>{TOK='';sessionStorage.removeItem('graff_tok');location.reload();});
+}
 
 async function init(){
   await loadDB();
