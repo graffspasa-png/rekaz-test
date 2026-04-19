@@ -1257,7 +1257,7 @@ function applyDisc(){
 async function doBook(){
   var name=document.getElementById('inpname').value.trim();
   if(!name){showErr('errconf','يرجى إدخال اسمك الكامل');return;}
-  if(!S.phone||!S.slot||!S.carts.length){showErr('errconf','بيانات ناقصة');return;}
+  if(!S.phone||!S.carts.length||!S.carts[0].slot){showErr('errconf','بيانات ناقصة');return;}
   var btn=document.getElementById('btnconf');btn.classList.add('ld');btn.disabled=true;showErr('errconf','');
   try{
     var cr=await fetch(B+'/create-customer',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:name,phone:S.phone})});
