@@ -31,6 +31,48 @@ const ADMIN_PASS = process.env.ADMIN_PASSWORD || "graff2026";
 const DISK_PATHS = ["/var/data/graff_db.json", "/tmp/graff_db.json"];
 let MEM_DB = null;
 
+// ── SUPABASE CONFIG ──
+const SB_URL    = process.env.SUPABASE_URL || "";      // e.g. https://xxxxx.supabase.co
+const SB_KEY    = process.env.SUPABASE_ANON_KEY || ""; // anon/service key
+const SB_TABLE  = "graff_config";
+const SB_ROW    = "main_db";
+
+async function sbRead() {
+  if (!SB_URL || !SB_KEY) return null;
+  try {
+    const r = await fetch(
+      `${SB_URL}/rest/v1/${SB_TABLE}?key=eq.${SB_ROW}&select=value`,
+      { headers: { "apikey": SB_KEY, "Authorization": `Bearer ${SB_KEY}`, "Content-Type": "application/json" } }
+    );
+    if (!r.ok) { console.log("[SB] Read failed:", r.status, await r.text()); return null; }
+    const rows = await r.json();
+    if (!rows || !rows.length) return null;
+    return rows[0].value;
+  } catch(e) { console.log("[SB] Read error:", e.message); return null; }
+}
+
+async function sbWrite(db) {
+  if (!SB_URL || !SB_KEY) return false;
+  try {
+    const r = await fetch(
+      `${SB_URL}/rest/v1/${SB_TABLE}`,
+      {
+        method: "POST",
+        headers: {
+          "apikey": SB_KEY,
+          "Authorization": `Bearer ${SB_KEY}`,
+          "Content-Type": "application/json",
+          "Prefer": "resolution=merge-duplicates"
+        },
+        body: JSON.stringify({ key: SB_ROW, value: db, updated_at: new Date().toISOString() })
+      }
+    );
+    if (!r.ok) { console.log("[SB] Write failed:", r.status, await r.text()); return false; }
+    console.log("[SB] Saved ✓");
+    return true;
+  } catch(e) { console.log("[SB] Write error:", e.message); return false; }
+}
+
 const DEFAULT_DB = {
   categories: [],
   services: [],
@@ -171,40 +213,69 @@ function deepMerge(target, source) {
   return out;
 }
 
-function readDB() {
+// ── DB: Read (Supabase → File → Memory → Default) ──
+async function readDB() {
+  // 1. Return memory cache if fresh (< 30s)
+  if (MEM_DB && MEM_DB._cachedAt && (Date.now() - MEM_DB._cachedAt) < 30000) return MEM_DB;
+
+  // 2. Try Supabase
+  const sbData = await sbRead();
+  if (sbData) {
+    MEM_DB = deepMerge(JSON.parse(JSON.stringify(DEFAULT_DB)), sbData);
+    MEM_DB._cachedAt = Date.now();
+    console.log("[DB] Loaded from Supabase ✓");
+    return MEM_DB;
+  }
+
+  // 3. Fallback: local file
   for (const p of DISK_PATHS) {
     try {
       if (existsSync(p)) {
         const raw = JSON.parse(readFileSync(p, "utf8"));
         MEM_DB = deepMerge(JSON.parse(JSON.stringify(DEFAULT_DB)), raw);
+        MEM_DB._cachedAt = Date.now();
+        console.log(`[DB] Loaded from file ${p}`);
         return MEM_DB;
       }
     } catch(e) { console.log(`Read ${p} failed:`, e.message); }
   }
-  if (MEM_DB) return MEM_DB;
+
+  // 4. Fallback: env variable
   if (process.env.INITIAL_DB) {
     try {
       const raw = JSON.parse(Buffer.from(process.env.INITIAL_DB, "base64").toString());
       MEM_DB = deepMerge(JSON.parse(JSON.stringify(DEFAULT_DB)), raw);
+      MEM_DB._cachedAt = Date.now();
       return MEM_DB;
     } catch(e) {}
   }
+
+  // 5. Default
   MEM_DB = JSON.parse(JSON.stringify(DEFAULT_DB));
+  MEM_DB._cachedAt = Date.now();
   return MEM_DB;
 }
 
-function writeDB(db) {
-  MEM_DB = db;
+// ── DB: Write (Supabase + File backup) ──
+async function writeDB(db) {
+  // Strip cache timestamp before saving
+  const { _cachedAt, ...cleanDB } = db;
+  MEM_DB = { ...db, _cachedAt: Date.now() };
+
+  // 1. Save to Supabase (primary)
+  const sbOk = await sbWrite(cleanDB);
+
+  // 2. Save to file as local backup
   for (const p of DISK_PATHS) {
     try {
       const dir = p.substring(0, p.lastIndexOf("/"));
       if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
-      writeFileSync(p, JSON.stringify(db, null, 2), "utf8");
-      console.log(`[DB] Saved to ${p}`);
+      writeFileSync(p, JSON.stringify(cleanDB, null, 2), "utf8");
+      if (!sbOk) console.log(`[DB] Saved to file ${p} (Supabase unavailable)`);
       return;
     } catch(e) { console.log(`Write ${p} failed:`, e.message); }
   }
-  console.warn("[DB] WARNING: Could not save to disk! Data in memory only.");
+  if (!sbOk) console.warn("[DB] WARNING: No persistent storage! Data in memory only.");
 }
 
 function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
@@ -251,7 +322,7 @@ app.get("/admin", (req,res) => {
 
 
 app.get("/site", (req,res) => {
-  const db = readDB();
+  const db = await readDB();
   res.json({
     theme:    db.theme,
     layout:   db.layout,
@@ -267,7 +338,7 @@ app.get("/site", (req,res) => {
 // ── MENU ──
 app.get("/menu", async (req,res) => {
   try {
-    const db = readDB();
+    const db = await readDB();
     const data = await getProds();
     const items = data.items || [];
     const byPriceId = {}, byProductId = {};
@@ -454,8 +525,8 @@ app.post("/admin/login",(req,res)=>{
   else res.status(401).json({error:"كلمة المرور غير صحيحة"});
 });
 app.get("/admin/db",adminAuth,(req,res)=>res.json(readDB()));
-app.put("/admin/db",adminAuth,(req,res)=>{
-  try{writeDB(req.body);res.json({success:true});}
+app.put("/admin/db",adminAuth,async(req,res)=>{
+  try{await writeDB(req.body);res.json({success:true});}
   catch(e){res.status(500).json({error:e.message});}
 });
 app.get("/admin/db-export",adminAuth,(req,res)=>{
@@ -471,19 +542,19 @@ app.post("/admin/categories",adminAuth,(req,res)=>{
     subSections: req.body.subSections||[],
     order:db.categories.length+1, visible:true
   };
-  db.categories.push(cat); writeDB(db); res.json(cat);
+  db.categories.push(cat); await writeDB(db); res.json(cat);
 });
 app.put("/admin/categories/:id",adminAuth,(req,res)=>{
   const db=readDB(); const i=db.categories.findIndex(c=>c.id===req.params.id);
   if(i<0) return res.status(404).json({error:"Not found"});
   db.categories[i]={...db.categories[i],...req.body,id:req.params.id};
-  writeDB(db); res.json(db.categories[i]);
+  await writeDB(db); res.json(db.categories[i]);
 });
-app.delete("/admin/categories/:id",adminAuth,(req,res)=>{
+app.delete("/admin/categories/:id",adminAuth,async(req,res)=>{
   const db=readDB();
   db.categories=db.categories.filter(c=>c.id!==req.params.id);
   db.services=db.services.filter(s=>s.categoryId!==req.params.id);
-  writeDB(db); res.json({success:true});
+  await writeDB(db); res.json({success:true});
 });
 app.put("/admin/categories-order",adminAuth,(req,res)=>{
   const db=readDB();
@@ -491,7 +562,7 @@ app.put("/admin/categories-order",adminAuth,(req,res)=>{
     const i=db.categories.findIndex(c=>c.id===id);
     if(i>=0) db.categories[i].order=idx+1;
   });
-  writeDB(db); res.json({success:true});
+  await writeDB(db); res.json({success:true});
 });
 app.put("/admin/categories/:id/services",adminAuth,(req,res)=>{
   const db=readDB(); const catId=req.params.id;
@@ -504,7 +575,7 @@ app.put("/admin/categories/:id/services",adminAuth,(req,res)=>{
       order:idx+1, visible:true
     });
   });
-  writeDB(db); res.json({success:true,count:(req.body.priceIds||[]).length});
+  await writeDB(db); res.json({success:true,count:(req.body.priceIds||[]).length});
 });
 app.get("/admin/rekaz-products",adminAuth,async(req,res)=>{
   try{res.json(await getProds());}catch(e){res.status(500).json({error:e.message});}
@@ -513,7 +584,7 @@ app.get("/admin/rekaz-products",adminAuth,async(req,res)=>{
 // ── POLICIES ──
 app.get("/admin/policies", adminAuth, (req,res) => res.json(readDB().policies||{}));
 app.put("/admin/policies", adminAuth, (req,res) => {
-  const db=readDB(); db.policies=req.body; writeDB(db); res.json({success:true});
+  const db=readDB(); db.policies=req.body; await writeDB(db); res.json({success:true});
 });
 
 // ── GIFT PAGE ──
@@ -554,7 +625,7 @@ app.post("/gift/purchase", async (req, res) => {
   if (!amount || !fromName || !fromPhone || !toName || !toPhone)
     return res.status(400).json({ error: "جميع الحقول مطلوبة" });
   try {
-    const db = readDB();
+    const db = await readDB();
     // Hardcoded pricing IDs extracted from Rekaz source
     const GIFT_PRICE_IDS = {
       "400": "3a20ab64-fb29-8449-e1ef-c92188e204ed",
@@ -624,7 +695,7 @@ app.post("/gift/purchase", async (req, res) => {
       createdAt: new Date().toISOString(),
       status: payUrl ? "pending_payment" : (giftPriceId ? "rekaz_failed" : "pending_review")
     });
-    writeDB(db);
+    await writeDB(db);
 
     res.json({ success: true, orderRef, invoiceId, payUrl, giftCode: invoiceId || orderRef });
   } catch(e) {
@@ -639,7 +710,7 @@ app.post("/membership/purchase", async (req, res) => {
   if (!planName || !price || !name || !phone)
     return res.status(400).json({ error: "جميع الحقول مطلوبة" });
   try {
-    const db = readDB();
+    const db = await readDB();
     const memItems = db.pages?.memberships?.items || [];
     const plan = typeof planIndex === "number" ? memItems[planIndex] : memItems.find(m => m.name === planName);
     const priceId = plan?.rekazPriceId || null;
@@ -701,7 +772,7 @@ app.post("/membership/purchase", async (req, res) => {
       createdAt: new Date().toISOString(),
       status: payUrl ? "pending_payment" : (priceId ? "rekaz_failed" : "pending_review")
     });
-    writeDB(db);
+    await writeDB(db);
 
     res.json({ success: true, orderRef, invoiceId, payUrl });
   } catch(e) {
@@ -714,14 +785,28 @@ app.post("/membership/purchase", async (req, res) => {
 app.get("/admin/gift-orders", adminAuth, (req, res) => { res.json(readDB().giftOrders || []); });
 app.get("/admin/membership-orders", adminAuth, (req, res) => { res.json(readDB().membershipOrders || []); });
 app.put("/admin/gift-orders/:ref", adminAuth, (req, res) => {
-  const db = readDB(); const o = (db.giftOrders || []).find(x => x.ref === req.params.ref);
+  const db = await readDB(); const o = (db.giftOrders || []).find(x => x.ref === req.params.ref);
   if (!o) return res.status(404).json({ error: "Not found" });
-  Object.assign(o, req.body); writeDB(db); res.json({ success: true });
+  Object.assign(o, req.body); await writeDB(db); res.json({ success: true });
 });
 app.put("/admin/membership-orders/:ref", adminAuth, (req, res) => {
-  const db = readDB(); const o = (db.membershipOrders || []).find(x => x.ref === req.params.ref);
+  const db = await readDB(); const o = (db.membershipOrders || []).find(x => x.ref === req.params.ref);
   if (!o) return res.status(404).json({ error: "Not found" });
-  Object.assign(o, req.body); writeDB(db); res.json({ success: true });
+  Object.assign(o, req.body); await writeDB(db); res.json({ success: true });
+});
+
+// ── SUPABASE HEALTH ──
+app.get("/admin/supabase-status", adminAuth, async(req,res)=>{
+  if(!SB_URL||!SB_KEY) return res.json({status:"not_configured",msg:"SUPABASE_URL and SUPABASE_ANON_KEY not set"});
+  const data=await sbRead();
+  res.json({status:data?"connected":"empty",url:SB_URL,hasData:!!data});
+});
+
+app.post("/admin/supabase-migrate", adminAuth, async(req,res)=>{
+  // Force push current DB to Supabase
+  const db=await readDB();
+  const ok=await sbWrite(db);
+  res.json({success:ok,msg:ok?"Migrated to Supabase ✓":"Failed - check SUPABASE_URL and SUPABASE_ANON_KEY"});
 });
 
 // ── DEBUG ──
@@ -737,7 +822,15 @@ app.get("/debug-product/:id",async(req,res)=>{
 });
 
 const PORT=process.env.PORT||3000;
-app.listen(PORT,()=>{
-  console.log(`[GRAFF SPA] Server on port ${PORT}`);
-  readDB();
-});
+// Startup: preload DB from Supabase
+async function startServer(){
+  console.log("[Startup] Loading DB from Supabase...");
+  try{
+    const db=await readDB();
+    console.log("[Startup] DB ready ✓ cats:",(db.categories||[]).length);
+  }catch(e){console.log("[Startup] DB load error:",e.message);}
+  app.listen(PORT,()=>{
+    console.log(`[GRAFF SPA] Server on port ${PORT}`);
+  });
+}
+startServer();
