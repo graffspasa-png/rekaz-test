@@ -469,32 +469,34 @@ app.post("/create-customer", async (req,res) => {
 
 // ── BOOKING ──
 app.post("/create-booking", async (req,res) => {
-  const {customerId,phone,priceId,from,to,addons}=req.body;
+  const {customerId,phone,priceId,extraPriceIds,from,to,addons}=req.body;
   if(!customerId||!priceId||!from||!to) return res.status(400).json({error:"Missing fields"});
   if(phone){
     const s=otpStore[phone];
     if(s && !s.verified) return res.status(403).json({error:"يجب التحقق من الجوال أولاً"});
   }
   try {
+    // Build customFields from addons (for first item)
     const addOnList = (addons||[]).filter(a=>a.id);
-
-    // Rekaz uses CustomFields for addOns: key=addOn.id, value=true
-    // Source: Rekaz network tab shows CustomFields[addonId]=true
     const customFields = {};
     addOnList.forEach(a => { customFields[a.id] = "true"; });
 
-    const payload = {
-      customerId,
-      branchId: BRANCH_ID,
-      items: [{
-        priceId,
-        quantity: 1,
-        from,
-        to,
-        customFields
-      }]
-    };
+    // Build items array — one item per selected service
+    // All share the same from/to slot
+    const allPriceIds = [priceId, ...(extraPriceIds||[])].filter(Boolean);
+    const items = allPriceIds.map((pid, idx) => ({
+      priceId: pid,
+      quantity: 1,
+      from,
+      to,
+      // Only apply customFields (addons) to first item
+      ...(idx === 0 && Object.keys(customFields).length ? {customFields} : {})
+    }));
+
+    const payload = { customerId, branchId: BRANCH_ID, items };
+    console.log("[Booking] items count:", items.length, "priceIds:", allPriceIds);
     console.log("[Booking] payload:", JSON.stringify(payload, null, 2));
+
     const r = await rekazFetch(`${REKAZ_API}/reservations/bulk`, {
       method: "POST",
       body: JSON.stringify(payload)
@@ -509,8 +511,8 @@ app.post("/create-booking", async (req,res) => {
     if(phone) delete otpStore[phone];
     const payPath = result.paymentLink || "";
     const payUrl = payPath ? (payPath.startsWith("http") ? payPath : `${REKAZ_BASE}${payPath}`) : null;
-    console.log(`[Booking] payUrl: ${payUrl}`);
-    res.json({success:true, payUrl});
+    console.log("[Booking] payUrl:", payUrl);
+    res.json({success:true, payUrl, orderRef: result.number||result.id||null});
   } catch(e){res.status(500).json({error:e.message});}
 });
 
