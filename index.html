@@ -204,6 +204,7 @@ body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-r
 .cartprice{font-family:'Cormorant Garamond',serif;font-size:22px;color:#fff;line-height:1}
 .cartsr{font-family:'Tajawal',sans-serif;font-size:10px;color:var(--muted)}
 .carttag{font-size:9px;color:rgba(255,255,255,.26);border:1px solid rgba(255,255,255,.07);padding:1px 6px;display:inline-block;margin-top:3px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.done-tag{background:rgba(42,160,90,.1);border-color:rgba(42,160,90,.3);color:rgba(42,160,90,.9);}
 .cartcta{padding:13px 20px;background:var(--gold);color:var(--ink);border:none;font-family:'Tajawal',sans-serif;font-size:11px;font-weight:500;letter-spacing:.12em;cursor:pointer;transition:background .14s;white-space:nowrap;flex-shrink:0;border-radius:var(--brad)}
 .cartcta:hover{background:var(--gold2)}
 
@@ -421,13 +422,14 @@ body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-r
   <div class="svcbody" id="svcbody"></div>
   <div class="cartbar" id="cartbar">
     <div class="cartinfo"><div class="cartcnt" id="cartcnt">لم يتم الاختيار بعد</div><div class="cartprice"><span class="cartsr">SAR </span><span id="carttot">0</span></div><div id="carttag"></div></div>
-    <button class="cartcta" onclick="go('dt')">متابعة ←</button>
+    <button class="cartcta" onclick="goNext()">متابعة ←</button>
   </div>
 </div>
 
 <!-- DATETIME -->
 <div id="dt" class="pg">
-  <div class="bar"><button class="back" onclick="go('svcs')">← رجوع</button><div class="logo-txt" onclick="go('home')">GRAFF SPA</div><div class="barr"><div class="sdot done"></div><div class="sdot on"></div><div class="sdot"></div></div></div>
+  <div class="bar"><button class="back" onclick="go('svcs')">← رجوع</button><div class="logo-txt" onclick="go('home')">GRAFF SPA</div><div class="barr"><div class="sdot done"></div>
+<div id="dt-svc-name" style="text-align:center;font-size:12px;color:var(--gold);padding:8px 16px;background:rgba(184,150,90,.06);border-bottom:1px solid rgba(184,150,90,.1);display:none"></div><div class="sdot on"></div><div class="sdot"></div></div></div>
   <div class="prog"><b style="width:55%"></b></div>
   <div class="dtbody">
     <div class="seclbl">اختاري التاريخ</div>
@@ -440,7 +442,8 @@ body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-r
   </div>
   <div class="dtfoot" id="dtfoot">
     <div class="dtmeta"><div class="dtm"><span class="dtml">التاريخ</span><span class="dtmv" id="seldate">—</span></div><div class="dtm" style="text-align:left"><span class="dtml">الوقت</span><span class="dtmv" id="seltime">—</span></div></div>
-    <button class="botbtn" id="btndt" onclick="go('phone')" disabled>متابعة للتحقق ←</button>
+    <button class="botbtn" id="btndt" onclick="confirmSlot(false)" disabled>تأكيد ←</button>
+  <button id="btndt-more" onclick="confirmSlot(true)" style="display:none;width:100%;padding:13px 16px;background:transparent;border:1px solid rgba(184,150,90,.3);color:var(--gold);font-family:'Tajawal',sans-serif;font-size:12px;cursor:pointer;margin-top:8px;transition:all .15s" >+ إضافة خدمة أخرى</button>
   </div>
 </div>
 
@@ -584,7 +587,7 @@ body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-r
 var B='https://rekaz-test.onrender.com';
 var MO=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
 var DA=['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
-var S={carts:[],addons:[],date:null,slot:null,slotLbl:null,phone:null,cid:null,payUrl:null,disc:0};
+var S={carts:[],pendingCart:null,addons:[],date:null,slot:null,slotLbl:null,phone:null,cid:null,payUrl:null,disc:0};
 var calY=new Date().getFullYear(),calM=new Date().getMonth(),allSlots=[],otpTimer=null;
 var CFG=null;
 
@@ -928,18 +931,23 @@ function onCardClick(el){
     return;
   }
   var pid=el.id;
-  var existIdx=S.carts.findIndex(function(c){return c.pid===pid;});
-  if(existIdx>-1){
-    // Deselect - remove from cart
-    S.carts.splice(existIdx,1);
+  // If clicking same pending item - deselect
+  if(S.pendingCart&&S.pendingCart.pid===pid){
+    S.pendingCart=null;
     el.classList.remove('sel');
     updCart();return;
   }
-  // Add to cart
+  // Deselect any previous pending selection
+  if(S.pendingCart){
+    var oldEl=document.getElementById(S.pendingCart.pid);
+    if(oldEl)oldEl.classList.remove('sel');
+    S.pendingCart=null;
+  }
+  // Set as pending (waiting for slot selection)
   var item={id:el.dataset.prod,priceId:el.dataset.price,name:el.dataset.name,
             dur:parseInt(el.dataset.dur)||0,amount:parseFloat(el.dataset.amt)||0,pid:pid,
             addOns:el.dataset.addons?JSON.parse(el.dataset.addons):[]};
-  S.carts.push(item);
+  S.pendingCart=item;
   el.classList.add('sel');updCart();
 }
 function onOptClick(el){
@@ -963,12 +971,12 @@ function onOptClick(el){
     if(!hasFromCard&&card)card.classList.remove('sel');
     updCart();return;
   }
-  // Add new option
+  // Set as pending (waiting for slot)
   el.classList.add('sel');
   var item={id:el.dataset.prod,priceId:priceId,name:displayName,
             dur:parseInt(el.dataset.dur)||0,amount:parseFloat(el.dataset.amt)||0,pid:pid,
             addOns:el.dataset.addons?JSON.parse(el.dataset.addons):[]};
-  S.carts.push(item);
+  S.pendingCart=item;
   if(card)card.classList.add('sel');
   updCart();
 }
@@ -980,6 +988,13 @@ function onAddonClick(el){
   updCart();
 }
 function clearSel(){
+  // Clear pending
+  if(S.pendingCart){
+    var el=document.getElementById(S.pendingCart.pid);
+    if(el)el.classList.remove('sel');
+    S.pendingCart=null;
+  }
+  // Clear completed carts (for full reset only)
   S.carts.forEach(function(c){
     var el=document.getElementById(c.pid);
     if(el)el.classList.remove('sel');
@@ -987,18 +1002,48 @@ function clearSel(){
   document.querySelectorAll('.opt-row.sel,.adrow.sel').forEach(function(v){v.classList.remove('sel');});
   S.carts=[];S.addons=[];
 }
+function goNext(){
+  if(S.pendingCart){
+    // Has a selected service waiting for slot
+    go('dt');
+  } else if(S.carts.length>0){
+    // All services committed, go to phone
+    go('phone');
+  } else {
+    showErr('errsvc','يرجى اختيار خدمة أولاً');
+  }
+}
 function swTab(cid,btn){
   document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('on');});btn.classList.add('on');
   document.querySelectorAll('.cpanel').forEach(function(c){c.classList.remove('on');});document.getElementById(cid).classList.add('on');
 }
-function calcTotal(){var base=S.carts.reduce(function(sum,c){return sum+c.amount;},0);return base+S.addons.reduce(function(s,a){return s+a.price;},0)-(S.disc||0);}
+function calcTotal(){var base=(S.pendingCart?S.pendingCart.amount:0);return base+S.addons.reduce(function(s,a){return s+a.price;},0);}
 function updCart(){
-  var has=S.carts.length>0;var tot=calcTotal();
+  var has=S.pendingCart!==null;
+  var tot=calcTotal();
+  var cartTotal=S.carts.reduce(function(s,c){return s+c.amount;},0);
+  var pendingAmt=S.pendingCart?S.pendingCart.amount:0;
+  var displayTot=(pendingAmt+(S.addons.reduce(function(s,a){return s+a.price;},0))).toLocaleString('en');
+  
+  // Show pending cart in cart bar
   var cnt=S.carts.length;
-  document.getElementById('cartcnt').textContent=has?(cnt+' خدمة مختارة'):'لم يتم الاختيار بعد';
-  document.getElementById('carttot').textContent=tot.toLocaleString('en');
-  document.getElementById('carttag').innerHTML=has?S.carts.map(function(c){return '<span class="carttag">'+esc(c.name)+'</span>';}).join(''):'';
-  document.getElementById('cartbar').classList.toggle('up',has);
+  var addedTxt=cnt>0?cnt+' خدمة مضافة · ':'';
+  document.getElementById('cartcnt').textContent=has?(addedTxt+(S.pendingCart.name)):(cnt>0?(cnt+' خدمة مختارة'):'لم يتم الاختيار بعد');
+  document.getElementById('carttot').textContent=has?displayTot:cartTotal.toLocaleString('en');
+  
+  // Tags: show completed carts + pending
+  var tags='';
+  S.carts.forEach(function(c){tags+='<span class="carttag done-tag">✓ '+esc(c.name)+'</span>';});
+  if(S.pendingCart)tags+='<span class="carttag">'+esc(S.pendingCart.name)+'</span>';
+  document.getElementById('carttag').innerHTML=tags;
+  document.getElementById('cartbar').classList.toggle('up',has||cnt>0);
+  
+  // Update proceed button
+  var btn=document.getElementById('svcnext');
+  if(btn){
+    btn.disabled=!has;
+    btn.textContent=has?'اختاري الوقت ←':(cnt>0?'تأكيد الخدمات ←':'اختاري خدمة أولاً');
+  }
 }
 
 // ── CALENDAR ──
@@ -1030,14 +1075,27 @@ function pickDate(y,m,d){
   document.getElementById('seltime').textContent='—';
   loadSlots(y,m,d);
 }
-function toAST(s){var d=new Date(s);var h=(d.getUTCHours()+3)%24;var mn=d.getUTCMinutes();return (h===0?12:h>12?h-12:h)+':'+p2(mn)+' '+(h<12?'ص':'م');}
-function toASTDate(s){var d=new Date(s);var a=new Date(d.getTime()+3*3600000);return a.getUTCFullYear()+'-'+p2(a.getUTCMonth()+1)+'-'+p2(a.getUTCDate());}
+function toAST(s){
+  // Rekaz returns times without timezone - treat as local (AST)
+  var raw=s.replace('Z','').split('T');
+  var time=raw[1]||'00:00:00';
+  var parts=time.split(':');
+  var h=parseInt(parts[0]),mn=parseInt(parts[1]||0);
+  var ampm=h<12?'ص':'م';
+  var h12=h===0?12:h>12?h-12:h;
+  return h12+':'+p2(mn)+' '+ampm;
+}
+function toASTDate(s){
+  // Rekaz returns local time - get date part directly
+  var raw=s.replace('Z','').split('T');
+  return raw[0]||s.slice(0,10);
+}
 async function loadSlots(y,m,d){
-  if(!S.carts.length)return;
+  if(!S.pendingCart)return;
   document.getElementById('slotsbox').innerHTML='<div class="slotload">جاري تحميل المواعيد...</div>';
   var ds=y+'-'+p2(m+1)+'-'+p2(d);
   try{
-    var q=new URLSearchParams({StartDate:ds+'T00:00:00',EndDate:ds+'T23:59:59',PriceId:S.carts[0].priceId,MinQuantity:'1'});
+    var q=new URLSearchParams({StartDate:ds+'T00:00:00',EndDate:ds+'T23:59:59',PriceId:S.pendingCart.priceId,MinQuantity:'1'});
     var r=await fetch(B+'/slots?'+q);if(!r.ok)throw new Error('HTTP '+r.status);
     var raw=await r.json();var seen={};
     allSlots=(Array.isArray(raw)?raw:[]).filter(function(s){
@@ -1056,13 +1114,41 @@ function pickSlot(i,lbl){
   document.getElementById('sl'+i).classList.add('on');
   S.slot=allSlots[i];S.slotLbl=lbl;
   document.getElementById('seltime').textContent=lbl;
+  // Update button with options
+  var hasMore=document.getElementById('btndt-more');
+  if(hasMore)hasMore.style.display='block';
   document.getElementById('btndt').disabled=false;
-  document.getElementById('btndt').textContent=lbl+' — متابعة ←';
+  document.getElementById('btndt').textContent='تأكيد — '+lbl+' ←';
   renderAddOns();
 }
 
+function confirmSlot(addMore){
+  if(!S.slot||!S.pendingCart){return;}
+  // Save slot to this cart item
+  var cartItem=Object.assign({},S.pendingCart,{slot:S.slot,slotLbl:S.slotLbl});
+  S.carts.push(cartItem);
+  S.pendingCart=null;
+  S.slot=null;S.slotLbl=null;
+  S.addons=[];
+  // Reset date UI
+  S.date=null;
+  // Show done tag on service card
+  document.querySelectorAll('.sc.sel').forEach(function(el){
+    el.classList.add('done');el.classList.remove('sel');
+  });
+  document.querySelectorAll('.opt-row.sel').forEach(function(el){el.classList.remove('sel');});
+  updCart();
+  if(addMore){
+    // Go back to services to pick another
+    go('svcs');
+  } else {
+    // All done - proceed to phone verification
+    go('phone');
+  }
+}
+
 function renderAddOns(){
-  var addOns=S.carts.length&&S.carts[0].addOns?S.carts[0].addOns:[];
+  var addOns=S.pendingCart&&S.pendingCart.addOns?S.pendingCart.addOns:[];
   var sec=document.getElementById('addonssec');
   var box=document.getElementById('addonsbox');
   if(!addOns.length){sec.style.display='none';return;}
@@ -1124,24 +1210,27 @@ async function verOTP(){
 
 // ── CONFIRM ──
 function buildConfirm(){
-  if(!S.carts.length||!S.date)return;
-  var d=S.date,dl=DA[new Date(d.y,d.m,d.d).getDay()]+' '+d.d+' '+MO[d.m];
-  var at=S.addons.reduce(function(s,a){return s+a.price;},0);
-  var sub=S.carts.reduce(function(s,c){return s+c.amount;},0)+at,disc=S.disc||0,tot=sub-disc,base=Math.round(tot/1.15),vat=tot-base;
-  // ── Booking details ──
+  if(!S.carts.length)return;
+  var sub=S.carts.reduce(function(s,c){return s+c.amount;},0);
+  var disc=S.disc||0,tot=sub-disc,base=Math.round(tot/1.15),vat=tot-base;
+  
+  // ── Each service with its own slot ──
   var h='<div class="inv-section">';
-  h+='<div class="inv-lbl">تفاصيل الحجز</div>';
-  h+='<div class="sumrow"><span class="suml">التاريخ</span><span class="sumv">'+dl+'</span></div>';
-  h+='<div class="sumrow"><span class="suml">الوقت</span><span class="sumv">'+(S.slotLbl||'—')+'</span></div>';
-  var totalDur=S.carts.reduce(function(s,c){return s+(c.dur||0);},0);if(totalDur)h+='<div class="sumrow"><span class="suml">المدة الإجمالية</span><span class="sumv">'+totalDur+' دقيقة</span></div>';
+  h+='<div class="inv-lbl">الخدمات المحجوزة</div>';
+  S.carts.forEach(function(c,i){
+    h+='<div class="sumrow" style="flex-direction:column;align-items:flex-start;gap:3px;padding:10px 0;border-bottom:1px solid rgba(0,0,0,.06)">';
+    h+='<div style="display:flex;justify-content:space-between;width:100%">';
+    h+='<span class="suml" style="font-weight:500;color:var(--text)">'+esc(c.name)+'</span>';
+    h+='<span class="sumv">SAR '+c.amount.toLocaleString('en')+'</span>';
+    h+='</div>';
+    h+='<div style="font-size:11px;color:var(--muted)">'+esc(c.slotLbl||'—')+'</div>';
+    h+='</div>';
+  });
   h+='</div>';
+  
   // ── Price breakdown ──
   h+='<div class="inv-section" style="margin-top:10px">';
   h+='<div class="inv-lbl">تفاصيل السعر</div>';
-  S.carts.forEach(function(c){h+='<div class="sumrow"><span class="suml">'+esc(c.name)+'</span><span class="sumv">SAR '+c.amount.toLocaleString('en')+'</span></div>';});
-  S.addons.forEach(function(a){
-    h+='<div class="sumrow"><span class="suml addon-lbl">+ '+esc(a.name)+'</span><span class="sumv addon-val">SAR '+a.price.toLocaleString('en')+'</span></div>';
-  });
   if(disc>0)h+='<div class="sumrow"><span class="suml" style="color:var(--ok)">خصم</span><span class="sumv" style="color:var(--ok)">− SAR '+disc.toLocaleString('en')+'</span></div>';
   h+='<div class="sumrow sum-divider"><span class="suml muted-lbl">قبل الضريبة</span><span class="sumv muted-val">SAR '+base.toLocaleString('en')+'</span></div>';
   h+='<div class="sumrow"><span class="suml muted-lbl">ضريبة القيمة المضافة 15%</span><span class="sumv muted-val">SAR '+vat.toLocaleString('en')+'</span></div>';
@@ -1174,7 +1263,11 @@ async function doBook(){
     var cr=await fetch(B+'/create-customer',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:name,phone:S.phone})});
     var cd=await cr.json();if(!cr.ok)throw new Error(cd.error||'فشل إنشاء العميل');
     S.cid=cd.customerId;
-    var br=await fetch(B+'/create-booking',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({customerId:S.cid,phone:S.phone,priceId:S.carts[0].priceId,extraPriceIds:S.carts.slice(1).map(function(c){return c.priceId;}),from:S.slot.from,to:S.slot.to,addons:S.addons.map(function(a){return{id:a.id};})})});
+    // Build items: each service has its own slot
+    var bookingItems=S.carts.map(function(c){
+      return {priceId:c.priceId,from:c.slot.from,to:c.slot.to};
+    });
+    var br=await fetch(B+'/create-booking',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({customerId:S.cid,phone:S.phone,items:bookingItems,addons:S.addons.map(function(a){return{id:a.id};})})});
     var bd=await br.json();if(!br.ok)throw new Error(bd.error||'فشل الحجز');
     S.payUrl=bd.payUrl||null;
     var ref=bd.orderNumber||'—';
@@ -1183,9 +1276,8 @@ async function doBook(){
     document.getElementById('succard').innerHTML=
       '<div class="sucrow"><span class="suclbl">الاسم</span><span class="sucval">'+esc(name)+'</span></div>'+
       '<div class="sucrow"><span class="suclbl">الجوال</span><span class="sucval">'+esc(S.phone)+'</span></div>'+
-      '<div class="sucrow"><span class="suclbl">الخدمات</span><span class="sucval">'+S.carts.map(function(c){return esc(c.name);}).join('، ')+'</span></div>'+
-      '<div class="sucrow"><span class="suclbl">التاريخ</span><span class="sucval">'+dl+'</span></div>'+
-      '<div class="sucrow"><span class="suclbl">الوقت</span><span class="sucval">'+S.slotLbl+'</span></div>'+
+      '<div class="sucrow"><span class="suclbl">الخدمات</span><span class="sucval">'+S.carts.map(function(c){return esc(c.name)+' ('+esc(c.slotLbl||'—')+')';}).join('<br>')+'</span></div>'+
+      
       '<div class="sucrow"><span class="suclbl">الإجمالي</span><span class="sucval">SAR '+tot.toLocaleString('en')+'</span></div>';
     // Show order ref from Rekaz
     if(bd.orderRef||bd.id){
@@ -1231,6 +1323,28 @@ function go(id){
   document.getElementById(id).classList.add('on');
   window.scrollTo(0,0);
   if(id==='confirm')buildConfirm();
+  if(id==='dt'){
+    // Reset slot UI for new service selection
+    S.slot=null;S.slotLbl=null;
+    var slotsec=document.getElementById('slotsec');if(slotsec)slotsec.style.display='none';
+    var dtfoot=document.getElementById('dtfoot');if(dtfoot)dtfoot.style.display='none';
+    var addsec=document.getElementById('addonssec');if(addsec)addsec.style.display='none';
+    var btndt=document.getElementById('btndt');if(btndt){btndt.disabled=true;btndt.textContent='اختاري وقتاً للمتابعة';}
+    var btndtm=document.getElementById('btndt-more');if(btndtm)btndtm.style.display='none';
+    // Show current pending service name
+    var svclbl=document.getElementById('dt-svc-name');
+    if(svclbl&&S.pendingCart){
+      svclbl.textContent='اختاري وقت — '+S.pendingCart.name;
+      svclbl.style.display='block';
+    } else if(svclbl){svclbl.style.display='none';}
+    // Reset calendar
+    calY=new Date().getFullYear();calM=new Date().getMonth();
+    renderCal();
+  }
+  if(id==='svcs'){
+    updCart();
+    if(!document.querySelector('.sc'))loadProducts();
+  }
 }
 function openWA(){
   var num=(CFG&&CFG.texts&&CFG.texts.whatsappNumber)||(CFG&&CFG.social&&CFG.social.whatsapp)||'966500000000';
