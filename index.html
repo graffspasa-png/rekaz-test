@@ -1076,19 +1076,19 @@ function pickDate(y,m,d){
   loadSlots(y,m,d);
 }
 function toAST(s){
-  // Rekaz returns times without timezone - treat as local (AST)
-  var raw=s.replace('Z','').split('T');
-  var time=raw[1]||'00:00:00';
-  var parts=time.split(':');
-  var h=parseInt(parts[0]),mn=parseInt(parts[1]||0);
+  // Rekaz returns UTC — convert to AST (+3)
+  var d=new Date(s.indexOf('Z')===-1?s+'Z':s);
+  var h=(d.getUTCHours()+3)%24;
+  var mn=d.getUTCMinutes();
   var ampm=h<12?'ص':'م';
   var h12=h===0?12:h>12?h-12:h;
   return h12+':'+p2(mn)+' '+ampm;
 }
 function toASTDate(s){
-  // Rekaz returns local time - get date part directly
-  var raw=s.replace('Z','').split('T');
-  return raw[0]||s.slice(0,10);
+  // Rekaz returns UTC — shift to AST (+3) before extracting date
+  var d=new Date(s.indexOf('Z')===-1?s+'Z':s);
+  var ast=new Date(d.getTime()+3*3600000);
+  return ast.getUTCFullYear()+'-'+p2(ast.getUTCMonth()+1)+'-'+p2(ast.getUTCDate());
 }
 async function loadSlots(y,m,d){
   if(!S.pendingCart)return;
