@@ -524,19 +524,19 @@ app.post("/admin/login",async(req,res)=>{
   if(req.body.password===ADMIN_PASS) res.json({success:true,token:ADMIN_PASS});
   else res.status(401).json({error:"كلمة المرور غير صحيحة"});
 });
-app.get("/admin/db",adminAuth,async(req,res)=>res.json(readDB()));
+app.get("/admin/db",adminAuth,async(req,res)=>res.json(await readDB()));
 app.put("/admin/db",adminAuth,async(req,res)=>{
   try{await writeDB(req.body);res.json({success:true});}
   catch(e){res.status(500).json({error:e.message});}
 });
 app.get("/admin/db-export",adminAuth,async(req,res)=>{
-  const db=readDB();
+  const db=await readDB();
   const b64=Buffer.from(JSON.stringify(db)).toString("base64");
   res.json({base64:b64,hint:"Set INITIAL_DB env var to this value for disaster recovery"});
 });
-app.get("/admin/categories",adminAuth,async(req,res)=>res.json(readDB().categories));
+app.get("/admin/categories",adminAuth,async(req,res)=>res.json(await readDB().categories));
 app.post("/admin/categories",adminAuth,async(req,res)=>{
-  const db=readDB();
+  const db=await readDB();
   const cat={
     id:"cat_"+uid(), nameAr:req.body.nameAr||"قسم جديد", nameEn:req.body.nameEn||"",
     subSections: req.body.subSections||[],
@@ -545,19 +545,19 @@ app.post("/admin/categories",adminAuth,async(req,res)=>{
   db.categories.push(cat); await writeDB(db); res.json(cat);
 });
 app.put("/admin/categories/:id",adminAuth,async(req,res)=>{
-  const db=readDB(); const i=db.categories.findIndex(c=>c.id===req.params.id);
+  const db=await readDB(); const i=db.categories.findIndex(c=>c.id===req.params.id);
   if(i<0) return res.status(404).json({error:"Not found"});
   db.categories[i]={...db.categories[i],...req.body,id:req.params.id};
   await writeDB(db); res.json(db.categories[i]);
 });
 app.delete("/admin/categories/:id",adminAuth,async(req,res)=>{
-  const db=readDB();
+  const db=await readDB();
   db.categories=db.categories.filter(c=>c.id!==req.params.id);
   db.services=db.services.filter(s=>s.categoryId!==req.params.id);
   await writeDB(db); res.json({success:true});
 });
 app.put("/admin/categories-order",adminAuth,async(req,res)=>{
-  const db=readDB();
+  const db=await readDB();
   (req.body.order||[]).forEach((id,idx)=>{
     const i=db.categories.findIndex(c=>c.id===id);
     if(i>=0) db.categories[i].order=idx+1;
@@ -565,7 +565,7 @@ app.put("/admin/categories-order",adminAuth,async(req,res)=>{
   await writeDB(db); res.json({success:true});
 });
 app.put("/admin/categories/:id/services",adminAuth,async(req,res)=>{
-  const db=readDB(); const catId=req.params.id;
+  const db=await readDB(); const catId=req.params.id;
   db.services=db.services.filter(s=>s.categoryId!==catId);
   (req.body.priceIds||[]).forEach((item,idx)=>{
     db.services.push({
@@ -782,8 +782,8 @@ app.post("/membership/purchase", async (req, res) => {
 });
 
 // ── ADMIN: ORDERS ──
-app.get("/admin/gift-orders", adminAuth, (req, res) => { res.json(readDB().giftOrders || []); });
-app.get("/admin/membership-orders", adminAuth, (req, res) => { res.json(readDB().membershipOrders || []); });
+app.get("/admin/gift-orders", adminAuth, async(req, res) => { const db=await readDB(); res.json(db.giftOrders || []); });
+app.get("/admin/membership-orders", adminAuth, async(req, res) => { const db=await readDB(); res.json(db.membershipOrders || []); });
 app.put("/admin/gift-orders/:ref", adminAuth, async(req, res) => {
   const db = await readDB(); const o = (db.giftOrders || []).find(x => x.ref === req.params.ref);
   if (!o) return res.status(404).json({ error: "Not found" });
