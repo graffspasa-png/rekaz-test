@@ -469,33 +469,35 @@ app.post("/create-customer", async (req,res) => {
 
 // ── BOOKING ──
 app.post("/create-booking", async (req,res) => {
-  const {customerId,phone,priceId,extraPriceIds,from,to,addons}=req.body;
-  if(!customerId||!priceId||!from||!to) return res.status(400).json({error:"Missing fields"});
+  const {customerId,phone,items,addons}=req.body;
+  // Support both new format (items[]) and legacy (priceId+from+to)
+  const bookingItems = items && items.length ? items : [{
+    priceId: req.body.priceId,
+    from: req.body.from,
+    to: req.body.to
+  }];
+  if(!customerId||!bookingItems.length||!bookingItems[0].priceId||!bookingItems[0].from)
+    return res.status(400).json({error:"Missing fields"});
   if(phone){
     const s=otpStore[phone];
     if(s && !s.verified) return res.status(403).json({error:"يجب التحقق من الجوال أولاً"});
   }
   try {
-    // Build customFields from addons (for first item)
     const addOnList = (addons||[]).filter(a=>a.id);
     const customFields = {};
     addOnList.forEach(a => { customFields[a.id] = "true"; });
 
-    // Build items array — one item per selected service
-    // All share the same from/to slot
-    const allPriceIds = [priceId, ...(extraPriceIds||[])].filter(Boolean);
-    const items = allPriceIds.map((pid, idx) => ({
-      priceId: pid,
+    // Each service gets its own slot (from/to from client)
+    const rekazItems = bookingItems.map((item, idx) => ({
+      priceId: item.priceId,
       quantity: 1,
-      from,
-      to,
-      // Only apply customFields (addons) to first item
+      from: item.from,
+      to: item.to,
       ...(idx === 0 && Object.keys(customFields).length ? {customFields} : {})
     }));
 
-    const payload = { customerId, branchId: BRANCH_ID, items };
-    console.log("[Booking] items count:", items.length, "priceIds:", allPriceIds);
-    console.log("[Booking] payload:", JSON.stringify(payload, null, 2));
+    const payload = { customerId, branchId: BRANCH_ID, items: rekazItems };
+    console.log("[Booking] items:", rekazItems.length, rekazItems.map(i=>i.priceId+' '+i.from));
 
     const r = await rekazFetch(`${REKAZ_API}/reservations/bulk`, {
       method: "POST",
@@ -507,11 +509,9 @@ app.post("/create-booking", async (req,res) => {
     }
     console.log("[Booking] SUCCESS:", r.text.slice(0,300));
     const result = r.json();
-
     if(phone) delete otpStore[phone];
     const payPath = result.paymentLink || "";
     const payUrl = payPath ? (payPath.startsWith("http") ? payPath : `${REKAZ_BASE}${payPath}`) : null;
-    console.log("[Booking] payUrl:", payUrl);
     res.json({success:true, payUrl, orderRef: result.number||result.id||null});
   } catch(e){res.status(500).json({error:e.message});}
 });
