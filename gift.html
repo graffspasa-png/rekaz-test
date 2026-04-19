@@ -4,684 +4,669 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <title>GRAFF SPA — بطاقة الإهداء</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='12' fill='%23080807'/><text y='48' x='32' text-anchor='middle' font-size='44' font-family='Georgia,serif' fill='%23b8965a'>G</text></svg>">
-<link id="gfont" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23080807'/><text y='24' x='16' text-anchor='middle' font-size='22' font-family='Georgia' fill='%23b8965a'>G</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
 <style>
-:root{
-  --gold:#b8965a;--gold2:#c8a66a;
-  --ink:#080807;--ink2:#0f0d0a;
-  --cream:#f3ede3;--cream2:#ebe3d5;
-  --w:#fff;--text:#17150e;--muted:#78706a;--border:#d8d0c0;
-  --err:#b33;--brad:0px;
-}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction:rtl;-webkit-font-smoothing:antialiased;min-height:100dvh;overflow-x:hidden}
-[dir=rtl] *{letter-spacing:0!important;word-spacing:0}
-.ls{letter-spacing:.14em!important}
-.ls-sm{letter-spacing:.08em!important}
+:root{
+  --g:#b8965a;--g2:#c9a96b;--g3:#a07840;--gd:rgba(184,150,90,.12);
+  --ink:#080807;--ink2:#0b0908;--ink3:#0f0c09;
+  --cream:#f2ece2;--cream2:#ece5d8;--text:#16140d;--muted:#7a7268;--brd:#cfc7b6
+}
+html{scroll-behavior:smooth}
+body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction:rtl;-webkit-font-smoothing:antialiased;overflow-x:hidden;min-height:100dvh}
 
-/* BAR */
-.bar{position:sticky;top:0;z-index:100;height:54px;padding:0 18px;display:flex;align-items:center;justify-content:space-between;background:rgba(8,8,7,.96);backdrop-filter:blur(24px);border-bottom:1px solid rgba(184,150,90,.1)}
-.logo-wrap{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:300;color:#fff;text-decoration:none;display:flex;gap:5px}
-.logo-wrap b{color:var(--gold);font-weight:300}
-.back-btn{background:none;border:none;color:rgba(255,255,255,.38);font-family:'Tajawal',sans-serif;font-size:11px;cursor:pointer;display:flex;align-items:center;gap:5px;min-width:52px;transition:color .15s;text-decoration:none;padding:6px 0}
-.back-btn:hover{color:var(--gold)}
+/* ══ BAR ══ */
+.bar{position:sticky;top:0;z-index:200;height:54px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;background:rgba(8,8,7,.97);backdrop-filter:blur(24px);border-bottom:1px solid rgba(255,255,255,.055)}
+.logo{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:300;color:#fff;text-decoration:none;letter-spacing:.14em;white-space:nowrap}
+.back{background:none;border:none;color:rgba(255,255,255,.32);font-size:11px;cursor:pointer;display:flex;align-items:center;gap:5px;padding:6px 0;font-family:'Tajawal',sans-serif;text-decoration:none;transition:color .14s;min-width:52px}
+.back:hover{color:rgba(255,255,255,.7)}
 
-/* STEPS */
-.steps{display:flex;align-items:center;justify-content:center;padding:10px 0;background:rgba(184,150,90,.04);border-bottom:1px solid rgba(184,150,90,.08);gap:0}
-.si{display:flex;align-items:center;gap:6px}
-.si-dot{width:25px;height:25px;border-radius:50%;border:1.5px solid rgba(184,150,90,.2);display:flex;align-items:center;justify-content:center;font-size:9px;color:rgba(255,255,255,.2);transition:all .3s}
-.si-dot.on{background:var(--gold);border-color:var(--gold);color:var(--ink);font-weight:600}
-.si-dot.done{background:rgba(184,150,90,.15);border-color:rgba(184,150,90,.4);color:var(--gold)}
-.si-lbl{font-size:9px;color:rgba(255,255,255,.22);transition:color .3s}
-.si.on .si-lbl{color:rgba(255,255,255,.6)}
-.si-line{width:26px;height:1px;background:rgba(184,150,90,.16);margin:0 4px}
+/* ══ STEPS ══ */
+.steps{display:flex;align-items:center;justify-content:center;padding:10px 0;background:rgba(184,150,90,.03);border-bottom:1px solid rgba(184,150,90,.07)}
+.si{display:flex;align-items:center;gap:5px}
+.sdot{width:24px;height:24px;border-radius:50%;border:1.5px solid rgba(184,150,90,.2);display:flex;align-items:center;justify-content:center;font-size:9px;color:rgba(255,255,255,.2);transition:all .24s}
+.sdot.on{background:var(--g);border-color:var(--g);color:var(--ink);font-weight:700}
+.sdot.dn{background:rgba(184,150,90,.1);border-color:rgba(184,150,90,.32);color:var(--g)}
+.slbl{font-size:9px;color:rgba(255,255,255,.2);letter-spacing:.05em}
+.si.on .slbl{color:rgba(255,255,255,.58)}
+.sline{width:20px;height:1px;background:rgba(184,150,90,.13);margin:0 4px}
 
-/* PAGES */
+/* ══ PAGES ══ */
 .pg{display:none;flex-direction:column;min-height:calc(100dvh - 54px)}
-.pg.on{display:flex;animation:pgIn .2s ease}
-@keyframes pgIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.pg.on{display:flex}
+#p1,#p2,#p3{background:var(--cream)}
+#pp,#pz{background:var(--cream)}
 
-/* ─────────────────────────────────────
-   PAGE 1: AMOUNT + CARD PREVIEW
-───────────────────────────────────── */
-#p1{background:var(--cream)}
-.p1-body{flex:1;overflow-y:auto;padding-bottom:96px}
+/* ══ PAGE 1 — AMOUNT ══ */
+.p1body{flex:1;overflow-y:auto;padding-bottom:88px}
 
-/* Hero strip */
-.p1-hero{background:var(--ink);padding:32px 20px 28px;text-align:center;position:relative;overflow:hidden}
-.p1-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 90% 60% at 50% 20%,rgba(184,150,90,.08),transparent 60%);pointer-events:none}
-.p1-hero::after{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(184,150,90,.013) 1px,transparent 1px),linear-gradient(90deg,rgba(184,150,90,.013) 1px,transparent 1px);background-size:52px 52px;pointer-events:none}
-.hero-eye{font-size:8px;letter-spacing:.42em!important;color:rgba(184,150,90,.6);margin-bottom:12px;display:flex;align-items:center;justify-content:center;gap:10px;position:relative;z-index:1}
-.hero-eye::before,.hero-eye::after{content:'';width:20px;height:1px;background:rgba(184,150,90,.3)}
-.hero-h1{font-family:'Cormorant Garamond',serif;font-size:clamp(28px,7vw,42px);font-weight:300;color:#fff;margin-bottom:7px;position:relative;z-index:1}
-.hero-sub{font-size:12px;color:rgba(255,255,255,.3);position:relative;z-index:1;line-height:1.7}
+/* Hero — dark, elegant */
+.ghero{
+  background:var(--ink2);padding:36px 20px 30px;
+  text-align:center;position:relative;overflow:hidden;
+  border-bottom:1px solid rgba(255,255,255,.04)
+}
+.ghero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 90% 60% at 50% 20%,rgba(184,150,90,.055),transparent 58%);pointer-events:none}
+.geye{font-size:7.5px;letter-spacing:.52em;color:rgba(184,150,90,.42);margin-bottom:12px;display:flex;align-items:center;justify-content:center;gap:12px;position:relative;z-index:1}
+.geye::before,.geye::after{content:'';width:22px;height:1px;background:rgba(184,150,90,.2)}
+.gen{font-family:'Cormorant Garamond',serif;font-size:clamp(26px,7vw,44px);font-weight:300;color:#fff;margin-bottom:6px;position:relative;z-index:1}
+.gen em{color:var(--g);font-style:normal}
+.gar{font-size:12px;color:rgba(255,255,255,.3);position:relative;z-index:1;line-height:1.8;letter-spacing:.06em}
 
-/* ── THE LUXURY GIFT CARD ── */
-.card-wrap{padding:20px 16px 0;max-width:480px;margin:0 auto}
-.card-label{font-size:8px;letter-spacing:.2em!important;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:8px}
-.card-label::after{content:'';flex:1;height:1px;background:var(--border)}
+/* ════ GIFT CARD PREVIEW ════
+   Design philosophy: completely different from membership card
+   — Pure gold geometric frame on cream/parchment
+   — Minimal, editorial, ultra-luxury
+   — The amount and name displayed prominently
+*/
+.prev-wrap{padding:20px 16px 0;max-width:460px;margin:0 auto}
+.prev-lbl{font-size:7.5px;letter-spacing:.22em;color:var(--muted);margin-bottom:11px;display:flex;align-items:center;gap:8px}
+.prev-lbl::after{content:'';flex:1;height:1px;background:var(--brd)}
 
-/* Card container — elegant proportions, NOT ATM style */
-.gift-card{
-  width:100%;max-width:400px;
+/* THE GIFT CARD — parchment luxury design */
+.gcard{
+  width:100%;max-width:390px;
   aspect-ratio:1.7/1;
   margin:0 auto;
   position:relative;
-  border-radius:14px;
+  border-radius:4px;
   overflow:hidden;
+  box-shadow:0 24px 64px rgba(0,0,0,.5),0 6px 20px rgba(0,0,0,.35),0 0 0 1px rgba(184,150,90,.25);
   cursor:default;
   user-select:none;
 }
-/* Multi-layer luxury background */
-.gc-bg{
-  position:absolute;inset:0;
-  background:
-    radial-gradient(ellipse 140% 100% at 70% -20%,rgba(40,30,18,.0) 0%,transparent 50%),
-    linear-gradient(155deg,#1a1410 0%,#0c0a07 30%,#141008 55%,#0a0806 100%);
-}
-.gc-silk{
-  position:absolute;inset:0;
-  background:
-    radial-gradient(ellipse 80% 60% at 75% 30%,rgba(184,150,90,.09) 0%,transparent 55%),
-    radial-gradient(ellipse 60% 80% at 20% 80%,rgba(184,150,90,.04) 0%,transparent 50%);
-}
-/* Decorative flowing curves — the signature design element */
-.gc-curves{position:absolute;inset:0;overflow:hidden}
-.gc-border{position:absolute;inset:0;border-radius:14px;border:1px solid rgba(184,150,90,.25)}
-.gc-border-inner{position:absolute;inset:5px;border-radius:10px;border:1px solid rgba(184,150,90,.08)}
-
-/* Card inner layout */
-.gc-inner{position:absolute;inset:0;padding:6% 7%;display:flex;flex-direction:column;justify-content:space-between;z-index:3}
-
+/* Parchment/cream base */
+.gc-base{position:absolute;inset:0;background:linear-gradient(158deg,#f7f1e5 0%,#f0e9da 35%,#ece3d0 65%,#e8dfc9 100%)}
+/* Subtle texture overlay */
+.gc-tex{position:absolute;inset:0;background:radial-gradient(ellipse 60% 40% at 20% 30%,rgba(255,255,255,.4),transparent 60%),radial-gradient(ellipse 50% 50% at 80% 70%,rgba(180,145,85,.06),transparent 55%)}
+/* Gold corner ornaments */
+.gc-corners{position:absolute;inset:0}
+/* Gold frame lines */
+.gc-frame{position:absolute;inset:10px;border:1px solid rgba(184,150,90,.35)}
+.gc-frame2{position:absolute;inset:14px;border:1px solid rgba(184,150,90,.15)}
+/* Content */
+.gc-in{position:absolute;inset:0;padding:8% 8%;display:flex;flex-direction:column;justify-content:space-between;z-index:3}
 .gc-top{display:flex;align-items:flex-start;justify-content:space-between}
-.gc-logo{font-family:'Cormorant Garamond',serif;font-size:clamp(10px,2.5vw,16px);font-weight:300;letter-spacing:.22em!important;color:rgba(255,255,255,.85);line-height:1}
-.gc-logo b{color:var(--gold)}
-.gc-title-block{text-align:left}
-.gc-title-en{font-family:'Cormorant Garamond',serif;font-size:clamp(7px,1.8vw,11px);font-weight:400;color:var(--gold);letter-spacing:.06em!important;line-height:1.3}
-.gc-title-ar{font-family:'Tajawal',sans-serif;font-size:clamp(8px,2vw,12px);font-weight:500;color:var(--gold);letter-spacing:0!important;line-height:1.3;margin-top:1px}
-
-.gc-mid{display:flex;align-items:center;flex:1;padding:2% 0}
-.gc-amount{font-family:'Cormorant Garamond',serif;font-size:clamp(22px,5.5vw,38px);font-weight:300;color:#fff;line-height:1;transition:all .25s}
-.gc-amount.ph{color:rgba(255,255,255,.15)}
-.gc-currency{font-size:clamp(8px,1.8vw,11px);color:rgba(255,255,255,.35);margin-top:3px;font-family:'Tajawal',sans-serif;letter-spacing:0!important}
-
+.gc-logo{font-family:'Cormorant Garamond',serif;font-size:clamp(10px,2.4vw,15px);font-weight:300;letter-spacing:.24em;color:rgba(20,15,8,.7);white-space:nowrap}
+.gc-tagblock{text-align:left}
+.gc-tag-en{font-family:'Cormorant Garamond',serif;font-size:clamp(6.5px,1.6vw,10px);color:var(--g3);letter-spacing:.08em;line-height:1.55}
+.gc-tag-ar{font-family:'Tajawal',sans-serif;font-size:clamp(7px,1.75vw,11px);font-weight:600;color:var(--g3);line-height:1.55;margin-top:1px}
+/* Center — amount dominates */
+.gc-center{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2% 0}
+.gc-amt{font-family:'Cormorant Garamond',serif;font-size:clamp(24px,6.5vw,46px);font-weight:300;color:rgba(20,15,8,.82);letter-spacing:.04em;line-height:1;transition:all .22s}
+.gc-amt.ph{color:rgba(20,15,8,.18);font-style:italic;font-size:clamp(14px,3.5vw,24px)}
+.gc-curr{font-size:clamp(8px,1.8vw,11px);color:rgba(20,15,8,.35);margin-top:4px;letter-spacing:.12em;font-family:'Tajawal',sans-serif}
+/* Bottom */
 .gc-bot{display:flex;justify-content:space-between;align-items:flex-end}
-.gc-to-block{}
-.gc-bot-lbl{font-size:clamp(5px,1.1vw,7px);letter-spacing:.14em!important;color:rgba(255,255,255,.25);text-transform:uppercase;margin-bottom:2px}
-.gc-to-name{font-size:clamp(9px,2.1vw,13px);color:rgba(255,255,255,.75);font-weight:400;max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;transition:all .2s;font-family:'Tajawal',sans-serif;letter-spacing:0!important}
-.gc-to-name.ph{color:rgba(255,255,255,.18);font-style:italic}
-.gc-from-block{text-align:left}
-.gc-from-lbl-wrap{text-align:left}
-.gc-from-name{font-size:clamp(8px,1.9vw,11px);color:rgba(255,255,255,.38);text-align:left;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;transition:all .2s;font-family:'Tajawal',sans-serif;letter-spacing:0!important}
-.gc-from-name.ph{color:rgba(255,255,255,.12)}
+.gc-to-sec{flex:1;min-width:0}
+.gc-lbl{font-size:clamp(5.5px,1.2vw,7.5px);letter-spacing:.2em;color:rgba(20,15,8,.3);text-transform:uppercase;margin-bottom:2px;font-family:'Cormorant Garamond',serif}
+.gc-to-val{font-family:'Cormorant Garamond',serif;font-size:clamp(9px,2.2vw,14px);font-weight:400;color:rgba(20,15,8,.75);letter-spacing:.08em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px;transition:all .2s}
+.gc-to-val.ph{color:rgba(20,15,8,.2);font-style:italic}
+.gc-from-sec{text-align:left;flex-shrink:0}
+.gc-from-val{font-family:'Cormorant Garamond',serif;font-size:clamp(8px,2vw,12px);color:rgba(20,15,8,.4);letter-spacing:.07em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100px;transition:all .2s}
+.gc-from-val.ph{color:rgba(20,15,8,.14);font-style:italic}
+/* Gold divider line center */
+.gc-div{width:1px;height:28px;background:rgba(184,150,90,.28);margin:0 12px;align-self:flex-end;margin-bottom:2px}
 
-/* Amount buttons */
-.amts-section{padding:16px 16px 0;max-width:480px;margin:0 auto}
-.sec-lbl{font-size:8px;letter-spacing:.2em!important;color:var(--muted);margin-bottom:11px;display:flex;align-items:center;gap:8px}
-.sec-lbl::after{content:'';flex:1;height:1px;background:var(--border)}
-.amts-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}
-.amt-btn{padding:15px 12px;background:var(--w);border:1.5px solid var(--border);cursor:pointer;transition:all .16s;text-align:center;border-radius:var(--brad);position:relative;font-family:'Tajawal',sans-serif}
-.amt-btn:hover{border-color:rgba(184,150,90,.4);transform:translateY(-1px)}
-.amt-btn.sel{border-color:var(--gold);background:linear-gradient(135deg,rgba(184,150,90,.08),rgba(184,150,90,.02));box-shadow:0 0 0 1px rgba(184,150,90,.14)}
-.amt-val{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:300;color:var(--text);line-height:1;margin-bottom:2px}
-.amt-sr{font-size:9px;color:var(--muted)}
-.amt-chk{position:absolute;top:6px;left:6px;width:16px;height:16px;border-radius:50%;background:var(--gold);display:none;align-items:center;justify-content:center}
-.amt-btn.sel .amt-chk{display:flex}
+/* Message bubble on card */
+.gc-msg-wrap{margin-top:4px;display:none}
+.gc-msg{font-family:'Cormorant Garamond',serif;font-size:clamp(8px,1.9vw,11.5px);color:rgba(20,15,8,.44);font-style:italic;line-height:1.55;padding:0 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 
-/* ─────────────────────────────────────
-   PAGE 2: DETAILS
-───────────────────────────────────── */
-#p2{background:var(--cream)}
-.p2-body{flex:1;overflow-y:auto;padding:16px 16px 96px;max-width:480px;margin:0 auto;width:100%}
-.fcard{background:var(--w);border:1px solid var(--border);padding:15px;margin-bottom:11px;border-radius:var(--brad)}
-.fc-ttl{font-size:8px;letter-spacing:.18em!important;color:var(--muted);margin-bottom:13px;display:flex;align-items:center;gap:8px}
-.fc-ttl::after{content:'';flex:1;height:1px;background:var(--border)}
-.flbl{font-size:10px;color:var(--muted);display:block;margin-bottom:4px;margin-top:10px}
-.flbl:first-child{margin-top:0}
-.req{color:var(--err)}
-.finp{width:100%;padding:11px 12px;background:var(--cream);border:1px solid var(--border);font-family:'Tajawal',sans-serif;font-size:14px;color:var(--text);outline:none;transition:border-color .14s;border-radius:var(--brad)}
-.finp:focus{border-color:rgba(24,21,14,.28)}
-.finp::placeholder{color:rgba(140,130,118,.32)}
-textarea.finp{resize:none;line-height:1.65}
+/* Download bar */
+.dl-bar{display:flex;gap:8px;margin-top:11px;max-width:390px;margin-left:auto;margin-right:auto}
+.dlbtn{flex:1;padding:10px 8px;background:rgba(184,150,90,.07);border:1px solid rgba(184,150,90,.2);color:rgba(184,150,90,.75);font-family:'Tajawal',sans-serif;font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .14s;letter-spacing:.05em}
+.dlbtn:hover{background:rgba(184,150,90,.14);color:var(--g)}
+#dl-bar{display:none}
 
-/* Toggle sender visibility */
-.tog-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 0 3px;border-top:1px solid var(--border);margin-top:10px}
-.tog-text{flex:1}
-.tog-title{font-size:12px;color:var(--text);font-weight:500;margin-bottom:2px}
-.tog-sub{font-size:10px;color:var(--muted);line-height:1.5}
-.tog{width:40px;height:22px;background:rgba(0,0,0,.08);border:1px solid var(--border);border-radius:11px;cursor:pointer;position:relative;transition:all .2s;flex-shrink:0}
-.tog.on{background:var(--gold);border-color:var(--gold)}
-.tog::after{content:'';width:16px;height:16px;background:#fff;border-radius:50%;position:absolute;top:2px;right:3px;transition:right .2s;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+/* Amounts */
+.amtsec{padding:18px 16px 0;max-width:460px;margin:0 auto}
+.albl{font-size:7.5px;letter-spacing:.22em;color:var(--muted);margin-bottom:11px;display:flex;align-items:center;gap:8px}
+.albl::after{content:'';flex:1;height:1px;background:var(--brd)}
+.agrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.acard{
+  padding:18px 12px;background:#fff;
+  border:1.5px solid var(--brd);
+  cursor:pointer;transition:all .15s;
+  text-align:center;position:relative;
+  font-family:'Tajawal',sans-serif
+}
+.acard:hover{border-color:rgba(184,150,90,.4);transform:translateY(-1px)}
+.acard.sel{border-color:var(--g);background:linear-gradient(135deg,rgba(184,150,90,.07),rgba(184,150,90,.02));box-shadow:0 0 0 1px rgba(184,150,90,.14)}
+.achk{position:absolute;top:7px;left:7px;width:16px;height:16px;border-radius:50%;background:var(--g);display:none;align-items:center;justify-content:center}
+.acard.sel .achk{display:flex}
+.aval{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:300;color:var(--text);line-height:1;margin-bottom:2px}
+.asr{font-size:9px;color:var(--muted);letter-spacing:.06em}
+
+/* ══ PAGE 2 — DETAILS ══ */
+.p2body{flex:1;overflow-y:auto;padding:16px 16px 90px;max-width:470px;margin:0 auto;width:100%}
+
+/* Gift card mini preview in page 2 header */
+.p2card{width:100%;aspect-ratio:1.7/1;position:relative;border-radius:4px;overflow:hidden;margin-bottom:14px;box-shadow:0 10px 36px rgba(0,0,0,.32),0 0 0 1px rgba(184,150,90,.22)}
+.p2cb{position:absolute;inset:0;background:linear-gradient(158deg,#f7f1e5,#f0e9da 35%,#ece3d0 65%,#e8dfc9)}
+.p2cf{position:absolute;inset:10px;border:1px solid rgba(184,150,90,.3)}
+.p2cf2{position:absolute;inset:14px;border:1px solid rgba(184,150,90,.12)}
+.p2cin{position:absolute;inset:0;padding:7% 7.5%;display:flex;flex-direction:column;justify-content:space-between;z-index:3}
+
+.fc{background:#fff;border:1px solid var(--brd);padding:15px;margin-bottom:11px}
+.fct{font-size:7.5px;letter-spacing:.2em;color:var(--muted);margin-bottom:13px;display:flex;align-items:center;gap:8px}
+.fct::after{content:'';flex:1;height:1px;background:var(--brd)}
+.lbl{font-size:10px;color:var(--muted);display:block;margin-bottom:5px;margin-top:11px}
+.lbl:first-child{margin-top:0}
+.req{color:#b33}
+.inp{width:100%;padding:11px 13px;background:var(--cream2);border:1px solid var(--brd);font-family:'Tajawal',sans-serif;font-size:14px;color:var(--text);outline:none;transition:border-color .13s}
+.inp:focus{border-color:rgba(24,21,14,.28)}
+.inp::placeholder{color:rgba(140,130,118,.27)}
+textarea.inp{resize:none;line-height:1.65}
+.tog-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 0 2px;border-top:1px solid var(--brd);margin-top:11px}
+.tog-txt{flex:1}
+.tog-t{font-size:12px;color:var(--text);font-weight:500;margin-bottom:2px}
+.tog-s{font-size:10px;color:var(--muted);line-height:1.5}
+.tog{width:40px;height:22px;background:rgba(0,0,0,.07);border:1px solid var(--brd);border-radius:11px;cursor:pointer;position:relative;transition:all .19s;flex-shrink:0}
+.tog.on{background:var(--g);border-color:var(--g)}
+.tog::after{content:'';width:16px;height:16px;background:#fff;border-radius:50%;position:absolute;top:2px;right:3px;transition:right .19s;box-shadow:0 1px 3px rgba(0,0,0,.14)}
 .tog.on::after{right:21px}
 
-/* Message preview */
-.msg-preview{background:var(--ink2);border:1px solid rgba(184,150,90,.15);border-radius:6px;padding:13px 15px;margin-top:10px;display:none;position:relative;overflow:hidden}
-.msg-preview::before{content:'"';font-family:'Cormorant Garamond',serif;font-size:38px;color:rgba(184,150,90,.12);position:absolute;top:2px;right:10px;line-height:1;pointer-events:none}
-.msg-text{font-size:13px;color:rgba(255,255,255,.65);line-height:1.72;padding-right:20px;font-style:italic}
-.msg-sig{display:flex;justify-content:space-between;margin-top:8px;font-size:10px;color:rgba(184,150,90,.5);flex-wrap:wrap;gap:4px}
-
-/* ─────────────────────────────────────
-   PAGE 3: CONFIRM
-───────────────────────────────────── */
-#p3{background:var(--cream)}
-.p3-body{flex:1;overflow-y:auto;padding:16px 16px 96px;max-width:480px;margin:0 auto;width:100%}
-
-/* Confirm card — same design, full width */
-.conf-card{width:100%;aspect-ratio:1.7/1;position:relative;border-radius:12px;overflow:hidden;margin-bottom:16px}
-.cc-bg{position:absolute;inset:0;background:linear-gradient(155deg,#1a1410 0%,#0c0a07 30%,#141008 55%,#0a0806 100%)}
-.cc-silk{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 75% 30%,rgba(184,150,90,.09),transparent 55%)}
-.cc-border{position:absolute;inset:0;border-radius:12px;border:1px solid rgba(184,150,90,.25)}
-.cc-inner{position:absolute;inset:0;padding:6% 7%;display:flex;flex-direction:column;justify-content:space-between;z-index:2}
-.cc-top{display:flex;align-items:flex-start;justify-content:space-between}
-.cc-logo{font-family:'Cormorant Garamond',serif;font-size:clamp(10px,2.5vw,16px);font-weight:300;letter-spacing:.22em!important;color:rgba(255,255,255,.85)}
-.cc-logo b{color:var(--gold)}
-.cc-title-block{text-align:left}
-.cc-title-en{font-family:'Cormorant Garamond',serif;font-size:clamp(7px,1.8vw,11px);color:var(--gold);letter-spacing:.06em!important;line-height:1.3}
-.cc-title-ar{font-size:clamp(8px,2vw,12px);font-weight:500;color:var(--gold);line-height:1.3;margin-top:1px}
-.cc-mid{flex:1;display:flex;align-items:center;padding:2% 0}
-.cc-amount{font-family:'Cormorant Garamond',serif;font-size:clamp(22px,5.5vw,38px);font-weight:300;color:#fff;line-height:1}
-.cc-currency{font-size:clamp(8px,1.8vw,11px);color:rgba(255,255,255,.35);margin-top:3px}
-.cc-bot{display:flex;justify-content:space-between;align-items:flex-end}
-.cc-bot-lbl{font-size:clamp(5px,1.1vw,7px);letter-spacing:.14em!important;color:rgba(255,255,255,.25);text-transform:uppercase;margin-bottom:2px}
-.cc-to-name{font-size:clamp(9px,2.1vw,13px);color:rgba(255,255,255,.75);font-family:'Tajawal',sans-serif;letter-spacing:0!important}
-.cc-from-block{text-align:left}
-.cc-from-name{font-size:clamp(8px,1.9vw,11px);color:rgba(255,255,255,.38);text-align:left;font-family:'Tajawal',sans-serif;letter-spacing:0!important}
-
-/* Summary */
-.sumcard{background:var(--w);border:1px solid var(--border);border-radius:var(--brad);overflow:hidden;margin-bottom:9px}
-.sr{display:flex;justify-content:space-between;align-items:flex-start;padding:9px 13px;border-bottom:1px solid var(--border);font-size:12px;gap:10px}
-.sr:last-child{border:none}
-.sl{color:var(--muted);font-size:10px;flex-shrink:0}
+/* ══ PAGE 3 — CONFIRM ══ */
+.p3body{flex:1;overflow-y:auto;padding:16px 16px 90px;max-width:470px;margin:0 auto;width:100%}
+.ccard{width:100%;aspect-ratio:1.7/1;position:relative;border-radius:4px;overflow:hidden;margin-bottom:14px;box-shadow:0 12px 40px rgba(0,0,0,.35),0 0 0 1px rgba(184,150,90,.22)}
+.scard{background:#fff;border:1px solid var(--brd);overflow:hidden;margin-bottom:10px}
+.srow{display:flex;justify-content:space-between;align-items:flex-start;padding:9px 13px;border-bottom:1px solid var(--brd);font-size:12px;gap:10px}
+.srow:last-child{border:none}
+.sl{color:var(--muted);font-size:10px;letter-spacing:.04em;flex-shrink:0}
 .sv{color:var(--text);font-weight:500;text-align:left}
-.sv.it{font-style:italic;font-weight:400;color:var(--muted)}
-.sum-tot{background:rgba(184,150,90,.06);border:1px solid rgba(184,150,90,.14);padding:12px 13px;margin-bottom:9px;display:flex;justify-content:space-between;align-items:center;border-radius:var(--brad)}
-.sum-tot-l{font-size:13px;font-weight:500;color:var(--text)}
-.sum-tot-v{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:300;color:var(--gold);display:flex;align-items:baseline;gap:4px}
-.sum-tot-sr{font-family:'Tajawal',sans-serif;font-size:11px;color:var(--muted)}
-.vat{font-size:9px;color:rgba(24,21,14,.28);text-align:center;padding:3px 0;margin-bottom:9px}
-.paysafe{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--muted);background:rgba(42,122,79,.05);border:1px solid rgba(42,122,79,.11);padding:9px 12px;margin-bottom:9px;border-radius:var(--brad)}
-.errbox{background:rgba(180,50,50,.05);border:1px solid rgba(180,50,50,.13);padding:9px 12px;font-size:12px;color:var(--err);display:none;line-height:1.6;border-radius:var(--brad);margin-bottom:9px}
+.sv.it{font-weight:400;font-style:italic;color:var(--muted)}
+.trow{background:rgba(184,150,90,.048);border:1px solid rgba(184,150,90,.12);padding:12px 13px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+.tl{font-size:13px;font-weight:500;color:var(--text)}
+.tv{font-family:'Cormorant Garamond',serif;font-size:29px;font-weight:300;color:var(--g);display:flex;align-items:baseline;gap:4px}
+.tsr{font-family:'Tajawal',sans-serif;font-size:11px;color:var(--muted)}
+.vat{font-size:8.5px;color:rgba(24,21,14,.23);text-align:center;padding:2px 0;margin-bottom:10px}
+.safe{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--muted);background:rgba(42,122,79,.04);border:1px solid rgba(42,122,79,.1);padding:10px 13px;margin-bottom:10px}
+.err{background:rgba(170,40,40,.04);border:1px solid rgba(170,40,40,.12);padding:10px 13px;font-size:12px;color:#a32828;display:none;line-height:1.6;margin-bottom:10px}
 
-/* PAY PAGE */
-#p-pay{background:var(--cream)}
-.pay-center{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 22px;text-align:center}
-.pay-icon{width:70px;height:70px;border-radius:50%;background:rgba(184,150,90,.08);border:1px solid rgba(184,150,90,.2);display:flex;align-items:center;justify-content:center;margin:0 auto 20px}
-.pay-title{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:300;color:var(--text);margin-bottom:7px}
-.pay-sub{font-size:12px;color:var(--muted);line-height:1.85;margin-bottom:30px;max-width:270px}
+/* CENTER PAGES */
+.cw{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;text-align:center}
+.pico2{width:70px;height:70px;border-radius:50%;background:rgba(184,150,90,.065);border:1px solid rgba(184,150,90,.17);display:flex;align-items:center;justify-content:center;margin:0 auto 20px}
+.ph2{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;color:var(--text);margin-bottom:7px}
+.ps2{font-size:12px;color:var(--muted);line-height:1.9;margin-bottom:28px;max-width:265px}
 
-/* SUCCESS */
-#p-suc{background:var(--cream)}
-.suc-center{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:36px 18px 40px;text-align:center}
-.suc-ring{width:70px;height:70px;border-radius:50%;background:var(--ink);display:flex;align-items:center;justify-content:center;margin:0 auto 18px;animation:rp .4s cubic-bezier(.4,0,.2,1);box-shadow:0 4px 22px rgba(184,150,90,.17)}
-@keyframes rp{from{transform:scale(.2);opacity:0}to{transform:scale(1);opacity:1}}
-.suc-chk{stroke-dasharray:32;stroke-dashoffset:32;animation:cd .44s .35s ease forwards}
+.sucring{width:70px;height:70px;border-radius:50%;background:var(--ink);display:flex;align-items:center;justify-content:center;margin:0 auto 18px;animation:rp .38s ease;box-shadow:0 4px 26px rgba(184,150,90,.14)}
+@keyframes rp{from{transform:scale(.08);opacity:0}to{transform:scale(1);opacity:1}}
+.suchk{stroke-dasharray:32;stroke-dashoffset:32;animation:cd .42s .36s ease forwards}
 @keyframes cd{to{stroke-dashoffset:0}}
-.suc-title{font-family:'Cormorant Garamond',serif;font-size:27px;font-weight:300;color:var(--text);margin-bottom:7px}
-.suc-sub{font-size:12px;color:var(--muted);line-height:1.85;margin-bottom:22px;max-width:280px}
-.suc-card-wrap{width:100%;max-width:340px;margin:0 auto 18px}
-.suc-ref{font-size:9px;letter-spacing:.12em!important;color:var(--muted);margin-bottom:20px}
-.suc-ref strong{color:var(--gold);font-size:13px;display:block;margin-top:3px}
+.such{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;color:var(--text);margin-bottom:7px}
+.suss{font-size:12px;color:var(--muted);margin-bottom:22px;line-height:1.9;max-width:265px}
+.succard{width:min(320px,89vw);aspect-ratio:1.7/1;position:relative;border-radius:4px;overflow:hidden;margin:0 auto 16px;box-shadow:0 14px 44px rgba(0,0,0,.32),0 0 0 1px rgba(184,150,90,.22)}
+.sucref{font-size:9px;letter-spacing:.12em;color:var(--muted);margin-bottom:19px}
+.sucref strong{color:var(--g);font-size:12px;display:block;margin-top:2px}
 
 /* BOTTOM BAR */
-.botbar{position:sticky;bottom:0;z-index:50;background:var(--ink);border-top:1px solid rgba(184,150,90,.1);padding:11px 14px;flex-shrink:0}
-.botbtn{width:100%;padding:14px;background:var(--gold);color:var(--ink);border:none;font-family:'Tajawal',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:all .16s;display:flex;align-items:center;justify-content:center;gap:7px;border-radius:var(--brad)}
-.botbtn:hover{background:var(--gold2)}
-.botbtn:disabled{background:rgba(184,150,90,.09);color:rgba(255,255,255,.13);cursor:not-allowed}
-.botbtn.ld{pointer-events:none;opacity:.7}
-.botbtn.ld::after{content:'';width:13px;height:13px;border:2px solid rgba(0,0,0,.13);border-top-color:rgba(0,0,0,.55);border-radius:50%;animation:sp .8s linear infinite}
+.bar2{position:sticky;bottom:0;z-index:50;background:var(--ink);border-top:1px solid rgba(255,255,255,.046);padding:11px 15px;flex-shrink:0}
+.bb{width:100%;padding:13px;background:var(--g);color:var(--ink);border:none;font-family:'Tajawal',sans-serif;font-size:11px;font-weight:600;cursor:pointer;transition:background .14s;display:flex;align-items:center;justify-content:center;gap:7px;letter-spacing:.1em}
+.bb:hover{background:var(--g2)}
+.bb:disabled{background:rgba(184,150,90,.08);color:rgba(255,255,255,.1);cursor:not-allowed}
+.bb.ld{pointer-events:none;opacity:.65}
+.bb.ld::after{content:'';width:13px;height:13px;border:2px solid rgba(0,0,0,.12);border-top-color:rgba(0,0,0,.44);border-radius:50%;animation:sp .8s linear infinite}
 @keyframes sp{to{transform:rotate(360deg)}}
-.gbtn{width:100%;padding:13px;background:var(--gold);color:var(--ink);border:none;font-family:'Tajawal',sans-serif;font-size:12px;font-weight:500;cursor:pointer;border-radius:var(--brad);display:flex;align-items:center;justify-content:center;gap:7px;transition:background .15s;text-decoration:none}
-.gbtn:hover{background:var(--gold2)}
-.obtn{width:100%;padding:12px;background:transparent;border:1px solid var(--border);color:var(--text);font-family:'Tajawal',sans-serif;font-size:12px;cursor:pointer;border-radius:var(--brad);transition:all .14s;margin-top:9px}
-.obtn:hover{border-color:rgba(184,150,90,.38)}
-.lnk{font-size:11px;color:rgba(24,21,14,.3);font-family:'Tajawal',sans-serif;cursor:pointer;padding:8px;background:none;border:none;text-decoration:none;display:block;text-align:center;margin-top:6px}
-.suc-acts{display:flex;flex-direction:column;gap:0;width:100%;max-width:290px}
-@media(max-width:380px){.amts-grid{grid-template-columns:1fr}}
+.gb{width:100%;padding:13px;background:var(--g);color:var(--ink);border:none;font-family:'Tajawal',sans-serif;font-size:11px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;text-decoration:none;transition:background .14s;letter-spacing:.09em}
+.gb:hover{background:var(--g2)}
+.ob{width:100%;padding:11px;background:transparent;border:1px solid var(--brd);color:var(--text);font-family:'Tajawal',sans-serif;font-size:11px;cursor:pointer;margin-top:8px;transition:all .13s}
+.ob:hover{border-color:rgba(184,150,90,.33)}
+.lk{font-size:11px;color:rgba(24,21,14,.26);cursor:pointer;padding:7px;background:none;border:none;text-decoration:none;display:block;text-align:center;margin-top:5px;font-family:'Tajawal',sans-serif}
+@media(max-width:360px){.agrid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 
 <div class="bar">
-  <a class="back-btn" id="back-btn" href="/">← رجوع</a>
-  <a class="logo-wrap" id="bar-logo" href="/"><span>GRAFF</span> <b>SPA</b></a>
+  <a class="back" id="bk" href="/">← رجوع</a>
+  <a class="logo" href="/">GRAFF SPA</a>
   <div style="min-width:52px"></div>
 </div>
 
-<div class="steps" id="steps-bar">
-  <div class="si on" id="si1"><div class="si-dot on" id="sd1">1</div><span class="si-lbl">المبلغ</span></div>
-  <div class="si-line"></div>
-  <div class="si" id="si2"><div class="si-dot" id="sd2">2</div><span class="si-lbl">التفاصيل</span></div>
-  <div class="si-line"></div>
-  <div class="si" id="si3"><div class="si-dot" id="sd3">3</div><span class="si-lbl">التأكيد</span></div>
-</div>
-
-<!-- PAGE 1: AMOUNT -->
+<!-- ════ P1: AMOUNT ════ -->
 <div id="p1" class="pg on">
-  <div class="p1-body">
-    <div class="p1-hero">
-      <p class="hero-eye" id="h-eye">GIFT CARD</p>
-      <h1 class="hero-h1" id="h-title">بطاقة الإهداء</h1>
-      <p class="hero-sub" id="h-sub">اهدي تجربة لا تُنسى لمن تحبين</p>
+  <div class="steps">
+    <div class="si on"><div class="sdot on">1</div><span class="slbl">القيمة</span></div>
+    <div class="sline"></div>
+    <div class="si"><div class="sdot">2</div><span class="slbl">التفاصيل</span></div>
+    <div class="sline"></div>
+    <div class="si"><div class="sdot">3</div><span class="slbl">التأكيد</span></div>
+  </div>
+  <div class="p1body">
+    <!-- Hero -->
+    <div class="ghero">
+      <p class="geye">GIFT CARD</p>
+      <h1 class="gen"><em>Gift</em> Card &nbsp;|&nbsp; بطاقة الإهداء</h1>
+      <p class="gar">اهدي تجربة فاخرة لا تُنسى — الهدية المثالية</p>
     </div>
 
-    <!-- ── LUXURY GIFT CARD PREVIEW ── -->
-    <div class="card-wrap">
-      <div class="card-label">معاينة البطاقة</div>
-      <div class="gift-card">
-        <div class="gc-bg"></div>
-        <div class="gc-silk"></div>
-        <!-- Decorative curves SVG -->
-        <div class="gc-curves">
-          <svg style="position:absolute;inset:0;width:100%;height:100%" viewBox="0 0 400 237" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <radialGradient id="rg1" cx="70%" cy="40%" r="60%">
-                <stop offset="0%" stop-color="#b8965a" stop-opacity="0.12"/>
-                <stop offset="100%" stop-color="#b8965a" stop-opacity="0"/>
-              </radialGradient>
-            </defs>
-            <rect width="400" height="237" fill="url(#rg1)"/>
-            <!-- Flowing ribbon curves -->
-            <path d="M 260 -20 Q 310 80 280 140 Q 250 200 310 237" fill="none" stroke="rgba(184,150,90,0.18)" stroke-width="28" stroke-linecap="round"/>
-            <path d="M 290 -20 Q 340 90 305 150 Q 270 210 340 237" fill="none" stroke="rgba(184,150,90,0.10)" stroke-width="18" stroke-linecap="round"/>
-            <path d="M 240 -20 Q 285 70 260 130 Q 235 190 290 237" fill="none" stroke="rgba(184,150,90,0.07)" stroke-width="12" stroke-linecap="round"/>
-            <!-- Subtle highlight line -->
-            <path d="M 0 0 L 400 0" stroke="rgba(184,150,90,0.15)" stroke-width="1"/>
-          </svg>
-        </div>
-        <div class="gc-border"></div>
-        <div class="gc-border-inner"></div>
-        <div class="gc-inner">
-          <!-- TOP ROW: Logo | Gift title -->
+    <!-- LIVE CARD PREVIEW -->
+    <div class="prev-wrap">
+      <div class="prev-lbl">معاينة البطاقة — تتحدث مع كتابتك</div>
+      <div class="gcard">
+        <!-- Parchment layers -->
+        <div class="gc-base"></div>
+        <div class="gc-tex"></div>
+        <!-- SVG corners & ornaments -->
+        <svg style="position:absolute;inset:0;width:100%;height:100%;z-index:2" viewBox="0 0 390 229" preserveAspectRatio="xMidYMid meet" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Outer frame -->
+          <rect x="10" y="10" width="370" height="209" stroke="rgba(160,120,64,0.38)" stroke-width="0.8"/>
+          <!-- Inner frame -->
+          <rect x="14" y="14" width="362" height="201" stroke="rgba(160,120,64,0.18)" stroke-width="0.6"/>
+          <!-- Corner ornaments — top right -->
+          <line x1="10" y1="10" x2="38" y2="10" stroke="rgba(160,120,64,0.65)" stroke-width="1.5"/>
+          <line x1="10" y1="10" x2="10" y2="38" stroke="rgba(160,120,64,0.65)" stroke-width="1.5"/>
+          <!-- Corner ornaments — top left -->
+          <line x1="380" y1="10" x2="352" y2="10" stroke="rgba(160,120,64,0.65)" stroke-width="1.5"/>
+          <line x1="380" y1="10" x2="380" y2="38" stroke="rgba(160,120,64,0.65)" stroke-width="1.5"/>
+          <!-- Corner ornaments — bottom right -->
+          <line x1="10" y1="219" x2="38" y2="219" stroke="rgba(160,120,64,0.65)" stroke-width="1.5"/>
+          <line x1="10" y1="219" x2="10" y2="191" stroke="rgba(160,120,64,0.65)" stroke-width="1.5"/>
+          <!-- Corner ornaments — bottom left -->
+          <line x1="380" y1="219" x2="352" y2="219" stroke="rgba(160,120,64,0.65)" stroke-width="1.5"/>
+          <line x1="380" y1="219" x2="380" y2="191" stroke="rgba(160,120,64,0.65)" stroke-width="1.5"/>
+          <!-- Center top ornament — subtle dot -->
+          <circle cx="195" cy="10" r="2" fill="rgba(160,120,64,0.4)"/>
+          <circle cx="195" cy="219" r="2" fill="rgba(160,120,64,0.4)"/>
+          <!-- Thin center divider line between name and from -->
+          <line x1="195" y1="185" x2="195" y2="215" stroke="rgba(160,120,64,0.25)" stroke-width="0.7"/>
+        </svg>
+        <div class="gc-in">
           <div class="gc-top">
-            <div class="gc-logo" id="gc-logo">GRAFF <b>SPA</b></div>
-            <div class="gc-title-block">
-              <div class="gc-title-en">Elite Membership Privilege</div>
-              <div class="gc-title-ar">بطاقـة الإهـداء</div>
+            <div class="gc-logo">GRAFF SPA</div>
+            <div class="gc-tagblock">
+              <div class="gc-tag-en">Gift Card</div>
+              <div class="gc-tag-ar">بطاقة الإهداء</div>
             </div>
           </div>
-          <!-- MIDDLE: Amount -->
-          <div class="gc-mid">
-            <div>
-              <div class="gc-amount ph" id="gc-amount">— — —</div>
-              <div class="gc-currency">ريال سعودي · SAR</div>
+          <div class="gc-center">
+            <div class="gc-amt ph" id="gc-amt">اختاري قيمة البطاقة</div>
+            <div class="gc-curr" id="gc-curr" style="display:none">SAUDI RIYAL · SAR</div>
+            <div class="gc-msg-wrap" id="gc-msg-wrap">
+              <div class="gc-msg" id="gc-msg-txt"></div>
             </div>
           </div>
-          <!-- BOTTOM: To/From -->
           <div class="gc-bot">
-            <div class="gc-to-block">
-              <div class="gc-bot-lbl">إلى</div>
-              <div class="gc-to-name ph" id="gc-to">المُهدى إليها</div>
+            <div class="gc-to-sec">
+              <div class="gc-lbl">TO</div>
+              <div class="gc-to-val ph" id="gc-to">المُهداة إليها</div>
             </div>
-            <div class="gc-from-block" id="gc-from-wrap">
-              <div class="gc-from-lbl-wrap">
-                <div class="gc-bot-lbl" style="text-align:left">من</div>
-                <div class="gc-from-name ph" id="gc-from">المُهدي</div>
-              </div>
+            <div class="gc-div" id="gc-divider" style="display:none"></div>
+            <div class="gc-from-sec" id="gc-from-sec" style="display:none">
+              <div class="gc-lbl" style="text-align:left">FROM</div>
+              <div class="gc-from-val ph" id="gc-from">المُهدي</div>
             </div>
           </div>
         </div>
+      </div>
+      <!-- Downloads — shown after fields filled -->
+      <div class="dl-bar" id="dl-bar">
+        <button class="dlbtn" onclick="dlImg()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="1"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>تحميل صورة</button>
+        <button class="dlbtn" onclick="dlPDF()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>تحميل PDF</button>
       </div>
     </div>
 
     <!-- AMOUNTS -->
-    <div class="amts-section">
-      <div class="sec-lbl">اختاري قيمة البطاقة</div>
-      <div class="amts-grid" id="amts-grid"></div>
+    <div class="amtsec">
+      <div class="albl">اختاري قيمة البطاقة</div>
+      <div class="agrid" id="agrid"></div>
     </div>
   </div>
-  <div class="botbar">
-    <button class="botbtn" id="btn1" onclick="goP2()" disabled>التالي — بيانات الإهداء ←</button>
-  </div>
+  <div class="bar2"><button class="bb" id="b1" onclick="goP2()" disabled>التالي — بيانات الإهداء ←</button></div>
 </div>
 
-<!-- PAGE 2: DETAILS -->
+<!-- ════ P2: DETAILS ════ -->
 <div id="p2" class="pg">
-  <div class="p2-body">
-    <div class="fcard">
-      <div class="fc-ttl">المُهدَى إليه / إليها</div>
-      <label class="flbl"><span class="req">* </span>الاسم</label>
-      <input class="finp" id="to-name" placeholder="نورة" maxlength="40" oninput="onToName()">
-      <label class="flbl"><span class="req">* </span>رقم الجوال (سيُرسل إليه الإهداء)</label>
-      <input class="finp" id="to-phone" type="tel" placeholder="05xxxxxxxx" maxlength="10" oninput="v2()">
+  <div class="steps">
+    <div class="si"><div class="sdot dn">✓</div><span class="slbl">القيمة</span></div>
+    <div class="sline"></div>
+    <div class="si on"><div class="sdot on">2</div><span class="slbl">التفاصيل</span></div>
+    <div class="sline"></div>
+    <div class="si"><div class="sdot">3</div><span class="slbl">التأكيد</span></div>
+  </div>
+  <div class="p2body">
+    <!-- Mini card preview in p2 -->
+    <div class="p2card">
+      <div class="p2cb"></div>
+      <svg style="position:absolute;inset:0;width:100%;height:100%;z-index:2" viewBox="0 0 100 59" preserveAspectRatio="none" fill="none"><rect x="2.5" y="2.5" width="95" height="54" stroke="rgba(160,120,64,0.35)" stroke-width="0.5"/><rect x="3.8" y="3.8" width="92.4" height="51.4" stroke="rgba(160,120,64,0.15)" stroke-width="0.4"/></svg>
+      <div class="p2cin" style="z-index:3">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+          <div style="font-family:'Cormorant Garamond',serif;font-size:clamp(8px,2vw,13px);font-weight:300;letter-spacing:.18em;color:rgba(20,15,8,.65)">GRAFF SPA</div>
+          <div style="text-align:left"><div style="font-family:'Cormorant Garamond',serif;font-size:clamp(6px,1.4vw,9px);color:var(--g3);letter-spacing:.07em">Gift Card</div><div style="font-size:clamp(6px,1.5vw,9.5px);font-weight:600;color:var(--g3);margin-top:1px">بطاقة الإهداء</div></div>
+        </div>
+        <div style="flex:1;display:flex;align-items:center;justify-content:center">
+          <span style="font-family:'Cormorant Garamond',serif;font-size:clamp(18px,4.8vw,34px);font-weight:300;color:rgba(20,15,8,.78);letter-spacing:.04em" id="p2-amt">—</span>
+          <span style="font-size:clamp(9px,2vw,13px);color:rgba(20,15,8,.35);margin-right:6px;font-family:'Tajawal',sans-serif" id="p2-curr" style="display:none">&nbsp;SAR</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-end">
+          <div><div style="font-family:'Cormorant Garamond',serif;font-size:clamp(4.5px,1.1vw,7px);letter-spacing:.2em;color:rgba(20,15,8,.28)">TO</div><div style="font-family:'Cormorant Garamond',serif;font-size:clamp(8px,2vw,13px);color:rgba(20,15,8,.7);letter-spacing:.08em" id="p2-to">—</div></div>
+          <div id="p2-from-sec" style="display:none;text-align:left"><div style="font-family:'Cormorant Garamond',serif;font-size:clamp(4.5px,1.1vw,7px);letter-spacing:.2em;color:rgba(20,15,8,.28)">FROM</div><div style="font-family:'Cormorant Garamond',serif;font-size:clamp(7px,1.7vw,11px);color:rgba(20,15,8,.42);letter-spacing:.07em" id="p2-from">—</div></div>
+        </div>
+      </div>
     </div>
-    <div class="fcard">
-      <div class="fc-ttl">المُهدي</div>
-      <label class="flbl"><span class="req">* </span>الاسم</label>
-      <input class="finp" id="from-name" placeholder="سارة" maxlength="40" oninput="onFromName()">
-      <label class="flbl"><span class="req">* </span>رقم الجوال</label>
-      <input class="finp" id="from-phone" type="tel" placeholder="05xxxxxxxx" maxlength="10" oninput="v2()">
+
+    <div class="fc">
+      <div class="fct">المُهداة إليها</div>
+      <label class="lbl"><span class="req">*</span> الاسم</label>
+      <input class="inp" id="tn" placeholder="نورة" maxlength="40" oninput="onTN()">
+      <label class="lbl"><span class="req">*</span> رقم الجوال</label>
+      <input class="inp" id="tp" type="tel" placeholder="05xxxxxxxx" maxlength="10" oninput="v2()">
+    </div>
+    <div class="fc">
+      <div class="fct">المُهدي</div>
+      <label class="lbl"><span class="req">*</span> الاسم</label>
+      <input class="inp" id="fn" placeholder="سارة" maxlength="40" oninput="onFN()">
+      <label class="lbl"><span class="req">*</span> رقم الجوال</label>
+      <input class="inp" id="fp" type="tel" placeholder="05xxxxxxxx" maxlength="10" oninput="v2()">
       <div class="tog-row">
-        <div class="tog-text">
-          <div class="tog-title">إظهار اسم المُهدي على البطاقة</div>
-          <div class="tog-sub">إذا أوقفته تظهر البطاقة بدون اسم المُهدي</div>
+        <div class="tog-txt">
+          <div class="tog-t">إظهار اسم المُهدي على البطاقة</div>
+          <div class="tog-s">يظهر اسمك في أسفل البطاقة</div>
         </div>
-        <div class="tog on" id="tog-from" onclick="togFrom()"></div>
+        <div class="tog on" id="togf" onclick="togFrom()"></div>
       </div>
     </div>
-    <div class="fcard">
-      <div class="fc-ttl">رسالة شخصية (اختياري)</div>
-      <textarea class="finp" id="gift-msg" rows="3" placeholder="اكتبي رسالتك للمُهدى إليها..." maxlength="200" oninput="onMsg()"></textarea>
-      <div class="msg-preview" id="msg-prev">
-        <p class="msg-text" id="msg-txt"></p>
-        <div class="msg-sig">
-          <span id="msg-to">إلى: —</span>
-          <span id="msg-from-sig">من: —</span>
-        </div>
-      </div>
+    <div class="fc">
+      <div class="fct">رسالة شخصية (اختياري)</div>
+      <textarea class="inp" id="gm" rows="3" placeholder="اكتبي رسالتك هنا..." maxlength="180" oninput="onMsg()"></textarea>
     </div>
-    <div class="errbox" id="err2"></div>
+    <div class="err" id="e2"></div>
   </div>
-  <div class="botbar">
-    <button class="botbtn" id="btn2" onclick="goP3()" disabled>مراجعة وتأكيد ←</button>
-  </div>
+  <div class="bar2"><button class="bb" id="b2" onclick="goP3()" disabled>مراجعة وتأكيد ←</button></div>
 </div>
 
-<!-- PAGE 3: CONFIRM -->
+<!-- ════ P3: CONFIRM ════ -->
 <div id="p3" class="pg">
-  <div class="p3-body">
-    <div class="sec-lbl">بطاقة الإهداء</div>
-    <div class="conf-card" id="conf-card">
-      <div class="cc-bg"></div>
-      <div class="cc-silk"></div>
-      <svg style="position:absolute;inset:0;width:100%;height:100%;z-index:1" viewBox="0 0 400 237" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
-        <path d="M 260 -20 Q 310 80 280 140 Q 250 200 310 237" fill="none" stroke="rgba(184,150,90,0.18)" stroke-width="28" stroke-linecap="round"/>
-        <path d="M 290 -20 Q 340 90 305 150 Q 270 210 340 237" fill="none" stroke="rgba(184,150,90,0.10)" stroke-width="18" stroke-linecap="round"/>
-        <path d="M 240 -20 Q 285 70 260 130 Q 235 190 290 237" fill="none" stroke="rgba(184,150,90,0.07)" stroke-width="12" stroke-linecap="round"/>
-      </svg>
-      <div class="cc-border"></div>
-      <div class="cc-inner">
-        <div class="cc-top">
-          <div class="cc-logo" id="cc-logo">GRAFF <b>SPA</b></div>
-          <div class="cc-title-block">
-            <div class="cc-title-en">Elite Membership Privilege</div>
-            <div class="cc-title-ar">بطاقـة الإهـداء</div>
-          </div>
+  <div class="steps">
+    <div class="si"><div class="sdot dn">✓</div><span class="slbl">القيمة</span></div>
+    <div class="sline"></div>
+    <div class="si"><div class="sdot dn">✓</div><span class="slbl">التفاصيل</span></div>
+    <div class="sline"></div>
+    <div class="si on"><div class="sdot on">3</div><span class="slbl">التأكيد</span></div>
+  </div>
+  <div class="p3body">
+    <!-- Confirm card -->
+    <div class="ccard">
+      <div class="p2cb"></div>
+      <svg style="position:absolute;inset:0;width:100%;height:100%;z-index:2" viewBox="0 0 100 59" preserveAspectRatio="none" fill="none"><rect x="2.5" y="2.5" width="95" height="54" stroke="rgba(160,120,64,0.35)" stroke-width="0.5"/><rect x="3.8" y="3.8" width="92.4" height="51.4" stroke="rgba(160,120,64,0.15)" stroke-width="0.4"/></svg>
+      <div style="position:absolute;inset:0;padding:6.5% 7.5%;display:flex;flex-direction:column;justify-content:space-between;z-index:3">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+          <div style="font-family:'Cormorant Garamond',serif;font-size:clamp(9px,2.1vw,14px);font-weight:300;letter-spacing:.18em;color:rgba(20,15,8,.65)">GRAFF SPA</div>
+          <div style="text-align:left"><div style="font-family:'Cormorant Garamond',serif;font-size:clamp(6.5px,1.5vw,10px);color:var(--g3);letter-spacing:.07em">Gift Card</div><div style="font-size:clamp(7px,1.65vw,10.5px);font-weight:600;color:var(--g3);margin-top:1px">بطاقة الإهداء</div></div>
         </div>
-        <div class="cc-mid">
-          <div>
-            <div class="cc-amount" id="cc-amt">—</div>
-            <div class="cc-currency">ريال سعودي · SAR</div>
-          </div>
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center">
+          <div style="font-family:'Cormorant Garamond',serif;font-size:clamp(22px,5.5vw,40px);font-weight:300;color:rgba(20,15,8,.8);letter-spacing:.04em" id="ca">—</div>
+          <div style="font-size:clamp(7px,1.6vw,10px);color:rgba(20,15,8,.3);margin-top:3px;letter-spacing:.12em;font-family:'Tajawal',sans-serif">SAUDI RIYAL · SAR</div>
+          <div id="cm" style="display:none;font-family:'Cormorant Garamond',serif;font-size:clamp(7px,1.7vw,10.5px);color:rgba(20,15,8,.38);font-style:italic;margin-top:5px;text-align:center;max-width:85%"></div>
         </div>
-        <div class="cc-bot">
-          <div>
-            <div class="cc-bot-lbl">إلى</div>
-            <div class="cc-to-name" id="cc-to">—</div>
-          </div>
-          <div class="cc-from-block" id="cc-from-sec">
-            <div class="cc-bot-lbl" style="text-align:left">من</div>
-            <div class="cc-from-name" id="cc-from">—</div>
-          </div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-end">
+          <div><div style="font-family:'Cormorant Garamond',serif;font-size:clamp(5px,1.2vw,7.5px);letter-spacing:.2em;color:rgba(20,15,8,.28)">TO</div><div style="font-family:'Cormorant Garamond',serif;font-size:clamp(9px,2.2vw,14px);color:rgba(20,15,8,.72);letter-spacing:.08em" id="ct">—</div></div>
+          <div id="cf-sec" style="display:none;text-align:left"><div style="font-family:'Cormorant Garamond',serif;font-size:clamp(5px,1.2vw,7.5px);letter-spacing:.2em;color:rgba(20,15,8,.28)">FROM</div><div style="font-family:'Cormorant Garamond',serif;font-size:clamp(8px,1.9vw,12px);color:rgba(20,15,8,.4);letter-spacing:.07em" id="cf">—</div></div>
         </div>
       </div>
     </div>
-
-    <div class="sec-lbl">ملخص الطلب</div>
-    <div class="sumcard">
-      <div class="sr"><span class="sl">إلى</span><span class="sv" id="s-to">—</span></div>
-      <div class="sr"><span class="sl">جوال المستلم</span><span class="sv" id="s-toph" style="direction:ltr">—</span></div>
-      <div class="sr"><span class="sl">من</span><span class="sv" id="s-from">—</span></div>
-      <div class="sr"><span class="sl">جوال المُهدي</span><span class="sv" id="s-fromph" style="direction:ltr">—</span></div>
-      <div class="sr" id="s-msg-row" style="display:none"><span class="sl">الرسالة</span><span class="sv it" id="s-msg">—</span></div>
-      <div class="sr"><span class="sl">القيمة</span><span class="sv" id="s-amt">—</span></div>
+    <div class="scard">
+      <div class="srow"><span class="sl">إلى</span><span class="sv" id="st">—</span></div>
+      <div class="srow"><span class="sl">جوال المستلم</span><span class="sv" id="stp" style="direction:ltr">—</span></div>
+      <div class="srow"><span class="sl">من</span><span class="sv" id="sf">—</span></div>
+      <div class="srow" id="sm-row" style="display:none"><span class="sl">الرسالة</span><span class="sv it" id="sm">—</span></div>
+      <div class="srow"><span class="sl">القيمة</span><span class="sv" id="sa">—</span></div>
     </div>
-    <div class="sum-tot"><span class="sum-tot-l">المجموع</span><span class="sum-tot-v"><span class="sum-tot-sr">SAR </span><span id="s-total">—</span></span></div>
+    <div class="trow"><span class="tl">الإجمالي</span><span class="tv"><span class="tsr">SAR </span><span id="sv2">—</span></span></div>
     <div class="vat">الأسعار شاملة ضريبة القيمة المضافة 15%</div>
-    <div class="paysafe">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-      دفع آمن ومشفر · سيتم تحويلك لإتمام العملية
-    </div>
-    <div class="errbox" id="err3"></div>
+    <div class="safe"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>دفع آمن ومشفر</div>
+    <div class="err" id="e3"></div>
   </div>
-  <div class="botbar">
-    <button class="botbtn" id="btn3" onclick="doPurchase()">شراء بطاقة الإهداء ←</button>
-  </div>
+  <div class="bar2"><button class="bb" id="b3" onclick="doBuy()">شراء بطاقة الإهداء ←</button></div>
 </div>
 
-<!-- PAY REDIRECT -->
-<div id="p-pay" class="pg">
-  <div class="pay-center">
-    <div class="pay-icon">
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><rect x="1" y="4" width="22" height="16" rx="3"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-    </div>
-    <div class="pay-title">إتمام الدفع</div>
-    <div class="pay-sub">اضغطي الزر أدناه لفتح صفحة الدفع الآمنة<br><span style="font-size:11px;color:rgba(24,21,14,.28)">بعد إتمام الدفع ستُعادين تلقائياً</span></div>
-    <a class="gbtn" id="pay-link" href="#" target="_self" style="max-width:320px">الدفع الآن ←</a>
-    <button class="obtn" style="max-width:320px" onclick="onPayDone()">✓ لقد أتممت الدفع</button>
-    <button class="lnk" onclick="showPage('p3')">إلغاء والعودة</button>
+<!-- PAY -->
+<div id="pp" class="pg">
+  <div class="cw">
+    <div class="pico2"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--g)" stroke-width="1.4"><rect x="1" y="4" width="22" height="16" rx="3"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div>
+    <div class="ph2">إتمام الدفع</div>
+    <div class="ps2">اضغطي لفتح صفحة الدفع الآمنة وأتممي عملية الشراء</div>
+    <a class="gb" id="plink" href="#" style="max-width:310px">فتح صفحة الدفع ←</a>
+    <button class="ob" style="max-width:310px" onclick="onDone()">✓ أتممت الدفع بنجاح</button>
+    <button class="lk" onclick="go('p3')">إلغاء والعودة</button>
   </div>
 </div>
 
 <!-- SUCCESS -->
-<div id="p-suc" class="pg">
-  <div class="suc-center">
-    <div class="suc-ring">
-      <svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-        <path class="suc-chk" d="M20 6L9 17l-5-5"/>
-      </svg>
-    </div>
-    <h2 class="suc-title">تم الإهداء بنجاح!</h2>
-    <p class="suc-sub" id="suc-sub">تم إرسال بطاقة الإهداء وسيتم إعلام المستلم قريباً</p>
-    <div class="suc-card-wrap">
-      <div class="conf-card">
-        <div class="cc-bg"></div>
-        <div class="cc-silk"></div>
-        <svg style="position:absolute;inset:0;width:100%;height:100%;z-index:1" viewBox="0 0 400 237" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
-          <path d="M 260 -20 Q 310 80 280 140 Q 250 200 310 237" fill="none" stroke="rgba(184,150,90,0.18)" stroke-width="28" stroke-linecap="round"/>
-          <path d="M 290 -20 Q 340 90 305 150 Q 270 210 340 237" fill="none" stroke="rgba(184,150,90,0.1)" stroke-width="18" stroke-linecap="round"/>
-        </svg>
-        <div class="cc-border"></div>
-        <div class="cc-inner">
-          <div class="cc-top">
-            <div class="cc-logo" id="suc-logo">GRAFF <b>SPA</b></div>
-            <div class="cc-title-block">
-              <div class="cc-title-en">Elite Membership Privilege</div>
-              <div class="cc-title-ar">بطاقـة الإهـداء</div>
-            </div>
-          </div>
-          <div class="cc-mid"><div><div class="cc-amount" id="suc-amt">—</div><div class="cc-currency">ريال سعودي · SAR</div></div></div>
-          <div class="cc-bot">
-            <div><div class="cc-bot-lbl">إلى</div><div class="cc-to-name" id="suc-to">—</div></div>
-            <div class="cc-from-block" id="suc-from-sec"><div class="cc-bot-lbl" style="text-align:left">من</div><div class="cc-from-name" id="suc-from">—</div></div>
-          </div>
-        </div>
+<div id="pz" class="pg">
+  <div class="cw">
+    <div class="sucring"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path class="suchk" d="M20 6L9 17l-5-5"/></svg></div>
+    <h2 class="such">تم الإهداء بنجاح!</h2>
+    <p class="suss" id="suss">ستصل البطاقة للمستلم قريباً</p>
+    <div class="succard">
+      <div class="p2cb"></div>
+      <svg style="position:absolute;inset:0;width:100%;height:100%;z-index:2" viewBox="0 0 100 59" preserveAspectRatio="none" fill="none"><rect x="2.5" y="2.5" width="95" height="54" stroke="rgba(160,120,64,0.35)" stroke-width="0.5"/></svg>
+      <div style="position:absolute;inset:0;padding:7% 8%;display:flex;flex-direction:column;justify-content:space-between;z-index:3">
+        <div style="display:flex;justify-content:space-between"><div style="font-family:'Cormorant Garamond',serif;font-size:clamp(9px,2vw,13px);font-weight:300;letter-spacing:.18em;color:rgba(20,15,8,.65)">GRAFF SPA</div><div style="text-align:left"><div style="font-family:'Cormorant Garamond',serif;font-size:clamp(6px,1.4vw,9px);color:var(--g3)">Gift Card</div><div style="font-size:clamp(6px,1.4vw,9px);font-weight:600;color:var(--g3)">بطاقة الإهداء</div></div></div>
+        <div style="flex:1;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:clamp(20px,5vw,36px);font-weight:300;color:rgba(20,15,8,.78)" id="zamt">—</div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-end"><div><div style="font-family:'Cormorant Garamond',serif;font-size:clamp(5px,1.1vw,7px);letter-spacing:.2em;color:rgba(20,15,8,.28)">TO</div><div style="font-family:'Cormorant Garamond',serif;font-size:clamp(8px,2vw,13px);color:rgba(20,15,8,.7);letter-spacing:.08em" id="zto">—</div></div><div id="zfsec" style="display:none;text-align:left"><div style="font-family:'Cormorant Garamond',serif;font-size:clamp(5px,1.1vw,7px);letter-spacing:.2em;color:rgba(20,15,8,.28)">FROM</div><div style="font-family:'Cormorant Garamond',serif;font-size:clamp(7px,1.7vw,11px);color:rgba(20,15,8,.4);letter-spacing:.07em" id="zfrom">—</div></div></div>
       </div>
     </div>
-    <div class="suc-ref">رقم الطلب: <strong id="suc-ref">—</strong></div>
-    <div class="suc-acts">
-      <button class="gbtn" onclick="shareCard()">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-        مشاركة البطاقة
-      </button>
-      <button class="obtn" onclick="resetAll()">إهداء بطاقة جديدة</button>
-      <a href="/" class="lnk">← العودة للرئيسية</a>
+    <div class="sucref">رقم الطلب <strong id="zref">—</strong></div>
+    <div style="width:100%;max-width:280px;display:flex;flex-direction:column;gap:0">
+      <button class="gb" onclick="shareCard()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>مشاركة تفاصيل البطاقة</button>
+      <button class="ob" onclick="resetAll()">إهداء بطاقة جديدة</button>
+      <a href="/" class="lk">← العودة للرئيسية</a>
     </div>
   </div>
 </div>
 
 <script>
 const B='https://rekaz-test.onrender.com';
-let CFG=null;
-let S={amount:null,toName:'',toPhone:'',fromName:'',fromPhone:'',msg:'',showFrom:true,payUrl:null,orderRef:null};
+const GPRICES={'400':'3a20ab64-fb29-8449-e1ef-c92188e204ed','500':'3a20ab64-fb29-6a4b-6338-39f7599d1edd','700':'3a20ab64-fb29-1904-97de-b77afcba741b','1000':'3a20ab64-fb29-e566-ee8c-b74c462a3d5f'};
+let S={amt:null,tn:'',tp:'',fn:'',fp:'',msg:'',showFrom:true,url:null,ref:null};
 
-async function init(){
-  try{const r=await fetch(B+'/site');if(r.ok)CFG=await r.json();}catch(e){}
-  applyConfig();renderAmounts();
-}
+(async()=>{
+  try{const r=await fetch(B+'/site');if(r.ok){const c=await r.json();const t=c.theme||{},R=document.documentElement;if(t.primaryColor)R.style.setProperty('--g',t.primaryColor);if(t.bgDark)R.style.setProperty('--ink',t.bgDark);if(t.bgLight)R.style.setProperty('--cream',t.bgLight);if(t.textColor)R.style.setProperty('--text',t.textColor);const gp=(c.pages&&c.pages.gift)||{};if(gp.rekazPrices)Object.assign(GPRICES,gp.rekazPrices);renderAmts(gp.amounts||[400,500,700,1000]);}}catch(e){renderAmts([400,500,700,1000]);}
+})();
 
-function applyConfig(){
-  if(!CFG)return;
-  const t=CFG.theme||{},l=CFG.layout||{},tx=CFG.texts||{},R=document.documentElement;
-  if(t.primaryColor)R.style.setProperty('--gold',t.primaryColor);
-  if(t.primaryHover)R.style.setProperty('--gold2',t.primaryHover);
-  if(t.bgDark)R.style.setProperty('--ink',t.bgDark);
-  if(t.bgDark2)R.style.setProperty('--ink2',t.bgDark2);
-  if(t.bgLight)R.style.setProperty('--cream',t.bgLight);
-  if(t.textColor)R.style.setProperty('--text',t.textColor);
-  if(t.mutedColor)R.style.setProperty('--muted',t.mutedColor);
-  if(t.borderColor)R.style.setProperty('--border',t.borderColor);
-  if(t.borderRadius!=null)R.style.setProperty('--brad',t.borderRadius+'px');
-  if(t.fontArabic){document.getElementById('gfont').href='https://fonts.googleapis.com/css2?family='+encodeURIComponent(t.fontArabic)+':wght@300;400;500&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&display=swap';document.body.style.fontFamily="'"+t.fontArabic+"',sans-serif";}
-  const logoTxt=l.logoText||'GRAFF SPA';
-  const lp=logoTxt.split(' ');
-  const lh=lp.length>1?lp[0]+' <b style="color:var(--gold)">'+lp.slice(1).join(' ')+'</b>':logoTxt;
-  document.querySelectorAll('#bar-logo,#gc-logo,#cc-logo,#suc-logo').forEach(el=>el.innerHTML=lh);
-  const gp=(CFG.pages&&CFG.pages.gift)||{};
-  if(tx.giftEyebrow||gp.eyebrow)set('h-eye',tx.giftEyebrow||gp.eyebrow);
-  if(gp.title||tx.giftTitle)set('h-title',gp.title||tx.giftTitle);
-  if(gp.subtitle||tx.giftSubtitle)set('h-sub',gp.subtitle||tx.giftSubtitle);
-  if(gp.title)document.title=(logoTxt)+' — '+(gp.title||'بطاقة الإهداء');
-}
-function set(id,v){const el=document.getElementById(id);if(el&&v)el.textContent=v;}
+function ge(id){return document.getElementById(id);}
+function sv(id,v){const e=ge(id);if(e&&v!=null)e.textContent=v;}
 
-function renderAmounts(){
-  const gp=(CFG&&CFG.pages&&CFG.pages.gift)||{};
-  const ams=gp.amounts||[400,500,700,1000];
-  document.getElementById('amts-grid').innerHTML=ams.map(a=>`
-    <button class="amt-btn" onclick="selAmt(this,${a})">
-      <div class="amt-chk"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="${getComputedStyle(document.documentElement).getPropertyValue('--ink')||'#080807'}" stroke-width="3.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="amt-val">${a}</div>
-      <div class="amt-sr">ريال سعودي</div>
-    </button>`).join('');
+function renderAmts(ams){
+  ge('agrid').innerHTML=ams.map(a=>`<button class="acard" onclick="selAmt(this,${a})"><div class="achk"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#080807" stroke-width="3.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div><div class="aval">${a}</div><div class="asr">ريال سعودي</div></button>`).join('');
 }
 
 function selAmt(el,amt){
-  document.querySelectorAll('.amt-btn').forEach(b=>b.classList.remove('sel'));
-  el.classList.add('sel');S.amount=amt;
-  const ae=document.getElementById('gc-amount');ae.textContent=amt;ae.classList.remove('ph');
-  document.getElementById('btn1').disabled=false;
+  document.querySelectorAll('.acard').forEach(b=>b.classList.remove('sel'));
+  el.classList.add('sel');S.amt=amt;
+  const ae=ge('gc-amt');ae.textContent=amt;ae.classList.remove('ph');
+  ge('gc-curr').style.display='block';
+  ge('b1').disabled=false;
+  // update p2 card
+  sv('p2-amt',amt);ge('p2-curr')&&(ge('p2-curr').style.display='');
 }
-
-function onToName(){
-  S.toName=document.getElementById('to-name').value.trim();
-  const el=document.getElementById('gc-to');
-  if(S.toName){el.textContent=S.toName;el.classList.remove('ph');}
-  else{el.textContent='المُهدى إليها';el.classList.add('ph');}
-  document.getElementById('msg-to').textContent='إلى: '+(S.toName||'—');
-  v2();
+function onTN(){
+  S.tn=ge('tn').value.trim();
+  const e=ge('gc-to');
+  if(S.tn){e.textContent=S.tn;e.classList.remove('ph');}else{e.textContent='المُهداة إليها';e.classList.add('ph');}
+  sv('p2-to',S.tn||'—');v2();
 }
-function onFromName(){
-  S.fromName=document.getElementById('from-name').value.trim();
-  const el=document.getElementById('gc-from');
-  if(S.showFrom&&S.fromName){el.textContent=S.fromName;el.classList.remove('ph');}
-  else{el.textContent=S.showFrom?'المُهدي':'—';el.classList.add('ph');}
-  document.getElementById('msg-from-sig').textContent='من: '+(S.fromName||'—');
+function onFN(){
+  S.fn=ge('fn').value.trim();
+  const e=ge('gc-from');
+  if(S.showFrom&&S.fn){e.textContent=S.fn;e.classList.remove('ph');}else if(S.showFrom){e.textContent='المُهدي';e.classList.add('ph');}
+  sv('p2-from',S.fn||'—');
+  ge('p2-from-sec')&&(ge('p2-from-sec').style.display=S.showFrom&&S.fn?'':'none');
   v2();
 }
 function togFrom(){
   S.showFrom=!S.showFrom;
-  document.getElementById('tog-from').classList.toggle('on',S.showFrom);
-  const fw=document.getElementById('gc-from-wrap');if(fw)fw.style.opacity=S.showFrom?'1':'0.3';
-  onFromName();
+  ge('togf').classList.toggle('on',S.showFrom);
+  ge('gc-divider').style.display=S.showFrom?'':'none';
+  ge('gc-from-sec').style.display=S.showFrom?'':'none';
+  onFN();
 }
 function onMsg(){
-  S.msg=document.getElementById('gift-msg').value.trim();
-  const prev=document.getElementById('msg-prev');
-  if(S.msg){prev.style.display='block';document.getElementById('msg-txt').textContent=S.msg;}
-  else prev.style.display='none';
+  S.msg=ge('gm').value.trim();
+  const w=ge('gc-msg-wrap'),t=ge('gc-msg-txt');
+  if(S.msg){w.style.display='block';t.textContent='"'+S.msg+'"';}else w.style.display='none';
 }
 function v2(){
-  const tn=document.getElementById('to-name').value.trim();
-  const tp=document.getElementById('to-phone').value.trim();
-  const fn=document.getElementById('from-name').value.trim();
-  const fp=document.getElementById('from-phone').value.trim();
-  document.getElementById('btn2').disabled=!(tn.length>=2&&tp.length>=9&&fn.length>=2&&fp.length>=9);
+  const ok=ge('tn').value.trim().length>=2&&ge('tp').value.trim().length>=9&&ge('fn').value.trim().length>=2&&ge('fp').value.trim().length>=9;
+  ge('b2').disabled=!ok;
 }
-
-function goP2(){if(!S.amount)return;showPage('p2');}
+function goP2(){if(!S.amt)return;go('p2');}
 function goP3(){
-  const tn=document.getElementById('to-name').value.trim();
-  const tp=document.getElementById('to-phone').value.trim();
-  const fn=document.getElementById('from-name').value.trim();
-  const fp=document.getElementById('from-phone').value.trim();
-  if(!tn||!tp||!fn||!fp){showErr('err2','يرجى تعبئة جميع الحقول');return;}
-  if(tp.length<9||fp.length<9){showErr('err2','يرجى إدخال أرقام جوال صحيحة');return;}
-  hideErr('err2');
-  S.toName=tn;S.toPhone=tp;S.fromName=fn;S.fromPhone=fp;
-  S.msg=document.getElementById('gift-msg').value.trim();
-  fillConf();showPage('p3');
+  const tn=ge('tn').value.trim(),tp=ge('tp').value.trim(),fn=ge('fn').value.trim(),fp=ge('fp').value.trim();
+  if(!tn||tp.length<9||!fn||fp.length<9){se('e2','يرجى تعبئة جميع الحقول');return;}
+  he('e2');S.tn=tn;S.tp=tp;S.fn=fn;S.fp=fp;S.msg=ge('gm').value.trim();
+  fillConf();go('p3');
 }
 function fillConf(){
-  set('cc-amt',S.amount);set('cc-to',S.toName);
-  const fSec=document.getElementById('cc-from-sec');if(fSec)fSec.style.display=S.showFrom?'block':'none';
-  set('cc-from',S.fromName);
-  set('s-to',S.toName);set('s-toph',S.toPhone);
-  set('s-from',S.showFrom?S.fromName:'(مخفي)');set('s-fromph',S.fromPhone);
-  set('s-amt',S.amount+' SAR');set('s-total',S.amount);
-  const mr=document.getElementById('s-msg-row');
-  if(S.msg){set('s-msg',S.msg);if(mr)mr.style.display='flex';}
-  else{if(mr)mr.style.display='none';}
+  sv('ca',S.amt);sv('ct',S.tn);sv('cf',S.fn);
+  ge('cf-sec').style.display=S.showFrom?'':'none';
+  const cm=ge('cm');if(S.msg){cm.textContent='"'+S.msg+'"';cm.style.display='';}else cm.style.display='none';
+  sv('st',S.tn);sv('stp',S.tp);sv('sf',S.showFrom?S.fn:'(مخفي)');sv('sa',S.amt+' SAR');sv('sv2',S.amt);
+  const mr=ge('sm-row');if(S.msg){sv('sm',S.msg);if(mr)mr.style.display='flex';}else{if(mr)mr.style.display='none';}
+  ge('dl-bar').style.display='flex';
 }
-
-async function doPurchase(){
-  const btn=document.getElementById('btn3');btn.classList.add('ld');btn.disabled=true;hideErr('err3');
+async function doBuy(){
+  const btn=ge('b3');btn.classList.add('ld');btn.disabled=true;he('e3');
+  const pid=GPRICES[String(S.amt)]||null;
   try{
-    const r=await fetch(B+'/gift/purchase',{
-      method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({amount:S.amount,fromName:S.fromName,fromPhone:'+966'+S.fromPhone.replace(/^0/,''),toName:S.toName,toPhone:'+966'+S.toPhone.replace(/^0/,''),message:S.msg,showSender:S.showFrom})
-    });
+    const r=await fetch(B+'/gift/purchase',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({amount:S.amt,priceId:pid,fromName:S.fn,fromPhone:'+966'+S.fp.replace(/^0/,''),toName:S.tn,toPhone:'+966'+S.tp.replace(/^0/,''),message:S.msg,showSender:S.showFrom})});
     const d=await r.json();
     if(!r.ok||d.error)throw new Error(d.error||'فشل إنشاء الطلب');
-    S.payUrl=d.payUrl;S.orderRef=d.orderRef||'—';
-    if(S.payUrl){document.getElementById('pay-link').href=S.payUrl;showPage('p-pay');}
-    else onPayDone();
-  }catch(e){
-    showErr('err3',e.message||'حدث خطأ، يرجى المحاولة مرة أخرى');
-    btn.classList.remove('ld');btn.disabled=false;
-  }
+    S.url=d.payUrl;S.ref=d.orderRef||'—';
+    if(S.url){ge('plink').href=S.url;go('pp');}else onDone();
+  }catch(e){se('e3',e.message||'حدث خطأ');btn.classList.remove('ld');btn.disabled=false;}
 }
-function onPayDone(){
-  set('suc-amt',S.amount);set('suc-to',S.toName);
-  const fs=document.getElementById('suc-from-sec');if(fs)fs.style.display=S.showFrom?'block':'none';
-  set('suc-from',S.fromName);set('suc-ref',S.orderRef||'—');
-  showPage('p-suc');
+function onDone(){
+  sv('zamt',S.amt+' SAR');sv('zto',S.tn);sv('zfrom',S.fn);sv('zref',S.ref||'—');
+  ge('zfsec').style.display=S.showFrom?'':'none';
+  sv('suss','تم إرسال بطاقة الإهداء إلى '+S.tn+' بنجاح');
+  go('pz');
 }
 function shareCard(){
-  const logoTxt=(CFG&&CFG.layout&&CFG.layout.logoText)||'GRAFF SPA';
-  const txt='🎁 بطاقة إهداء '+logoTxt+'\nإلى: '+S.toName+'\nالقيمة: '+S.amount+' SAR'+(S.msg?'\nرسالة: '+S.msg:'')+'\n\nاستمتعي بتجربة فاخرة';
+  const txt='🎁 بطاقة إهداء GRAFF SPA\nإلى: '+S.tn+'\nالقيمة: '+S.amt+' SAR'+(S.msg?'\n"'+S.msg+'"':'');
   if(navigator.share)navigator.share({title:'بطاقة إهداء',text:txt}).catch(()=>{});
-  else{navigator.clipboard?.writeText(txt);alert('تم نسخ التفاصيل');}
+  else{navigator.clipboard&&navigator.clipboard.writeText(txt);notif('تم نسخ التفاصيل ✓');}
 }
 function resetAll(){
-  S={amount:null,toName:'',toPhone:'',fromName:'',fromPhone:'',msg:'',showFrom:true,payUrl:null,orderRef:null};
-  document.querySelectorAll('.amt-btn').forEach(b=>b.classList.remove('sel'));
-  const ae=document.getElementById('gc-amount');ae.textContent='— — —';ae.classList.add('ph');
-  const te=document.getElementById('gc-to');te.textContent='المُهدى إليها';te.classList.add('ph');
-  const fe=document.getElementById('gc-from');fe.textContent='المُهدي';fe.classList.add('ph');
-  ['to-name','to-phone','from-name','from-phone','gift-msg'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-  document.getElementById('msg-prev').style.display='none';
-  document.getElementById('tog-from').classList.add('on');
-  document.getElementById('gc-from-wrap').style.opacity='1';
-  document.getElementById('btn1').disabled=true;document.getElementById('btn2').disabled=true;
-  document.getElementById('back-btn').style.display='';
-  showPage('p1');
+  S={amt:null,tn:'',tp:'',fn:'',fp:'',msg:'',showFrom:true,url:null,ref:null};
+  document.querySelectorAll('.acard').forEach(b=>b.classList.remove('sel'));
+  const ae=ge('gc-amt');ae.textContent='اختاري قيمة البطاقة';ae.classList.add('ph');
+  ge('gc-curr').style.display='none';
+  const te=ge('gc-to');te.textContent='المُهداة إليها';te.classList.add('ph');
+  const fe=ge('gc-from');fe.textContent='المُهدي';fe.classList.add('ph');
+  ge('gc-divider').style.display='none';ge('gc-from-sec').style.display='none';ge('gc-msg-wrap').style.display='none';
+  ['tn','tp','fn','fp','gm'].forEach(id=>{const el=ge(id);if(el)el.value='';});
+  ge('togf').classList.add('on');ge('dl-bar').style.display='none';ge('b1').disabled=true;ge('b2').disabled=true;
+  go('p1');
 }
 
-function showPage(id){
+function dlImg(){
+  // Canvas-based card download
+  try{
+    const W=780,H=459,c=document.createElement('canvas');c.width=W;c.height=H;
+    const x=c.getContext('2d');
+    // Background — parchment gradient
+    const grd=x.createLinearGradient(0,0,W,H);
+    grd.addColorStop(0,'#f7f1e5');grd.addColorStop(.35,'#f0e9da');grd.addColorStop(.65,'#ece3d0');grd.addColorStop(1,'#e8dfc9');
+    x.fillStyle=grd;x.fillRect(0,0,W,H);
+    // Subtle texture
+    const g2=x.createRadialGradient(W*.2,H*.3,0,W*.2,H*.3,W*.5);
+    g2.addColorStop(0,'rgba(255,255,255,0.35)');g2.addColorStop(1,'transparent');
+    x.fillStyle=g2;x.fillRect(0,0,W,H);
+    // Outer frame
+    x.strokeStyle='rgba(160,120,64,0.38)';x.lineWidth=1.5;x.strokeRect(20,20,W-40,H-40);
+    // Inner frame
+    x.strokeStyle='rgba(160,120,64,0.18)';x.lineWidth=1;x.strokeRect(28,28,W-56,H-56);
+    // Corner accents - top right (RTL: top-right = start corner)
+    x.strokeStyle='rgba(160,120,64,0.7)';x.lineWidth=2.5;
+    [[20,20,70,20],[20,20,20,70],[W-20,20,W-70,20],[W-20,20,W-20,70],[20,H-20,70,H-20],[20,H-20,20,H-70],[W-20,H-20,W-70,H-20],[W-20,H-20,W-20,H-70]].forEach(([x1,y1,x2,y2])=>{x.beginPath();x.moveTo(x1,y1);x.lineTo(x2,y2);x.stroke();});
+    // Logo
+    x.textAlign='right';x.direction='rtl';
+    x.font='300 26px "Cormorant Garamond",Georgia,serif';x.fillStyle='rgba(20,15,8,0.65)';x.letterSpacing='5px';x.fillText('GRAFF SPA',W-50,66);
+    // Tag
+    x.textAlign='left';x.font='300 17px "Cormorant Garamond",Georgia,serif';x.fillStyle='rgba(140,95,50,0.8)';x.fillText('Gift Card',50,58);
+    x.font='600 16px Tajawal,Arial';x.fillStyle='rgba(140,95,50,0.8)';x.fillText('بطاقة الإهداء',50,80);
+    // Amount — large center
+    x.textAlign='center';x.font='300 86px "Cormorant Garamond",Georgia,serif';x.fillStyle='rgba(20,15,8,0.82)';x.fillText(S.amt,W/2,H/2+22);
+    x.font='300 16px Tajawal,Arial';x.fillStyle='rgba(20,15,8,0.32)';x.letterSpacing='4px';x.fillText('SAUDI RIYAL · SAR',W/2,H/2+50);
+    // Message
+    if(S.msg){x.font='italic 300 17px "Cormorant Garamond",Georgia,serif';x.fillStyle='rgba(20,15,8,0.38)';x.letterSpacing='0px';x.fillText('"'+S.msg+'"',W/2,H/2+82);}
+    // To
+    x.textAlign='right';x.font='300 14px "Cormorant Garamond",Georgia,serif';x.fillStyle='rgba(20,15,8,0.28)';x.letterSpacing='3px';x.fillText('TO',W-50,H-60);
+    x.font='300 20px "Cormorant Garamond",Georgia,serif';x.fillStyle='rgba(20,15,8,0.72)';x.letterSpacing='2px';x.fillText(S.tn,W-50,H-38);
+    // From
+    if(S.showFrom&&S.fn){x.textAlign='left';x.font='300 14px "Cormorant Garamond",Georgia,serif';x.fillStyle='rgba(20,15,8,0.28)';x.letterSpacing='3px';x.fillText('FROM',50,H-60);x.font='300 18px "Cormorant Garamond",Georgia,serif';x.fillStyle='rgba(20,15,8,0.42)';x.letterSpacing='2px';x.fillText(S.fn,50,H-38);}
+    c.toBlob(b=>{const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download='GRAFF-SPA-Gift-Card.png';a.click();URL.revokeObjectURL(u);},'image/png');
+    notif('تم تحميل الصورة ✓');
+  }catch(e){notif('تعذر التحميل');}
+}
+
+function dlPDF(){
+  const w=window.open('','_blank','width=700,height=520');
+  w.document.write(`<!DOCTYPE html><html dir="rtl"><head><meta charset="UTF-8"><title>Gift Card — GRAFF SPA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;600&family=Cormorant+Garamond:wght@300;400&display=swap" rel="stylesheet">
+  <style>*{margin:0;padding:0;box-sizing:border-box}body{background:#f2ece2;display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:'Tajawal',sans-serif;padding:20px}
+  .card{width:620px;height:365px;background:linear-gradient(158deg,#f7f1e5,#f0e9da 35%,#ece3d0 65%,#e8dfc9);border-radius:4px;position:relative;overflow:hidden;border:1px solid rgba(160,120,64,0.28)}
+  .frame{position:absolute;inset:12px;border:1px solid rgba(160,120,64,0.32);pointer-events:none}
+  .frame2{position:absolute;inset:17px;border:1px solid rgba(160,120,64,0.14);pointer-events:none}
+  svg.corners{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+  .content{position:absolute;inset:0;padding:6% 7%;display:flex;flex-direction:column;justify-content:space-between}
+  .top{display:flex;justify-content:space-between;align-items:flex-start}
+  .logo{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:300;letter-spacing:4px;color:rgba(20,15,8,.65)}
+  .tagblock{text-align:left}.ten{font-family:'Cormorant Garamond',serif;font-size:13px;color:rgba(140,95,50,.8);letter-spacing:1px}.tar{font-size:12px;font-weight:600;color:rgba(140,95,50,.8);margin-top:2px}
+  .mid{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .amt{font-family:'Cormorant Garamond',serif;font-size:72px;font-weight:300;color:rgba(20,15,8,.82);letter-spacing:2px;line-height:1}
+  .curr{font-size:12px;color:rgba(20,15,8,.3);margin-top:6px;letter-spacing:5px}
+  .gmsg{font-family:'Cormorant Garamond',serif;font-size:14px;color:rgba(20,15,8,.38);font-style:italic;margin-top:8px}
+  .bot{display:flex;justify-content:space-between;align-items:flex-end}
+  .blbl{font-family:'Cormorant Garamond',serif;font-size:9px;letter-spacing:3px;color:rgba(20,15,8,.28);margin-bottom:4px}
+  .bval{font-family:'Cormorant Garamond',serif;font-size:18px;color:rgba(20,15,8,.72);letter-spacing:2px}
+  .bfrom{font-family:'Cormorant Garamond',serif;font-size:15px;color:rgba(20,15,8,.42);letter-spacing:1px}
+  .pbtn{position:fixed;bottom:20px;right:20px;padding:12px 24px;background:#b8965a;color:#080807;border:none;font-family:'Tajawal',sans-serif;font-size:13px;font-weight:600;cursor:pointer;border-radius:2px}
+  @media print{.pbtn{display:none}body{background:white}}</style></head><body>
+  <div><div class="card">
+    <div class="frame"></div><div class="frame2"></div>
+    <svg class="corners" viewBox="0 0 620 365" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <line x1="12" y1="12" x2="60" y2="12" stroke="rgba(160,120,64,0.7)" stroke-width="2"/>
+      <line x1="12" y1="12" x2="12" y2="60" stroke="rgba(160,120,64,0.7)" stroke-width="2"/>
+      <line x1="608" y1="12" x2="560" y2="12" stroke="rgba(160,120,64,0.7)" stroke-width="2"/>
+      <line x1="608" y1="12" x2="608" y2="60" stroke="rgba(160,120,64,0.7)" stroke-width="2"/>
+      <line x1="12" y1="353" x2="60" y2="353" stroke="rgba(160,120,64,0.7)" stroke-width="2"/>
+      <line x1="12" y1="353" x2="12" y2="305" stroke="rgba(160,120,64,0.7)" stroke-width="2"/>
+      <line x1="608" y1="353" x2="560" y2="353" stroke="rgba(160,120,64,0.7)" stroke-width="2"/>
+      <line x1="608" y1="353" x2="608" y2="305" stroke="rgba(160,120,64,0.7)" stroke-width="2"/>
+    </svg>
+    <div class="content">
+      <div class="top"><div class="logo">GRAFF SPA</div><div class="tagblock"><div class="ten">Gift Card</div><div class="tar">بطاقة الإهداء</div></div></div>
+      <div class="mid"><div class="amt">${S.amt} <span style="font-size:24px;color:rgba(20,15,8,.28)">SAR</span></div><div class="curr">SAUDI RIYAL</div>${S.msg?`<div class="gmsg">"${S.msg}"</div>`:''}</div>
+      <div class="bot"><div><div class="blbl">TO</div><div class="bval">${S.tn}</div></div>${S.showFrom&&S.fn?`<div style="text-align:left"><div class="blbl">FROM</div><div class="bfrom">${S.fn}</div></div>`:''}</div>
+    </div>
+  </div><p style="text-align:center;font-size:11px;color:rgba(0,0,0,.35);margin-top:12px;font-family:'Tajawal',sans-serif;letter-spacing:2px">GRAFF SPA — ELITE LUXURY EXPERIENCE</p></div>
+  <button class="pbtn" onclick="window.print()">طباعة / حفظ PDF</button>
+  </body></html>`);w.document.close();
+}
+
+function notif(msg){
+  let el=ge('ntf');
+  if(!el){el=document.createElement('div');el.id='ntf';el.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#080807;color:#b8965a;border:1px solid rgba(184,150,90,.28);padding:10px 20px;font-size:12px;z-index:9999;font-family:Tajawal,sans-serif;white-space:nowrap;pointer-events:none';document.body.appendChild(el);}
+  el.textContent=msg;el.style.opacity='1';clearTimeout(el._t);el._t=setTimeout(()=>el.style.opacity='0',2500);
+}
+
+function go(id){
   document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
-  document.getElementById(id).classList.add('on');window.scrollTo(0,0);updateSteps(id);
+  ge(id).classList.add('on');window.scrollTo(0,0);
+  const bk=ge('bk');
+  if(id==='p1'){bk.href='/';bk.onclick=null;}
+  else if(id==='p2'){bk.href='#';bk.onclick=e=>{e.preventDefault();go('p1');};}
+  else if(id==='p3'){bk.href='#';bk.onclick=e=>{e.preventDefault();go('p2');};}
+  else if(id==='pp'){bk.href='#';bk.onclick=e=>{e.preventDefault();go('p3');};}
+  else bk.style.display='none';
 }
-function updateSteps(pgId){
-  const map={'p1':1,'p2':2,'p3':3,'p-pay':3,'p-suc':0};
-  const cur=map[pgId]||0;
-  document.getElementById('steps-bar').style.display=(pgId==='p-suc')?'none':'flex';
-  for(let i=1;i<=3;i++){
-    const dot=document.getElementById('sd'+i);const item=document.getElementById('si'+i);
-    dot.className='si-dot';item.className='si';dot.textContent=i;
-    if(i<cur){dot.className='si-dot done';dot.innerHTML='<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>';}
-    else if(i===cur){dot.className='si-dot on';item.className='si on';}
-  }
-  const back=document.getElementById('back-btn');
-  if(pgId==='p1'){back.href='/';back.onclick=null;}
-  else if(pgId==='p2'){back.href='#';back.onclick=e=>{e.preventDefault();showPage('p1');};}
-  else if(pgId==='p3'){back.href='#';back.onclick=e=>{e.preventDefault();showPage('p2');};}
-  else if(pgId==='p-pay'){back.href='#';back.onclick=e=>{e.preventDefault();showPage('p3');};}
-  else back.style.display='none';
-}
-function showErr(id,msg){const el=document.getElementById(id);if(el){el.textContent=msg;el.style.display='block';}}
-function hideErr(id){const el=document.getElementById(id);if(el)el.style.display='none';}
-init();
+function se(id,m){const e=ge(id);if(e){e.textContent=m;e.style.display='block';}}
+function he(id){const e=ge(id);if(e)e.style.display='none';}
 </script>
 </body>
 </html>
