@@ -567,7 +567,16 @@ const B='https://rekaz-test.onrender.com';
 const PID='3a20a42a-07d0-8197-2e26-e9cb52804ff4';
 let S={n:'',p:'',e:'',url:null,ref:null};
 
-(async()=>{try{const r=await fetch(B+'/site');if(r.ok){const c=await r.json();const t=c.theme||{};const R=document.documentElement;if(t.primaryColor)R.style.setProperty('--g',t.primaryColor);if(t.bgDark)R.style.setProperty('--ink',t.bgDark);if(t.bgLight)R.style.setProperty('--cream',t.bgLight);if(t.textColor)R.style.setProperty('--text',t.textColor);}}catch(e){}})();
+(async()=>{try{const r=await fetch(B+'/site');if(r.ok){const c=await r.json();const t=c.theme||{},tx=c.texts||{};const R=document.documentElement;
+  if(t.primaryColor)R.style.setProperty('--g',t.primaryColor);
+  if(t.bgDark)R.style.setProperty('--ink',t.bgDark);
+  if(t.bgLight)R.style.setProperty('--cream',t.bgLight);
+  if(t.textColor)R.style.setProperty('--text',t.textColor);
+  // Apply card texts
+  if(tx.memberCardLogoText)document.querySelectorAll('.mc-logo,.clogo').forEach(el=>el.textContent=tx.memberCardLogoText);
+  if(tx.memberCardTitleEn)document.querySelectorAll('.mc-badge-en,.cten').forEach(el=>el.textContent=tx.memberCardTitleEn);
+  if(tx.memberCardTitleAr)document.querySelectorAll('.mc-badge-ar,.ctar').forEach(el=>el.textContent=tx.memberCardTitleAr);
+}}catch(e){}})();
 
 function g(id){return document.getElementById(id);}
 function s(id,v){const e=g(id);if(e&&v!=null)e.textContent=v;}
