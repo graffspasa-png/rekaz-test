@@ -427,6 +427,14 @@ app.get("/slots", async (req,res) => {
   try {
     const q = new URLSearchParams(req.query).toString();
     const r = await rekazFetch(`${REKAZ_API}/reservations/slots?${q}`);
+    // Log first slot to see exact time format from Rekaz
+    try {
+      const parsed = JSON.parse(r.text);
+      if(Array.isArray(parsed) && parsed.length > 0) {
+        console.log("[SLOTS] First slot from:", parsed[0].from, "| to:", parsed[0].to);
+        console.log("[SLOTS] Total slots:", parsed.length);
+      }
+    } catch(e) {}
     res.status(r.status).send(r.text);
   } catch(e) { res.status(500).json({error:e.message}); }
 });
