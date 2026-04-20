@@ -318,8 +318,8 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction
 <body>
 
 <div class="bar">
-  <a class="back" id="bk" href="/">← رجوع</a>
-  <a class="logo" href="/">GRAFF SPA</a>
+  <a class="back" id="bk" href="javascript:history.back()">← رجوع</a>
+  <a class="logo" href="javascript:history.back()">GRAFF SPA</a>
   <button class="bar-btn" onclick="toJoin()">اشتراكي الآن</button>
 </div>
 
@@ -399,7 +399,7 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction
 
           <!-- BOTTOM ROW -->
           <div class="cbot">
-            <div class="cname" id="card-name">MANAL AL SHARIF</div>
+            <div class="cname" id="card-name">MEMBER NAME</div>
             <div class="cdates">
               <div class="cdar">تاريخ الانتهاء : ٢٧/٠٤</div>
               <div class="cden">Expiry Date: 04/27</div>
@@ -576,6 +576,9 @@ function toPurchase(){go('pd');}
 function vd(){
   const n=g('dn').value.trim(),p=g('dp').value.trim();
   g('bd').disabled=!(n.length>=2&&p.length>=9);
+  // Update card name live
+  const cn=g('card-name');
+  if(cn)cn.textContent=n?n.toUpperCase():'MEMBER NAME';
 }
 function goConf(){
   const n=g('dn').value.trim(),p=g('dp').value.trim();
