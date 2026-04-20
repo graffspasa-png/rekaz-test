@@ -1117,14 +1117,14 @@ async function loadSlots(y,m,d){
   document.getElementById('slotsbox').innerHTML='<div class="slotload">جاري تحميل المواعيد...</div>';
   var ds=y+'-'+p2(m+1)+'-'+p2(d);
   try{
-    // Query in UTC: AST date 00:00 = UTC previous day 21:00
-    // Query a wide range and filter by AST date in display
-    var qStart=ds+'T00:00:00';
-    var qEnd=ds+'T23:59:59';
-    // To catch UTC slots: also include previous day's last 3 hours
-    var prevDate=new Date(new Date(ds+'T00:00:00').getTime()-3*3600000);
-    var prevDs=prevDate.getUTCFullYear()+'-'+p2(prevDate.getUTCMonth()+1)+'-'+p2(prevDate.getUTCDate());
-    var q=new URLSearchParams({StartDate:prevDs+'T21:00:00Z',EndDate:ds+'T20:59:59Z',PriceId:S.pendingCart.priceId,MinQuantity:'1'});
+    // Convert AST day to UTC range:
+    // AST midnight = UTC previous day 21:00
+    // AST 23:59    = UTC same day 20:59
+    var astMidnight=new Date(ds+'T00:00:00+03:00'); // AST start of day
+    var astEnd=new Date(ds+'T23:59:59+03:00');      // AST end of day
+    var utcStart=astMidnight.toISOString().slice(0,19)+'Z';
+    var utcEnd=astEnd.toISOString().slice(0,19)+'Z';
+    var q=new URLSearchParams({StartDate:utcStart,EndDate:utcEnd,PriceId:S.pendingCart.priceId,MinQuantity:'1'});
     var r=await fetch(B+'/slots?'+q);if(!r.ok)throw new Error('HTTP '+r.status);
     var raw=await r.json();var seen={};
     allSlots=(Array.isArray(raw)?raw:[]).filter(function(s){
