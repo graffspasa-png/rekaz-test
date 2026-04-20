@@ -677,6 +677,13 @@ function applyConfig(){
   var gc=(CFG.pages&&CFG.pages.gift)||{};
   if(gc.title){var el=document.getElementById('gift-h1');if(el)el.textContent=gc.title;}
   if(gc.subtitle){var el=document.getElementById('gift-sub');if(el)el.textContent=gc.subtitle;}
+  // Apply extra texts from texts field
+  var applyExtra=['homeEyebrow','homeTagline','homeCity','footerDesc','footerCopy','logoText'];
+  applyExtra.forEach(function(k){
+    if(tx[k]){
+      if(k==='homeCity'){var el=document.getElementById('home-city');if(el)el.textContent=tx[k];}
+    }
+  });
 }
 
 function renderHomeButtons(){
@@ -779,13 +786,16 @@ function renderMems(){
 }
 
 // ── SERVICES: load from /menu ──
+var _menuCache=null;
 async function loadProducts(){
+  if(_menuCache){buildSvcFromMenu(_menuCache);return;}
   document.getElementById('tabs').innerHTML='<span style="padding:12px 18px;font-size:10px;color:rgba(255,255,255,.25)">جاري التحميل...</span>';
   try{
     var r=await fetch(B+'/menu');
     if(!r.ok) throw new Error('HTTP '+r.status);
     var d=await r.json();
     var cats=d.categories||[];
+    _menuCache=cats;
     if(!cats.length){
       document.getElementById('tabs').innerHTML='';
       document.getElementById('svcbody').innerHTML='<div class="empty-svcs">لم يتم إعداد الأقسام بعد<br>يرجى إعداد الأقسام وربط الخدمات من لوحة التحكم</div>';
@@ -1395,7 +1405,13 @@ function go(id){
   }
   if(id==='svcs'){
     updCart();
-    if(!document.querySelector('.sc'))loadProducts();
+    // Load once, use cache on subsequent visits
+    if(!document.querySelector('.sc')){
+      loadProducts();
+    } else {
+      // Already loaded — just update UI
+      updCart();
+    }
   }
   if(id==='home'||id==='suc'){
     try{sessionStorage.removeItem('graff_page');}catch(e){}
