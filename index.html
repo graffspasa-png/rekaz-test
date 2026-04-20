@@ -1312,8 +1312,11 @@ async function doBook(){
     S.cid=cd.customerId;
     // Build items: each service has its own slot
     function forceInvoiceMatch(utcString){
+      // slot.from is UTC e.g. 10:30Z
+      // Rekaz displays UTC as-is in invoice
+      // To show 13:30 (1:30pm AST) in invoice, add +3h before sending
       var d=new Date(utcString);
-      var adjusted=new Date(d.getTime()-(3*60*60*1000));
+      var adjusted=new Date(d.getTime()+(3*60*60*1000));
       return adjusted.toISOString();
     }
     var bookingItems=S.carts.map(function(c){
