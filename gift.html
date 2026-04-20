@@ -466,7 +466,19 @@ const GPRICES={'400':'3a20ab64-fb29-8449-e1ef-c92188e204ed','500':'3a20ab64-fb29
 let S={amt:null,tn:'',tp:'',fn:'',fp:'',msg:'',showFrom:true,url:null,ref:null};
 
 (async()=>{
-  try{const r=await fetch(B+'/site');if(r.ok){const c=await r.json();const t=c.theme||{},R=document.documentElement;if(t.primaryColor)R.style.setProperty('--g',t.primaryColor);if(t.bgDark)R.style.setProperty('--ink',t.bgDark);if(t.bgLight)R.style.setProperty('--cream',t.bgLight);if(t.textColor)R.style.setProperty('--text',t.textColor);const gp=(c.pages&&c.pages.gift)||{};if(gp.rekazPrices)Object.assign(GPRICES,gp.rekazPrices);renderAmts(gp.amounts||[400,500,700,1000]);}}catch(e){renderAmts([400,500,700,1000]);}
+  try{const r=await fetch(B+'/site');if(r.ok){const c=await r.json();const t=c.theme||{},tx=c.texts||{},R=document.documentElement;
+  if(t.primaryColor)R.style.setProperty('--g',t.primaryColor);
+  if(t.bgDark)R.style.setProperty('--ink',t.bgDark);
+  if(t.bgLight)R.style.setProperty('--cream',t.bgLight);
+  if(t.textColor)R.style.setProperty('--text',t.textColor);
+  // Apply card texts
+  if(tx.giftCardLogoLine1)document.querySelectorAll('.gc-logo').forEach(el=>el.textContent=tx.giftCardLogoLine1);
+  if(tx.giftCardTagEn)document.querySelectorAll('.gc-tag-en').forEach(el=>el.textContent=tx.giftCardTagEn);
+  if(tx.giftCardTagAr)document.querySelectorAll('.gc-tag-ar').forEach(el=>el.textContent=tx.giftCardTagAr);
+  if(tx.giftCardCurrency)document.querySelectorAll('.gc-curr').forEach(el=>el.textContent=tx.giftCardCurrency);
+  const gp=(c.pages&&c.pages.gift)||{};
+  if(gp.rekazPrices)Object.assign(GPRICES,gp.rekazPrices);renderAmts(gp.amounts||[400,500,700,1000]);
+}}catch(e){renderAmts([400,500,700,1000]);}
 })();
 
 function ge(id){return document.getElementById(id);}
