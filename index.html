@@ -1311,10 +1311,19 @@ async function doBook(){
     var cd=await cr.json();if(!cr.ok)throw new Error(cd.error||'فشل إنشاء العميل');
     S.cid=cd.customerId;
     // Build items: each service has its own slot
-    // Send UTC values as-is — never re-convert
+    // Convert UTC to Asia/Riyadh (+03:00) before sending to Rekaz
+    function toRiyadh(utc){
+      var d=new Date(utc);
+      var off=3*60; // +03:00 in minutes
+      var local=new Date(d.getTime()+off*60000);
+      var s=local.toISOString().replace('Z','+03:00');
+      return s;
+    }
     var bookingItems=S.carts.map(function(c){
-      console.log('[Booking] FINAL UTC SENT: from='+c.slot.from+' to='+c.slot.to);
-      return {priceId:c.priceId,from:c.slot.from,to:c.slot.to};
+      var from=toRiyadh(c.slot.from);
+      var to=toRiyadh(c.slot.to);
+      console.log('[Booking] SENDING +03:00: from='+from+' to='+to);
+      return {priceId:c.priceId,from:from,to:to};
     });
     var br=await fetch(B+'/create-booking',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({customerId:S.cid,phone:S.phone,items:bookingItems,addons:S.addons.map(function(a){return{id:a.id};})})});
     var bd=await br.json();if(!br.ok)throw new Error(bd.error||'فشل الحجز');
