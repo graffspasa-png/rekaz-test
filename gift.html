@@ -94,9 +94,9 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction
 .gc-tag-ar{font-family:'Tajawal',sans-serif;font-size:clamp(7px,1.75vw,11px);font-weight:600;color:var(--g3);line-height:1.55;margin-top:1px}
 /* Center — amount dominates */
 .gc-center{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2% 0}
-.gc-amt{font-family:'Cormorant Garamond',serif;font-size:clamp(24px,6.5vw,46px);font-weight:300;color:rgba(20,15,8,.82);letter-spacing:.04em;line-height:1;transition:all .22s}
-.gc-amt.ph{color:rgba(20,15,8,.18);font-style:italic;font-size:clamp(14px,3.5vw,24px)}
-.gc-curr{font-size:clamp(8px,1.8vw,11px);color:rgba(20,15,8,.35);margin-top:4px;letter-spacing:.12em;font-family:'Tajawal',sans-serif}
+.gc-amt{font-family:'Cormorant Garamond',serif;font-size:clamp(28px,7vw,50px);font-weight:300;color:rgba(20,15,8,.85);letter-spacing:.02em;line-height:1;transition:all .22s}
+.gc-amt.ph{color:rgba(20,15,8,.18);font-style:italic;font-size:clamp(12px,3vw,18px);font-weight:300}
+.gc-curr{font-size:clamp(8px,1.6vw,10px);color:rgba(20,15,8,.32);margin-top:5px;letter-spacing:.18em;font-family:'Tajawal',sans-serif;text-transform:uppercase}
 /* Bottom */
 .gc-bot{display:flex;justify-content:space-between;align-items:flex-end}
 .gc-to-sec{flex:1;min-width:0}
@@ -219,8 +219,8 @@ textarea.inp{resize:none;line-height:1.65}
 <body>
 
 <div class="bar">
-  <a class="back" id="bk" href="/">← رجوع</a>
-  <a class="logo" href="/">GRAFF SPA</a>
+  <a class="back" id="bk" href="javascript:history.back()">← رجوع</a>
+  <a class="logo" href="javascript:history.back()" id="gift-logo">GRAFF SPA</a>
   <div style="min-width:52px"></div>
 </div>
 
@@ -281,8 +281,11 @@ textarea.inp{resize:none;line-height:1.65}
             </div>
           </div>
           <div class="gc-center">
-            <div class="gc-amt ph" id="gc-amt">اختاري قيمة البطاقة</div>
-            <div class="gc-curr" id="gc-curr" style="display:none">SAUDI RIYAL · SAR</div>
+            <div style="display:flex;align-items:baseline;gap:6px;justify-content:center">
+              <div class="gc-amt ph" id="gc-amt">اختاري القيمة</div>
+              <div id="gc-sar" style="font-family:'Tajawal',sans-serif;font-size:clamp(10px,2vw,14px);color:rgba(20,15,8,.4);font-weight:400;display:none">SAR</div>
+            </div>
+            <div class="gc-curr" id="gc-curr" style="display:none">ريال سعودي</div>
             <div class="gc-msg-wrap" id="gc-msg-wrap">
               <div class="gc-msg" id="gc-msg-txt"></div>
             </div>
@@ -478,6 +481,7 @@ function selAmt(el,amt){
   el.classList.add('sel');S.amt=amt;
   const ae=ge('gc-amt');ae.textContent=amt;ae.classList.remove('ph');
   ge('gc-curr').style.display='block';
+  var sarEl=ge('gc-sar');if(sarEl)sarEl.style.display='';
   ge('b1').disabled=false;
   // update p2 card
   sv('p2-amt',amt);ge('p2-curr')&&(ge('p2-curr').style.display='');
