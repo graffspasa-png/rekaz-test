@@ -47,6 +47,12 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink2);color:#fff;directio
 .content{flex:1;padding:22px;max-width:960px;width:100%}
 .panel{display:none}
 .panel.on{display:block;animation:fi .18s ease}
+.text-group{margin-bottom:18px}
+.text-group-ttl{font-size:8px;letter-spacing:.2em;color:var(--gold);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid rgba(184,150,90,.15);text-transform:uppercase}
+.text-row{display:flex;align-items:center;gap:12px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.text-lbl{font-size:11px;color:rgba(255,255,255,.45);min-width:180px;flex-shrink:0}
+.text-inp{flex:1;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);color:#fff;font-family:'Tajawal',sans-serif;font-size:13px;padding:7px 10px;outline:none;transition:border-color .13s}
+.text-inp:focus{border-color:rgba(184,150,90,.4)}
 @keyframes fi{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
 .card{background:var(--ink3);border:1px solid rgba(255,255,255,.07);padding:20px;margin-bottom:14px}
 .card-ttl{font-size:11px;font-weight:500;letter-spacing:.1em;color:rgba(255,255,255,.65);margin-bottom:16px;display:flex;align-items:center;gap:8px;text-transform:uppercase}
@@ -491,22 +497,31 @@ async function loadRekazProds(){
 
 // ── TEXTS ──
 const TEXT_GROUPS=[
-  {title:'الصفحة الرئيسية',keys:['homeEyebrow','homeTagline','homeCity','btn1Text','btn2Text','btn3Text','btn4Text','footerDesc','footerCopy','whatsappNumber']},
+  {title:'الشعار والهوية',keys:['logoText','vatNumber','homeCity','whatsappNumber']},
+  {title:'الصفحة الرئيسية',keys:['homeEyebrow','homeTagline','btn1Text','btn2Text','btn3Text','btn4Text','footerDesc','footerCopy']},
   {title:'صفحة الحجز',keys:['bookingStep1Title','bookingStep1Sub','bookingStep2Title','bookingStep3Title','bookingStep3Sub','bookingConfirmTitle','bookingConfirmSub','paymentSafeText']},
-  {title:'صفحة الإهداء',keys:['giftEyebrow','giftTitle','giftSubtitle']},
-  {title:'صفحة العضويات',keys:['membershipsEyebrow','membershipsTitle','membershipsSub']},
-  {title:'المعلومات',keys:['logoText','vatNumber']}
+  {title:'بطاقة الإهداء — نصوص الصفحة',keys:['giftEyebrow','giftTitle','giftSubtitle']},
+  {title:'بطاقة الإهداء — نصوص البطاقة',keys:['giftCardLogoLine1','giftCardTagEn','giftCardTagAr','giftCardCurrency']},
+  {title:'بطاقة العضوية — نصوص الصفحة',keys:['membershipsEyebrow','membershipsTitle','membershipsSub']},
+  {title:'بطاقة العضوية — نصوص البطاقة',keys:['memberCardLogoText','memberCardTitleEn','memberCardTitleAr','memberCardPlanName']},
+  {title:'نصوص الفوتر',keys:['footerDesc','footerCopy']}
 ];
 const TEXT_LABELS={
-  homeEyebrow:'العبارة الأولى (eyebrow)',homeTagline:'العبارة الرئيسية (tagline)',homeCity:'المدينة',
+  logoText:'نص الشعار',vatNumber:'الرقم الضريبي',homeCity:'المدينة',whatsappNumber:'رقم واتساب',
+  homeEyebrow:'عبارة eyebrow الرئيسية',homeTagline:'العبارة الرئيسية (tagline)',
   btn1Text:'زر 1',btn2Text:'زر 2',btn3Text:'زر 3',btn4Text:'زر 4',
-  footerDesc:'وصف الفوتر',footerCopy:'حقوق الملكية',whatsappNumber:'رقم واتساب',
-  bookingStep1Title:'عنوان خطوة 1',bookingStep1Sub:'وصف خطوة 1',bookingStep2Title:'عنوان خطوة 2',
-  bookingStep3Title:'عنوان خطوة 3',bookingStep3Sub:'وصف خطوة 3',
-  bookingConfirmTitle:'عنوان التأكيد',bookingConfirmSub:'وصف التأكيد',paymentSafeText:'نص الدفع الآمن',
-  giftEyebrow:'Eyebrow',giftTitle:'العنوان',giftSubtitle:'العنوان الفرعي',
-  membershipsEyebrow:'Eyebrow',membershipsTitle:'العنوان',membershipsSub:'الوصف',
-  logoText:'نص الشعار',vatNumber:'الرقم الضريبي'
+  footerDesc:'وصف الفوتر',footerCopy:'حقوق الملكية',
+  bookingStep1Title:'عنوان خطوة الخدمات',bookingStep1Sub:'وصف خطوة الخدمات',
+  bookingStep2Title:'عنوان خطوة الموعد',
+  bookingStep3Title:'عنوان خطوة التحقق',bookingStep3Sub:'وصف خطوة التحقق',
+  bookingConfirmTitle:'عنوان صفحة التأكيد',bookingConfirmSub:'وصف صفحة التأكيد',
+  paymentSafeText:'نص الدفع الآمن',
+  giftEyebrow:'عبارة Eyebrow',giftTitle:'عنوان صفحة الإهداء',giftSubtitle:'وصف صفحة الإهداء',
+  giftCardLogoLine1:'شعار البطاقة (السطر الأول)',giftCardTagEn:'اسم البطاقة (إنجليزي)',
+  giftCardTagAr:'اسم البطاقة (عربي)',giftCardCurrency:'نص العملة على البطاقة',
+  membershipsEyebrow:'عبارة Eyebrow',membershipsTitle:'عنوان صفحة العضوية',membershipsSub:'وصف صفحة العضوية',
+  memberCardLogoText:'شعار بطاقة العضوية',memberCardTitleEn:'اسم العضوية (إنجليزي)',
+  memberCardTitleAr:'اسم العضوية (عربي)',memberCardPlanName:'اسم الباقة على البطاقة'
 };
 function renderTexts(){
   const tx=DB.texts||{};
