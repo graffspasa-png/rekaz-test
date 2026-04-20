@@ -421,8 +421,15 @@ body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-r
   </div>
   <div class="svcbody" id="svcbody"></div>
   <div class="cartbar" id="cartbar">
-    <div class="cartinfo"><div class="cartcnt" id="cartcnt">لم يتم الاختيار بعد</div><div class="cartprice"><span class="cartsr">SAR </span><span id="carttot">0</span></div><div id="carttag"></div></div>
-    <button class="cartcta" onclick="goNext()">متابعة ←</button>
+    <div class="cartinfo">
+      <div class="cartcnt" id="cartcnt">لم يتم الاختيار بعد</div>
+      <div style="display:flex;align-items:baseline;gap:3px">
+        <span class="cartsr">SAR</span>
+        <span id="carttot" style="font-family:'Cormorant Garamond',serif;font-size:20px;color:#fff">0</span>
+      </div>
+      <div id="carttag" style="margin-top:3px;display:flex;flex-wrap:wrap;gap:4px;max-width:200px"></div>
+    </div>
+    <button class="cartcta" id="cartcta-btn" onclick="goNext()">متابعة ←</button>
   </div>
 </div>
 
@@ -592,6 +599,21 @@ var calY=new Date().getFullYear(),calM=new Date().getMonth(),allSlots=[],otpTime
 var CFG=null;
 
 // ── INIT ──
+// Restore page on refresh
+(function(){
+  try{
+    var pg=sessionStorage.getItem('graff_page');
+    if(pg&&pg!=='home'&&pg!=='suc'){
+      // Only restore safe pages — for booking pages, go home (can't restore mid-flow)
+      // Exception: svcs page (no state needed)
+      if(pg==='svcs'){
+        document.querySelectorAll('.pg').forEach(function(p){p.classList.remove('on');});
+        var el=document.getElementById('svcs');if(el)el.classList.add('on');
+      }
+    }
+  }catch(e){}
+})();
+
 async function init(){
   try{var r=await fetch(B+'/site');if(r.ok)CFG=await r.json();}catch(e){console.log('Site config:',e.message);}
   applyConfig();
@@ -1039,10 +1061,9 @@ function updCart(){
   document.getElementById('cartbar').classList.toggle('up',has||cnt>0);
   
   // Update proceed button
-  var btn=document.getElementById('svcnext');
-  if(btn){
-    btn.disabled=!has;
-    btn.textContent=has?'اختاري الوقت ←':(cnt>0?'تأكيد الخدمات ←':'اختاري خدمة أولاً');
+  var ctabtn=document.getElementById('cartcta-btn');
+  if(ctabtn){
+    ctabtn.textContent=has?'اختاري الوقت ←':(cnt>0?'تأكيد وإتمام الحجز ←':'متابعة ←');
   }
 }
 
@@ -1130,8 +1151,7 @@ function confirmSlot(addMore){
   S.pendingCart=null;
   S.slot=null;S.slotLbl=null;
   S.addons=[];
-  // Reset date UI
-  S.date=null;
+  // Keep S.date so calendar shows correctly
   // Show done tag on service card
   document.querySelectorAll('.sc.sel').forEach(function(el){
     el.classList.add('done');el.classList.remove('sel');
@@ -1218,12 +1238,15 @@ function buildConfirm(){
   var h='<div class="inv-section">';
   h+='<div class="inv-lbl">الخدمات المحجوزة</div>';
   S.carts.forEach(function(c,i){
-    h+='<div class="sumrow" style="flex-direction:column;align-items:flex-start;gap:3px;padding:10px 0;border-bottom:1px solid rgba(0,0,0,.06)">';
-    h+='<div style="display:flex;justify-content:space-between;width:100%">';
-    h+='<span class="suml" style="font-weight:500;color:var(--text)">'+esc(c.name)+'</span>';
-    h+='<span class="sumv">SAR '+c.amount.toLocaleString('en')+'</span>';
-    h+='</div>';
+    h+='<div class="sumrow" style="align-items:flex-start;padding:11px 13px;gap:8px">';
+    h+='<div style="flex:1;min-width:0">';
+    h+='<div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:3px">'+esc(c.name)+'</div>';
     h+='<div style="font-size:11px;color:var(--muted)">'+esc(c.slotLbl||'—')+'</div>';
+    h+='</div>';
+    h+='<div style="display:flex;align-items:center;gap:8px;flex-shrink:0">';
+    h+='<span style="font-family:Cormorant Garamond,serif;font-size:18px;color:var(--text)">'+c.amount.toLocaleString('en')+'<span style="font-family:Tajawal,sans-serif;font-size:9px;color:var(--muted);margin-right:2px"> SAR</span></span>';
+    h+='<button onclick="removeCart('+i+')" style="width:22px;height:22px;border-radius:50%;border:1px solid rgba(180,50,50,.25);background:rgba(180,50,50,.06);color:rgba(180,50,50,.6);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;flex-shrink:0;font-family:monospace">×</button>';
+    h+='</div>';
     h+='</div>';
   });
   h+='</div>';
@@ -1238,6 +1261,11 @@ function buildConfirm(){
 
   document.getElementById('confsumm').innerHTML=h;
   document.getElementById('conftot').innerHTML='<span class="sumtotl">الإجمالي شامل الضريبة</span><span class="sumtotv">SAR '+tot.toLocaleString('en')+'</span>';
+}
+function removeCart(i){
+  S.carts.splice(i,1);
+  if(S.carts.length===0){go('svcs');return;}
+  buildConfirm();
 }
 function selPay(el){el.closest('.pms').querySelectorAll('.pmrow').forEach(function(r){r.classList.remove('on');});el.classList.add('on');}
 function applyDisc(){
@@ -1271,13 +1299,11 @@ async function doBook(){
     var bd=await br.json();if(!br.ok)throw new Error(bd.error||'فشل الحجز');
     S.payUrl=bd.payUrl||null;
     var ref=bd.orderNumber||'—';
-    var dd=S.date,dl=DA[new Date(dd.y,dd.m,dd.d).getDay()]+' '+dd.d+' '+MO[dd.m];
-    var tot=calcTotal();
+    var tot=S.carts.reduce(function(s,c){return s+c.amount;},0);
     document.getElementById('succard').innerHTML=
       '<div class="sucrow"><span class="suclbl">الاسم</span><span class="sucval">'+esc(name)+'</span></div>'+
       '<div class="sucrow"><span class="suclbl">الجوال</span><span class="sucval">'+esc(S.phone)+'</span></div>'+
-      '<div class="sucrow"><span class="suclbl">الخدمات</span><span class="sucval">'+S.carts.map(function(c){return esc(c.name)+' ('+esc(c.slotLbl||'—')+')';}).join('<br>')+'</span></div>'+
-      
+      S.carts.map(function(c){return '<div class="sucrow"><span class="suclbl">'+esc(c.name)+'</span><span class="sucval">'+esc(c.slotLbl||'—')+' · SAR '+c.amount.toLocaleString('en')+'</span></div>';}).join('')+
       '<div class="sucrow"><span class="suclbl">الإجمالي</span><span class="sucval">SAR '+tot.toLocaleString('en')+'</span></div>';
     // Show order ref from Rekaz
     if(bd.orderRef||bd.id){
@@ -1320,30 +1346,31 @@ function closePopup(){
 // ── NAV ──
 function go(id){
   document.querySelectorAll('.pg').forEach(function(p){p.classList.remove('on');});
-  document.getElementById(id).classList.add('on');
+  var el=document.getElementById(id);if(!el)return;
+  el.classList.add('on');
   window.scrollTo(0,0);
+  // Save current page in sessionStorage so refresh stays on page
+  try{sessionStorage.setItem('graff_page',id);}catch(e){}
   if(id==='confirm')buildConfirm();
   if(id==='dt'){
-    // Reset slot UI for new service selection
     S.slot=null;S.slotLbl=null;
     var slotsec=document.getElementById('slotsec');if(slotsec)slotsec.style.display='none';
     var dtfoot=document.getElementById('dtfoot');if(dtfoot)dtfoot.style.display='none';
     var addsec=document.getElementById('addonssec');if(addsec)addsec.style.display='none';
     var btndt=document.getElementById('btndt');if(btndt){btndt.disabled=true;btndt.textContent='اختاري وقتاً للمتابعة';}
     var btndtm=document.getElementById('btndt-more');if(btndtm)btndtm.style.display='none';
-    // Show current pending service name
     var svclbl=document.getElementById('dt-svc-name');
-    if(svclbl&&S.pendingCart){
-      svclbl.textContent='اختاري وقت — '+S.pendingCart.name;
-      svclbl.style.display='block';
-    } else if(svclbl){svclbl.style.display='none';}
-    // Reset calendar
-    calY=new Date().getFullYear();calM=new Date().getMonth();
+    if(svclbl&&S.pendingCart){svclbl.textContent='اختاري وقت — '+S.pendingCart.name;svclbl.style.display='block';}
+    else if(svclbl){svclbl.style.display='none';}
+    if(!S.date){calY=new Date().getFullYear();calM=new Date().getMonth();}
     renderCal();
   }
   if(id==='svcs'){
     updCart();
     if(!document.querySelector('.sc'))loadProducts();
+  }
+  if(id==='home'||id==='suc'){
+    try{sessionStorage.removeItem('graff_page');}catch(e){}
   }
 }
 function openWA(){
