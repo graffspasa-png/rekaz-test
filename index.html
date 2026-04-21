@@ -120,8 +120,9 @@ body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-r
 
 /* ── SUB-SECTION HEADER ── */
 .subcategory-title{text-align:center;margin-bottom:24px;margin-top:32px;padding:0 16px}
-.title-en{display:block;font-size:26px;letter-spacing:.18em;text-transform:uppercase;font-family:'Cormorant Garamond',serif;color:var(--text);line-height:1.2;font-weight:300}
-.title-ar{display:block;font-size:22px;margin-top:4px;font-family:'Tajawal',sans-serif;direction:rtl;color:var(--muted);letter-spacing:0;font-weight:400;line-height:1.4}
+:root{--sub-en-size:26px;--sub-ar-size:22px}
+.title-en{display:block;font-size:var(--sub-en-size);letter-spacing:.18em;text-transform:uppercase;font-family:'Cormorant Garamond',serif;color:var(--text);line-height:1.2;font-weight:300}
+.title-ar{display:block;font-size:var(--sub-ar-size);margin-top:4px;font-family:'Tajawal',sans-serif;direction:rtl;color:var(--muted);letter-spacing:0;font-weight:400;line-height:1.4}
 .title-line{width:36px;height:2px;background:#c5a46d;margin:12px auto 0;border-radius:1px}
 .sub-cards{display:flex;flex-direction:column;gap:7px;padding-bottom:4px}
 
@@ -682,13 +683,9 @@ function applyConfig(){
   var gc=(CFG.pages&&CFG.pages.gift)||{};
   if(gc.title){var el=document.getElementById('gift-h1');if(el)el.textContent=gc.title;}
   if(gc.subtitle){var el=document.getElementById('gift-sub');if(el)el.textContent=gc.subtitle;}
-  // Apply extra texts from texts field
-  var applyExtra=['homeEyebrow','homeTagline','homeCity','footerDesc','footerCopy','logoText'];
-  applyExtra.forEach(function(k){
-    if(tx[k]){
-      if(k==='homeCity'){var el=document.getElementById('home-city');if(el)el.textContent=tx[k];}
-    }
-  });
+  // Apply subcategory font sizes from theme
+  if(t.subEnSize) R.style.setProperty('--sub-en-size', t.subEnSize+'px');
+  if(t.subArSize) R.style.setProperty('--sub-ar-size', t.subArSize+'px');
 }
 
 function renderHomeButtons(){
