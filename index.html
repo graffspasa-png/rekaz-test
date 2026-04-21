@@ -39,7 +39,7 @@ body,button,input,textarea,select{
 @keyframes fi{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
 /* Arabic text — zero letter-spacing everywhere */
 body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility}
-[dir=rtl] *{letter-spacing:0 !important;word-spacing:0}
+[dir=rtl] *{letter-spacing:0 !important;word-spacing:.02em}
 /* Restore letter-spacing only for English/display elements */
 .eyebrow,.hcity,.svceye,.seclbl,.fmeye,.fctitl,.page-eyebrow,.adtitle,.title-en,.logo-txt,.flogo-txt,.fcity,.vatnote,.sucref,.tb-title,.card-ttl{letter-spacing:.1em !important}
 .hlogo,.hlogo b,.page-h1,.suctit,.popup-title,.fmh1{letter-spacing:.06em !important}
@@ -134,11 +134,11 @@ body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-r
 .sc.sel .scbar{transform:scaleY(1)}
 .scbody{display:flex;align-items:flex-start;padding:13px 12px 11px;gap:10px}
 .scinfo{flex:1;min-width:0}
-.scname{font-size:14px;font-weight:500;color:var(--text);line-height:1.28;margin-bottom:3px}
-.scdesc{font-size:11px;color:var(--muted);line-height:1.65;margin-bottom:5px}
+.scname{font-size:15px;font-weight:500;color:var(--text);line-height:1.3;margin-bottom:4px}
+.scdesc{font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:5px}
 .scdur{display:inline-flex;align-items:center;gap:4px;font-size:10px;color:var(--gold);font-weight:500;background:rgba(184,150,90,.07);border:1px solid rgba(184,150,90,.14);padding:2px 8px;border-radius:20px}
 .scright{display:flex;flex-direction:column;align-items:flex-end;gap:7px;flex-shrink:0;padding-top:1px}
-.scprice{font-family:'Cormorant Garamond',serif;font-size:21px;font-weight:400;color:var(--text);line-height:1}
+.scprice{font-family:'Cormorant Garamond',serif;font-size:23px;font-weight:400;color:var(--text);line-height:1}
 .scsr{font-family:'Tajawal',sans-serif;font-size:9px;color:var(--muted);margin-right:1px}
 .scvat{font-size:8px;color:rgba(118,110,100,.45);text-align:left;margin-top:1px}
 .scchk{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;transition:all .16s;flex-shrink:0}
@@ -180,7 +180,7 @@ body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-r
 .opt-dot{width:7px;height:7px;border-radius:50%;background:#fff;opacity:0;transform:scale(0);transition:all .14s}
 .opt-row.sel .opt-dot{opacity:1;transform:scale(1)}
 .opt-info{flex:1}
-.opt-name{font-size:13px;color:var(--text);margin-bottom:2px}
+.opt-name{font-size:14px;color:var(--text);margin-bottom:3px}
 .opts-arrow{width:22px;height:22px;border-radius:50%;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--muted);transition:transform .2s,border-color .15s;flex-shrink:0}
 .sc.has-open .opts-arrow{border-color:var(--gold);color:var(--gold)}
 .opt-name-en{font-size:11px;color:var(--muted);font-family:'Cormorant Garamond',serif;letter-spacing:.04em}
@@ -204,7 +204,7 @@ body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-r
 .cartcnt{font-size:9px;letter-spacing:.09em;color:var(--muted);margin-bottom:1px}
 .cartprice{font-family:'Cormorant Garamond',serif;font-size:22px;color:#fff;line-height:1}
 .cartsr{font-family:'Tajawal',sans-serif;font-size:10px;color:var(--muted)}
-.carttag{font-size:9px;color:rgba(255,255,255,.26);border:1px solid rgba(255,255,255,.07);padding:1px 6px;display:inline-block;margin-top:3px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.carttag{font-size:12px;color:rgba(255,255,255,.82);padding:0;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:400}
 .done-tag{background:rgba(42,160,90,.1);border-color:rgba(42,160,90,.3);color:rgba(42,160,90,.9);}
 .cartcta{padding:13px 20px;background:var(--gold);color:var(--ink);border:none;font-family:'Tajawal',sans-serif;font-size:11px;font-weight:500;letter-spacing:.12em;cursor:pointer;transition:background .14s;white-space:nowrap;flex-shrink:0;border-radius:var(--brad)}
 .cartcta:hover{background:var(--gold2)}
@@ -251,7 +251,7 @@ body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-r
 .fctitl::after{content:'';flex:1;height:1px;background:var(--border)}
 .flbl{font-size:10px;letter-spacing:.08em;color:var(--muted);display:block;margin-bottom:4px;margin-top:10px}
 .flbl:first-child{margin-top:0}
-.finp{width:100%;padding:11px 12px;background:var(--cream);border:1px solid var(--border);font-family:'Tajawal',sans-serif;font-size:14px;color:var(--text);outline:none;transition:border-color .15s;border-radius:var(--brad)}
+.finp{width:100%;padding:13px 14px;background:var(--cream);border:1px solid var(--border);font-family:'Tajawal',sans-serif;font-size:15px;color:var(--text);outline:none;transition:border-color .15s;border-radius:var(--brad)}
 .finp:focus{border-color:rgba(24,21,14,.36)}
 .finp::placeholder{color:rgba(145,135,125,.42)}
 
@@ -266,7 +266,7 @@ body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-r
 
 /* SUMMARY */
 .sumcard{background:var(--w);border:1px solid var(--border);margin-bottom:9px;border-radius:var(--brad)}
-.sumrow{display:flex;justify-content:space-between;align-items:center;padding:10px 13px;border-bottom:1px solid var(--border);font-size:12px;gap:8px}
+.sumrow{display:flex;justify-content:space-between;align-items:center;padding:11px 14px;border-bottom:1px solid var(--border);font-size:13px;gap:8px}
 .inv-section{background:var(--w);border:1px solid var(--border);border-radius:var(--brad);overflow:hidden;margin-bottom:0}
 .inv-lbl{font-size:8px;letter-spacing:.18em;color:var(--muted);padding:9px 13px 5px;text-transform:uppercase;border-bottom:1px solid var(--border);background:rgba(24,21,14,.025)}
 .addon-lbl{color:var(--ok)!important}
@@ -422,13 +422,13 @@ body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-r
   </div>
   <div class="svcbody" id="svcbody"></div>
   <div class="cartbar" id="cartbar">
-    <div class="cartinfo">
-      <div class="cartcnt" id="cartcnt">لم يتم الاختيار بعد</div>
-      <div style="display:flex;align-items:baseline;gap:3px">
-        <span class="cartsr">SAR</span>
-        <span id="carttot" style="font-family:'Cormorant Garamond',serif;font-size:20px;color:#fff">0</span>
+    <div class="cartinfo" style="min-width:0;flex:1">
+      <div class="cartcnt" id="cartcnt" style="font-size:10px;letter-spacing:.06em;color:rgba(255,255,255,.4);margin-bottom:2px">اختاري خدمة للمتابعة</div>
+      <div id="carttag" style="display:flex;flex-direction:column;gap:3px"></div>
+      <div style="display:flex;align-items:baseline;gap:4px;margin-top:4px">
+        <span style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;color:var(--gold)" id="carttot">0</span>
+        <span style="font-size:10px;color:rgba(255,255,255,.35)">SAR شامل الضريبة</span>
       </div>
-      <div id="carttag" style="margin-top:3px;display:flex;flex-wrap:wrap;gap:4px;max-width:200px"></div>
     </div>
     <button class="cartcta" id="cartcta-btn" onclick="goNext()">متابعة ←</button>
   </div>
@@ -498,9 +498,7 @@ body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-r
     <div class="vatnote">الأسعار شاملة ضريبة القيمة المضافة 15%</div>
     <div class="seclbl">كود الخصم</div>
     <div class="discw"><div class="discr"><input class="disci" id="disci" placeholder="أدخلي كود الخصم" maxlength="20"><button class="disca" onclick="applyDisc()">تطبيق</button></div><div class="discm" id="discm"></div></div>
-    <div class="seclbl">وسيلة الدفع</div>
-    <div class="paysafe"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>دفع آمن ومشفر · سيتم تحويلك لإتمام العملية</div>
-    <div class="pms" id="pms"></div>
+    <div class="paysafe" style="margin-top:8px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>دفع آمن ومشفر · سيتم تحويلك لإتمام الدفع عبر بوابة آمنة</div>
     <div class="errbox" id="errconf"></div>
   </div>
   <div class="botbar"><button class="botbtn" id="btnconf" onclick="doBook()">الدفع وتأكيد الحجز ←</button></div>
@@ -1054,28 +1052,39 @@ function swTab(cid,btn){
 function calcTotal(){var base=(S.pendingCart?S.pendingCart.amount:0);return base+S.addons.reduce(function(s,a){return s+a.price;},0);}
 function updCart(){
   var has=S.pendingCart!==null;
-  var tot=calcTotal();
-  var cartTotal=S.carts.reduce(function(s,c){return s+c.amount;},0);
-  var pendingAmt=S.pendingCart?S.pendingCart.amount:0;
-  var displayTot=(pendingAmt+(S.addons.reduce(function(s,a){return s+a.price;},0))).toLocaleString('en');
-  
-  // Show pending cart in cart bar
   var cnt=S.carts.length;
-  var addedTxt=cnt>0?cnt+' خدمة مضافة · ':'';
-  document.getElementById('cartcnt').textContent=has?(addedTxt+(S.pendingCart.name)):(cnt>0?(cnt+' خدمة مختارة'):'لم يتم الاختيار بعد');
-  document.getElementById('carttot').textContent=has?displayTot:cartTotal.toLocaleString('en');
+  var pendingAmt=S.pendingCart?S.pendingCart.amount:0;
+  var completedTotal=S.carts.reduce(function(s,c){return s+c.amount;},0);
+  var displayTot=has?(pendingAmt+completedTotal):completedTotal;
   
-  // Tags: show completed carts + pending
+  // Count label
+  var cntEl=document.getElementById('cartcnt');
+  if(cntEl){
+    if(has&&cnt===0) cntEl.textContent='خدمة مختارة — اختاري الوقت';
+    else if(has&&cnt>0) cntEl.textContent=cnt+' خدمة مؤكدة + خدمة جديدة';
+    else if(!has&&cnt>0) cntEl.textContent=cnt+' خدم'+(cnt===1?'ة':'ات')+' مؤكدة';
+    else cntEl.textContent='اختاري خدمة للمتابعة';
+  }
+  
+  // Tags
   var tags='';
-  S.carts.forEach(function(c){tags+='<span class="carttag done-tag">✓ '+esc(c.name)+'</span>';});
-  if(S.pendingCart)tags+='<span class="carttag">'+esc(S.pendingCart.name)+'</span>';
+  S.carts.forEach(function(c){
+    tags+='<span class="carttag done-tag" style="font-size:11px;color:rgba(184,150,90,.85)">✓ '+esc(c.name)+'<span style="color:rgba(255,255,255,.3);font-size:10px;margin-right:4px"> · '+c.slotLbl+'</span></span>';
+  });
+  if(S.pendingCart) tags+='<span class="carttag" style="font-size:13px;font-weight:500;color:#fff">'+esc(S.pendingCart.name)+'</span>';
   document.getElementById('carttag').innerHTML=tags;
+  
+  // Total
+  var totEl=document.getElementById('carttot');
+  if(totEl) totEl.textContent=displayTot.toLocaleString('en');
+  
   document.getElementById('cartbar').classList.toggle('up',has||cnt>0);
   
-  // Update proceed button
   var ctabtn=document.getElementById('cartcta-btn');
   if(ctabtn){
-    ctabtn.textContent=has?'اختاري الوقت ←':(cnt>0?'تأكيد وإتمام الحجز ←':'متابعة ←');
+    if(has) ctabtn.textContent='اختاري الوقت ←';
+    else if(cnt>0) ctabtn.textContent='تأكيد الحجز — '+cnt+' خدمات ←';
+    else ctabtn.textContent='متابعة ←';
   }
 }
 
