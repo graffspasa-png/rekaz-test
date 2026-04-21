@@ -33,7 +33,7 @@ body,button,input,textarea,select{
   font-family:'Cormorant Garamond',serif !important
 }
 .pg{display:none;min-height:100dvh;flex-direction:column}
-.pg.on{display:flex;animation:fi .22s ease}
+.pg.on{display:flex;animation:fi .18s ease}
 @keyframes fo{from{opacity:0}to{opacity:1}}
 @keyframes su{from{transform:scale(.9);opacity:0}to{transform:scale(1);opacity:1}}
 @keyframes fi{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
@@ -615,7 +615,10 @@ var CFG=null;
 })();
 
 async function init(){
-  try{var r=await fetch(B+'/site');if(r.ok)CFG=await r.json();}catch(e){console.log('Site config:',e.message);}
+  try{
+    var r=await fetch(B+'/site');
+    if(r.ok)CFG=await r.json();
+  }catch(e){console.log('Site config:',e.message);}
   applyConfig();
   renderSocial();
   renderFooterPay();
@@ -623,6 +626,8 @@ async function init(){
   renderGiftPage();
   renderMems();
   renderPayMethods();
+  // Preload services in background after UI ready
+  setTimeout(function(){if(!_menuCache)loadProducts();},500);
 }
 
 function applyConfig(){
