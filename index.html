@@ -72,9 +72,9 @@ body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-r
 .hl{width:42px;height:1px;background:linear-gradient(to right,transparent,rgba(184,150,90,.26))}
 .hl.r{background:linear-gradient(to left,transparent,rgba(184,150,90,.26))}
 .hd{width:5px;height:5px;background:var(--gold);transform:rotate(45deg)}
-.htag{font-family:'Cormorant Garamond',serif;font-size:clamp(15px,3.1vw,18px);font-weight:300;color:rgba(255,255,255,.22);line-height:1.45;margin-bottom:40px}
+.htag{font-family:'Cormorant Garamond',serif;font-size:clamp(17px,3.8vw,22px);font-weight:300;color:rgba(255,255,255,.28);line-height:1.5;margin-bottom:40px}
 .hbtns{position:relative;z-index:2;align-self:center;width:100%;max-width:355px;padding:0 20px 20px;display:flex;flex-direction:column;gap:9px}
-.hbtn{width:100%;padding:15px 20px;font-family:'Tajawal',sans-serif;font-size:12px;letter-spacing:0;cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:all .17s;border:none;line-height:1;border-radius:var(--brad)}
+.hbtn{width:100%;padding:16px 20px;font-family:'Tajawal',sans-serif;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:all .17s;border:none;line-height:1;border-radius:var(--brad)}
 .hbtn.primary{background:var(--gold);color:var(--ink);font-weight:500}
 .hbtn.primary:hover{background:var(--gold2)}
 .hbtn.outline{background:transparent;border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.5)}
@@ -206,7 +206,7 @@ body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-r
 .cartsr{font-family:'Tajawal',sans-serif;font-size:10px;color:var(--muted)}
 .carttag{font-size:12px;color:rgba(255,255,255,.82);padding:0;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:400}
 .done-tag{background:rgba(42,160,90,.1);border-color:rgba(42,160,90,.3);color:rgba(42,160,90,.9);}
-.cartcta{padding:13px 20px;background:var(--gold);color:var(--ink);border:none;font-family:'Tajawal',sans-serif;font-size:11px;font-weight:500;letter-spacing:.12em;cursor:pointer;transition:background .14s;white-space:nowrap;flex-shrink:0;border-radius:var(--brad)}
+.cartcta{padding:15px 22px;background:var(--gold);color:var(--ink);border:none;font-family:'Tajawal',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:background .14s;white-space:nowrap;flex-shrink:0;border-radius:var(--brad)}
 .cartcta:hover{background:var(--gold2)}
 
 /* DATETIME */
@@ -230,7 +230,7 @@ body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-r
 .slotload{font-size:11px;color:var(--gold);padding:17px;text-align:center;letter-spacing:.12em}
 .slotnone{font-size:12px;color:var(--muted);padding:19px;text-align:center;line-height:2;background:var(--w);border:1px solid var(--border);border-radius:var(--brad)}
 .slots{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
-.slot{padding:10px 3px;text-align:center;background:var(--w);border:1px solid var(--border);font-size:12px;cursor:pointer;transition:all .11s;color:var(--text);font-family:'Tajawal',sans-serif;border-radius:var(--brad)}
+.slot{padding:12px 4px;text-align:center;background:var(--w);border:1px solid var(--border);font-size:14px;cursor:pointer;transition:all .11s;color:var(--text);font-family:'Tajawal',sans-serif;border-radius:var(--brad)}
 .slot:hover{background:var(--cream2)}
 .slot.on{background:var(--ink);color:#fff;border-color:var(--ink)}
 .dtfoot{position:fixed;bottom:0;right:0;left:0;z-index:100;background:var(--ink);border-top:1px solid rgba(184,150,90,.13);padding:10px 13px;display:none}
@@ -386,7 +386,7 @@ body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-r
     <p class="htag" id="home-tagline">حيث تلتقي العناية بالفخامة · في أدق تفاصيلها</p>
   </div>
   <div class="hbtns" id="home-btns">
-    <button class="hbtn primary" onclick="go('svcs')"><span>احجزي موعدك الآن</span><span class="harr">←</span></button>
+    <button class="hbtn primary" onclick="go('svcs')"><span>احجزي موعدك</span><span class="harr">←</span></button>
     <button class="hbtn outline" onclick="go('gift-page')"><span>أهدي من تحبين</span><span class="harr">←</span></button>
     <button class="hbtn outline" onclick="go('memberships-page')"><span>العضويات</span><span class="harr">←</span></button>
     <button class="hbtn outline" onclick="openWA()"><span>تواصلي معنا</span><span class="harr">←</span></button>
@@ -437,12 +437,18 @@ body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-r
 <!-- DATETIME -->
 <div id="dt" class="pg">
   <div class="bar"><button class="back" onclick="go('svcs')">← رجوع</button><div class="logo-txt" onclick="go('home')">GRAFF SPA</div><div class="barr"><div class="sdot done"></div>
-<div id="dt-svc-name" style="text-align:center;font-size:12px;color:var(--gold);padding:8px 16px;background:rgba(184,150,90,.06);border-bottom:1px solid rgba(184,150,90,.1);display:none"></div><div class="sdot on"></div><div class="sdot"></div></div></div>
+<div class="sdot on"></div><div class="sdot"></div></div></div>
   <div class="prog"><b style="width:55%"></b></div>
+  <!-- Selected service banner -->
+  <div id="dt-svc-banner" style="display:none;background:var(--ink);border-bottom:1px solid rgba(184,150,90,.12);padding:14px 20px;text-align:center">
+    <div style="font-size:8px;letter-spacing:.2em;color:rgba(184,150,90,.5);margin-bottom:5px">الخدمة المختارة</div>
+    <div id="dt-svc-name" style="font-family:'Cormorant Garamond',serif;font-size:clamp(17px,4.5vw,24px);font-weight:300;color:#fff;letter-spacing:.06em"></div>
+    <div id="dt-svc-price" style="font-family:'Tajawal',sans-serif;font-size:13px;color:var(--gold);margin-top:3px;opacity:.75"></div>
+  </div>
   <div class="dtbody">
-    <div class="seclbl">اختاري التاريخ</div>
+    <div class="seclbl">التاريخ</div>
     <div class="cal"><div class="calnav"><button class="calbtn" onclick="chM(-1)">›</button><div class="calmo" id="callbl"></div><button class="calbtn" onclick="chM(1)">‹</button></div><div class="calhd"><div class="calhl">أح</div><div class="calhl">إث</div><div class="calhl">ث</div><div class="calhl">أر</div><div class="calhl">خ</div><div class="calhl">ج</div><div class="calhl">س</div></div><div class="calgrid" id="calgrid"></div></div>
-    <div id="slotsec" style="display:none"><div class="seclbl">الأوقات المتاحة</div><div id="slotsbox"></div></div>
+    <div id="slotsec" style="display:none"><div class="seclbl">المواعيد المتاحة</div><div id="slotsbox"></div></div>
     <div id="addonssec" style="display:none">
       <div class="seclbl">الإضافات</div>
       <div id="addonsbox"></div>
@@ -461,11 +467,11 @@ body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-r
   <div class="bar"><button class="back" onclick="go('dt')">← رجوع</button><div class="logo-txt" onclick="go('home')">GRAFF SPA</div><div class="barr"><div class="sdot done"></div><div class="sdot done"></div><div class="sdot on"></div></div></div>
   <div class="prog"><b style="width:75%"></b></div>
   <div class="fmbody">
-    <div class="fmhd"><p class="fmeye">STEP 3 · VERIFICATION</p><h2 class="fmh1">تأكيد هويتك</h2><p class="fmsub">سنرسل رمز التحقق لجوالك</p></div>
-    <div class="fcard"><div class="fctitl">رقم الجوال</div><label class="flbl">رقم جوالك السعودي</label><input class="finp" id="inpphone" type="tel" maxlength="10" placeholder="05xxxxxxxx" oninput="onPh()" autocomplete="tel" style="font-size:18px;letter-spacing:.08em;text-align:center"></div>
+    <div class="fmhd"><p class="fmeye">STEP 3 · VERIFICATION</p><h2 class="fmh1">تأكيد هويتك</h2><p class="fmsub">سيُرسل رمز التحقق إلى جوالك</p></div>
+    <div class="fcard"><div class="fctitl">رقم الجوال</div><label class="flbl">رقم الجوال</label><input class="finp" id="inpphone" type="tel" maxlength="10" placeholder="05xxxxxxxx" oninput="onPh()" autocomplete="tel" style="font-size:18px;letter-spacing:.08em;text-align:center"></div>
     <div class="errbox" id="errph"></div>
   </div>
-  <div class="botbar"><button class="botbtn" id="btnph" onclick="sendOTP()" disabled>إرسال رمز التحقق ←</button></div>
+  <div class="botbar"><button class="botbtn" id="btnph" onclick="sendOTP()" disabled>إرسال الرمز ←</button></div>
 </div>
 
 <!-- OTP -->
@@ -473,16 +479,16 @@ body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-r
   <div class="bar"><button class="back" onclick="go('phone')">← رجوع</button><div class="logo-txt" onclick="go('home')">GRAFF SPA</div><div class="barr"><div class="sdot done"></div><div class="sdot done"></div><div class="sdot on"></div></div></div>
   <div class="prog"><b style="width:80%"></b></div>
   <div class="fmbody">
-    <div class="fmhd"><p class="fmeye">STEP 3 · CODE</p><h2 class="fmh1">رمز التحقق</h2><p class="fmsub" id="otphnt">تم إرسال الرمز على جوالك</p></div>
+    <div class="fmhd"><p class="fmeye">STEP 3 · CODE</p><h2 class="fmh1">رمز التحقق</h2><p class="fmsub" id="otphnt">تم إرسال الرمز إلى جوالك</p></div>
     <div class="fcard"><div class="fctitl">أدخلي الرمز المكون من 4 أرقام</div>
       <div id="otpcode"></div>
       <div class="otprow"><input class="otpd" id="o4" maxlength="1" type="tel" inputmode="numeric" oninput="ochk()" onkeydown="ob(event,this,'o3')"><input class="otpd" id="o3" maxlength="1" type="tel" inputmode="numeric" oninput="om(this,'o4')" onkeydown="ob(event,this,'o2')"><input class="otpd" id="o2" maxlength="1" type="tel" inputmode="numeric" oninput="om(this,'o3')" onkeydown="ob(event,this,'o1')"><input class="otpd" id="o1" maxlength="1" type="tel" inputmode="numeric" oninput="om(this,'o2')" onkeydown="ob(event,this,'')"></div>
       <div class="otptimer" id="otptimer"></div>
-      <button class="otprsnd" id="otprsnd" onclick="sendOTP(true)" disabled>⟳ إعادة الإرسال</button>
+      <button class="otprsnd" id="otprsnd" onclick="sendOTP(true)" disabled>⟳ إعادة إرسال الرمز</button>
     </div>
     <div class="errbox" id="errotp"></div>
   </div>
-  <div class="botbar"><button class="botbtn" id="btnotp" onclick="verOTP()" disabled>تحقق وأكملي ←</button></div>
+  <div class="botbar"><button class="botbtn" id="btnotp" onclick="verOTP()" disabled>تحقق وتابعي ←</button></div>
 </div>
 
 <!-- CONFIRM -->
@@ -490,18 +496,18 @@ body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-r
   <div class="bar"><button class="back" onclick="go('otp')">← رجوع</button><div class="logo-txt" onclick="go('home')">GRAFF SPA</div><div class="barr"><div class="sdot done"></div><div class="sdot done"></div><div class="sdot on"></div></div></div>
   <div class="prog"><b style="width:100%"></b></div>
   <div class="fmbody">
-    <div class="fmhd"><p class="fmeye">FINAL STEP</p><h2 class="fmh1">تأكيد الحجز</h2><p class="fmsub">راجعي تفاصيل حجزك وأتممي الدفع</p></div>
+    <div class="fmhd"><p class="fmeye">FINAL STEP</p><h2 class="fmh1">تأكيد الحجز</h2><p class="fmsub">راجعي تفاصيل الحجز وأتمّي الدفع</p></div>
     <div class="fcard"><div class="fctitl">بياناتك</div><label class="flbl">الاسم الكامل</label><input class="finp" id="inpname" placeholder="سارة الأحمدي" autocomplete="name"></div>
     <div class="seclbl">ملخص الطلب</div>
     <div class="sumcard" id="confsumm"></div>
     <div class="sumtot" id="conftot"></div>
     <div class="vatnote">الأسعار شاملة ضريبة القيمة المضافة 15%</div>
     <div class="seclbl">كود الخصم</div>
-    <div class="discw"><div class="discr"><input class="disci" id="disci" placeholder="أدخلي كود الخصم" maxlength="20"><button class="disca" onclick="applyDisc()">تطبيق</button></div><div class="discm" id="discm"></div></div>
-    <div class="paysafe" style="margin-top:8px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>دفع آمن ومشفر · سيتم تحويلك لإتمام الدفع عبر بوابة آمنة</div>
+    <div class="discw"><div class="discr"><input class="disci" id="disci" placeholder="كود الخصم" maxlength="20"><button class="disca" onclick="applyDisc()">تطبيق</button></div><div class="discm" id="discm"></div></div>
+    <div class="paysafe" style="margin-top:8px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>دفع آمن ومشفر — ستُحوَّلين إلى بوابة الدفع فور التأكيد</div>
     <div class="errbox" id="errconf"></div>
   </div>
-  <div class="botbar"><button class="botbtn" id="btnconf" onclick="doBook()">الدفع وتأكيد الحجز ←</button></div>
+  <div class="botbar"><button class="botbtn" id="btnconf" onclick="doBook()" style="background:var(--gold);color:var(--ink);font-size:16px;font-weight:700">الدفع وتأكيد الحجز ←</button></div>
 </div>
 
 <!-- SUCCESS -->
@@ -510,7 +516,7 @@ body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-r
   <div class="sucb">
     <div class="sucring"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path class="succhk" d="M20 6L9 17l-5-5"/></svg></div>
     <h2 class="suctit">تم الحجز بنجاح</h2>
-    <p class="sucsub" id="sucsub">تم تأكيد حجزك في نظام GRAFF SPA</p>
+    <p class="sucsub" id="sucsub">تم تأكيد حجزك بنجاح في GRAFF SPA</p>
     <div class="succard" id="succard"></div>
     <p class="sucref">رقم الطلب: <strong id="sucref">—</strong></p>
     <button class="sucpay" id="sucpay" onclick="openPayPopup()" style="display:none">إتمام الدفع ←</button>
@@ -1063,7 +1069,7 @@ function updCart(){
     if(has&&cnt===0) cntEl.textContent='خدمة مختارة — اختاري الوقت';
     else if(has&&cnt>0) cntEl.textContent=cnt+' خدمة مؤكدة + خدمة جديدة';
     else if(!has&&cnt>0) cntEl.textContent=cnt+' خدم'+(cnt===1?'ة':'ات')+' مؤكدة';
-    else cntEl.textContent='اختاري خدمة للمتابعة';
+    else cntEl.textContent='اختاري خدمة للبدء';
   }
   
   // Tags
@@ -1135,7 +1141,7 @@ function toASTDate(s){
 }
 async function loadSlots(y,m,d){
   if(!S.pendingCart)return;
-  document.getElementById('slotsbox').innerHTML='<div class="slotload">جاري تحميل المواعيد...</div>';
+  document.getElementById('slotsbox').innerHTML='<div class="slotload">جاري تحميل المواعيد</div>';
   var ds=y+'-'+p2(m+1)+'-'+p2(d);
   try{
     // Convert AST day to UTC range:
@@ -1153,7 +1159,7 @@ async function loadSlots(y,m,d){
       if(toASTDate(s.from)!==ds)return false;
       var l=toAST(s.from);if(seen[l])return false;seen[l]=true;return true;
     });
-    if(!allSlots.length){document.getElementById('slotsbox').innerHTML='<div class="slotnone">لا توجد مواعيد متاحة في هذا اليوم</div>';return;}
+    if(!allSlots.length){document.getElementById('slotsbox').innerHTML='<div class="slotnone">لا تتوفر مواعيد لهذا اليوم</div>';return;}
     var h='<div class="slots">';
     allSlots.forEach(function(s,i){h+='<div class="slot" id="sl'+i+'" onclick="pickSlot('+i+')">'+toAST(s.from)+'</div>';});
     document.getElementById('slotsbox').innerHTML=h+'</div>';
@@ -1311,7 +1317,7 @@ function selPay(el){el.closest('.pms').querySelectorAll('.pmrow').forEach(functi
 function applyDisc(){
   var code=document.getElementById('disci').value.trim().toUpperCase();
   var msg=document.getElementById('discm');
-  if(!code){msg.className='discm err';msg.textContent='أدخلي كود الخصم';return;}
+  if(!code){msg.className='discm err';msg.textContent='كود الخصم';return;}
   var codes={'GRAFF10':10,'WELCOME20':20,'VIP15':15};
   if(codes[code]){
     var at=S.addons.reduce(function(s,a){return s+a.price;},0);
@@ -1408,9 +1414,16 @@ function go(id){
     var addsec=document.getElementById('addonssec');if(addsec)addsec.style.display='none';
     var btndt=document.getElementById('btndt');if(btndt){btndt.disabled=true;btndt.textContent='اختاري وقتاً للمتابعة';}
     var btndtm=document.getElementById('btndt-more');if(btndtm)btndtm.style.display='none';
+    var svcbanner=document.getElementById('dt-svc-banner');
     var svclbl=document.getElementById('dt-svc-name');
-    if(svclbl&&S.pendingCart){svclbl.textContent='اختاري وقت — '+S.pendingCart.name;svclbl.style.display='block';}
-    else if(svclbl){svclbl.style.display='none';}
+    var svcprice=document.getElementById('dt-svc-price');
+    if(S.pendingCart){
+      if(svcbanner)svcbanner.style.display='';
+      if(svclbl)svclbl.textContent=S.pendingCart.name;
+      if(svcprice)svcprice.textContent=S.pendingCart.amount?'SAR '+S.pendingCart.amount.toLocaleString('en'):'';
+    } else {
+      if(svcbanner)svcbanner.style.display='none';
+    }
     if(!S.date){calY=new Date().getFullYear();calM=new Date().getMonth();}
     renderCal();
   }
