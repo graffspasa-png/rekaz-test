@@ -102,7 +102,15 @@ const DEFAULT_DB = {
     btn1Text: "احجزي موعدك الآن",
     btn2Text: "أهدي من تحبين",
     btn3Text: "العضويات",
-    btn4Text: "تواصلي معنا"
+    btn4Text: "تواصلي معنا",
+    giftCardLogoLine1: "GRAFF SPA",
+    giftCardTagEn: "Gift Card",
+    giftCardTagAr: "بطاقة الإهداء",
+    giftCardCurrency: "SAR",
+    memberCardLogoText: "GRAFF SPA",
+    memberCardTitleEn: "Elite Membership",
+    memberCardTitleAr: "عضوية النخبة",
+    memberCardPlanName: "ELITE"
   },
   theme: {
     primaryColor:"#b8965a", primaryHover:"#c8a66a",
