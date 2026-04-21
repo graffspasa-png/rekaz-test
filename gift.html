@@ -621,7 +621,7 @@ function dlImg(){
 }
 
 function dlPDF(){
-  const w=window.open('','_blank','width=700,height=520');
+  const w=window.open('','_blank','width=750,height=560');
   w.document.write(`<!DOCTYPE html><html dir="rtl"><head><meta charset="UTF-8"><title>Gift Card — GRAFF SPA</title>
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;600&family=Cormorant+Garamond:wght@300;400&display=swap" rel="stylesheet">
   <style>*{margin:0;padding:0;box-sizing:border-box}body{background:#f2ece2;display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:'Tajawal',sans-serif;padding:20px}
@@ -674,8 +674,9 @@ function notif(msg){
 function go(id){
   document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
   ge(id).classList.add('on');window.scrollTo(0,0);
+  try{sessionStorage.setItem('gift_page',id);}catch(e){}
   const bk=ge('bk');
-  if(id==='p1'){bk.href='/';bk.onclick=null;}
+  if(id==='p1'){bk.href='javascript:history.back()';bk.onclick=null;}
   else if(id==='p2'){bk.href='#';bk.onclick=e=>{e.preventDefault();go('p1');};}
   else if(id==='p3'){bk.href='#';bk.onclick=e=>{e.preventDefault();go('p2');};}
   else if(id==='pp'){bk.href='#';bk.onclick=e=>{e.preventDefault();go('p3');};}
