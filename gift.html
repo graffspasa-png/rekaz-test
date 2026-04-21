@@ -77,13 +77,13 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction
   user-select:none;
 }
 /* Parchment/cream base */
-.gc-base{position:absolute;inset:0;background:linear-gradient(158deg,#f7f1e5 0%,#f0e9da 35%,#ece3d0 65%,#e8dfc9 100%)}
+.gc-base{position:absolute;inset:0;background:linear-gradient(145deg,#f8f2e6 0%,#f1eadb 30%,#ebe2cf 60%,#e5dbc8 100%)}
 /* Subtle texture overlay */
 .gc-tex{position:absolute;inset:0;background:radial-gradient(ellipse 60% 40% at 20% 30%,rgba(255,255,255,.4),transparent 60%),radial-gradient(ellipse 50% 50% at 80% 70%,rgba(180,145,85,.06),transparent 55%)}
 /* Gold corner ornaments */
 .gc-corners{position:absolute;inset:0}
 /* Gold frame lines */
-.gc-frame{position:absolute;inset:10px;border:1px solid rgba(184,150,90,.35)}
+.gc-frame{position:absolute;inset:10px;border:1px solid rgba(160,120,60,.42)}
 .gc-frame2{position:absolute;inset:14px;border:1px solid rgba(184,150,90,.15)}
 /* Content */
 .gc-in{position:absolute;inset:0;padding:8% 8%;display:flex;flex-direction:column;justify-content:space-between;z-index:3}
@@ -100,11 +100,11 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction
 /* Bottom */
 .gc-bot{display:flex;justify-content:space-between;align-items:flex-end}
 .gc-to-sec{flex:1;min-width:0}
-.gc-lbl{font-size:clamp(5.5px,1.2vw,7.5px);letter-spacing:.2em;color:rgba(20,15,8,.3);text-transform:uppercase;margin-bottom:2px;font-family:'Cormorant Garamond',serif}
-.gc-to-val{font-family:'Cormorant Garamond',serif;font-size:clamp(9px,2.2vw,14px);font-weight:400;color:rgba(20,15,8,.75);letter-spacing:.08em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px;transition:all .2s}
+.gc-lbl{font-size:clamp(7px,1.5vw,9px);letter-spacing:.12em;color:rgba(20,15,8,.32);text-transform:uppercase;margin-bottom:3px;font-family:'Cormorant Garamond',serif}
+.gc-to-val{font-family:'Tajawal',sans-serif;font-size:clamp(10px,2.4vw,15px);font-weight:500;color:rgba(20,15,8,.78);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:140px;transition:all .2s}
 .gc-to-val.ph{color:rgba(20,15,8,.2);font-style:italic}
 .gc-from-sec{text-align:left;flex-shrink:0}
-.gc-from-val{font-family:'Cormorant Garamond',serif;font-size:clamp(8px,2vw,12px);color:rgba(20,15,8,.4);letter-spacing:.07em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100px;transition:all .2s}
+.gc-from-val{font-family:'Tajawal',sans-serif;font-size:clamp(9px,2.1vw,13px);color:rgba(20,15,8,.45);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:110px;transition:all .2s}
 .gc-from-val.ph{color:rgba(20,15,8,.14);font-style:italic}
 /* Gold divider line center */
 .gc-div{width:1px;height:28px;background:rgba(184,150,90,.28);margin:0 12px;align-self:flex-end;margin-bottom:2px}
@@ -146,7 +146,7 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction
 .p2cb{position:absolute;inset:0;background:linear-gradient(158deg,#f7f1e5,#f0e9da 35%,#ece3d0 65%,#e8dfc9)}
 .p2cf{position:absolute;inset:10px;border:1px solid rgba(184,150,90,.3)}
 .p2cf2{position:absolute;inset:14px;border:1px solid rgba(184,150,90,.12)}
-.p2cin{position:absolute;inset:0;padding:7% 7.5%;display:flex;flex-direction:column;justify-content:space-between;z-index:3}
+.p2cin{position:absolute;inset:0;padding:7% 8%;display:flex;flex-direction:column;justify-content:space-between;z-index:3}
 
 .fc{background:#fff;border:1px solid var(--brd);padding:15px;margin-bottom:11px}
 .fct{font-size:7.5px;letter-spacing:.2em;color:var(--muted);margin-bottom:13px;display:flex;align-items:center;gap:8px}
@@ -285,7 +285,7 @@ textarea.inp{resize:none;line-height:1.65}
               <div class="gc-amt ph" id="gc-amt">اختاري القيمة</div>
               <div id="gc-sar" style="font-family:'Tajawal',sans-serif;font-size:clamp(10px,2vw,14px);color:rgba(20,15,8,.4);font-weight:400;display:none">SAR</div>
             </div>
-            <div class="gc-curr" id="gc-curr" style="display:none">ريال سعودي</div>
+            <div class="gc-curr" id="gc-curr" style="display:none">SAR</div>
             <div class="gc-msg-wrap" id="gc-msg-wrap">
               <div class="gc-msg" id="gc-msg-txt"></div>
             </div>
@@ -400,7 +400,7 @@ textarea.inp{resize:none;line-height:1.65}
         </div>
         <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center">
           <div style="font-family:'Cormorant Garamond',serif;font-size:clamp(22px,5.5vw,40px);font-weight:300;color:rgba(20,15,8,.8);letter-spacing:.04em" id="ca">—</div>
-          <div style="font-size:clamp(7px,1.6vw,10px);color:rgba(20,15,8,.3);margin-top:3px;letter-spacing:.12em;font-family:'Tajawal',sans-serif">SAUDI RIYAL · SAR</div>
+          <div style="font-size:clamp(7px,1.6vw,10px);color:rgba(20,15,8,.3);margin-top:3px;letter-spacing:.12em;font-family:'Tajawal',sans-serif">SAR</div>
           <div id="cm" style="display:none;font-family:'Cormorant Garamond',serif;font-size:clamp(7px,1.7vw,10.5px);color:rgba(20,15,8,.38);font-style:italic;margin-top:5px;text-align:center;max-width:85%"></div>
         </div>
         <div style="display:flex;justify-content:space-between;align-items:flex-end">
@@ -485,7 +485,7 @@ function ge(id){return document.getElementById(id);}
 function sv(id,v){const e=ge(id);if(e&&v!=null)e.textContent=v;}
 
 function renderAmts(ams){
-  ge('agrid').innerHTML=ams.map(a=>`<button class="acard" onclick="selAmt(this,${a})"><div class="achk"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#080807" stroke-width="3.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div><div class="aval">${a}</div><div class="asr">ريال سعودي</div></button>`).join('');
+  ge('agrid').innerHTML=ams.map(a=>`<button class="acard" onclick="selAmt(this,${a})"><div class="achk"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#080807" stroke-width="3.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div><div class="aval">${a}</div><div class="asr">SAR</div></button>`).join('');
 }
 
 function selAmt(el,amt){
@@ -607,7 +607,7 @@ function dlImg(){
     x.font='600 16px Tajawal,Arial';x.fillStyle='rgba(140,95,50,0.8)';x.fillText('بطاقة الإهداء',50,80);
     // Amount — large center
     x.textAlign='center';x.font='300 86px "Cormorant Garamond",Georgia,serif';x.fillStyle='rgba(20,15,8,0.82)';x.fillText(S.amt,W/2,H/2+22);
-    x.font='300 16px Tajawal,Arial';x.fillStyle='rgba(20,15,8,0.32)';x.letterSpacing='4px';x.fillText('SAUDI RIYAL · SAR',W/2,H/2+50);
+    x.font='300 16px Tajawal,Arial';x.fillStyle='rgba(20,15,8,0.32)';x.letterSpacing='4px';x.fillText('SAR',W/2,H/2+50);
     // Message
     if(S.msg){x.font='italic 300 17px "Cormorant Garamond",Georgia,serif';x.fillStyle='rgba(20,15,8,0.38)';x.letterSpacing='0px';x.fillText('"'+S.msg+'"',W/2,H/2+82);}
     // To
@@ -635,7 +635,7 @@ function dlPDF(){
   .tagblock{text-align:left}.ten{font-family:'Cormorant Garamond',serif;font-size:13px;color:rgba(140,95,50,.8);letter-spacing:1px}.tar{font-size:12px;font-weight:600;color:rgba(140,95,50,.8);margin-top:2px}
   .mid{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center}
   .amt{font-family:'Cormorant Garamond',serif;font-size:72px;font-weight:300;color:rgba(20,15,8,.82);letter-spacing:2px;line-height:1}
-  .curr{font-size:12px;color:rgba(20,15,8,.3);margin-top:6px;letter-spacing:5px}
+  .curr{font-size:13px;color:rgba(20,15,8,.3);margin-top:6px;letter-spacing:8px;font-family:'Cormorant Garamond',serif}
   .gmsg{font-family:'Cormorant Garamond',serif;font-size:14px;color:rgba(20,15,8,.38);font-style:italic;margin-top:8px}
   .bot{display:flex;justify-content:space-between;align-items:flex-end}
   .blbl{font-family:'Cormorant Garamond',serif;font-size:9px;letter-spacing:3px;color:rgba(20,15,8,.28);margin-bottom:4px}
@@ -657,7 +657,7 @@ function dlPDF(){
     </svg>
     <div class="content">
       <div class="top"><div class="logo">GRAFF SPA</div><div class="tagblock"><div class="ten">Gift Card</div><div class="tar">بطاقة الإهداء</div></div></div>
-      <div class="mid"><div class="amt">${S.amt} <span style="font-size:24px;color:rgba(20,15,8,.28)">SAR</span></div><div class="curr">SAUDI RIYAL</div>${S.msg?`<div class="gmsg">"${S.msg}"</div>`:''}</div>
+      <div class="mid"><div class="amt">${S.amt} <span style="font-size:24px;color:rgba(20,15,8,.28)">SAR</span></div><div class="curr">SAR</div>${S.msg?`<div class="gmsg">"${S.msg}"</div>`:''}</div>
       <div class="bot"><div><div class="blbl">TO</div><div class="bval">${S.tn}</div></div>${S.showFrom&&S.fn?`<div style="text-align:left"><div class="blbl">FROM</div><div class="bfrom">${S.fn}</div></div>`:''}</div>
     </div>
   </div><p style="text-align:center;font-size:11px;color:rgba(0,0,0,.35);margin-top:12px;font-family:'Tajawal',sans-serif;letter-spacing:2px">GRAFF SPA — ELITE LUXURY EXPERIENCE</p></div>
