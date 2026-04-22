@@ -649,6 +649,9 @@ function applyConfig(){
   if(t.mutedColor)     R.style.setProperty('--muted',t.mutedColor);
   if(t.borderColor)    R.style.setProperty('--border',t.borderColor);
   if(t.borderRadius!=null) R.style.setProperty('--brad',t.borderRadius+'px');
+  // Apply sub font sizes
+  if(t.subEnSize)      R.style.setProperty('--sub-en-size',t.subEnSize+'px');
+  if(t.subArSize)      R.style.setProperty('--sub-ar-size',t.subArSize+'px');
   if(t.fontArabic){
     var lnk=document.getElementById('gfont');
     lnk.href='https://fonts.googleapis.com/css2?family='+encodeURIComponent(t.fontArabic)+':wght@300;400;500&family=Cormorant+Garamond:wght@300;400&display=swap';
