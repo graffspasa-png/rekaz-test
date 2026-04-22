@@ -134,20 +134,20 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction
 .ctop{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
 .clogo{
   font-family:'Cormorant Garamond',serif;
-  font-size:clamp(10px,2.55vw,16px);font-weight:300;
-  letter-spacing:.26em;color:rgba(255,255,255,.8);
+  font-size:clamp(13px,3.2vw,21px);font-weight:300;
+  letter-spacing:.26em;color:#fff;
   white-space:nowrap;line-height:1;flex-shrink:0
 }
 .ctitle{text-align:left;flex-shrink:0}
 .cten{
   font-family:'Cormorant Garamond',serif;
-  font-size:clamp(6.5px,1.65vw,10.5px);font-weight:300;
-  color:var(--g);letter-spacing:.07em;line-height:1.55
+  font-size:clamp(10px,2.4vw,15px);font-weight:300;
+  color:var(--g2);letter-spacing:.07em;line-height:1.55
 }
 .ctar{
   font-family:'Tajawal',sans-serif;
-  font-size:clamp(7px,1.75vw,11px);font-weight:600;
-  color:var(--g);line-height:1.55;margin-top:1px
+  font-size:clamp(11px,2.6vw,17px);font-weight:600;
+  color:var(--g2);line-height:1.55;margin-top:1px
 }
 .cnum{
   font-family:'Cormorant Garamond',serif;
@@ -160,8 +160,8 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction
 .cbot{display:flex;justify-content:space-between;align-items:flex-end}
 .cname{
   font-family:'Cormorant Garamond',serif;
-  font-size:clamp(9px,2.4vw,15px);font-weight:300;
-  color:rgba(255,255,255,.74);letter-spacing:.13em;white-space:nowrap
+  font-size:clamp(13px,3.2vw,20px);font-weight:300;
+  color:#fff;letter-spacing:.13em;white-space:nowrap
 }
 .cdates{text-align:left}
 .cdar{
@@ -196,7 +196,7 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction
 .svc{display:flex;align-items:center;gap:14px;padding:13px 0;border-bottom:1px solid rgba(255,255,255,.046)}
 .svc:last-child{border:none}
 .svcd{width:5px;height:5px;background:var(--g);transform:rotate(45deg);flex-shrink:0;opacity:.65}
-.svcn{font-size:14px;color:rgba(255,255,255,.65);line-height:1.5}
+.svcn{font-size:16px;color:rgba(255,255,255,.82);line-height:1.5}
 
 /* Privileges */
 .psec{background:rgba(184,150,90,.02);border-top:1px solid rgba(184,150,90,.065);border-bottom:1px solid rgba(184,150,90,.065);padding:44px 0}
@@ -258,13 +258,13 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction
 .fc{background:#fff;border:1px solid var(--brd);padding:15px;margin-bottom:11px}
 .fct{font-size:7.5px;letter-spacing:.2em;color:var(--muted);margin-bottom:13px;display:flex;align-items:center;gap:8px}
 .fct::after{content:'';flex:1;height:1px;background:var(--brd)}
-.lbl{font-size:10px;color:var(--muted);display:block;margin-bottom:5px;margin-top:11px}
+.lbl{font-size:14px;color:var(--muted);display:block;margin-bottom:5px;margin-top:11px}
 .lbl:first-child{margin-top:0}
 .req{color:#b33}
 .inp{
-  width:100%;padding:11px 13px;
+  width:100%;padding:15px 16px;
   background:var(--cream);border:1px solid var(--brd);
-  font-family:'Tajawal',sans-serif;font-size:14px;color:var(--text);
+  font-family:'Tajawal',sans-serif;font-size:16px;color:var(--text);
   outline:none;transition:border-color .13s
 }
 .inp:focus{border-color:rgba(24,21,14,.28)}
@@ -320,7 +320,7 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction
 <div class="bar">
   <a class="back" id="bk" href="javascript:history.back()">← رجوع</a>
   <a class="logo" href="javascript:history.back()">GRAFF SPA</a>
-  <button class="bar-btn" onclick="toJoin()">اشتراكي الآن</button>
+  <div style="min-width:60px"></div>
 </div>
 
 <!-- ══ LANDING ══ -->
