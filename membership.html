@@ -169,8 +169,8 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction
 
 <!-- BAR -->
 <div class="bar">
-  <a class="back" href="https://graffspasa-png.github.io">← رجوع</a>
-  <a class="logo" href="https://graffspasa-png.github.io">GRAFF SPA</a>
+  <button class="back" onclick="window.location.href='https://graffspasa-png.github.io'">← رجوع</button>
+  <span class="logo" style="cursor:pointer" onclick="go('p0')">GRAFF SPA</span>
   <div style="min-width:52px"></div>
 </div>
 
@@ -423,14 +423,23 @@ async function doBuy(){
   const btn=g('bc');btn.textContent='جاري...';btn.disabled=true;
   g('ec').style.display='none';
   try{
-    const r=await fetch(B+'/membership/purchase',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({name:S.n,phone:'+966'+S.p.replace(/^0/,''),email:S.e,priceId:PID})});
+    const body={
+      name:S.n,
+      phone:'+966'+S.p.replace(/^0/,''),
+      email:S.e||undefined,
+      planName:'Elite Membership Privilege',
+      planIndex:0,
+      price:10000,
+      priceId:PID
+    };
+    const r=await fetch(B+'/membership/purchase',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
     const d=await r.json();
     if(!r.ok||d.error)throw new Error(d.error||'فشل الطلب');
     S.url=d.payUrl;S.ref=d.orderRef||'—';
     if(S.url){g('plink').href=S.url;go('pp');}else onDone();
   }catch(e){
-    g('ec').textContent=e.message||'حدث خطأ';g('ec').style.display='block';
+    g('ec').textContent=e.message||'حدث خطأ. تأكدي من الاتصال والمحاولة مرة أخرى.';
+    g('ec').style.display='block';
     btn.textContent='تأكيد وإتمام الدفع ←';btn.disabled=false;
   }
 }
