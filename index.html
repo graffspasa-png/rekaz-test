@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
 <title>GRAFF SPA — Riyadh</title>
 <link rel="icon" id="fav" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='12' fill='%23080807'/><text y='48' x='32' text-anchor='middle' font-size='44' font-family='Georgia,serif' fill='%23b8965a'>G</text></svg>">
 <link id="gfont" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500&family=Cairo:wght@300;400;500&family=Cormorant+Garamond:wght@300;400&display=swap" rel="stylesheet">
@@ -134,12 +136,12 @@ body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-r
 .sc.sel .scbar{transform:scaleY(1)}
 .scbody{display:flex;align-items:flex-start;padding:13px 12px 11px;gap:10px}
 .scinfo{flex:1;min-width:0}
-.scname{font-size:15px;font-weight:500;color:var(--text);line-height:1.3;margin-bottom:4px}
-.scdesc{font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:5px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.scname{font-size:17px;font-weight:600;color:var(--text);line-height:1.3;margin-bottom:5px}
+.scdesc{font-size:14px;color:var(--muted);line-height:1.7;margin-bottom:5px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 .sc.sel .scdesc,.sc.expanded .scdesc{-webkit-line-clamp:unset;display:block}
 .scdur{display:inline-flex;align-items:center;gap:4px;font-size:10px;color:var(--gold);font-weight:500;background:rgba(184,150,90,.07);border:1px solid rgba(184,150,90,.14);padding:2px 8px;border-radius:20px}
 .scright{display:flex;flex-direction:column;align-items:flex-end;gap:7px;flex-shrink:0;padding-top:1px}
-.scprice{font-family:'Cormorant Garamond',serif;font-size:23px;font-weight:400;color:var(--text);line-height:1}
+.scprice{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:400;color:var(--text);line-height:1}
 .scsr{font-family:'Tajawal',sans-serif;font-size:9px;color:var(--muted);margin-right:1px}
 .scvat{font-size:8px;color:rgba(118,110,100,.45);text-align:left;margin-top:1px}
 .scchk{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;transition:all .16s;flex-shrink:0}
@@ -248,7 +250,7 @@ body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-r
 .fmh1{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;color:var(--text);letter-spacing:.06em;margin-bottom:4px}
 .fmsub{font-size:14px;color:var(--muted);line-height:1.7}
 .fcard{background:var(--w);border:1px solid var(--border);padding:15px;margin-bottom:9px;border-radius:var(--brad)}
-.fctitl{font-size:8px;letter-spacing:.18em;color:var(--muted);margin-bottom:11px;display:flex;align-items:center;gap:8px}
+.fctitl{font-size:10px;letter-spacing:.18em;color:var(--muted);margin-bottom:11px;display:flex;align-items:center;gap:8px}
 .fctitl::after{content:'';flex:1;height:1px;background:var(--border)}
 .flbl{font-size:14px;color:var(--muted);display:block;margin-bottom:5px;margin-top:12px}
 .flbl:first-child{margin-top:0}
@@ -388,8 +390,8 @@ body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-r
   </div>
   <div class="hbtns" id="home-btns">
     <button class="hbtn primary" onclick="go('svcs')"><span>احجزي تجربتك</span><span class="harr">←</span></button>
-    <button class="hbtn outline" onclick="window.location.href=B+'/gift'"><span>بطاقات الإهداء</span><span class="harr">←</span></button>
-    <button class="hbtn outline" onclick="window.location.href=B+'/membership'"><span>العضويات الحصرية</span><span class="harr">←</span></button>
+    <button class="hbtn outline" onclick="window.open(B+'/gift','_self')"><span>بطاقات الإهداء</span><span class="harr">←</span></button>
+    <button class="hbtn outline" onclick="window.open(B+'/membership','_self')"><span>العضويات الحصرية</span><span class="harr">←</span></button>
     <button class="hbtn outline" onclick="openWA()"><span>تواصلي معنا</span><span class="harr">←</span></button>
   </div>
   <div class="footer">
@@ -621,10 +623,12 @@ var CFG=null;
 })();
 
 async function init(){
-  try{
-    var r=await fetch(B+'/site');
-    if(r.ok)CFG=await r.json();
-  }catch(e){console.log('Site config:',e.message);}
+  // Fetch site config AND menu in parallel — fastest loading
+  var siteP=fetch(B+'/site',{cache:'no-store'}).then(function(r){return r.ok?r.json():null;}).catch(function(){return null;});
+  var menuP=fetch(B+'/menu',{cache:'no-store'}).then(function(r){return r.ok?r.json():null;}).catch(function(){return null;});
+  var results=await Promise.all([siteP,menuP]);
+  CFG=results[0];
+  var menuData=results[1];
   applyConfig();
   renderSocial();
   renderFooterPay();
@@ -632,8 +636,11 @@ async function init(){
   renderGiftPage();
   renderMems();
   renderPayMethods();
-  // Preload services in background after UI ready
-  setTimeout(function(){if(!_menuCache)loadProducts();},500);
+  // Services already loaded — build immediately
+  if(menuData&&menuData.categories){
+    _menuCache=menuData.categories;
+    buildSvcFromMenu(_menuCache);
+  }
 }
 
 function applyConfig(){
@@ -801,7 +808,7 @@ async function loadProducts(){
   if(_menuCache){buildSvcFromMenu(_menuCache);return;}
   document.getElementById('tabs').innerHTML='<span style="padding:12px 18px;font-size:10px;color:rgba(255,255,255,.25)">جاري التحميل...</span>';
   try{
-    var r=await fetch(B+'/menu');
+    var r=await fetch(B+'/menu',{cache:'no-store'});
     if(!r.ok) throw new Error('HTTP '+r.status);
     var d=await r.json();
     var cats=d.categories||[];
@@ -1433,12 +1440,10 @@ function go(id){
   }
   if(id==='svcs'){
     updCart();
-    // Load once, use cache on subsequent visits
-    if(!document.querySelector('.sc')){
-      loadProducts();
+    if(_menuCache){
+      buildSvcFromMenu(_menuCache);
     } else {
-      // Already loaded — just update UI
-      updCart();
+      loadProducts();
     }
   }
   if(id==='home'||id==='suc'){
@@ -1470,7 +1475,7 @@ function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replac
 function esc2(s){return (s||'').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
 
 renderCal();
-init().then(loadProducts);
+init();
 
 
 // ANS removed
