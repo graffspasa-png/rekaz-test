@@ -403,7 +403,7 @@ app.get("/menu", async (req,res) => {
                 nameAr,
                 nameEn,
                 amount: rd.pricing.amount,
-                duration: rd.pricing.duration || p.duration || 0
+                duration: rd.pricing.duration ?? 0
               });
             } else if (!existing.options.length) {
               existing.options.push({
@@ -411,7 +411,7 @@ app.get("/menu", async (req,res) => {
                 nameAr: "",
                 nameEn: "",
                 amount: p.amount || 0,
-                duration: p.duration || 0
+                duration: p.duration ?? 0
               });
             }
             return acc;
