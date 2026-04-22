@@ -74,7 +74,7 @@ body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-r
 .hd{width:5px;height:5px;background:var(--gold);transform:rotate(45deg)}
 .htag{font-family:'Cormorant Garamond',serif;font-size:clamp(17px,3.8vw,22px);font-weight:300;color:rgba(255,255,255,.28);line-height:1.5;margin-bottom:40px}
 .hbtns{position:relative;z-index:2;align-self:center;width:100%;max-width:355px;padding:0 20px 20px;display:flex;flex-direction:column;gap:9px}
-.hbtn{width:100%;padding:16px 20px;font-family:'Tajawal',sans-serif;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:all .17s;border:none;line-height:1;border-radius:var(--brad)}
+.hbtn{width:100%;padding:17px 20px;font-family:'Tajawal',sans-serif;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:all .17s;border:none;line-height:1;border-radius:var(--brad);white-space:nowrap}
 .hbtn.primary{background:var(--gold);color:var(--ink);font-weight:500}
 .hbtn.primary:hover{background:var(--gold2)}
 .hbtn.outline{background:transparent;border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.5)}
@@ -135,7 +135,8 @@ body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-r
 .scbody{display:flex;align-items:flex-start;padding:13px 12px 11px;gap:10px}
 .scinfo{flex:1;min-width:0}
 .scname{font-size:15px;font-weight:500;color:var(--text);line-height:1.3;margin-bottom:4px}
-.scdesc{font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:5px}
+.scdesc{font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:5px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.sc.sel .scdesc,.sc.expanded .scdesc{-webkit-line-clamp:unset;display:block}
 .scdur{display:inline-flex;align-items:center;gap:4px;font-size:10px;color:var(--gold);font-weight:500;background:rgba(184,150,90,.07);border:1px solid rgba(184,150,90,.14);padding:2px 8px;border-radius:20px}
 .scright{display:flex;flex-direction:column;align-items:flex-end;gap:7px;flex-shrink:0;padding-top:1px}
 .scprice{font-family:'Cormorant Garamond',serif;font-size:23px;font-weight:400;color:var(--text);line-height:1}
@@ -243,13 +244,13 @@ body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-r
 .fmpg{background:var(--cream)}
 .fmbody{flex:1;overflow-y:auto;padding:20px 12px 18px;max-width:440px;margin:0 auto;width:100%}
 .fmhd{text-align:center;margin-bottom:19px}
-.fmeye{font-size:8px;letter-spacing:.28em;color:var(--gold);margin-bottom:6px}
-.fmh1{font-family:'Cormorant Garamond',serif;font-size:25px;font-weight:300;color:var(--text);letter-spacing:.06em;margin-bottom:3px}
-.fmsub{font-size:11px;color:var(--muted);line-height:1.62}
+.fmeye{font-size:9px;letter-spacing:.28em;color:var(--gold);margin-bottom:8px}
+.fmh1{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;color:var(--text);letter-spacing:.06em;margin-bottom:4px}
+.fmsub{font-size:14px;color:var(--muted);line-height:1.7}
 .fcard{background:var(--w);border:1px solid var(--border);padding:15px;margin-bottom:9px;border-radius:var(--brad)}
 .fctitl{font-size:8px;letter-spacing:.18em;color:var(--muted);margin-bottom:11px;display:flex;align-items:center;gap:8px}
 .fctitl::after{content:'';flex:1;height:1px;background:var(--border)}
-.flbl{font-size:10px;letter-spacing:.08em;color:var(--muted);display:block;margin-bottom:4px;margin-top:10px}
+.flbl{font-size:13px;color:var(--muted);display:block;margin-bottom:5px;margin-top:12px}
 .flbl:first-child{margin-top:0}
 .finp{width:100%;padding:13px 14px;background:var(--cream);border:1px solid var(--border);font-family:'Tajawal',sans-serif;font-size:15px;color:var(--text);outline:none;transition:border-color .15s;border-radius:var(--brad)}
 .finp:focus{border-color:rgba(24,21,14,.36)}
@@ -257,7 +258,7 @@ body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-r
 
 /* OTP */
 .otprow{display:flex;gap:9px;justify-content:center;direction:ltr;margin-top:12px}
-.otpd{width:58px;height:64px;text-align:center;font-size:28px;font-weight:300;background:var(--cream);border:1px solid var(--border);color:var(--text);outline:none;transition:border-color .15s,box-shadow .15s;font-family:'Cormorant Garamond',serif;border-radius:var(--brad)}
+.otpd{width:62px;height:68px;text-align:center;font-size:32px;font-weight:300;background:var(--cream);border:1px solid var(--border);color:var(--text);outline:none;transition:border-color .15s,box-shadow .15s;font-family:'Cormorant Garamond',serif;border-radius:var(--brad)}
 .otpd:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(184,150,90,.12)}
 .otpcode{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;color:var(--gold);letter-spacing:.18em;text-align:center;margin:14px 0 4px;padding:12px;background:rgba(184,150,90,.08);border:1px dashed rgba(184,150,90,.3);border-radius:var(--brad)}
 .otptimer{font-size:11px;color:var(--muted);text-align:center;margin-top:9px}
@@ -275,8 +276,8 @@ body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-r
 .muted-val{color:var(--muted)!important}
 .sum-divider{border-top:2px solid var(--border)!important;margin-top:2px}
 .sumrow:last-child{border:none}
-.suml{color:var(--muted);font-size:11px;white-space:nowrap}
-.sumv{color:var(--text);font-weight:500;text-align:left}
+.suml{color:var(--muted);font-size:13px;white-space:nowrap}
+.sumv{color:var(--text);font-weight:500;text-align:left;font-size:14px}
 .sumtot{background:rgba(184,150,90,.05);border:1px solid rgba(184,150,90,.14);padding:12px 13px;margin-bottom:9px;display:flex;justify-content:space-between;align-items:center;border-radius:var(--brad)}
 .sumtotl{font-size:13px;font-weight:500;color:var(--text)}
 .sumtotv{font-family:'Cormorant Garamond',serif;font-size:23px;font-weight:300;color:var(--gold)}
@@ -386,9 +387,9 @@ body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-r
     <p class="htag" id="home-tagline">حيث تلتقي العناية بالفخامة · في أدق تفاصيلها</p>
   </div>
   <div class="hbtns" id="home-btns">
-    <button class="hbtn primary" onclick="go('svcs')"><span>احجزي موعدك</span><span class="harr">←</span></button>
-    <button class="hbtn outline" onclick="go('gift-page')"><span>أهدي من تحبين</span><span class="harr">←</span></button>
-    <button class="hbtn outline" onclick="go('memberships-page')"><span>العضويات</span><span class="harr">←</span></button>
+    <button class="hbtn primary" onclick="go('svcs')"><span>احجزي تجربتك</span><span class="harr">←</span></button>
+    <button class="hbtn outline" onclick="window.location.href=B+'/gift'"><span>بطاقات الإهداء</span><span class="harr">←</span></button>
+    <button class="hbtn outline" onclick="window.location.href=B+'/membership'"><span>العضويات الحصرية</span><span class="harr">←</span></button>
     <button class="hbtn outline" onclick="openWA()"><span>تواصلي معنا</span><span class="harr">←</span></button>
   </div>
   <div class="footer">
@@ -423,7 +424,7 @@ body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-r
   <div class="svcbody" id="svcbody"></div>
   <div class="cartbar" id="cartbar">
     <div class="cartinfo" style="min-width:0;flex:1">
-      <div class="cartcnt" id="cartcnt" style="font-size:10px;letter-spacing:.06em;color:rgba(255,255,255,.4);margin-bottom:2px">اختاري خدمة للمتابعة</div>
+      <div class="cartcnt" id="cartcnt" style="font-size:12px;color:rgba(255,255,255,.45);margin-bottom:3px">اختاري خدمة للبدء</div>
       <div id="carttag" style="display:flex;flex-direction:column;gap:3px"></div>
       <div style="display:flex;align-items:baseline;gap:4px;margin-top:4px">
         <span style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;color:var(--gold)" id="carttot">0</span>
@@ -885,7 +886,7 @@ function buildCard(svc){
   var singleOpt=opts.length===1?opts[0]:null;
   var name=svc.nameAr||'';
   var desc=(svc.description||'').replace(/<[^>]*>/g,'').replace(/&amp;/g,'&').replace(/&nbsp;/g,' ').trim();
-  if(desc.length>160)desc=desc.substring(0,160)+'...';
+  // Keep full description, show/hide handled by CSS
   var dur=singleOpt?singleOpt.duration:(hasOpts?0:0);
   var amt=singleOpt?singleOpt.amount:(hasOpts?Math.min.apply(null,opts.map(function(o){return o.amount;})):0);
   var priceId=singleOpt?singleOpt.id:'';
