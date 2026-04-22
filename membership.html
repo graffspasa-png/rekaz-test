@@ -568,9 +568,11 @@ let S={n:'',p:'',e:'',url:null,ref:null};
 
 (async()=>{try{const r=await fetch(B+'/site');if(r.ok){const c=await r.json();const t=c.theme||{},tx=c.texts||{};const R=document.documentElement;
   if(t.primaryColor)R.style.setProperty('--g',t.primaryColor);
+  if(t.primaryHover)R.style.setProperty('--g2',t.primaryHover);
   if(t.bgDark)R.style.setProperty('--ink',t.bgDark);
   if(t.bgLight)R.style.setProperty('--cream',t.bgLight);
   if(t.textColor)R.style.setProperty('--text',t.textColor);
+  if(t.mutedColor)R.style.setProperty('--muted',t.mutedColor);
   // Apply card texts
   if(tx.memberCardLogoText)document.querySelectorAll('.mc-logo,.clogo').forEach(el=>el.textContent=tx.memberCardLogoText);
   if(tx.memberCardTitleEn)document.querySelectorAll('.mc-badge-en,.cten').forEach(el=>el.textContent=tx.memberCardTitleEn);
