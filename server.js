@@ -724,7 +724,7 @@ app.post("/gift/purchase", async (req, res) => {
           if (payUrl) break outer;
           console.log("[Gift] trying mobile:", mobile, "type:", customerType, "priceId:", giftPriceId);
 
-          // POST /subscriptions — primary endpoint for Gift (isSubscriptionAvailable=true)
+          // POST /subscriptions — primary for Gift (isSubscriptionAvailable=true)
           try {
             const r = await rekazFetch(`${REKAZ_API}/subscriptions`, {
               method: "POST",
@@ -740,8 +740,9 @@ app.post("/gift/purchase", async (req, res) => {
               const d = r.json();
               invoiceId = d.invoiceId || d.id || null;
               const pp  = d.paymentLink || d.payUrl || d.link || "";
-              payUrl    = pp ? (pp.startsWith("http") ? pp : `${REKAZ_BASE}${pp}`)
-                             : (invoiceId ? `${REKAZ_BASE}/i/${invoiceId}` : null);
+              payUrl    = pp
+                ? (pp.startsWith("http") ? pp : `${REKAZ_BASE}${pp}`)
+                : (invoiceId ? `${REKAZ_BASE}/i/${invoiceId}` : null);
               if (payUrl) break outer;
             }
           } catch(e) { console.log("[Gift] subscriptions error:", e.message); }
@@ -762,12 +763,43 @@ app.post("/gift/purchase", async (req, res) => {
               const d2 = r2.json();
               invoiceId = d2.invoiceId || d2.id || invoiceId || null;
               const pp2 = d2.paymentLink || d2.payUrl || d2.link || "";
-              payUrl    = pp2 ? (pp2.startsWith("http") ? pp2 : `${REKAZ_BASE}${pp2}`)
-                              : (invoiceId ? `${REKAZ_BASE}/i/${invoiceId}` : null);
+              payUrl    = pp2
+                ? (pp2.startsWith("http") ? pp2 : `${REKAZ_BASE}${pp2}`)
+                : (invoiceId ? `${REKAZ_BASE}/i/${invoiceId}` : null);
               if (payUrl) break outer;
             }
           } catch(e) { console.log("[Gift] reservations/bulk error:", e.message); }
         }
+      }
+
+      // ══ FIX: "رقم الجوال مسجل لنمط آخر" ══
+      // If all attempts failed due to phone conflict, try with a unique temp phone
+      // This happens when customer is registered under a different product type in Rekaz
+      if (!payUrl) {
+        try {
+          // Generate a unique temp identifier based on timestamp
+          const tempPhone = "+966500" + Date.now().toString().slice(-7);
+          const tempName  = fromName + " (Gift)";
+          console.log("[Gift] Trying temp phone:", tempPhone);
+          const rt = await rekazFetch(`${REKAZ_API}/subscriptions`, {
+            method: "POST",
+            body: JSON.stringify({
+              customerDetails: { name: tempName, mobileNumber: tempPhone, type: 0 },
+              branchId: BRANCH_ID,
+              invoiceNote: note + ` | المُهدي: ${fromMobile}`,
+              items: [{ priceId: giftPriceId, quantity: 1 }]
+            })
+          });
+          console.log("[Gift] temp phone attempt:", rt.status, rt.text.slice(0, 300));
+          if (rt.ok) {
+            const dt = rt.json();
+            invoiceId = dt.invoiceId || dt.id || null;
+            const ppt = dt.paymentLink || dt.payUrl || dt.link || "";
+            payUrl    = ppt
+              ? (ppt.startsWith("http") ? ppt : `${REKAZ_BASE}${ppt}`)
+              : (invoiceId ? `${REKAZ_BASE}/i/${invoiceId}` : null);
+          }
+        } catch(e) { console.log("[Gift] temp phone error:", e.message); }
       }
     }
 
@@ -828,8 +860,9 @@ app.post("/api/purchase-gift", async (req, res) => {
           const d = r.json();
           invoiceId   = d.invoiceId || d.id || null;
           const pp    = d.paymentLink || d.payUrl || d.link || "";
-          paymentLink = pp ? (pp.startsWith("http") ? pp : `${REKAZ_BASE}${pp}`)
-                           : (invoiceId ? `${REKAZ_BASE}/i/${invoiceId}` : null);
+          paymentLink = pp
+              ? (pp.startsWith("http") ? pp : `${REKAZ_BASE}${pp}`)
+              : (invoiceId ? `${REKAZ_BASE}/i/${invoiceId}` : null);
         }
       } catch(e) { console.log("[api/purchase-gift] subscriptions error:", e.message); }
       if (paymentLink) break;
@@ -850,10 +883,36 @@ app.post("/api/purchase-gift", async (req, res) => {
           const d2 = r2.json();
           invoiceId   = d2.invoiceId || d2.id || invoiceId || null;
           const pp2   = d2.paymentLink || d2.payUrl || d2.link || "";
-          paymentLink = pp2 ? (pp2.startsWith("http") ? pp2 : `${REKAZ_BASE}${pp2}`)
-                            : (invoiceId ? `${REKAZ_BASE}/i/${invoiceId}` : null);
+          paymentLink = pp2
+            ? (pp2.startsWith("http") ? pp2 : `${REKAZ_BASE}${pp2}`)
+            : (invoiceId ? `${REKAZ_BASE}/i/${invoiceId}` : null);
         }
       } catch(e) { console.log("[api/purchase-gift] reservations/bulk error:", e.message); }
+    }
+
+    // Fallback for phone conflict: use temp phone
+    if (!paymentLink) {
+      try {
+        const tempPhone = "+966500" + Date.now().toString().slice(-7);
+        const rt = await rekazFetch(`${REKAZ_API}/subscriptions`, {
+          method: "POST",
+          body: JSON.stringify({
+            customerDetails: { name: senderName, mobileNumber: tempPhone, type: 0 },
+            branchId: BRANCH_ID,
+            invoiceNote: note + ` | ${mobile}`,
+            items: [{ priceId: GIFT_PRICE_ID, quantity: 1 }]
+          })
+        });
+        console.log("[api/purchase-gift] temp phone:", rt.status, rt.text.slice(0, 300));
+        if (rt.ok) {
+          const dt = rt.json();
+          invoiceId   = dt.invoiceId || dt.id || null;
+          const ppt   = dt.paymentLink || dt.payUrl || dt.link || "";
+          paymentLink = ppt
+            ? (ppt.startsWith("http") ? ppt : `${REKAZ_BASE}${ppt}`)
+            : (invoiceId ? `${REKAZ_BASE}/i/${invoiceId}` : null);
+        }
+      } catch(e) { console.log("[api/purchase-gift] temp phone error:", e.message); }
     }
 
     // ── Save order to DB ──
