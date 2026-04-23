@@ -622,26 +622,7 @@ var CFG=null;
   }catch(e){}
 })();
 
-async function init(){
-  // Fetch site config AND menu in parallel — fastest loading
-  var siteP=fetch(B+'/site',{cache:'no-store'}).then(function(r){return r.ok?r.json():null;}).catch(function(){return null;});
-  var menuP=fetch(B+'/menu',{cache:'no-store'}).then(function(r){return r.ok?r.json():null;}).catch(function(){return null;});
-  var results=await Promise.all([siteP,menuP]);
-  CFG=results[0];
-  var menuData=results[1];
-  applyConfig();
-  renderSocial();
-  renderFooterPay();
-  renderHomeButtons();
-  renderGiftPage();
-  renderMems();
-  renderPayMethods();
-  // Services already loaded — build immediately
-  if(menuData&&menuData.categories){
-    _menuCache=menuData.categories;
-    buildSvcFromMenu(_menuCache);
-  }
-}
+// init defined below in resilient section
 
 function applyConfig(){
   if(!CFG)return;
@@ -802,28 +783,7 @@ function renderMems(){
   }).join('');
 }
 
-// ── SERVICES: load from /menu ──
-var _menuCache=null;
-async function loadProducts(){
-  if(_menuCache){buildSvcFromMenu(_menuCache);return;}
-  document.getElementById('tabs').innerHTML='<span style="padding:12px 18px;font-size:10px;color:rgba(255,255,255,.25)">جاري التحميل...</span>';
-  try{
-    var r=await fetch(B+'/menu',{cache:'no-store'});
-    if(!r.ok) throw new Error('HTTP '+r.status);
-    var d=await r.json();
-    var cats=d.categories||[];
-    _menuCache=cats;
-    if(!cats.length){
-      document.getElementById('tabs').innerHTML='';
-      document.getElementById('svcbody').innerHTML='<div class="empty-svcs">لم يتم إعداد الأقسام بعد<br>يرجى إعداد الأقسام وربط الخدمات من لوحة التحكم</div>';
-      return;
-    }
-    buildSvcFromMenu(cats);
-  }catch(e){
-    document.getElementById('tabs').innerHTML='';
-    document.getElementById('svcbody').innerHTML='<div class="empty-svcs" style="color:var(--err)">فشل التحميل: '+esc(e.message)+'</div>';
-  }
-}
+// loadProducts defined below in resilient section
 
 function renderSubHeader(rawName){
   var enPart='',arPart='';
@@ -1132,7 +1092,7 @@ function pickDate(y,m,d){
   document.getElementById('btndt').textContent='اختاري وقتاً للمتابعة';
   document.getElementById('seldate').textContent=DA[new Date(y,m,d).getDay()]+' '+d+' '+MO[m];
   document.getElementById('seltime').textContent='—';
-  loadSlots(y,m,d);
+  loadSlotsSafe(y,m,d);
 }
 function toAST(s){
   // Rekaz returns UTC with Z — convert to AST (+3) for display only
@@ -1150,32 +1110,7 @@ function toASTDate(s){
   var ast=new Date(d.getTime()+3*3600000);
   return ast.getUTCFullYear()+'-'+p2(ast.getUTCMonth()+1)+'-'+p2(ast.getUTCDate());
 }
-async function loadSlots(y,m,d){
-  if(!S.pendingCart)return;
-  document.getElementById('slotsbox').innerHTML='<div class="slotload">جاري تحميل المواعيد</div>';
-  var ds=y+'-'+p2(m+1)+'-'+p2(d);
-  try{
-    // Convert AST day to UTC range:
-    // AST midnight = UTC previous day 21:00
-    // AST 23:59    = UTC same day 20:59
-    var astMidnight=new Date(ds+'T00:00:00+03:00'); // AST start of day
-    var astEnd=new Date(ds+'T23:59:59+03:00');      // AST end of day
-    var utcStart=astMidnight.toISOString().slice(0,19)+'Z';
-    var utcEnd=astEnd.toISOString().slice(0,19)+'Z';
-    var q=new URLSearchParams({StartDate:utcStart,EndDate:utcEnd,PriceId:S.pendingCart.priceId,MinQuantity:'1'});
-    var r=await fetch(B+'/slots?'+q);if(!r.ok)throw new Error('HTTP '+r.status);
-    var raw=await r.json();var seen={};
-    allSlots=(Array.isArray(raw)?raw:[]).filter(function(s){
-      if(!s.isAvailable||s.isOutDated)return false;
-      if(toASTDate(s.from)!==ds)return false;
-      var l=toAST(s.from);if(seen[l])return false;seen[l]=true;return true;
-    });
-    if(!allSlots.length){document.getElementById('slotsbox').innerHTML='<div class="slotnone">لا تتوفر مواعيد لهذا اليوم</div>';return;}
-    var h='<div class="slots">';
-    allSlots.forEach(function(s,i){h+='<div class="slot" id="sl'+i+'" onclick="pickSlot('+i+')">'+toAST(s.from)+'</div>';});
-    document.getElementById('slotsbox').innerHTML=h+'</div>';
-  }catch(e){document.getElementById('slotsbox').innerHTML='<div class="slotnone">خطأ في تحميل المواعيد</div>';}
-}
+// loadSlots replaced by loadSlotsSafe below
 function pickSlot(i){
   document.querySelectorAll('.slot').forEach(function(s){s.classList.remove('on');});
   document.getElementById('sl'+i).classList.add('on');
@@ -1475,10 +1410,158 @@ function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replac
 function esc2(s){return (s||'').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
 
 renderCal();
+
+// ══════════════════════════════════════════
+// RESILIENT INIT — all fixes applied
+// ══════════════════════════════════════════
+
+// ── 1. fetchSafe: retry 5 times with 800ms delay ──
+async function fetchSafe(url, options, tries){
+  tries = tries || 5;
+  options = options || {};
+  options.cache = 'no-store'; // always bypass cache
+  for(var i=0;i<tries;i++){
+    try{
+      var res=await fetch(url,options);
+      if(res.ok) return await res.json();
+    }catch(e){}
+    if(i<tries-1) await new Promise(function(r){setTimeout(r,800);});
+  }
+  throw new Error('API_FAILED');
+}
+
+// ── 2. localStorage helpers ──
+function lsGet(k){try{var v=localStorage.getItem(k);return v?JSON.parse(v):null;}catch(e){return null;}}
+function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
+
+// ── 3. loadProducts: cache-first, retry, never blank ──
+var _menuCache=_menuCache||null;
+async function loadProducts(){
+  // Show cached immediately if available
+  if(_menuCache){buildSvcFromMenu(_menuCache);return;}
+  var cached=lsGet('graff_menu');
+  if(cached&&cached.length){
+    _menuCache=cached;
+    buildSvcFromMenu(cached);
+    // Update in background silently
+    fetchSafe(B+'/menu').then(function(d){
+      var cats=d&&d.categories&&d.categories.length?d.categories:null;
+      if(cats){_menuCache=cats;lsSet('graff_menu',cats);buildSvcFromMenu(cats);}
+    }).catch(function(){});
+    return;
+  }
+  // No cache — show loading, retry up to 5 times
+  document.getElementById('tabs').innerHTML='<span style="padding:12px 18px;font-size:13px;color:rgba(255,255,255,.4)">جاري التحميل...</span>';
+  try{
+    var d=await fetchSafe(B+'/menu');
+    var cats=d&&d.categories?d.categories:[];
+    if(cats.length){
+      _menuCache=cats;
+      lsSet('graff_menu',cats);
+      buildSvcFromMenu(cats);
+    } else {
+      // Empty response — do NOT clear, just show message
+      if(!document.querySelector('.sc')){
+        document.getElementById('tabs').innerHTML='';
+        document.getElementById('svcbody').innerHTML='<div class="empty-svcs">لا توجد خدمات متاحة حالياً</div>';
+      }
+    }
+  }catch(e){
+    // NEVER clear existing content on failure
+    if(!document.querySelector('.sc')){
+      // Try one more time after 2s
+      setTimeout(function(){
+        var c2=lsGet('graff_menu');
+        if(c2&&c2.length){_menuCache=c2;buildSvcFromMenu(c2);}
+        else document.getElementById('tabs').innerHTML='<span style="padding:12px 18px;font-size:13px;color:rgba(255,255,255,.4)">يرجى التحقق من الاتصال...</span>';
+      },2000);
+    }
+  }
+}
+
+// ── 4. loadSlots: retry, never blank on failure ──
+async function loadSlotsSafe(y,m,d){
+  if(!S.pendingCart)return;
+  document.getElementById('slotsbox').innerHTML='<div class="slotload">جاري تحميل المواعيد</div>';
+  var ds=y+'-'+p2(m+1)+'-'+p2(d);
+  var astMidnight=new Date(ds+'T00:00:00+03:00');
+  var astEnd=new Date(ds+'T23:59:59+03:00');
+  var utcStart=astMidnight.toISOString().slice(0,19)+'Z';
+  var utcEnd=astEnd.toISOString().slice(0,19)+'Z';
+  var q=new URLSearchParams({StartDate:utcStart,EndDate:utcEnd,PriceId:S.pendingCart.priceId,MinQuantity:'1'});
+  try{
+    var raw=await fetchSafe(B+'/slots?'+q);
+    var seen={};
+    allSlots=(Array.isArray(raw)?raw:[]).filter(function(sl){
+      if(!sl.isAvailable||sl.isOutDated)return false;
+      if(toASTDate(sl.from)!==ds)return false;
+      var l=toAST(sl.from);if(seen[l])return false;seen[l]=true;return true;
+    });
+    if(!allSlots.length){
+      document.getElementById('slotsbox').innerHTML='<div class="slotnone">لا تتوفر مواعيد لهذا اليوم</div>';
+      return;
+    }
+    var h='<div class="slots">';
+    allSlots.forEach(function(sl,i){h+='<div class="slot" id="sl'+i+'" onclick="pickSlot('+i+')">'+toAST(sl.from)+'</div>';});
+    document.getElementById('slotsbox').innerHTML=h+'</div>';
+  }catch(e){
+    // Retry silently — don't show blank
+    document.getElementById('slotsbox').innerHTML='<div class="slotload" style="color:rgba(184,150,90,.6)">جاري إعادة المحاولة...</div>';
+    setTimeout(function(){loadSlotsSafe(y,m,d);},1500);
+  }
+}
+
+// ── 5. Restore state from localStorage ──
+(function restoreState(){
+  var saved=lsGet('graff_state');
+  if(saved){
+    // Only restore carts (not transient UI state)
+    if(saved.carts&&saved.carts.length) S.carts=saved.carts;
+    if(saved.phone) S.phone=saved.phone;
+    if(saved.disc) S.disc=saved.disc;
+  }
+})();
+
+// Save state on any change
+var _saveStateTimer=null;
+function saveState(){
+  clearTimeout(_saveStateTimer);
+  _saveStateTimer=setTimeout(function(){
+    lsSet('graff_state',{carts:S.carts,phone:S.phone,disc:S.disc});
+  },300);
+}
+
+// ── 6. init: parallel fetch, cache-first ──
+async function init(){
+  // Load cached config immediately for instant render
+  var cachedCfg=lsGet('graff_cfg');
+  if(cachedCfg){CFG=cachedCfg;applyConfig();renderSocial();renderFooterPay();renderHomeButtons();renderGiftPage();renderMems();renderPayMethods();}
+  // Load cached menu immediately
+  var cachedMenu=lsGet('graff_menu');
+  if(cachedMenu&&cachedMenu.length){_menuCache=cachedMenu;} // ready for when svcs opens
+
+  // Fetch fresh data in parallel
+  var siteP=fetchSafe(B+'/site').catch(function(){return null;});
+  var menuP=fetchSafe(B+'/menu').catch(function(){return null;});
+  var results=await Promise.all([siteP,menuP]);
+
+  // Apply site config
+  if(results[0]){
+    CFG=results[0];
+    lsSet('graff_cfg',CFG);
+    applyConfig();renderSocial();renderFooterPay();renderHomeButtons();renderGiftPage();renderMems();renderPayMethods();
+  }
+  // Apply menu
+  if(results[1]&&results[1].categories&&results[1].categories.length){
+    _menuCache=results[1].categories;
+    lsSet('graff_menu',_menuCache);
+    // If svcs page is visible, build immediately
+    var svcsEl=document.getElementById('svcs');
+    if(svcsEl&&svcsEl.classList.contains('on')) buildSvcFromMenu(_menuCache);
+  }
+}
+
 init();
-
-
-// ANS removed
 
 </script>
 </body>
