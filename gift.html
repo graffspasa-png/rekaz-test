@@ -4,77 +4,44 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <title>GRAFF SPA — بطاقة الإهداء</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23080807'/><text y='24' x='16' text-anchor='middle' font-size='22' font-family='Georgia' fill='%23b8965a'>G</text></svg>">
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&family=Cormorant+Garamond:wght@300;400&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-:root{--gold:#b8965a;--gold2:#c9a96b;--ink:#080807;--ink2:#0b0908;--cream:#f5efe4;--cream2:#ede6d8;--text:#1a1714}
-body{font-family:'Tajawal',sans-serif;background:var(--ink);color:var(--cream);overflow-x:hidden;line-height:1.6}
-.nav{position:fixed;top:0;width:100%;height:70px;background:rgba(8,8,7,.9);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:space-between;padding:0 24px;z-index:100;border-bottom:1px solid rgba(184,150,90,.1)}
-.logo{font-family:'Cormorant Garamond',serif;font-size:24px;letter-spacing:4px;color:var(--gold);text-decoration:none;font-weight:300}
-.main{padding:100px 20px 60px;max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1.2fr;gap:40px;align-items:start}
-@media(max-width:900px){.main{grid-template-columns:1fr;padding-top:80px}}
-.preview-side{position:sticky;top:100px;text-align:center}
-@media(max-width:900px){.preview-side{position:static}}
-canvas{max-width:100%;height:auto;background:#141210;box-shadow:0 20px 50px rgba(0,0,0,.5);border:1px solid rgba(184,150,90,.2)}
-.form-side{background:var(--ink2);padding:40px;border:1px solid rgba(184,150,90,.1)}
-h1{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:300;margin-bottom:10px;color:var(--gold)}
-p.sub{font-size:14px;color:rgba(245,239,228,.6);margin-bottom:30px}
-.section-label{display:block;font-size:12px;text-transform:uppercase;letter-spacing:2px;color:var(--gold);margin:25px 0 15px;font-weight:600}
-.amounts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.amt-btn{background:transparent;border:1px solid rgba(184,150,90,.3);color:var(--cream);padding:12px;cursor:pointer;transition:.3s;font-family:inherit}
-.amt-btn.active{background:var(--gold);border-color:var(--gold);color:var(--ink);font-weight:600}
-.input-group{margin-bottom:15px}
-input{width:100%;background:rgba(255,255,255,.03);border:1px solid rgba(184,150,90,.2);padding:14px;color:#fff;font-family:inherit;outline:none;transition:.3s}
-input:focus{border-color:var(--gold);background:rgba(255,255,255,.06)}
-.btn-primary{width:100%;background:var(--gold);color:var(--ink);border:none;padding:18px;font-size:16px;font-weight:700;cursor:pointer;margin-top:30px;transition:.3s;letter-spacing:1px}
-.btn-primary:hover{background:var(--gold2);transform:translateY(-2px)}
-.btn-primary:disabled{opacity:.5;cursor:not-allowed}
-#ntf{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:var(--gold);color:var(--ink);padding:12px 24px;font-weight:600;font-size:14px;opacity:0;transition:.4s;pointer-events:none;z-index:1000}
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--gold:#b8965a;--ink:#080807;--cream:#f5efe4}
+body{font-family:'Tajawal',sans-serif;background:var(--ink);color:var(--cream);line-height:1.6}
+.nav{height:70px;background:rgba(8,8,7,.9);display:flex;align-items:center;padding:0 24px;border-bottom:1px solid rgba(184,150,90,.1)}
+.logo{font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--gold);text-decoration:none}
+.main{padding:40px 20px;max-width:1000px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:40px}
+@media(max-width:800px){.main{grid-template-columns:1fr}}
+canvas{width:100%;background:#141210;border:1px solid var(--gold)}
+.form-side{background:#0b0908;padding:30px;border:1px solid rgba(184,150,90,.1)}
+h1{color:var(--gold);margin-bottom:20px}
+.amounts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:20px 0}
+.amt-btn{background:transparent;border:1px solid var(--gold);color:#fff;padding:10px;cursor:pointer}
+.amt-btn.active{background:var(--gold);color:var(--ink)}
+input{width:100%;padding:12px;margin-bottom:10px;background:#1a1714;border:1px solid #333;color:#fff}
+.btn-primary{width:100%;background:var(--gold);padding:15px;border:none;font-weight:700;cursor:pointer}
+#ntf{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--gold);color:var(--ink);padding:10px 20px;opacity:0;transition:0.3s}
 </style>
 </head>
 <body>
-
-<div id="ntf">تم حفظ البطاقة ✓</div>
-
-<nav class="nav">
-  <a href="/" class="logo">GRAFF SPA</a>
-</nav>
-
+<div id="ntf">جاري المعالجة...</div>
+<nav class="nav"><a href="/" class="logo">GRAFF SPA</a></nav>
 <div class="main">
-  <div class="preview-side">
-    <canvas id="cv" width="600" height="800"></canvas>
-    <p style="margin-top:20px;font-size:13px;color:rgba(245,239,228,.4)">* سيتم تحميل نسخة PNG تلقائياً عند الدفع</p>
-  </div>
-
+  <div><canvas id="cv" width="600" height="800"></canvas></div>
   <div class="form-side">
-    <h1>بطاقة الإهداء الرقمية</h1>
-    <p class="sub">امنح من تحب تجربة استثنائية من الاسترخاء والرفاهية في جراف سبا.</p>
-    
-    <span class="section-label">اختر القيمة (ريال سعودي)</span>
+    <h1>بطاقة الإهداء</h1>
     <div class="amounts">
       <button class="amt-btn active" onclick="setAmt(500,this)">500</button>
       <button class="amt-btn" onclick="setAmt(1000,this)">1000</button>
       <button class="amt-btn" onclick="setAmt(2000,this)">2000</button>
     </div>
-
-    <span class="section-label">بيانات المُهدى إليه</span>
-    <div class="input-group">
-      <input type="text" placeholder="اسم المستلم" oninput="upd('tn',this.value)">
-    </div>
-    <div class="input-group">
-      <input type="tel" placeholder="رقم جوال المستلم" oninput="upd('p',this.value)">
-    </div>
-
-    <span class="section-label">بياناتك الشخصية</span>
-    <div class="input-group">
-      <input type="text" placeholder="اسمك الكريم" oninput="upd('fn',this.value)">
-    </div>
-
+    <input type="text" placeholder="اسم المستلم" oninput="upd('tn',this.value)">
+    <input type="tel" placeholder="رقم جوال المستلم" oninput="upd('p',this.value)">
+    <input type="text" placeholder="اسمك الكريم" oninput="upd('fn',this.value)">
     <button class="btn-primary" onclick="downloadCard()">إرسال الإهداء والدفع</button>
   </div>
 </div>
-
 <script>
 const ge=id=>document.getElementById(id);
 const S={v:500,tn:'',fn:'',p:''};
@@ -82,97 +49,34 @@ const cv=ge('cv'),x=cv.getContext('2d');
 const img=new Image();
 img.crossOrigin="anonymous";
 img.src='https://i.ibb.co/S7X7YfLh/6.png';
-img.onload=drawCard;
-
-function setAmt(v,el){
-  S.v=v;
-  document.querySelectorAll('.amt-btn').forEach(b=>b.classList.remove('active'));
-  el.classList.add('active');
-  drawCard();
+img.onload=draw;
+function setAmt(v,el){S.v=v;document.querySelectorAll('.amt-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');draw();}
+function upd(k,v){S[k]=v;draw();}
+function draw(){
+  x.drawImage(img,0,0,600,800);
+  x.textAlign='center';x.fillStyle='#1a1714';x.font='40px Tajawal';
+  if(S.tn)x.fillText(S.tn,300,420);
+  x.fillStyle='#b8965a';x.font='30px Tajawal';
+  x.fillText(S.v+' SAR',300,600);
 }
-
-function upd(k,v){ S[k]=v; drawCard(); }
-
-function drawCard(){
-  const W=cv.width,H=cv.height;
-  x.clearRect(0,0,W,H);
-  x.drawImage(img,0,0,W,H);
-  
-  if(S.tn){
-    x.textAlign='center';
-    x.fillStyle='rgba(20,15,8,0.7)';
-    x.font='600 42px Tajawal,Arial';
-    x.fillText(S.tn,W/2,H/2 + 20);
-  }
-
-  if(S.fn){
-    x.textAlign='right';
-    x.font='400 18px "Cormorant Garamond",serif';
-    x.fillStyle='rgba(140,100,35,0.8)';
-    x.fillText('من:', 120, H-120);
-    x.font='600 24px Tajawal,Arial';
-    x.fillStyle='rgba(20,15,8,0.6)';
-    x.fillText(S.fn, 120, H-85);
-  }
-
-  x.textAlign='center';
-  x.font='600 30px Tajawal,Arial';
-  x.fillStyle='#b8965a';
-  x.fillText(S.v + ' SAR', W/2, H-200);
-}
-
-async function downloadCard() {
-  const btn = document.querySelector('.btn-primary');
-  const originalText = btn.innerHTML;
-  
-  if (!S.fn || !S.tn || !S.p) {
-      notif('يرجى إكمال جميع البيانات');
-      return;
-  }
-
-  try {
-    btn.innerHTML = 'جاري معالجة الطلب...';
-    btn.disabled = true;
-
-    const response = await fetch('/api/purchase-gift', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        amount: S.v,
-        senderName: S.fn,
-        recipientName: S.tn,
-        recipientPhone: S.p
-      })
+async function downloadCard(){
+  if(!S.fn||!S.tn||!S.p){alert('أكمل البيانات');return;}
+  const btn=document.querySelector('.btn-primary');
+  btn.disabled=true; btn.innerHTML='جاري التحميل...';
+  try{
+    const res=await fetch('/api/purchase-gift',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({amount:S.v,senderName:S.fn,recipientName:S.tn,recipientPhone:S.p})
     });
-
-    const data = await response.json();
-
-    if (data.success && data.paymentLink) {
-      cv.toBlob(b => {
-        const u = URL.createObjectURL(b);
-        const a = document.createElement('a');
-        a.href = u;
-        a.download = `Graff-Gift-${S.tn}.png`;
-        a.click();
-      }, 'image/png');
-
-      notif('تم حفظ البطاقة.. جاري التحويل للدفع');
-      setTimeout(() => { window.location.href = data.paymentLink; }, 1500);
-    } else {
-      notif('خطأ في الاتصال بركاز');
-      btn.disabled = false;
-      btn.innerHTML = originalText;
-    }
-  } catch (e) {
-    notif('تعذر الاتصال بالسيرفر');
-    btn.disabled = false;
-    btn.innerHTML = originalText;
-  }
-}
-
-function notif(msg){
-  const el=ge('ntf'); el.textContent=msg; el.style.opacity='1';
-  clearTimeout(el._t); el._t=setTimeout(()=>el.style.opacity='0',3000);
+    const data=await res.json();
+    if(data.success && data.paymentLink){
+      cv.toBlob(b=>{
+        const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='Gift.png';a.click();
+      });
+      window.location.href=data.paymentLink;
+    }else{alert('خطأ في ركاز');}
+  }catch(e){alert('خطأ اتصال');}
+  btn.disabled=false; btn.innerHTML='إرسال الإهداء والدفع';
 }
 </script>
 </body>
