@@ -303,22 +303,9 @@ async function rekazFetch(url, opts = {}) {
 
 async function getProds() {
   if (rCache && Date.now()-rCacheTime < CACHE_TTL) return rCache;
-  // Fetch all types: Reservation(0), Merchandise(2), Gift(3)
-  // Some Rekaz tenants need explicit type param to include Gift products
   let items = [];
-  for (const type of [0, 1, 2, 3]) {
-    try {
-      const r = await rekazFetch(`${REKAZ_API}/products?type=${type}&maxResultCount=200`);
-      if (r.ok) {
-        const d = r.json();
-        const list = d.items || [];
-        list.forEach(p => {
-          if (!items.find(x => x.id === p.id)) items.push(p);
-        });
-      }
-    } catch(e) {}
-  }
-  // Also fetch without type filter (gets default/all)
+
+  // 1. Standard public products (Reservation, Merchandise)
   try {
     const r = await rekazFetch(`${REKAZ_API}/products?maxResultCount=200`);
     if (r.ok) {
@@ -328,11 +315,36 @@ async function getProds() {
       });
     }
   } catch(e) {}
+
+  // 2. Gift products from app API (different endpoint used by graffspa.com)
+  const giftSlugs = ["gift-card", "gift_card", "giftcard"];
+  for (const slug of giftSlugs) {
+    try {
+      const r = await rekazFetch(`${REKAZ_BASE}/api/app/product/product/${slug}`);
+      if (r.ok) {
+        const p = r.json();
+        if (p && p.id && !items.find(x => x.id === p.id)) {
+          items.push(p);
+        }
+      }
+    } catch(e) {}
+  }
+
+  // 3. Also try fetching all products with type=3 (Gift)
+  try {
+    const r = await rekazFetch(`${REKAZ_API}/products?type=3&maxResultCount=200`);
+    if (r.ok) {
+      const d = r.json();
+      (d.items||[]).forEach(p => {
+        if (!items.find(x => x.id === p.id)) items.push(p);
+      });
+    }
+  } catch(e) {}
+
   rCache = { items }; rCacheTime = Date.now();
   return rCache;
 }
 
-// Force refresh products cache
 async function refreshProds() { rCacheTime = 0; return getProds(); }
 
 function auth(req, res, next) {
@@ -1140,6 +1152,27 @@ app.get("/debug-product/:id",async(req,res)=>{
     const r=await rekazFetch(`${REKAZ_API}/products/${req.params.id}`);
     res.send(r.text);
   }catch(e){res.status(500).send(e.message);}
+});
+
+
+// ── Show gift product with pricing from app API ──
+app.get("/admin/gift-product-info", adminAuth, async (req, res) => {
+  rCacheTime = 0;
+  const data = await getProds();
+  const giftProduct = (data.items||[]).find(p => p.typeString === "Gift" || p.type === 3);
+  if (!giftProduct) return res.json({ found: false, total: data.items?.length });
+  res.json({
+    found: true,
+    id: giftProduct.id,
+    name: giftProduct.name,
+    type: giftProduct.typeString,
+    isSubscriptionAvailable: giftProduct.isSubscriptionAvailable,
+    pricing: (giftProduct.pricing||[]).map(p => ({
+      id: p.id,
+      amount: p.amount,
+      name: p.name
+    }))
+  });
 });
 
 const PORT=process.env.PORT||3000;
