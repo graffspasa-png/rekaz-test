@@ -8,689 +8,171 @@
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-:root{
-  --gold:#b8965a;--gold2:#c9a96b;
-  --ink:#080807;--ink2:#0b0908;
-  --cream:#f5efe4;--cream2:#ede6d8;
-  --text:#1a1510;--muted:#7a7060;--brd:#d4c8b0
-}
-body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction:rtl;-webkit-font-smoothing:antialiased;overflow-x:hidden;min-height:100dvh}
-
-/* ══ BAR ══ */
-.bar{position:sticky;top:0;z-index:200;height:54px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;background:rgba(8,8,7,.97);backdrop-filter:blur(20px);border-bottom:1px solid rgba(184,150,90,.12)}
-.logo{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:300;color:#fff;text-decoration:none;letter-spacing:.18em}
-.back{background:none;border:none;color:rgba(255,255,255,.4);font-size:14px;cursor:pointer;display:flex;align-items:center;gap:6px;padding:6px 0;font-family:'Tajawal',sans-serif;text-decoration:none;transition:color .15s}
-.back:hover{color:#fff}
-
-/* ══ STEPS ══ */
-.steps{display:flex;align-items:center;justify-content:center;gap:0;padding:12px 0;background:rgba(184,150,90,.04);border-bottom:1px solid rgba(184,150,90,.1)}
-.si{display:flex;align-items:center;gap:7px}
-.sdot{width:28px;height:28px;border-radius:50%;border:1.5px solid rgba(184,150,90,.25);display:flex;align-items:center;justify-content:center;font-size:11px;color:rgba(255,255,255,.25);transition:all .2s}
-.sdot.on{background:var(--gold);border-color:var(--gold);color:var(--ink);font-weight:700}
-.sdot.dn{background:rgba(184,150,90,.15);border-color:rgba(184,150,90,.4);color:var(--gold)}
-.slbl{font-size:12px;color:rgba(255,255,255,.5)}
-.si.on .slbl{color:rgba(255,255,255,.85)}
-.sline{width:32px;height:1px;background:rgba(184,150,90,.2);margin:0 6px}
-
-/* ══ PAGES ══ */
-.pg{display:none;flex-direction:column;min-height:calc(100dvh - 54px)}
-.pg.on{display:flex}
-#p1,#p2,#p3,#pp,#pz{background:var(--cream)}
-
-/* ══ HERO ══ */
-.hero{background:var(--ink2);padding:36px 20px 30px;text-align:center;position:relative;overflow:hidden;border-bottom:1px solid rgba(184,150,90,.08)}
-.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 55% at 50% 10%,rgba(184,150,90,.07),transparent 60%)}
-.heye{font-size:8px;letter-spacing:.5em;color:rgba(184,150,90,.5);margin-bottom:12px;position:relative;z-index:1}
-.htit{font-family:'Cormorant Garamond',serif;font-size:clamp(30px,7vw,48px);font-weight:300;color:#fff;letter-spacing:.1em;position:relative;z-index:1;line-height:1.1}
-.htit em{color:var(--gold);font-style:normal}
-.hsub{font-size:15px;color:rgba(255,255,255,.55);margin-top:10px;position:relative;z-index:1;line-height:1.8}
-
-/* ══════════════════════════════════
-   THE CARD — ONE DESIGN EVERYWHERE
-   Cream/ivory background, gold frame
-   ══════════════════════════════════ */
-.card-wrap{padding:24px 16px 0;max-width:450px;margin:0 auto;width:100%}
-.card-lbl{font-size:8px;letter-spacing:.22em;color:var(--muted);margin-bottom:14px;display:flex;align-items:center;gap:8px;text-transform:uppercase}
-.card-lbl::after{content:'';flex:1;height:1px;background:var(--brd)}
-
-/* THE CARD ITSELF */
-.gcard{
-  width:100%;
-  aspect-ratio:1.586;
-  position:relative;
-  border-radius:10px;
-  overflow:hidden;
-  background:linear-gradient(160deg,#f8f3ea 0%,#f2ebe0 40%,#ede5d6 100%);
-  box-shadow:0 16px 48px rgba(0,0,0,.18),0 4px 16px rgba(0,0,0,.1),0 0 0 1px rgba(180,138,60,.28);
-  user-select:none
-}
-/* Gold SVG frame — same in all pages */
-.card-frame{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2}
-/* Card content */
-.card-body{position:absolute;inset:0;padding:8% 8%;display:flex;flex-direction:column;justify-content:space-between;z-index:5}
-/* TOP */
-.card-top{display:flex;align-items:flex-start;justify-content:space-between}
-.card-logo{
-  font-family:'Cormorant Garamond',serif;
-  font-size:clamp(14px,3.5vw,22px);
-  font-weight:300;
-  letter-spacing:.24em;
-  color:rgba(20,15,8,.82);
-  white-space:nowrap
-}
-.card-tags{text-align:left;display:flex;flex-direction:column;align-items:flex-end;gap:2px}
-.card-tag-en{
-  font-family:'Cormorant Garamond',serif;
-  font-size:clamp(8.5px,2vw,12.5px);
-  color:rgba(140,100,35,.78);
-  letter-spacing:.08em;
-  font-weight:400
-}
-.card-tag-ar{
-  font-family:'Tajawal',sans-serif;
-  font-size:clamp(9px,2.1vw,13px);
-  font-weight:600;
-  color:rgba(140,100,35,.78);
-  margin-top:1px
-}
-/* MIDDLE */
-.card-mid{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px}
-.card-amt{
-  font-family:'Cormorant Garamond',serif;
-  font-size:clamp(52px,13.5vw,90px);
-  font-weight:300;
-  color:rgba(20,15,8,.88);
-  letter-spacing:.01em;
-  line-height:1;
-  transition:all .2s
-}
-.card-amt.ph{
-  color:rgba(20,15,8,.16);
-  font-size:clamp(15px,3.8vw,24px);
-  font-style:italic;
-  letter-spacing:.06em
-}
-.card-sar{
-  font-family:'Cormorant Garamond',serif;
-  font-size:clamp(10px,2.3vw,14px);
-  color:rgba(140,100,35,.85);
-  letter-spacing:.38em;
-  display:none;
-  font-weight:400
-}
-.card-line{width:40px;height:1px;background:rgba(140,100,35,.28);display:none;margin:4px auto}
-.card-msg{
-  font-family:'Cormorant Garamond',serif;
-  font-size:clamp(9.5px,2.2vw,14px);
-  color:rgba(20,15,8,.4);
-  font-style:italic;
-  text-align:center;
-  padding:0 8%;
-  display:none;
-  line-height:1.55;
-  letter-spacing:.02em
-}
-/* BOTTOM */
-.card-bot{display:flex;justify-content:space-between;align-items:flex-end}
-.card-person{flex:1;min-width:0}
-/* Luxury label — small caps gold */
-.card-lbl2{
-  font-family:'Cormorant Garamond',serif;
-  font-size:clamp(7.5px,1.7vw,10px);
-  letter-spacing:.32em;
-  color:rgba(138,98,32,.85);
-  text-transform:uppercase;
-  margin-bottom:5px;
-  font-weight:400
-}
-/* Name — clean, strong, no truncation issue */
-.card-name{
-  font-family:'Cormorant Garamond',serif;
-  font-size:clamp(14px,3.3vw,21px);
-  font-weight:400;
-  color:rgba(20,15,8,.78);
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-  max-width:155px;line-height:1.2;
-  letter-spacing:.04em
-}
-.card-name.ph{color:rgba(20,15,8,.15);font-style:italic;font-size:clamp(11px,2.5vw,15px)}
-.card-sep{width:1px;height:28px;background:rgba(140,100,35,.18);margin:0 16px;align-self:flex-end;display:none}
-.card-from{text-align:left;flex-shrink:0;display:none}
-.card-from-name{
-  font-family:'Cormorant Garamond',serif;
-  font-size:clamp(13px,3vw,19px);
-  font-weight:400;
-  color:rgba(20,15,8,.6);
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-  max-width:140px;letter-spacing:.04em
-}
-
-/* ══ AMOUNTS ══ */
-.amts{padding:20px 16px 0;max-width:450px;margin:0 auto;width:100%}
-.amt-lbl{font-size:8px;letter-spacing:.22em;color:var(--muted);margin-bottom:14px;display:flex;align-items:center;gap:8px;text-transform:uppercase}
-.amt-lbl::after{content:'';flex:1;height:1px;background:var(--brd)}
-.amt-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
-.amt-btn{padding:20px 12px;background:#fff;border:2px solid var(--brd);cursor:pointer;transition:all .15s;text-align:center;border-radius:8px;position:relative}
-.amt-btn:hover{border-color:rgba(184,150,90,.5);transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.08)}
-.amt-btn.sel{border-color:var(--gold);background:rgba(184,150,90,.06);box-shadow:0 0 0 1px rgba(184,150,90,.2)}
-.amt-check{position:absolute;top:8px;left:8px;width:20px;height:20px;border-radius:50%;background:var(--gold);display:none;align-items:center;justify-content:center}
-.amt-btn.sel .amt-check{display:flex}
-.amt-val{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:300;color:var(--text);line-height:1;margin-bottom:4px}
-.amt-sar{font-size:11px;color:var(--muted)}
-
-/* ══ DOWNLOAD ══ */
-.dl-wrap{display:none;padding:16px 16px 0;max-width:450px;margin:0 auto;width:100%}
-.dl-btn{width:100%;padding:15px;background:var(--ink);color:#fff;border:none;font-family:'Tajawal',sans-serif;font-size:15px;font-weight:600;cursor:pointer;border-radius:8px;display:flex;align-items:center;justify-content:center;gap:10px;transition:background .15s}
-.dl-btn:hover{background:#1a1510}
-
-/* ══ FORMS ══ */
-.form-body{flex:1;overflow-y:auto;padding:20px 16px 100px;max-width:450px;margin:0 auto;width:100%}
-.fc{background:#fff;border:1px solid var(--brd);padding:18px;margin-bottom:14px;border-radius:10px}
-.fct{font-size:9px;letter-spacing:.2em;color:var(--muted);margin-bottom:16px;display:flex;align-items:center;gap:8px;text-transform:uppercase;font-weight:600}
-.fct::after{content:'';flex:1;height:1px;background:var(--brd)}
-.flbl{font-size:14px;color:var(--muted);display:block;margin-bottom:6px;margin-top:14px}
-.flbl:first-child{margin-top:0}
-.req{color:#c0392b}
-.finp{width:100%;padding:14px 16px;background:var(--cream2);border:1.5px solid var(--brd);font-family:'Tajawal',sans-serif;font-size:16px;color:var(--text);outline:none;transition:border-color .15s;border-radius:8px}
-.finp:focus{border-color:var(--gold)}
-.finp::placeholder{color:rgba(120,110,90,.35)}
-textarea.finp{resize:none;line-height:1.7}
-.tog-row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 0 0;border-top:1px solid var(--brd);margin-top:14px}
-.tog-txt .tog-t{font-size:15px;color:var(--text);font-weight:600;margin-bottom:3px}
-.tog-txt .tog-s{font-size:13px;color:var(--muted);line-height:1.6}
-.tog{width:46px;height:26px;background:var(--brd);border-radius:13px;cursor:pointer;position:relative;transition:all .2s;flex-shrink:0;border:none}
-.tog.on{background:var(--gold)}
-.tog::after{content:'';width:20px;height:20px;background:#fff;border-radius:50%;position:absolute;top:3px;right:3px;transition:right .2s;box-shadow:0 1px 4px rgba(0,0,0,.2)}
-.tog.on::after{right:23px}
-
-/* ══ SUMMARY ══ */
-.sblock{background:#fff;border:1px solid var(--brd);border-radius:10px;overflow:hidden;margin-bottom:14px}
-.sblbl{font-size:9px;letter-spacing:.18em;color:var(--muted);padding:11px 16px 8px;border-bottom:1px solid var(--brd);text-transform:uppercase;font-weight:600}
-.srow{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--brd);font-size:14px}
-.srow:last-child{border:none}
-.srl{color:var(--muted);font-size:13px}
-.srv{font-weight:600;color:var(--text)}
-.stot{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;color:var(--gold)}
-.err{font-size:14px;color:#c0392b;padding:8px 0;display:none}
-
-/* ══ SUCCESS ══ */
-.suc-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:32px 20px 40px;text-align:center;background:var(--cream)}
-.suc-ring{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#0d7a42,#0a6035);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;box-shadow:0 6px 24px rgba(13,122,66,.25)}
-.suc-tit{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:300;color:var(--text);letter-spacing:.06em;margin-bottom:8px}
-.suc-sub{font-size:14px;color:var(--muted);line-height:1.8;margin-bottom:28px}
-.suc-dl{width:100%;max-width:380px;padding:15px;background:var(--ink);color:#fff;border:none;font-family:'Tajawal',sans-serif;font-size:15px;font-weight:600;cursor:pointer;border-radius:8px;display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:14px;transition:background .15s}
-.suc-dl:hover{background:#1a1510}
-.suc-share{width:100%;max-width:380px;padding:15px;background:transparent;border:1.5px solid var(--brd);color:var(--text);font-family:'Tajawal',sans-serif;font-size:15px;cursor:pointer;border-radius:8px;display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:14px;transition:all .15s}
-.suc-share:hover{border-color:var(--gold);color:var(--gold)}
-.suc-new{width:100%;max-width:380px;padding:14px;background:transparent;border:none;color:var(--muted);font-family:'Tajawal',sans-serif;font-size:14px;cursor:pointer;margin-bottom:10px}
-.suc-home{font-size:13px;color:rgba(184,150,90,.6);text-decoration:none}
-.suc-home:hover{color:var(--gold)}
-
-/* ══ BOTTOM BAR ══ */
-.botbar{position:fixed;bottom:0;right:0;left:0;padding:14px 16px;background:rgba(242,235,226,.97);backdrop-filter:blur(20px);border-top:1px solid var(--brd)}
-.botbtn{width:100%;max-width:450px;margin:0 auto;display:block;padding:16px;background:var(--ink);color:#fff;border:none;font-family:'Tajawal',sans-serif;font-size:16px;font-weight:700;cursor:pointer;border-radius:8px;transition:background .15s}
-.botbtn:hover{background:#1a1510}
-.botbtn:disabled{opacity:.35;pointer-events:none}
-
-/* ══ PAYMENT ══ */
-.pay-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;text-align:center;background:var(--cream)}
-.pay-icon{width:64px;height:64px;border-radius:50%;background:rgba(184,150,90,.1);border:1px solid rgba(184,150,90,.25);display:flex;align-items:center;justify-content:center;margin:0 auto 20px}
-.pay-tit{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:300;color:var(--text);margin-bottom:10px}
-.pay-sub{font-size:14px;color:var(--muted);line-height:1.8;max-width:300px;margin-bottom:28px}
-.pay-link{width:100%;max-width:340px;padding:16px;background:var(--gold);color:var(--ink);border:none;font-family:'Tajawal',sans-serif;font-size:16px;font-weight:700;cursor:pointer;border-radius:8px;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:12px;transition:background .15s}
-.pay-link:hover{background:var(--gold2)}
-.pay-done{background:none;border:none;color:rgba(184,150,90,.55);font-family:'Tajawal',sans-serif;font-size:14px;cursor:pointer;padding:8px}
-
-/* toast */
-#ntf{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--gold);border:1px solid rgba(184,150,90,.3);padding:12px 24px;font-size:14px;z-index:9999;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .3s;border-radius:8px;font-family:'Tajawal',sans-serif}
+:root{--gold:#b8965a;--gold2:#c9a96b;--ink:#080807;--ink2:#0b0908;--cream:#f5efe4;--cream2:#ede6d8;--text:#1a1714}
+body{font-family:'Tajawal',sans-serif;background:var(--ink);color:var(--cream);overflow-x:hidden;line-height:1.6}
+.nav{position:fixed;top:0;width:100%;height:70px;background:rgba(8,8,7,.9);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:space-between;padding:0 24px;z-index:100;border-bottom:1px solid rgba(184,150,90,.1)}
+.logo{font-family:'Cormorant Garamond',serif;font-size:24px;letter-spacing:4px;color:var(--gold);text-decoration:none;font-weight:300}
+.main{padding:100px 20px 60px;max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1.2fr;gap:40px;align-items:start}
+@media(max-width:900px){.main{grid-template-columns:1fr;padding-top:80px}}
+.preview-side{position:sticky;top:100px;text-align:center}
+@media(max-width:900px){.preview-side{position:static}}
+canvas{max-width:100%;height:auto;background:#141210;box-shadow:0 20px 50px rgba(0,0,0,.5);border:1px solid rgba(184,150,90,.2)}
+.form-side{background:var(--ink2);padding:40px;border:1px solid rgba(184,150,90,.1)}
+h1{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:300;margin-bottom:10px;color:var(--gold)}
+p.sub{font-size:14px;color:rgba(245,239,228,.6);margin-bottom:30px}
+.section-label{display:block;font-size:12px;text-transform:uppercase;letter-spacing:2px;color:var(--gold);margin:25px 0 15px;font-weight:600}
+.amounts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.amt-btn{background:transparent;border:1px solid rgba(184,150,90,.3);color:var(--cream);padding:12px;cursor:pointer;transition:.3s;font-family:inherit}
+.amt-btn.active{background:var(--gold);border-color:var(--gold);color:var(--ink);font-weight:600}
+.input-group{margin-bottom:15px}
+input{width:100%;background:rgba(255,255,255,.03);border:1px solid rgba(184,150,90,.2);padding:14px;color:#fff;font-family:inherit;outline:none;transition:.3s}
+input:focus{border-color:var(--gold);background:rgba(255,255,255,.06)}
+.btn-primary{width:100%;background:var(--gold);color:var(--ink);border:none;padding:18px;font-size:16px;font-weight:700;cursor:pointer;margin-top:30px;transition:.3s;letter-spacing:1px}
+.btn-primary:hover{background:var(--gold2);transform:translateY(-2px)}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed}
+#ntf{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:var(--gold);color:var(--ink);padding:12px 24px;font-weight:600;font-size:14px;opacity:0;transition:.4s;pointer-events:none;z-index:1000}
 </style>
 </head>
 <body>
 
-<!-- BAR -->
-<div class="bar">
-  <a class="back" id="bk" href="javascript:history.back()">← رجوع</a>
-  <a class="logo" href="javascript:history.back()">GRAFF SPA</a>
-  <div style="min-width:52px"></div>
-</div>
+<div id="ntf">تم حفظ البطاقة ✓</div>
 
-<!-- ════ P1: AMOUNT ════ -->
-<div id="p1" class="pg on">
-  <div class="steps">
-    <div class="si on"><div class="sdot on">1</div><span class="slbl">القيمة</span></div>
-    <div class="sline"></div>
-    <div class="si"><div class="sdot">2</div><span class="slbl">التفاصيل</span></div>
-    <div class="sline"></div>
-    <div class="si"><div class="sdot">3</div><span class="slbl">التأكيد</span></div>
+<nav class="nav">
+  <a href="/" class="logo">GRAFF SPA</a>
+</nav>
+
+<div class="main">
+  <div class="preview-side">
+    <canvas id="cv" width="600" height="800"></canvas>
+    <p style="margin-top:20px;font-size:13px;color:rgba(245,239,228,.4)">* سيتم تحميل نسخة PNG تلقائياً عند الدفع</p>
   </div>
-  <div style="flex:1;overflow-y:auto;padding-bottom:88px">
-    <div class="hero">
-      <div class="heye">GIFT CARD</div>
-      <h1 class="htit">GRAFF <em>SPA</em></h1>
-      <p class="hsub">اهدي تجربة لا تُنسى لمن تحبين</p>
+
+  <div class="form-side">
+    <h1>بطاقة الإهداء الرقمية</h1>
+    <p class="sub">امنح من تحب تجربة استثنائية من الاسترخاء والرفاهية في جراف سبا.</p>
+    
+    <span class="section-label">اختر القيمة (ريال سعودي)</span>
+    <div class="amounts">
+      <button class="amt-btn active" onclick="setAmt(500,this)">500</button>
+      <button class="amt-btn" onclick="setAmt(1000,this)">1000</button>
+      <button class="amt-btn" onclick="setAmt(2000,this)">2000</button>
     </div>
 
-    <!-- CARD PREVIEW -->
-    <div class="card-wrap">
-      <div class="card-lbl">معاينة البطاقة</div>
-      <div class="gcard">
-        <!-- Frame SVG -->
-        <svg class="card-frame" viewBox="0 0 390 246" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect x="10" y="10" width="370" height="226" stroke="rgba(155,115,48,0.55)" stroke-width="1.2"/>
-          <rect x="17" y="17" width="356" height="212" stroke="rgba(180,138,60,0.2)" stroke-width="0.7"/>
-          <path d="M10 10 L58 10 M10 10 L10 58" stroke="rgba(140,100,35,0.85)" stroke-width="2.8" stroke-linecap="square"/>
-          <path d="M380 10 L332 10 M380 10 L380 58" stroke="rgba(140,100,35,0.85)" stroke-width="2.8" stroke-linecap="square"/>
-          <path d="M10 236 L58 236 M10 236 L10 188" stroke="rgba(140,100,35,0.85)" stroke-width="2.8" stroke-linecap="square"/>
-          <path d="M380 236 L332 236 M380 236 L380 188" stroke="rgba(140,100,35,0.85)" stroke-width="2.8" stroke-linecap="square"/>
-          <circle cx="195" cy="10" r="3.5" fill="rgba(155,115,48,0.7)"/>
-          <circle cx="195" cy="236" r="3.5" fill="rgba(155,115,48,0.7)"/>
-        </svg>
-        <div class="card-body">
-          <div class="card-top">
-            <div class="card-logo" id="c-logo">GRAFF SPA</div>
-            <div class="card-tags">
-              <div class="card-tag-en" id="c-tag-en">Gift Card</div>
-              <div class="card-tag-ar" id="c-tag-ar">بطاقة الإهداء</div>
-            </div>
-          </div>
-          <div class="card-mid">
-            <div class="card-amt ph" id="c-amt">اختاري القيمة</div>
-            <div class="card-sar" id="c-sar">SAR</div>
-            <div class="card-line" id="c-line"></div>
-            <div class="card-msg" id="c-msg"></div>
-          </div>
-          <div class="card-bot">
-            <div class="card-person">
-              <div class="card-lbl2">TO</div>
-              <div class="card-name ph" id="c-to">اسم المُهداة إليها</div>
-            </div>
-            <div class="card-sep" id="c-sep"></div>
-            <div class="card-from" id="c-from-sec">
-              <div class="card-lbl2" style="text-align:left">FROM</div>
-              <div class="card-from-name" id="c-from">اسمك</div>
-            </div>
-          </div>
-        </div>
-      </div>
+    <span class="section-label">بيانات المُهدى إليه</span>
+    <div class="input-group">
+      <input type="text" placeholder="اسم المستلم" oninput="upd('tn',this.value)">
+    </div>
+    <div class="input-group">
+      <input type="tel" placeholder="رقم جوال المستلم" oninput="upd('p',this.value)">
     </div>
 
-    <!-- AMOUNTS -->
-    <div class="amts">
-      <div class="amt-lbl">اختاري قيمة البطاقة</div>
-      <div class="amt-grid" id="agrid"></div>
+    <span class="section-label">بياناتك الشخصية</span>
+    <div class="input-group">
+      <input type="text" placeholder="اسمك الكريم" oninput="upd('fn',this.value)">
     </div>
 
-    <!-- Download hidden from customer — admin only -->
-  </div>
-  <div class="botbar"><button class="botbtn" id="b1" onclick="goP2()" disabled>التالي — بيانات الإهداء ←</button></div>
-</div>
-
-<!-- ════ P2: DETAILS ════ -->
-<div id="p2" class="pg">
-  <div class="steps">
-    <div class="si"><div class="sdot dn">✓</div><span class="slbl">القيمة</span></div>
-    <div class="sline"></div>
-    <div class="si on"><div class="sdot on">2</div><span class="slbl">التفاصيل</span></div>
-    <div class="sline"></div>
-    <div class="si"><div class="sdot">3</div><span class="slbl">التأكيد</span></div>
-  </div>
-  <div class="form-body">
-    <!-- Card preview same design -->
-    <div style="width:100%;aspect-ratio:1.586;position:relative;border-radius:10px;overflow:hidden;margin-bottom:20px;background:linear-gradient(160deg,#f8f3ea,#f2ebe0 40%,#ede5d6);box-shadow:0 8px 32px rgba(0,0,0,.12),0 0 0 1px rgba(155,115,48,.28)">
-      <svg style="position:absolute;inset:0;width:100%;height:100%;z-index:2;pointer-events:none" viewBox="0 0 390 246" fill="none">
-        <rect x="12" y="12" width="366" height="222" stroke="rgba(138,98,32,0.52)" stroke-width="1.2"/>
-      </svg>
-      <div style="position:absolute;inset:0;padding:8% 8%;display:flex;flex-direction:column;justify-content:space-between;z-index:5">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start">
-          <div style="font-family:'Cormorant Garamond',serif;font-size:clamp(13px,3.2vw,20px);font-weight:400;letter-spacing:.2em;color:rgba(20,15,8,.85)">GRAFF SPA</div>
-          <div style="text-align:left">
-            <div style="font-family:'Cormorant Garamond',serif;font-size:clamp(9px,2.1vw,13px);color:rgba(155,115,48,.9);letter-spacing:.06em">Gift Card</div>
-            <div style="font-size:clamp(10px,2.3vw,14px);font-weight:700;color:rgba(155,115,48,.9);margin-top:2px">بطاقة الإهداء</div>
-          </div>
-        </div>
-        <div style="text-align:center">
-          <div style="font-family:'Cormorant Garamond',serif;font-size:clamp(42px,10.5vw,68px);font-weight:300;color:rgba(20,15,8,.88);line-height:1" id="p2-amt">—</div>
-          <div style="font-family:'Cormorant Garamond',serif;font-size:clamp(10px,2.3vw,15px);color:rgba(155,115,48,.85);letter-spacing:.28em;margin-top:4px;display:none" id="p2-sar">SAR</div>
-          <div style="font-family:'Cormorant Garamond',serif;font-size:clamp(10px,2.4vw,15px);color:rgba(20,15,8,.4);font-style:italic;margin-top:6px;display:none" id="p2-msg"></div>
-        </div>
-        <div style="display:flex;justify-content:space-between;align-items:flex-end">
-          <div>
-            <div style="font-family:'Cormorant Garamond',serif;font-size:clamp(7px,1.6vw,10px);letter-spacing:.25em;color:rgba(155,115,48,.8);text-transform:uppercase;margin-bottom:5px">TO</div>
-            <div style="font-family:'Tajawal',sans-serif;font-size:clamp(14px,3.4vw,20px);font-weight:400;color:rgba(20,15,8,.78);max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;letter-spacing:.04em" id="p2-to">—</div>
-          </div>
-          <div style="display:none;text-align:left" id="p2-from-sec">
-            <div style="font-family:'Cormorant Garamond',serif;font-size:clamp(7px,1.6vw,10px);letter-spacing:.25em;color:rgba(155,115,48,.8);text-transform:uppercase;margin-bottom:5px">FROM</div>
-            <div style="font-family:'Tajawal',sans-serif;font-size:clamp(12px,2.9vw,17px);font-weight:400;color:rgba(20,15,8,.58);max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;letter-spacing:.04em" id="p2-from">—</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="fc">
-      <div class="fct">المُهداة إليها</div>
-      <label class="flbl">الاسم الكامل <span class="req">*</span></label>
-      <input class="finp" id="tn" placeholder="سارة الأحمدي" oninput="onTN()" autocomplete="name">
-      <label class="flbl">رقم الجوال <span class="req">*</span></label>
-      <input class="finp" id="tp" placeholder="05xxxxxxxx" type="tel" maxlength="10" oninput="v2()" autocomplete="tel">
-    </div>
-    <div class="fc">
-      <div class="fct">المُهدي</div>
-      <label class="flbl">اسمك الكامل <span class="req">*</span></label>
-      <input class="finp" id="fn" placeholder="نورة الخالدي" oninput="onFN()" autocomplete="name">
-      <label class="flbl">رقم جوالك <span class="req">*</span></label>
-      <input class="finp" id="fp" placeholder="05xxxxxxxx" type="tel" maxlength="10" oninput="v2()" autocomplete="tel">
-      <div class="tog-row">
-        <div class="tog-txt">
-          <div class="tog-t">إظهار اسمك على البطاقة</div>
-          <div class="tog-s">سيظهر اسمك في خانة "من" على البطاقة</div>
-        </div>
-        <button class="tog on" id="togf" onclick="togFrom()"></button>
-      </div>
-    </div>
-    <div class="fc">
-      <div class="fct">رسالة الإهداء — اختياري</div>
-      <textarea class="finp" id="gm" rows="3" placeholder="اكتبي رسالتك الخاصة هنا..." oninput="onMsg()"></textarea>
-    </div>
-    <div class="err" id="e2"></div>
-  </div>
-  <div class="botbar"><button class="botbtn" id="b2" onclick="goP3()" disabled>التالي — مراجعة وتأكيد ←</button></div>
-</div>
-
-<!-- ════ P3: CONFIRM ════ -->
-<div id="p3" class="pg">
-  <div class="steps">
-    <div class="si"><div class="sdot dn">✓</div><span class="slbl">القيمة</span></div>
-    <div class="sline"></div>
-    <div class="si"><div class="sdot dn">✓</div><span class="slbl">التفاصيل</span></div>
-    <div class="sline"></div>
-    <div class="si on"><div class="sdot on">3</div><span class="slbl">التأكيد</span></div>
-  </div>
-  <div class="form-body">
-    <!-- Card same design -->
-    <div style="width:100%;aspect-ratio:1.586;position:relative;border-radius:10px;overflow:hidden;margin-bottom:20px;background:linear-gradient(160deg,#f8f3ea,#f2ebe0 40%,#ede5d6);box-shadow:0 8px 32px rgba(0,0,0,.12),0 0 0 1px rgba(155,115,48,.28)">
-      <svg style="position:absolute;inset:0;width:100%;height:100%;z-index:2;pointer-events:none" viewBox="0 0 390 246" fill="none">
-        <rect x="12" y="12" width="366" height="222" stroke="rgba(138,98,32,0.52)" stroke-width="1.2"/>
-      </svg>
-      <div style="position:absolute;inset:0;padding:8% 8%;display:flex;flex-direction:column;justify-content:space-between;z-index:5">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start">
-          <div style="font-family:'Cormorant Garamond',serif;font-size:clamp(13px,3.2vw,20px);font-weight:400;letter-spacing:.2em;color:rgba(20,15,8,.85)">GRAFF SPA</div>
-          <div style="text-align:left">
-            <div style="font-family:'Cormorant Garamond',serif;font-size:clamp(9px,2.1vw,13px);color:rgba(155,115,48,.9)">Gift Card</div>
-            <div style="font-size:clamp(10px,2.3vw,14px);font-weight:700;color:rgba(155,115,48,.9);margin-top:2px">بطاقة الإهداء</div>
-          </div>
-        </div>
-        <div style="text-align:center">
-          <div style="display:flex;align-items:baseline;justify-content:center;gap:10px">
-            <div style="font-family:'Cormorant Garamond',serif;font-size:clamp(42px,10.5vw,68px);font-weight:300;color:rgba(20,15,8,.88);line-height:1" id="p3-amt">—</div>
-            <div style="font-family:'Cormorant Garamond',serif;font-size:clamp(11px,2.5vw,16px);color:rgba(155,115,48,.85);letter-spacing:.25em">SAR</div>
-          </div>
-          <div style="font-family:'Cormorant Garamond',serif;font-size:clamp(11px,2.5vw,15px);color:rgba(20,15,8,.4);font-style:italic;margin-top:6px;display:none" id="p3-msg"></div>
-        </div>
-        <div style="display:flex;justify-content:space-between;align-items:flex-end">
-          <div>
-            <div style="font-family:'Cormorant Garamond',serif;font-size:clamp(7px,1.6vw,10px);letter-spacing:.25em;color:rgba(155,115,48,.8);text-transform:uppercase;margin-bottom:5px">TO</div>
-            <div style="font-family:'Tajawal',sans-serif;font-size:clamp(14px,3.4vw,20px);font-weight:400;color:rgba(20,15,8,.78);letter-spacing:.04em" id="p3-to">—</div>
-          </div>
-          <div style="display:none;text-align:left" id="p3-from-sec">
-            <div style="font-family:'Cormorant Garamond',serif;font-size:clamp(7px,1.6vw,10px);letter-spacing:.25em;color:rgba(155,115,48,.8);text-transform:uppercase;margin-bottom:5px">FROM</div>
-            <div style="font-family:'Tajawal',sans-serif;font-size:clamp(12px,2.9vw,17px);font-weight:400;color:rgba(20,15,8,.58);letter-spacing:.04em" id="p3-from">—</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="sblock">
-      <div class="sblbl">ملخص الطلب</div>
-      <div class="srow"><span class="srl">المُهداة إليها</span><span class="srv" id="s-to"></span></div>
-      <div class="srow"><span class="srl">الجوال</span><span class="srv" id="s-tp" style="direction:ltr;text-align:left"></span></div>
-      <div class="srow"><span class="srl">المُهدي</span><span class="srv" id="s-fn"></span></div>
-      <div class="srow" id="s-msg-row" style="display:none"><span class="srl">الرسالة</span><span class="srv" id="s-msg" style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></span></div>
-      <div class="srow" style="background:rgba(184,150,90,.05);border-top:1px solid rgba(184,150,90,.15)">
-        <span class="srl" style="font-weight:600;color:var(--text);font-size:14px">قيمة البطاقة</span>
-        <span class="stot" id="s-amt"></span>
-      </div>
-    </div>
-    <div style="font-size:13px;color:var(--muted);text-align:center;padding:0 0 16px;line-height:1.8">سيتم إرسال البطاقة عبر الواتساب فور إتمام الدفع</div>
-    <div class="err" id="e3"></div>
-  </div>
-  <div class="botbar"><button class="botbtn" id="b3" onclick="doBuy()">إتمام الشراء ←</button></div>
-</div>
-
-<!-- ════ PP: PAYMENT ════ -->
-<div id="pp" class="pg">
-  <div class="pay-body">
-    <div class="pay-icon">
-      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="rgba(184,150,90,.7)" stroke-width="1.5"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-    </div>
-    <div class="pay-tit">إتمام الدفع</div>
-    <p class="pay-sub">اضغطي للانتقال لبوابة الدفع الآمنة — ستصل البطاقة فور الإتمام</p>
-    <a class="pay-link" id="plink" href="#" target="_blank">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-      الانتقال لبوابة الدفع ←
-    </a>
-    <button class="pay-done" onclick="onDone()">✓ أتممت الدفع</button>
+    <button class="btn-primary" onclick="downloadCard()">إرسال الإهداء والدفع</button>
   </div>
 </div>
-
-<!-- ════ PZ: SUCCESS ════ -->
-<div id="pz" class="pg">
-  <div class="suc-body">
-    <div class="suc-ring">
-      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>
-    </div>
-    <h2 class="suc-tit">تم الإهداء بنجاح</h2>
-    <p class="suc-sub" id="suc-msg">تم إرسال بطاقة الإهداء بنجاح</p>
-
-    <!-- Card same design on success -->
-    <div style="width:100%;max-width:380px;aspect-ratio:1.586;position:relative;border-radius:10px;overflow:hidden;margin-bottom:24px;background:linear-gradient(160deg,#f8f3ea,#f2ebe0 40%,#ede5d6);box-shadow:0 8px 32px rgba(0,0,0,.12),0 0 0 1px rgba(155,115,48,.28)">
-      <svg style="position:absolute;inset:0;width:100%;height:100%;z-index:2;pointer-events:none" viewBox="0 0 390 246" fill="none">
-        <rect x="12" y="12" width="366" height="222" stroke="rgba(138,98,32,0.52)" stroke-width="1.2"/>
-      </svg>
-      <div style="position:absolute;inset:0;padding:8% 8%;display:flex;flex-direction:column;justify-content:space-between;z-index:5">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start">
-          <div style="font-family:'Cormorant Garamond',serif;font-size:clamp(13px,3.2vw,20px);font-weight:400;letter-spacing:.2em;color:rgba(20,15,8,.85)">GRAFF SPA</div>
-          <div style="text-align:left">
-            <div style="font-family:'Cormorant Garamond',serif;font-size:clamp(9px,2.1vw,13px);color:rgba(155,115,48,.9)">Gift Card</div>
-            <div style="font-size:clamp(10px,2.3vw,14px);font-weight:700;color:rgba(155,115,48,.9);margin-top:2px">بطاقة الإهداء</div>
-          </div>
-        </div>
-        <div style="text-align:center">
-          <div style="display:flex;align-items:baseline;justify-content:center;gap:10px">
-            <div style="font-family:'Cormorant Garamond',serif;font-size:clamp(42px,10.5vw,68px);font-weight:300;color:rgba(20,15,8,.88);line-height:1" id="z-amt">—</div>
-            <div style="font-family:'Cormorant Garamond',serif;font-size:clamp(11px,2.5vw,16px);color:rgba(155,115,48,.85);letter-spacing:.25em">SAR</div>
-          </div>
-          <div style="font-family:'Cormorant Garamond',serif;font-size:clamp(11px,2.5vw,15px);color:rgba(20,15,8,.4);font-style:italic;margin-top:6px;display:none" id="z-msg"></div>
-        </div>
-        <div style="display:flex;justify-content:space-between;align-items:flex-end">
-          <div>
-            <div style="font-family:'Cormorant Garamond',serif;font-size:clamp(7px,1.6vw,10px);letter-spacing:.25em;color:rgba(155,115,48,.8);text-transform:uppercase;margin-bottom:5px">TO</div>
-            <div style="font-family:'Tajawal',sans-serif;font-size:clamp(14px,3.4vw,20px);font-weight:400;color:rgba(20,15,8,.78);letter-spacing:.04em" id="z-to">—</div>
-          </div>
-          <div style="display:none;text-align:left" id="z-from-sec">
-            <div style="font-family:'Cormorant Garamond',serif;font-size:clamp(7px,1.6vw,10px);letter-spacing:.25em;color:rgba(155,115,48,.8);text-transform:uppercase;margin-bottom:5px">FROM</div>
-            <div style="font-family:'Tajawal',sans-serif;font-size:clamp(12px,2.9vw,17px);font-weight:400;color:rgba(20,15,8,.58);letter-spacing:.04em" id="z-from">—</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Download removed from success — admin sends card -->
-    <button class="suc-share" onclick="shareCard()">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-      مشاركة البطاقة
-    </button>
-    <button class="suc-new" onclick="resetAll()">إهداء بطاقة جديدة</button>
-    <a href="javascript:history.go(-4)" class="suc-home">← العودة للرئيسية</a>
-  </div>
-</div>
-
-<div id="ntf"></div>
 
 <script>
-const B='https://rekaz-test.onrender.com';
-const GPRICES={'400':'3a20ab64-fb29-8449-e1ef-c92188e204ed','500':'3a20ab64-fb29-6a4b-6338-39f7599d1edd','700':'3a20ab64-fb29-1904-97de-b77afcba741b','1000':'3a20ab64-fb29-e566-ee8c-b74c462a3d5f'};
-let S={amt:null,tn:'',tp:'',fn:'',fp:'',msg:'',showFrom:true,url:null,ref:null};
+const ge=id=>document.getElementById(id);
+const S={v:500,tn:'',fn:'',p:''};
+const cv=ge('cv'),x=cv.getContext('2d');
+const img=new Image();
+img.crossOrigin="anonymous";
+img.src='https://i.ibb.co/S7X7YfLh/6.png';
+img.onload=drawCard;
 
-// Load config
-(async()=>{
-  try{
-    const r=await fetch(B+'/site');if(!r.ok)throw 0;
-    const cfg=await r.json();
-    const t=cfg.theme||{},tx=cfg.texts||{},R=document.documentElement;
-    if(t.primaryColor)R.style.setProperty('--gold',t.primaryColor);
-    if(t.primaryHover)R.style.setProperty('--gold2',t.primaryHover);
-    if(t.bgDark)R.style.setProperty('--ink',t.bgDark);
-    if(t.bgLight)R.style.setProperty('--cream',t.bgLight);
-    if(t.textColor)R.style.setProperty('--text',t.textColor);
-    if(t.mutedColor)R.style.setProperty('--muted',t.mutedColor);
-    if(t.borderColor)R.style.setProperty('--brd',t.borderColor);
-    // Card texts
-    if(tx.giftCardLogoLine1){document.querySelectorAll('#c-logo').forEach(e=>e.textContent=tx.giftCardLogoLine1);}
-    if(tx.giftCardTagEn){document.querySelectorAll('#c-tag-en').forEach(e=>e.textContent=tx.giftCardTagEn);}
-    if(tx.giftCardTagAr){document.querySelectorAll('#c-tag-ar').forEach(e=>e.textContent=tx.giftCardTagAr);}
-    if(tx.giftSubtitle){const e=document.querySelector('.hsub');if(e)e.textContent=tx.giftSubtitle;}
-    const gp=(cfg.pages&&cfg.pages.gift)||{};
-    if(gp.rekazPrices)Object.assign(GPRICES,gp.rekazPrices);
-    renderAmts(gp.amounts||[400,500,700,1000]);
-  }catch(e){renderAmts([400,500,700,1000]);}
-})();
-
-function ge(id){return document.getElementById(id);}
-function sv(id,v){const e=ge(id);if(e)e.textContent=v??'';}
-function sh(id,v){const e=ge(id);if(e)e.style.display=v?'':'none';}
-
-function renderAmts(ams){
-  ge('agrid').innerHTML=ams.map(a=>`
-    <button class="amt-btn" onclick="selAmt(this,${a})">
-      <div class="amt-check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#080807" stroke-width="3.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="amt-val">${a}</div>
-      <div class="amt-sar">ريال سعودي</div>
-    </button>`).join('');
+function setAmt(v,el){
+  S.v=v;
+  document.querySelectorAll('.amt-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  drawCard();
 }
 
-function selAmt(el,amt){
-  document.querySelectorAll('.amt-btn').forEach(b=>b.classList.remove('sel'));
-  el.classList.add('sel');S.amt=amt;
-  // Update main card
-  const ca=ge('c-amt');ca.textContent=amt;ca.classList.remove('ph');
-  sh('c-sar',true);sh('c-line',true);
-  ge('b1').disabled=false;
-  // Update p2 card
-  sv('p2-amt',amt);sh('p2-sar',true);
+function upd(k,v){ S[k]=v; drawCard(); }
+
+function drawCard(){
+  const W=cv.width,H=cv.height;
+  x.clearRect(0,0,W,H);
+  x.drawImage(img,0,0,W,H);
+  
+  if(S.tn){
+    x.textAlign='center';
+    x.fillStyle='rgba(20,15,8,0.7)';
+    x.font='600 42px Tajawal,Arial';
+    x.fillText(S.tn,W/2,H/2 + 20);
+  }
+
+  if(S.fn){
+    x.textAlign='right';
+    x.font='400 18px "Cormorant Garamond",serif';
+    x.fillStyle='rgba(140,100,35,0.8)';
+    x.fillText('من:', 120, H-120);
+    x.font='600 24px Tajawal,Arial';
+    x.fillStyle='rgba(20,15,8,0.6)';
+    x.fillText(S.fn, 120, H-85);
+  }
+
+  x.textAlign='center';
+  x.font='600 30px Tajawal,Arial';
+  x.fillStyle='#b8965a';
+  x.fillText(S.v + ' SAR', W/2, H-200);
 }
 
-function onTN(){
-  S.tn=ge('tn').value.trim();
-  const e=ge('c-to');
-  if(S.tn){e.textContent=S.tn;e.classList.remove('ph');}
-  else{e.textContent='اسم المُهداة إليها';e.classList.add('ph');}
-  sv('p2-to',S.tn||'—');v2();
-}
+async function downloadCard() {
+  const btn = document.querySelector('.btn-primary');
+  const originalText = btn.innerHTML;
+  
+  if (!S.fn || !S.tn || !S.p) {
+      notif('يرجى إكمال جميع البيانات');
+      return;
+  }
 
-function onFN(){
-  S.fn=ge('fn').value.trim();
-  const ef=ge('c-from');if(ef&&S.showFrom)ef.textContent=S.fn||'اسمك';
-  sh('c-from-sec',S.showFrom);sh('c-sep',S.showFrom&&!!S.fn);
-  sh('p2-from-sec',S.showFrom&&!!S.fn);
-  sv('p2-from',S.fn||'—');v2();
-}
+  try {
+    btn.innerHTML = 'جاري معالجة الطلب...';
+    btn.disabled = true;
 
-function togFrom(){
-  S.showFrom=!S.showFrom;
-  ge('togf').classList.toggle('on',S.showFrom);
-  onFN();
-}
-
-function onMsg(){
-  S.msg=ge('gm').value.trim();
-  const m=ge('c-msg');
-  if(S.msg){m.textContent='"'+S.msg+'"';m.style.display='block';}else m.style.display='none';
-  sh('p2-msg',!!S.msg);if(S.msg)sv('p2-msg','"'+S.msg+'"');
-}
-
-function v2(){
-  ge('b2').disabled=!(ge('tn').value.trim().length>=2&&ge('tp').value.trim().length>=9&&ge('fn').value.trim().length>=2&&ge('fp').value.trim().length>=9);
-}
-
-function goP2(){if(!S.amt)return;go('p2');}
-
-function goP3(){
-  const tn=ge('tn').value.trim(),tp=ge('tp').value.trim(),fn=ge('fn').value.trim(),fp=ge('fp').value.trim();
-  if(!tn||tp.length<9||!fn||fp.length<9){sh('e2',true);ge('e2').textContent='يرجى تعبئة جميع الحقول المطلوبة';return;}
-  sh('e2',false);S.tn=tn;S.tp=tp;S.fn=fn;S.fp=fp;S.msg=ge('gm').value.trim();
-  // Fill p3 card
-  sv('p3-amt',S.amt);
-  sh('p3-msg',!!S.msg);if(S.msg)sv('p3-msg','"'+S.msg+'"');
-  sv('p3-to',S.tn);sh('p3-from-sec',S.showFrom&&!!S.fn);sv('p3-from',S.fn);
-  // Fill summary
-  sv('s-to',S.tn);sv('s-tp',S.tp);sv('s-fn',S.showFrom?S.fn:'(مخفي)');sv('s-amt',S.amt+' SAR');
-  sh('s-msg-row',!!S.msg);sv('s-msg',S.msg);
-  go('p3');
-}
-
-async function doBuy(){
-  const btn=ge('b3');btn.textContent='جاري...';btn.disabled=true;sh('e3',false);
-  const pid=GPRICES[String(S.amt)]||null;
-  const payload={
-    amount:S.amt,priceId:pid,
-    fromName:S.fn,fromPhone:'+966'+S.fp.replace(/^0/,''),
-    toName:S.tn,toPhone:'+966'+S.tp.replace(/^0/,''),
-    message:S.msg,showSender:S.showFrom
-  };
- cv.toBlob(b => {
-      // هذا الجزء هو تعديل الربط مع ركاز
-      const u = URL.createObjectURL(b);
-      
-      // طلب رابط الدفع من السيرفر
-      fetch('/api/purchase-gift', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          amount: S.v,
-          senderName: S.fn,
-          recipientName: S.tn,
-          recipientPhone: S.p
-        })
+    const response = await fetch('/api/purchase-gift', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        amount: S.v,
+        senderName: S.fn,
+        recipientName: S.tn,
+        recipientPhone: S.p
       })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success && data.paymentLink) {
-          // تحميل الصورة أولاً للذكرى
-          const a = document.createElement('a');
-          a.href = u;
-          a.download = `Graff-Gift-${S.tn}.png`;
-          a.click();
-          
-          notif('تم حفظ البطاقة.. جاري التحويل للدفع');
-          
-          // الانتقال لصفحة دفع ركاز
-          setTimeout(() => {
-            window.location.href = data.paymentLink;
-          }, 1500);
-        } else {
-          notif('خطأ في الاتصال بركاز: ' + (data.error || 'حاول لاحقاً'));
-        }
-      })
-      .catch(e => {
-        notif('تعذر الوصول للسيرفر');
-        console.error(e);
-      })
-      .finally(() => {
-        btn.innerHTML = originalText;
-        btn.disabled = false;
-      });
-    }, 'image/png');
+    });
 
+    const data = await response.json();
+
+    if (data.success && data.paymentLink) {
+      cv.toBlob(b => {
+        const u = URL.createObjectURL(b);
+        const a = document.createElement('a');
+        a.href = u;
+        a.download = `Graff-Gift-${S.tn}.png`;
+        a.click();
+      }, 'image/png');
+
+      notif('تم حفظ البطاقة.. جاري التحويل للدفع');
+      setTimeout(() => { window.location.href = data.paymentLink; }, 1500);
+    } else {
+      notif('خطأ في الاتصال بركاز');
+      btn.disabled = false;
+      btn.innerHTML = originalText;
+    }
   } catch (e) {
-    notif('تعذر التحميل');
-    btn.innerHTML = originalText;
+    notif('تعذر الاتصال بالسيرفر');
     btn.disabled = false;
+    btn.innerHTML = originalText;
   }
 }
 
 function notif(msg){
-  const el=ge('ntf');el.textContent=msg;el.style.opacity='1';
-  clearTimeout(el._t);el._t=setTimeout(()=>el.style.opacity='0',3000);
+  const el=ge('ntf'); el.textContent=msg; el.style.opacity='1';
+  clearTimeout(el._t); el._t=setTimeout(()=>el.style.opacity='0',3000);
 }
 </script>
 </body>
