@@ -670,20 +670,42 @@ app.post("/gift/purchase", async (req, res) => {
     return res.status(400).json({ error: "جميع الحقول مطلوبة" });
   try {
     const db = await readDB();
+    const GIFT_PRODUCT_ID = "d67c6360-62b3-4516-9ddc-2e6b9d5370a9";
 
     // ── Resolve priceId ──
-    const GIFT_PRICE_IDS = {
-      "400":  "3a20ab64-fb29-8449-e1ef-c92188e204ed",
-      "500":  "3a20ab64-fb29-6a4b-6338-39f7599d1edd",
-      "700":  "3a20ab64-fb29-1904-97de-b77afcba741b",
-      "1000": "3a20ab64-fb29-e566-ee8c-b74c462a3d5f"
-    };
-    const dbPrices = db.pages?.gift?.rekazPrices || {};
-    const giftPriceId = priceId
-      || dbPrices[String(amount)]
-      || GIFT_PRICE_IDS[String(amount)]
-      || db.pages?.gift?.rekazPriceId
-      || null;
+    // 1. Try to get priceId by fetching the gift product from Rekaz
+    let giftPriceId = priceId || null;
+    if (!giftPriceId) {
+      try {
+        // Try different endpoints to get the gift product pricing
+        const endpoints = [
+          `${REKAZ_API}/products/${GIFT_PRODUCT_ID}`,
+          `${REKAZ_BASE}/api/app/product/product/${GIFT_PRODUCT_ID}`,
+          `${REKAZ_BASE}/api/app/product/gift-card/${GIFT_PRODUCT_ID}`,
+        ];
+        for (const url of endpoints) {
+          const r = await rekazFetch(url);
+          if (r.ok) {
+            const prod = r.json();
+            const pricing = prod.pricing || prod.prices || [];
+            // Find pricing matching amount
+            const match = pricing.find(p => Math.abs((p.amount||p.price||0) - amount) < 1);
+            if (match) { giftPriceId = match.id || match.priceId; break; }
+            // If only one pricing option, use it
+            if (pricing.length === 1) { giftPriceId = pricing[0].id || pricing[0].priceId; break; }
+            // Use first pricing as fallback
+            if (pricing.length > 0 && !giftPriceId) { giftPriceId = pricing[0].id || pricing[0].priceId; }
+          }
+        }
+      } catch(e) { console.log("[Gift] product fetch error:", e.message); }
+    }
+
+    // 2. Fallback: DB prices
+    if (!giftPriceId) {
+      const dbPrices = db.pages?.gift?.rekazPrices || {};
+      giftPriceId = dbPrices[String(amount)] || db.pages?.gift?.rekazPriceId || null;
+    }
+    console.log("[Gift] amount:", amount, "productId:", GIFT_PRODUCT_ID, "priceId:", giftPriceId);
 
     const orderRef  = "GIFT-" + Date.now().toString(36).toUpperCase();
     let payUrl      = null;
@@ -744,7 +766,7 @@ app.post("/gift/purchase", async (req, res) => {
         } catch(e) { console.log("[Gift] subscriptions error:", e.message); }
       }
 
-      // ── Attempt 3: POST /api/public/orders (generic order endpoint) ──
+      // ── Attempt 3: POST /api/public/orders ──
       if (!payUrl) {
         try {
           const r3 = await rekazFetch(`${REKAZ_API}/orders`, {
@@ -766,6 +788,30 @@ app.post("/gift/purchase", async (req, res) => {
               : (invoiceId ? `${REKAZ_BASE}/i/${invoiceId}` : null);
           }
         } catch(e) { console.log("[Gift] orders error:", e.message); }
+      }
+
+      // ── Attempt 4: POST /reservations/bulk with productId (no priceId) ──
+      if (!payUrl) {
+        try {
+          const r4 = await rekazFetch(`${REKAZ_API}/reservations/bulk`, {
+            method: "POST",
+            body: JSON.stringify({
+              customerDetails: { name: fromName, mobileNumber: mobile, type: 1 },
+              branchId: BRANCH_ID,
+              invoiceNote: note,
+              items: [{ productId: GIFT_PRODUCT_ID, quantity: 1, amount }]
+            })
+          });
+          console.log("[Gift] /reservations/bulk (productId):", r4.status, r4.text.slice(0, 400));
+          if (r4.ok) {
+            const d4  = r4.json();
+            invoiceId = d4.invoiceId || d4.id || invoiceId || null;
+            const pp4 = d4.paymentLink || d4.payUrl || d4.link || "";
+            payUrl    = pp4
+              ? (pp4.startsWith("http") ? pp4 : `${REKAZ_BASE}${pp4}`)
+              : (invoiceId ? `${REKAZ_BASE}/i/${invoiceId}` : null);
+          }
+        } catch(e) { console.log("[Gift] productId attempt error:", e.message); }
       }
     }
 
@@ -1045,6 +1091,29 @@ app.get("/debug-find-gift", async (req, res) => {
 });
 
 // ── DEBUG: try all possible Rekaz Gift Card endpoints ──
+
+// ── DEBUG: fetch specific gift product by ID ──
+app.get("/debug-gift-product-direct", async (req, res) => {
+  const GIFT_PRODUCT_ID = "d67c6360-62b3-4516-9ddc-2e6b9d5370a9";
+  const results = {};
+  // Try multiple endpoint patterns for gift products
+  const urls = [
+    `${REKAZ_API}/products/${GIFT_PRODUCT_ID}`,
+    `${REKAZ_API}/gift-cards/${GIFT_PRODUCT_ID}`,
+    `${REKAZ_API}/products/gift/${GIFT_PRODUCT_ID}`,
+    `${REKAZ_BASE}/api/app/product/product/${GIFT_PRODUCT_ID}`,
+    `${REKAZ_BASE}/api/app/product/gift-card/${GIFT_PRODUCT_ID}`,
+    `${REKAZ_BASE}/api/app/gift-card/${GIFT_PRODUCT_ID}`,
+  ];
+  for (const url of urls) {
+    try {
+      const r = await rekazFetch(url);
+      results[url] = { status: r.status, ok: r.ok, data: r.ok ? r.json() : r.text.slice(0,300) };
+    } catch(e) { results[url] = { error: e.message }; }
+  }
+  res.json(results);
+});
+
 app.get("/debug-rekaz-gift-all", async (req, res) => {
   const results = {};
   const endpoints = [
