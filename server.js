@@ -771,6 +771,52 @@ app.post("/gift/purchase", async (req, res) => {
           }
         } catch(e) { console.log("[Gift] reservations/bulk error:", e.message); }
         if (payUrl) break;
+
+        // ── Attempt C: POST /gift-cards (dedicated gift endpoint) ──
+        try {
+          const rC = await rekazFetch(`${REKAZ_API}/gift-cards`, {
+            method: "POST",
+            body: JSON.stringify({
+              customerDetails: { name: customerName, mobileNumber: mobile, type: 1 },
+              branchId: BRANCH_ID,
+              productId: GIFT_PRODUCT_ID,
+              priceId: giftPriceId,
+              quantity: 1,
+              note
+            })
+          });
+          console.log("[Gift] /gift-cards:", rC.status, rC.text.slice(0, 400));
+          if (rC.ok) {
+            const dC  = rC.json();
+            invoiceId = dC.invoiceId || dC.id || invoiceId || null;
+            const ppC = dC.paymentLink || dC.payUrl || dC.link || "";
+            payUrl    = ppC ? (ppC.startsWith("http") ? ppC : `${REKAZ_BASE}${ppC}`)
+                            : (invoiceId ? `${REKAZ_BASE}/i/${invoiceId}` : null);
+          }
+        } catch(e) { console.log("[Gift] /gift-cards error:", e.message); }
+        if (payUrl) break;
+
+        // ── Attempt D: POST /invoices (create invoice directly) ──
+        try {
+          const rD = await rekazFetch(`${REKAZ_API}/invoices`, {
+            method: "POST",
+            body: JSON.stringify({
+              customerDetails: { name: customerName, mobileNumber: mobile, type: 1 },
+              branchId: BRANCH_ID,
+              note,
+              items: [{ priceId: giftPriceId, quantity: 1, amount }]
+            })
+          });
+          console.log("[Gift] /invoices:", rD.status, rD.text.slice(0, 400));
+          if (rD.ok) {
+            const dD  = rD.json();
+            invoiceId = dD.invoiceId || dD.id || invoiceId || null;
+            const ppD = dD.paymentLink || dD.payUrl || dD.link || "";
+            payUrl    = ppD ? (ppD.startsWith("http") ? ppD : `${REKAZ_BASE}${ppD}`)
+                            : (invoiceId ? `${REKAZ_BASE}/i/${invoiceId}` : null);
+          }
+        } catch(e) { console.log("[Gift] /invoices error:", e.message); }
+        if (payUrl) break;
       }
     }
 
@@ -1068,6 +1114,28 @@ app.get("/debug-gift-product-direct", async (req, res) => {
     try {
       const r = await rekazFetch(url);
       results[url] = { status: r.status, ok: r.ok, data: r.ok ? r.json() : r.text.slice(0,300) };
+    } catch(e) { results[url] = { error: e.message }; }
+  }
+  res.json(results);
+});
+
+
+// ── Fetch gift product pricing directly from Rekaz app API ──
+app.get("/debug-gift-pricing", async (req, res) => {
+  const id = req.query.id || "d67c6360-62b3-4516-9ddc-2e6b9d5370a9";
+  const results = {};
+  const urls = [
+    `${REKAZ_BASE}/api/app/product/gift-card/${id}`,
+    `${REKAZ_BASE}/api/app/gift-card/${id}`,
+    `${REKAZ_BASE}/api/app/product/product/${id}`,
+    `${REKAZ_API}/products/${id}`,
+    `${REKAZ_BASE}/api/app/voucher/${id}`,
+  ];
+  for (const url of urls) {
+    try {
+      const r = await rekazFetch(url);
+      const txt = r.text;
+      results[url] = { status: r.status, body: r.ok ? r.json() : txt.slice(0,300) };
     } catch(e) { results[url] = { error: e.message }; }
   }
   res.json(results);
