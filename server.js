@@ -19,8 +19,7 @@ app.use((req, res, next) => {
 });
 
 const REKAZ_API  = "https://platform.rekaz.io/api/public";
-const REKAZ_BASE     = "https://platform.rekaz.io";  // API calls
-const REKAZ_PAY_BASE = "https://graffspa.rekaz.io";   // Payment links (tenant subdomain)
+const REKAZ_BASE = "https://platform.rekaz.io";
 const RH = () => ({
   "Authorization": `Basic ${process.env.REKAZ_AUTH}`,
   "__tenant": process.env.REKAZ_TENANT_ID,
@@ -684,29 +683,26 @@ app.post("/gift/purchase", async (req, res) => {
   try {
     const db = await readDB();
 
-    // ── Confirmed priceIds from Rekaz Gift CARD product ──
     const GIFT_PRICE_IDS = {
       "400":  "3a20ab64-fb29-8449-e1ef-c92188e204ed",
       "500":  "3a20ab64-fb29-6a4b-6338-39f7599d1edd",
       "700":  "3a20ab64-fb29-1904-97de-b77afcba741b",
       "1000": "3a20ab64-fb29-e566-ee8c-b74c462a3d5f"
     };
-    const dbPrices   = db.pages?.gift?.rekazPrices || {};
+    const dbPrices    = db.pages?.gift?.rekazPrices || {};
     const giftPriceId = priceId || dbPrices[String(amount)] || GIFT_PRICE_IDS[String(amount)] || null;
-    const orderRef   = "GIFT-" + Date.now().toString(36).toUpperCase();
-    let payUrl       = null;
-    let invoiceId    = null;
+    const orderRef    = "GIFT-" + Date.now().toString(36).toUpperCase();
+    let payUrl        = null;
+    let invoiceId     = null;
 
     console.log("[Gift] amount:", amount, "priceId:", giftPriceId);
 
-    if (!giftPriceId) {
-      console.log("[Gift] No priceId — saving as pending_review");
-    } else {
+    if (giftPriceId) {
       const fromMobile = fromPhone.startsWith("+966") ? fromPhone : "+966" + fromPhone.replace(/^0/, "");
       const toMobile   = toPhone.startsWith("+966")   ? toPhone   : "+966" + toPhone.replace(/^0/, "");
       const note       = `Gift to: ${toName} (${toMobile})` + (message ? ` — "${message}"` : "");
 
-      // ── Step 1: Find or create customer in Rekaz ──
+      // ── Step 1: Find or create customer ──
       let customerId = null;
       try {
         const chk = await rekazFetch(`${REKAZ_API}/customers?mobileNumber=${encodeURIComponent(fromMobile)}`);
@@ -722,35 +718,42 @@ app.post("/gift/purchase", async (req, res) => {
           if (cr.ok) { const crd = cr.json(); customerId = crd.id || null; }
         }
         console.log("[Gift] customerId:", customerId);
-      } catch(e) { console.log("[Gift] customer error:", e.message); }
+      } catch(e) { console.log("[Gift] customer lookup:", e.message); }
 
-      // ── Step 2: Purchase ──
-      // Use customerId if available (avoids "رقم الجوال مسجل لنمط آخر")
-      const buildPayload = (useCustomerId) => useCustomerId
+      // ── Step 2: Use /reservations/bulk (same as working booking flow) ──
+      const payload = customerId
         ? { customerId, branchId: BRANCH_ID, invoiceNote: note, items: [{ priceId: giftPriceId, quantity: 1 }] }
         : { customerDetails: { name: fromName, mobileNumber: fromMobile, type: 0 }, branchId: BRANCH_ID, invoiceNote: note, items: [{ priceId: giftPriceId, quantity: 1 }] };
 
-      const endpoints = [
-        `${REKAZ_API}/subscriptions`,
-        `${REKAZ_API}/reservations/bulk`
-      ];
-
-      for (const useId of [true, false]) {
-        for (const ep of endpoints) {
-          if (payUrl) break;
-          if (useId && !customerId) continue;
-          try {
-            const r = await rekazFetch(ep, { method: "POST", body: JSON.stringify(buildPayload(useId)) });
-            console.log("[Gift]", ep.split("/api/public/")[1], "useCustomerId:" + useId, "→", r.status, r.text.slice(0, 200));
-            if (r.ok) {
-              const d = r.json();
-              invoiceId = d.invoiceId || d.id || null;
-              const pp  = d.paymentLink || d.payUrl || d.link || "";
-              payUrl    = pp ? (pp.startsWith("http") ? pp : `${REKAZ_PAY_BASE}${pp}`)
-                             : (invoiceId ? `${REKAZ_PAY_BASE}/i/${invoiceId}` : null);
-            }
-          } catch(e) { console.log("[Gift] error:", e.message); }
+      try {
+        const r = await rekazFetch(`${REKAZ_API}/reservations/bulk`, {
+          method: "POST", body: JSON.stringify(payload)
+        });
+        console.log("[Gift] /reservations/bulk:", r.status, r.text.slice(0, 300));
+        if (r.ok) {
+          const d   = r.json();
+          invoiceId = d.invoiceId || d.orderId || d.id || null;
+          const pp  = d.paymentLink || d.payUrl || d.link || "";
+          payUrl    = pp ? (pp.startsWith("http") ? pp : `${REKAZ_BASE}${pp}`)
+                         : (invoiceId ? `${REKAZ_BASE}/i/${invoiceId}` : null);
         }
+      } catch(e) { console.log("[Gift] reservations/bulk error:", e.message); }
+
+      // ── Fallback: /subscriptions ──
+      if (!payUrl) {
+        try {
+          const r2 = await rekazFetch(`${REKAZ_API}/subscriptions`, {
+            method: "POST", body: JSON.stringify(payload)
+          });
+          console.log("[Gift] /subscriptions fallback:", r2.status, r2.text.slice(0, 300));
+          if (r2.ok) {
+            const d2  = r2.json();
+            invoiceId = d2.invoiceId || d2.id || invoiceId || null;
+            const pp2 = d2.paymentLink || d2.payUrl || d2.link || "";
+            payUrl    = pp2 ? (pp2.startsWith("http") ? pp2 : `${REKAZ_BASE}${pp2}`)
+                            : (invoiceId ? `${REKAZ_BASE}/i/${invoiceId}` : null);
+          }
+        } catch(e) { console.log("[Gift] subscriptions error:", e.message); }
       }
     }
 
@@ -810,7 +813,7 @@ app.post("/api/purchase-gift", async (req, res) => {
           const pp    = d.paymentLink || d.payUrl || d.link || "";
           invoiceId = d.invoiceId || d.id || invoiceId || null;
           if (invoiceId) {
-            paymentLink = `${REKAZ_PAY_BASE}/i/${invoiceId}`;
+            paymentLink = `${REKAZ_BASE}/i/${invoiceId}`;
           } else if (pp) {
             paymentLink = pp.startsWith("http") ? pp : `${REKAZ_BASE}${pp}`;
           }
@@ -836,7 +839,7 @@ app.post("/api/purchase-gift", async (req, res) => {
           const pp2   = d2.paymentLink || d2.payUrl || d2.link || "";
           invoiceId = d2.invoiceId || d2.id || invoiceId || null;
           if (invoiceId) {
-            paymentLink = `${REKAZ_PAY_BASE}/i/${invoiceId}`;
+            paymentLink = `${REKAZ_BASE}/i/${invoiceId}`;
           } else if (pp2) {
             paymentLink = pp2.startsWith("http") ? pp2 : `${REKAZ_BASE}${pp2}`;
           }
@@ -864,7 +867,7 @@ app.post("/api/purchase-gift", async (req, res) => {
           const ppt   = dt.paymentLink || dt.payUrl || dt.link || "";
           invoiceId = dt.invoiceId || dt.id || invoiceId || null;
           if (invoiceId) {
-            paymentLink = `${REKAZ_PAY_BASE}/i/${invoiceId}`;
+            paymentLink = `${REKAZ_BASE}/i/${invoiceId}`;
           } else if (ppt) {
             paymentLink = ppt.startsWith("http") ? ppt : `${REKAZ_BASE}${ppt}`;
           }
@@ -938,8 +941,8 @@ app.post("/membership/purchase", async (req, res) => {
         const result = r.json();
         invoiceId = result.invoiceId || result.id || null;
         const pp = result.paymentLink || result.payUrl || "";
-        payUrl = pp ? (pp.startsWith("http") ? pp : `${REKAZ_PAY_BASE}${pp}`)
-                    : (invoiceId ? `${REKAZ_PAY_BASE}/i/${invoiceId}` : null);
+        payUrl = pp ? (pp.startsWith("http") ? pp : `${REKAZ_BASE}${pp}`)
+                    : (invoiceId ? `${REKAZ_BASE}/i/${invoiceId}` : null);
       }
     } catch(e) { console.log("[Mem] subscriptions error:", e.message); }
 
@@ -959,8 +962,8 @@ app.post("/membership/purchase", async (req, res) => {
           const res2 = r2.json();
           invoiceId = res2.invoiceId || res2.id || null;
           const pp = res2.paymentLink || res2.payUrl || "";
-          payUrl = pp ? (pp.startsWith("http") ? pp : `${REKAZ_PAY_BASE}${pp}`)
-                      : (invoiceId ? `${REKAZ_PAY_BASE}/i/${invoiceId}` : null);
+          payUrl = pp ? (pp.startsWith("http") ? pp : `${REKAZ_BASE}${pp}`)
+                      : (invoiceId ? `${REKAZ_BASE}/i/${invoiceId}` : null);
         }
       } catch(e) { console.log("[Mem] reservations/bulk error:", e.message); }
     }
