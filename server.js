@@ -973,20 +973,32 @@ app.get("/debug-rekaz",async(req,res)=>{
   catch(e){res.status(500).json({error:e.message});}
 });
 
-// ── DEBUG: see Rekaz gift products live ──
+// ── DEBUG: show ALL Rekaz products grouped by type ──
 app.get("/debug-gift-products", async (req, res) => {
   try {
     const data = await getProds();
-    const gifts = (data.items || []).filter(p =>
-      p.typeString === "Gift" || p.type === 3 || p.typeString === "Merchandise" || p.type === 2
-    );
-    res.json({
-      total: data.items?.length || 0,
-      giftProducts: gifts.map(p => ({
-        id: p.id, name: p.name, nameAr: p.nameAr, type: p.type, typeString: p.typeString,
-        pricing: (p.pricing||[]).map(pr => ({ id: pr.id, amount: pr.amount, name: pr.name }))
+    const all = (data.items || []).map(p => ({
+      id: p.id,
+      name: p.name,
+      nameAr: p.nameAr,
+      type: p.type,
+      typeString: p.typeString,
+      isGift: p.typeString === "Gift" || p.type === 3,
+      isMerchandise: p.typeString === "Merchandise" || p.type === 2,
+      isSubscription: p.isSubscriptionAvailable,
+      pricing: (p.pricing||[]).map(pr => ({
+        id: pr.id, amount: pr.amount, name: pr.name, nameAr: pr.nameAr,
+        duration: pr.duration
       }))
+    }));
+    // Group by type
+    const byType = {};
+    all.forEach(p => {
+      const t = p.typeString || String(p.type);
+      if (!byType[t]) byType[t] = [];
+      byType[t].push(p);
     });
+    res.json({ total: all.length, byType });
   } catch(e) { res.status(500).json({ error: e.message }); }
 });
 app.get("/debug-product/:id",async(req,res)=>{
