@@ -739,10 +739,14 @@ app.post("/gift/purchase", async (req, res) => {
             if (r.ok) {
               const d = r.json();
               invoiceId = d.invoiceId || d.id || null;
+              // Prefer invoiceId /i/ URL (stable) over /orders/pay/ short code (session-tied)
+              invoiceId = d.invoiceId || d.id || invoiceId || null;
               const pp  = d.paymentLink || d.payUrl || d.link || "";
-              payUrl    = pp
-                ? (pp.startsWith("http") ? pp : `${REKAZ_BASE}${pp}`)
-                : (invoiceId ? `${REKAZ_BASE}/i/${invoiceId}` : null);
+              if (invoiceId) {
+                payUrl = `${REKAZ_BASE}/i/${invoiceId}`;
+              } else if (pp) {
+                payUrl = pp.startsWith("http") ? pp : `${REKAZ_BASE}${pp}`;
+              }
               if (payUrl) break outer;
             }
           } catch(e) { console.log("[Gift] subscriptions error:", e.message); }
@@ -762,10 +766,13 @@ app.post("/gift/purchase", async (req, res) => {
             if (r2.ok) {
               const d2 = r2.json();
               invoiceId = d2.invoiceId || d2.id || invoiceId || null;
+              invoiceId = d2.invoiceId || d2.id || invoiceId || null;
               const pp2 = d2.paymentLink || d2.payUrl || d2.link || "";
-              payUrl    = pp2
-                ? (pp2.startsWith("http") ? pp2 : `${REKAZ_BASE}${pp2}`)
-                : (invoiceId ? `${REKAZ_BASE}/i/${invoiceId}` : null);
+              if (invoiceId) {
+                payUrl = `${REKAZ_BASE}/i/${invoiceId}`;
+              } else if (pp2) {
+                payUrl = pp2.startsWith("http") ? pp2 : `${REKAZ_BASE}${pp2}`;
+              }
               if (payUrl) break outer;
             }
           } catch(e) { console.log("[Gift] reservations/bulk error:", e.message); }
@@ -795,9 +802,12 @@ app.post("/gift/purchase", async (req, res) => {
             const dt = rt.json();
             invoiceId = dt.invoiceId || dt.id || null;
             const ppt = dt.paymentLink || dt.payUrl || dt.link || "";
-            payUrl    = ppt
-              ? (ppt.startsWith("http") ? ppt : `${REKAZ_BASE}${ppt}`)
-              : (invoiceId ? `${REKAZ_BASE}/i/${invoiceId}` : null);
+            invoiceId = dt.invoiceId || dt.id || invoiceId || null;
+            if (invoiceId) {
+              payUrl = `${REKAZ_BASE}/i/${invoiceId}`;
+            } else if (ppt) {
+              payUrl = ppt.startsWith("http") ? ppt : `${REKAZ_BASE}${ppt}`;
+            }
           }
         } catch(e) { console.log("[Gift] temp phone error:", e.message); }
       }
@@ -860,9 +870,12 @@ app.post("/api/purchase-gift", async (req, res) => {
           const d = r.json();
           invoiceId   = d.invoiceId || d.id || null;
           const pp    = d.paymentLink || d.payUrl || d.link || "";
-          paymentLink = pp
-              ? (pp.startsWith("http") ? pp : `${REKAZ_BASE}${pp}`)
-              : (invoiceId ? `${REKAZ_BASE}/i/${invoiceId}` : null);
+          invoiceId = d.invoiceId || d.id || invoiceId || null;
+          if (invoiceId) {
+            paymentLink = `${REKAZ_BASE}/i/${invoiceId}`;
+          } else if (pp) {
+            paymentLink = pp.startsWith("http") ? pp : `${REKAZ_BASE}${pp}`;
+          }
         }
       } catch(e) { console.log("[api/purchase-gift] subscriptions error:", e.message); }
       if (paymentLink) break;
@@ -883,9 +896,12 @@ app.post("/api/purchase-gift", async (req, res) => {
           const d2 = r2.json();
           invoiceId   = d2.invoiceId || d2.id || invoiceId || null;
           const pp2   = d2.paymentLink || d2.payUrl || d2.link || "";
-          paymentLink = pp2
-            ? (pp2.startsWith("http") ? pp2 : `${REKAZ_BASE}${pp2}`)
-            : (invoiceId ? `${REKAZ_BASE}/i/${invoiceId}` : null);
+          invoiceId = d2.invoiceId || d2.id || invoiceId || null;
+          if (invoiceId) {
+            paymentLink = `${REKAZ_BASE}/i/${invoiceId}`;
+          } else if (pp2) {
+            paymentLink = pp2.startsWith("http") ? pp2 : `${REKAZ_BASE}${pp2}`;
+          }
         }
       } catch(e) { console.log("[api/purchase-gift] reservations/bulk error:", e.message); }
     }
@@ -908,9 +924,12 @@ app.post("/api/purchase-gift", async (req, res) => {
           const dt = rt.json();
           invoiceId   = dt.invoiceId || dt.id || null;
           const ppt   = dt.paymentLink || dt.payUrl || dt.link || "";
-          paymentLink = ppt
-            ? (ppt.startsWith("http") ? ppt : `${REKAZ_BASE}${ppt}`)
-            : (invoiceId ? `${REKAZ_BASE}/i/${invoiceId}` : null);
+          invoiceId = dt.invoiceId || dt.id || invoiceId || null;
+          if (invoiceId) {
+            paymentLink = `${REKAZ_BASE}/i/${invoiceId}`;
+          } else if (ppt) {
+            paymentLink = ppt.startsWith("http") ? ppt : `${REKAZ_BASE}${ppt}`;
+          }
         }
       } catch(e) { console.log("[api/purchase-gift] temp phone error:", e.message); }
     }
