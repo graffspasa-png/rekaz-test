@@ -431,9 +431,26 @@ async function doBuy(){
       price:10000,
       priceId:PID
     };
-    const r=await fetch(B+'/membership/purchase',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-    const d=await r.json();
-    if(!r.ok||d.error)throw new Error(d.error||'فشل الطلب');
+    // Retry up to 3 times
+    let d=null;
+    for(let attempt=0;attempt<3;attempt++){
+      try{
+        const r=await fetch(B+'/membership/purchase',{
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify(body),
+          cache:'no-store'
+        });
+        d=await r.json();
+        if(r.ok&&!d.error)break;
+        if(d.error)throw new Error(d.error);
+      }catch(e){
+        if(attempt===2)throw e;
+        await new Promise(res=>setTimeout(res,1000));
+      }
+    }
+    if(!d)throw new Error('فشل الطلب');
+    console.log('[Mem] response:', d);
     S.url=d.payUrl;S.ref=d.orderRef||'—';
     if(S.url){g('plink').href=S.url;go('pp');}else onDone();
   }catch(e){
