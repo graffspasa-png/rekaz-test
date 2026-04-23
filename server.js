@@ -673,6 +673,7 @@ app.post("/gift/purchase", async (req, res) => {
           const payload = {
             customerDetails: { name: fromName, mobileNumber: mobile, type: 1 },
             branchId: BRANCH_ID,
+            invoiceNote: `Gift Card to: ${toName} (${toMobile})` + (message ? ` - "${message}"` : ""),
             items: [{ priceId: giftPriceId, quantity: 1 }]
           };
           const r = await rekazFetch(`${REKAZ_API}/subscriptions`, {
@@ -690,10 +691,8 @@ app.post("/gift/purchase", async (req, res) => {
               body: JSON.stringify({
                 customerDetails: { name: fromName, mobileNumber: mobile, type: 1 },
                 branchId: BRANCH_ID,
-                items: [{ priceId: giftPriceId, quantity: 1, customFields: {
-                  gift_to_name: toName, gift_to_phone: toMobile,
-                  gift_from_name: showSender ? fromName : "", gift_message: message||""
-                }}]
+                invoiceNote: `Gift Card to: ${toName} (${toMobile})` + (message ? ` - "${message}"` : ""),
+                items: [{ priceId: giftPriceId, quantity: 1 }]
               })
             });
             if (r2.ok) {
@@ -724,71 +723,87 @@ app.post("/gift/purchase", async (req, res) => {
 
 // ── REKAZ: MEMBERSHIP PURCHASE ──
 app.post("/membership/purchase", async (req, res) => {
-  const { planName, planIndex, price, name, phone, email } = req.body;
-  if (!planName || !price || !name || !phone)
-    return res.status(400).json({ error: "جميع الحقول مطلوبة" });
+  const { planName, planIndex, price, name, phone, email, priceId: bodyPriceId } = req.body;
+  // name and phone are required; planName/price optional if priceId is sent directly
+  if (!name || !phone)
+    return res.status(400).json({ error: "الاسم ورقم الجوال مطلوبان" });
   try {
     const db = await readDB();
+    // Priority: body priceId → DB plan priceId → hardcoded PID
+    const MEMBERSHIP_PRICE_ID = "3a20a42a-07d0-8197-2e26-e9cb52804ff4";
     const memItems = db.pages?.memberships?.items || [];
-    const plan = typeof planIndex === "number" ? memItems[planIndex] : memItems.find(m => m.name === planName);
-    const priceId = plan?.rekazPriceId || null;
+    const plan = typeof planIndex === "number"
+      ? memItems[planIndex]
+      : memItems.find(m => m.name === planName);
+    const priceId = bodyPriceId
+      || plan?.rekazPriceId
+      || db.pages?.memberships?.rekazPriceId
+      || MEMBERSHIP_PRICE_ID;
+    console.log("[Mem] priceId resolved:", priceId, "plan:", planName);
     const orderRef = "MEM-" + Date.now().toString(36).toUpperCase();
     let payUrl = null;
     let invoiceId = null;
 
-    if (priceId) {
-      const mobile = phone.startsWith("+966") ? phone : "+966" + phone.replace(/^0/, "");
+    const mobile = phone.startsWith("+966") ? phone : "+966" + phone.replace(/^0/, "");
 
-      // Membership (Merchandise) uses POST /api/public/subscriptions
+    // ── ATTEMPT 1: POST /subscriptions (recommended for Merchandise/Membership) ──
+    try {
+      const payload = {
+        customerDetails: {
+          name,
+          mobileNumber: mobile,
+          email: email || undefined,
+          type: 1
+        },
+        branchId: BRANCH_ID,
+        items: [{ priceId, quantity: 1 }]
+      };
+      const r = await rekazFetch(`${REKAZ_API}/subscriptions`, {
+        method: "POST", body: JSON.stringify(payload)
+      });
+      console.log("[Mem] /subscriptions:", r.status, r.text.slice(0, 300));
+      if (r.ok) {
+        const result = r.json();
+        invoiceId = result.invoiceId || result.id || null;
+        const pp = result.paymentLink || result.payUrl || "";
+        payUrl = pp ? (pp.startsWith("http") ? pp : `${REKAZ_BASE}${pp}`)
+                    : (invoiceId ? `${REKAZ_BASE}/i/${invoiceId}` : null);
+      }
+    } catch(e) { console.log("[Mem] subscriptions error:", e.message); }
+
+    // ── ATTEMPT 2: POST /reservations/bulk (fallback) ──
+    if (!invoiceId) {
       try {
-        const payload = {
-          customerDetails: {
-            name,
-            mobileNumber: mobile,
-            email: email || undefined,
-            type: 1
-          },
-          branchId: BRANCH_ID,
-          items: [{ priceId, quantity: 1 }]
-        };
-
-        const r = await rekazFetch(`${REKAZ_API}/subscriptions`, {
+        const r2 = await rekazFetch(`${REKAZ_API}/reservations/bulk`, {
           method: "POST",
-          body: JSON.stringify(payload)
+          body: JSON.stringify({
+            customerDetails: { name, mobileNumber: mobile, email: email||undefined, type: 1 },
+            branchId: BRANCH_ID,
+            items: [{ priceId, quantity: 1 }]
+          })
         });
-
-        console.log("[Mem] subscriptions response:", r.status, r.text.slice(0, 300));
-
-        if (r.ok) {
-          const result = r.json();
-          invoiceId = result.invoiceId || null;
-          if (invoiceId) payUrl = `${REKAZ_BASE}/i/${invoiceId}`;
-        } else {
-          // Fallback: reservations/bulk
-          const r2 = await rekazFetch(`${REKAZ_API}/reservations/bulk`, {
-            method: "POST",
-            body: JSON.stringify({
-              customerDetails: { name, mobileNumber: mobile, type: 1 },
-              branchId: BRANCH_ID,
-              items: [{ priceId, quantity: 1 }]
-            })
-          });
-          if (r2.ok) {
-            const res2 = r2.json();
-            invoiceId = res2.invoiceId || null;
-            const pp = res2.paymentLink || "";
-            payUrl = pp ? (pp.startsWith("http") ? pp : `${REKAZ_BASE}${pp}`) : (invoiceId ? `${REKAZ_BASE}/i/${invoiceId}` : null);
-          }
+        console.log("[Mem] /reservations/bulk:", r2.status, r2.text.slice(0, 300));
+        if (r2.ok) {
+          const res2 = r2.json();
+          invoiceId = res2.invoiceId || res2.id || null;
+          const pp = res2.paymentLink || res2.payUrl || "";
+          payUrl = pp ? (pp.startsWith("http") ? pp : `${REKAZ_BASE}${pp}`)
+                      : (invoiceId ? `${REKAZ_BASE}/i/${invoiceId}` : null);
         }
-      } catch(e) { console.log("[Mem] purchase error:", e.message); }
+      } catch(e) { console.log("[Mem] reservations/bulk error:", e.message); }
     }
 
     if (!db.membershipOrders) db.membershipOrders = [];
     db.membershipOrders.unshift({
-      ref: orderRef, invoiceId, planName, price, name,
-      phone: phone.replace(/^0/, "966"), email: email || "",
+      ref: orderRef, invoiceId,
+      planName: planName || "Elite Membership",
+      price: price || 10000,
+      name,
+      phone: mobile,
+      email: email || "",
+      priceId,
       createdAt: new Date().toISOString(),
-      status: payUrl ? "pending_payment" : (priceId ? "rekaz_failed" : "pending_review")
+      status: payUrl ? "pending_payment" : "rekaz_failed"
     });
     await writeDB(db);
 
