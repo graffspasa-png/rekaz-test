@@ -303,11 +303,37 @@ async function rekazFetch(url, opts = {}) {
 
 async function getProds() {
   if (rCache && Date.now()-rCacheTime < CACHE_TTL) return rCache;
-  const r = await rekazFetch(`${REKAZ_API}/products`);
-  if (!r.ok) throw new Error("Rekaz products failed");
-  rCache = r.json(); rCacheTime = Date.now();
+  // Fetch all types: Reservation(0), Merchandise(2), Gift(3)
+  // Some Rekaz tenants need explicit type param to include Gift products
+  let items = [];
+  for (const type of [0, 1, 2, 3]) {
+    try {
+      const r = await rekazFetch(`${REKAZ_API}/products?type=${type}&maxResultCount=200`);
+      if (r.ok) {
+        const d = r.json();
+        const list = d.items || [];
+        list.forEach(p => {
+          if (!items.find(x => x.id === p.id)) items.push(p);
+        });
+      }
+    } catch(e) {}
+  }
+  // Also fetch without type filter (gets default/all)
+  try {
+    const r = await rekazFetch(`${REKAZ_API}/products?maxResultCount=200`);
+    if (r.ok) {
+      const d = r.json();
+      (d.items||[]).forEach(p => {
+        if (!items.find(x => x.id === p.id)) items.push(p);
+      });
+    }
+  } catch(e) {}
+  rCache = { items }; rCacheTime = Date.now();
   return rCache;
 }
+
+// Force refresh products cache
+async function refreshProds() { rCacheTime = 0; return getProds(); }
 
 function auth(req, res, next) {
   if ((req.headers.authorization||"").replace("Bearer ","") !== ADMIN_PASS)
@@ -973,32 +999,48 @@ app.get("/debug-rekaz",async(req,res)=>{
   catch(e){res.status(500).json({error:e.message});}
 });
 
-// ── DEBUG: show ALL Rekaz products grouped by type ──
+// ── DEBUG: show ALL products by type, force refresh ──
 app.get("/debug-gift-products", async (req, res) => {
   try {
+    rCacheTime = 0; // force refresh
     const data = await getProds();
-    const all = (data.items || []).map(p => ({
-      id: p.id,
-      name: p.name,
-      nameAr: p.nameAr,
-      type: p.type,
-      typeString: p.typeString,
-      isGift: p.typeString === "Gift" || p.type === 3,
-      isMerchandise: p.typeString === "Merchandise" || p.type === 2,
-      isSubscription: p.isSubscriptionAvailable,
-      pricing: (p.pricing||[]).map(pr => ({
-        id: pr.id, amount: pr.amount, name: pr.name, nameAr: pr.nameAr,
-        duration: pr.duration
-      }))
-    }));
-    // Group by type
+    const all = (data.items || []);
     const byType = {};
     all.forEach(p => {
-      const t = p.typeString || String(p.type);
+      const t = p.typeString || String(p.type) || "Unknown";
       if (!byType[t]) byType[t] = [];
-      byType[t].push(p);
+      byType[t].push({
+        id: p.id, name: p.name, nameAr: p.nameAr,
+        type: p.type, typeString: p.typeString,
+        pricing: (p.pricing||[]).map(pr => ({
+          id: pr.id, amount: pr.amount, name: pr.name
+        }))
+      });
     });
-    res.json({ total: all.length, byType });
+    res.json({ total: all.length, types: Object.keys(byType), byType });
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── DEBUG: search for gift card product by name ──
+app.get("/debug-find-gift", async (req, res) => {
+  try {
+    rCacheTime = 0;
+    const data = await getProds();
+    const keyword = (req.query.q || "gift").toLowerCase();
+    const found = (data.items||[]).filter(p =>
+      (p.name||"").toLowerCase().includes(keyword) ||
+      (p.nameAr||"").toLowerCase().includes(keyword) ||
+      p.typeString === "Gift" || p.type === 3
+    );
+    res.json({
+      total: data.items?.length || 0,
+      found: found.length,
+      items: found.map(p => ({
+        id: p.id, name: p.name, nameAr: p.nameAr,
+        type: p.type, typeString: p.typeString,
+        pricing: (p.pricing||[]).map(pr => ({ id: pr.id, amount: pr.amount, name: pr.name }))
+      }))
+    });
   } catch(e) { res.status(500).json({ error: e.message }); }
 });
 app.get("/debug-product/:id",async(req,res)=>{
