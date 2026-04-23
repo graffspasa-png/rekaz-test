@@ -19,7 +19,8 @@ app.use((req, res, next) => {
 });
 
 const REKAZ_API  = "https://platform.rekaz.io/api/public";
-const REKAZ_BASE = "https://platform.rekaz.io";
+const REKAZ_BASE     = "https://platform.rekaz.io";  // API calls
+const REKAZ_PAY_BASE = "https://graffspa.rekaz.io";   // Payment links (tenant subdomain)
 const RH = () => ({
   "Authorization": `Basic ${process.env.REKAZ_AUTH}`,
   "__tenant": process.env.REKAZ_TENANT_ID,
@@ -745,8 +746,8 @@ app.post("/gift/purchase", async (req, res) => {
               const d = r.json();
               invoiceId = d.invoiceId || d.id || null;
               const pp  = d.paymentLink || d.payUrl || d.link || "";
-              payUrl    = pp ? (pp.startsWith("http") ? pp : `${REKAZ_BASE}${pp}`)
-                             : (invoiceId ? `${REKAZ_BASE}/i/${invoiceId}` : null);
+              payUrl    = pp ? (pp.startsWith("http") ? pp : `${REKAZ_PAY_BASE}${pp}`)
+                             : (invoiceId ? `${REKAZ_PAY_BASE}/i/${invoiceId}` : null);
             }
           } catch(e) { console.log("[Gift] error:", e.message); }
         }
@@ -809,7 +810,7 @@ app.post("/api/purchase-gift", async (req, res) => {
           const pp    = d.paymentLink || d.payUrl || d.link || "";
           invoiceId = d.invoiceId || d.id || invoiceId || null;
           if (invoiceId) {
-            paymentLink = `${REKAZ_BASE}/i/${invoiceId}`;
+            paymentLink = `${REKAZ_PAY_BASE}/i/${invoiceId}`;
           } else if (pp) {
             paymentLink = pp.startsWith("http") ? pp : `${REKAZ_BASE}${pp}`;
           }
@@ -835,7 +836,7 @@ app.post("/api/purchase-gift", async (req, res) => {
           const pp2   = d2.paymentLink || d2.payUrl || d2.link || "";
           invoiceId = d2.invoiceId || d2.id || invoiceId || null;
           if (invoiceId) {
-            paymentLink = `${REKAZ_BASE}/i/${invoiceId}`;
+            paymentLink = `${REKAZ_PAY_BASE}/i/${invoiceId}`;
           } else if (pp2) {
             paymentLink = pp2.startsWith("http") ? pp2 : `${REKAZ_BASE}${pp2}`;
           }
@@ -863,7 +864,7 @@ app.post("/api/purchase-gift", async (req, res) => {
           const ppt   = dt.paymentLink || dt.payUrl || dt.link || "";
           invoiceId = dt.invoiceId || dt.id || invoiceId || null;
           if (invoiceId) {
-            paymentLink = `${REKAZ_BASE}/i/${invoiceId}`;
+            paymentLink = `${REKAZ_PAY_BASE}/i/${invoiceId}`;
           } else if (ppt) {
             paymentLink = ppt.startsWith("http") ? ppt : `${REKAZ_BASE}${ppt}`;
           }
@@ -937,8 +938,8 @@ app.post("/membership/purchase", async (req, res) => {
         const result = r.json();
         invoiceId = result.invoiceId || result.id || null;
         const pp = result.paymentLink || result.payUrl || "";
-        payUrl = pp ? (pp.startsWith("http") ? pp : `${REKAZ_BASE}${pp}`)
-                    : (invoiceId ? `${REKAZ_BASE}/i/${invoiceId}` : null);
+        payUrl = pp ? (pp.startsWith("http") ? pp : `${REKAZ_PAY_BASE}${pp}`)
+                    : (invoiceId ? `${REKAZ_PAY_BASE}/i/${invoiceId}` : null);
       }
     } catch(e) { console.log("[Mem] subscriptions error:", e.message); }
 
@@ -958,8 +959,8 @@ app.post("/membership/purchase", async (req, res) => {
           const res2 = r2.json();
           invoiceId = res2.invoiceId || res2.id || null;
           const pp = res2.paymentLink || res2.payUrl || "";
-          payUrl = pp ? (pp.startsWith("http") ? pp : `${REKAZ_BASE}${pp}`)
-                      : (invoiceId ? `${REKAZ_BASE}/i/${invoiceId}` : null);
+          payUrl = pp ? (pp.startsWith("http") ? pp : `${REKAZ_PAY_BASE}${pp}`)
+                      : (invoiceId ? `${REKAZ_PAY_BASE}/i/${invoiceId}` : null);
         }
       } catch(e) { console.log("[Mem] reservations/bulk error:", e.message); }
     }
