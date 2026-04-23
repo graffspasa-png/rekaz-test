@@ -617,6 +617,13 @@ var CFG=null;
       if(pg==='svcs'){
         document.querySelectorAll('.pg').forEach(function(p){p.classList.remove('on');});
         var el=document.getElementById('svcs');if(el)el.classList.add('on');
+        // IMMEDIATELY render from cache — before any fetch
+        var _cm=null;try{var _cv=localStorage.getItem('graff_menu');if(_cv)_cm=JSON.parse(_cv);}catch(e){}
+        if(_cm&&_cm.length){
+          _menuCache=_cm;
+          // Build directly — don't wait for init()
+          buildSvcFromMenu(_cm);
+        }
       }
     }
   }catch(e){}
@@ -1450,8 +1457,10 @@ async function loadProducts(){
     }).catch(function(){});
     return;
   }
-  // No cache — show loading, retry up to 5 times
-  document.getElementById('tabs').innerHTML='<span style="padding:12px 18px;font-size:13px;color:rgba(255,255,255,.4)">جاري التحميل...</span>';
+  // No cache — show loading ONLY if tabs are empty
+  if(!document.querySelector('.tab')){
+    document.getElementById('tabs').innerHTML='<span style="padding:12px 18px;font-size:13px;color:rgba(255,255,255,.4)">جاري التحميل...</span>';
+  }
   try{
     var d=await fetchSafe(B+'/menu');
     var cats=d&&d.categories?d.categories:[];
@@ -1536,9 +1545,16 @@ async function init(){
   // Load cached config immediately for instant render
   var cachedCfg=lsGet('graff_cfg');
   if(cachedCfg){CFG=cachedCfg;applyConfig();renderSocial();renderFooterPay();renderHomeButtons();renderGiftPage();renderMems();renderPayMethods();}
-  // Load cached menu immediately
+  // Load cached menu immediately AND render if svcs is open
   var cachedMenu=lsGet('graff_menu');
-  if(cachedMenu&&cachedMenu.length){_menuCache=cachedMenu;} // ready for when svcs opens
+  if(cachedMenu&&cachedMenu.length){
+    _menuCache=cachedMenu;
+    // If svcs is already open (refresh), build NOW
+    var _svcsNow=document.getElementById('svcs');
+    if(_svcsNow&&_svcsNow.classList.contains('on')){
+      buildSvcFromMenu(_menuCache);
+    }
+  }
 
   // Fetch fresh data in parallel
   var siteP=fetchSafe(B+'/site').catch(function(){return null;});
@@ -1555,9 +1571,11 @@ async function init(){
   if(results[1]&&results[1].categories&&results[1].categories.length){
     _menuCache=results[1].categories;
     lsSet('graff_menu',_menuCache);
-    // If svcs page is visible, build immediately
+    // If svcs page is visible, always re-render with fresh data
     var svcsEl=document.getElementById('svcs');
-    if(svcsEl&&svcsEl.classList.contains('on')) buildSvcFromMenu(_menuCache);
+    if(svcsEl&&svcsEl.classList.contains('on')){
+      buildSvcFromMenu(_menuCache);
+    }
   }
 }
 
