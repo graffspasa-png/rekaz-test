@@ -13,13 +13,8 @@ app.use((req, res, next) => {
   if (req.method === "OPTIONS") return res.sendStatus(200);
   next();
 });
-app.use((req, res, next) => {
-  console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`);
-  next();
-});
 
 const REKAZ_API  = "https://platform.rekaz.io/api/public";
-const REKAZ_BASE = "https://platform.rekaz.io";
 const RH = () => ({
   "Authorization": `Basic ${process.env.REKAZ_AUTH}`,
   "__tenant": process.env.REKAZ_TENANT_ID,
@@ -35,7 +30,7 @@ async function readDB() {
 }
 async function writeDB(data) { writeFileSync(DB_PATH, JSON.stringify(data, null, 2)); }
 
-// ── PURCHASE GIFT ROUTE (التعديل المطلوب هنا) ──
+// ── مسار شراء بطاقة الإهداء ──
 app.post("/api/purchase-gift", async (req, res) => {
   try {
     const { amount, senderName, recipientName, recipientPhone } = req.body;
@@ -68,15 +63,13 @@ app.post("/api/purchase-gift", async (req, res) => {
     if (data.paymentLink) {
       res.json({ success: true, paymentLink: data.paymentLink });
     } else {
-      throw new Error(data.error?.message || "فشل إصدار رابط الدفع من ركاز");
+      throw new Error(data.error?.message || "فشل إصدار رابط الدفع");
     }
   } catch (error) {
-    console.error("Gift Error:", error);
     res.status(500).json({ success: false, error: error.message });
   }
 });
 
-// ── PUBLIC ROUTES ──
 app.get("/api/site", async(req,res)=>{
   const db=await readDB();
   res.json(db.site||{});
@@ -90,16 +83,15 @@ app.get("/api/menu", async(req,res)=>{
   } catch(e) { res.status(500).json({error:e.message}); }
 });
 
-// ── ADMIN ROUTES ──
 const adminAuth = (req,res,next)=>{
   const auth=req.headers.authorization;
   if(auth===`Bearer ${ADMIN_PASS}`) return next();
-  res.status(401).json({error:\"Unauthorized\"});
+  res.status(401).json({error:"Unauthorized"});
 };
 
 app.post("/admin/login", (req,res)=>{
   if(req.body.password===ADMIN_PASS) res.json({success:true,token:ADMIN_PASS});
-  else res.status(401).json({error:\"Wrong password\"});
+  else res.status(401).json({error:"Wrong password"});
 });
 
 app.get("/admin/db", adminAuth, async(req,res)=>{
