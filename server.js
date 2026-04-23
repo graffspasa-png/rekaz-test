@@ -1043,6 +1043,40 @@ app.get("/debug-find-gift", async (req, res) => {
     });
   } catch(e) { res.status(500).json({ error: e.message }); }
 });
+
+// ── DEBUG: try all possible Rekaz Gift Card endpoints ──
+app.get("/debug-rekaz-gift-all", async (req, res) => {
+  const results = {};
+  const endpoints = [
+    "/products?type=3",
+    "/products?type=4",
+    "/products?productType=Gift",
+    "/products?productType=3",
+    "/gift-cards",
+    "/giftcards",
+    "/gift-vouchers",
+    "/vouchers",
+    "/products/gift",
+    "/products?category=gift",
+    "/packages",
+    "/products?isGift=true",
+    "/products?maxResultCount=500",
+  ];
+  for (const ep of endpoints) {
+    try {
+      const r = await rekazFetch(`${REKAZ_API}${ep}`);
+      results[ep] = {
+        status: r.status,
+        ok: r.ok,
+        preview: r.text.slice(0, 200)
+      };
+    } catch(e) {
+      results[ep] = { error: e.message };
+    }
+  }
+  res.json(results);
+});
+
 app.get("/debug-product/:id",async(req,res)=>{
   try{
     const r=await rekazFetch(`${REKAZ_API}/products/${req.params.id}`);
