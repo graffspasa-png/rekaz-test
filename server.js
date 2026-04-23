@@ -805,10 +805,6 @@ app.post("/api/purchase-gift", async (req, res) => {
     const mobile = recipientPhone.startsWith("+966")
       ? recipientPhone
       : "+966" + recipientPhone.replace(/^0/, "");
-
-    const mobile = recipientPhone.startsWith("+966")
-      ? recipientPhone
-      : "+966" + recipientPhone.replace(/^0/, "");
     const note = `Gift Card - إلى: ${recipientName}`;
     const customerTypes = [0, 1];
 
