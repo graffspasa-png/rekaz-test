@@ -35,7 +35,6 @@ app.post("/api/purchase-gift", async (req, res) => {
   try {
     const { amount, senderName, recipientName, recipientPhone } = req.body;
     const GIFT_PRICE_ID = "3a1cf597-90c7-0346-6330-80d0d829928d";
-
     const payload = {
       customerDetails: { name: senderName, mobileNumber: "+966500000000", type: 1 },
       branchId: BRANCH_ID,
@@ -44,65 +43,36 @@ app.post("/api/purchase-gift", async (req, res) => {
         priceId: GIFT_PRICE_ID,
         from: new Date().toISOString(),
         to: new Date(Date.now() + 3600000).toISOString(), 
-        customFields: {
-          "المُرسل": senderName,
-          "المُستلم": recipientName,
-          "جوال المستلم": recipientPhone,
-          "المبلغ": amount
-        }
+        customFields: { "المُرسل": senderName, "المُستلم": recipientName, "جوال المستلم": recipientPhone, "المبلغ": amount }
       }]
     };
-
-    const response = await fetch(`${REKAZ_API}/reservations/bulk`, {
-      method: "POST",
-      headers: RH(),
-      body: JSON.stringify(payload)
-    });
-
+    const response = await fetch(`${REKAZ_API}/reservations/bulk`, { method: "POST", headers: RH(), body: JSON.stringify(payload) });
     const data = await response.json();
-    if (data.paymentLink) {
-      res.json({ success: true, paymentLink: data.paymentLink });
-    } else {
-      throw new Error(data.error?.message || "فشل إصدار رابط الدفع");
-    }
-  } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
-  }
+    if (data.paymentLink) res.json({ success: true, paymentLink: data.paymentLink });
+    else throw new Error(data.error?.message || "فشل إصدار رابط الدفع");
+  } catch (error) { res.status(500).json({ success: false, error: error.message }); }
 });
 
-app.get("/api/site", async(req,res)=>{
-  const db=await readDB();
-  res.json(db.site||{});
-});
-
+// ── الوظائف الأساسية للموقع ──
+app.get("/api/site", async(req,res)=>{ const db=await readDB(); res.json(db.site||{}); });
 app.get("/api/menu", async(req,res)=>{
-  try {
-    const r=await fetch(`${REKAZ_API}/products/categories?branchId=${BRANCH_ID}`, { headers:RH() });
-    const d=await r.json();
-    res.json(d);
-  } catch(e) { res.status(500).json({error:e.message}); }
+  try { const r=await fetch(`${REKAZ_API}/products/categories?branchId=${BRANCH_ID}`, { headers:RH() }); res.json(await r.json()); }
+  catch(e) { res.status(500).json({error:e.message}); }
 });
 
+// ── لوحة التحكم ──
 const adminAuth = (req,res,next)=>{
   const auth=req.headers.authorization;
   if(auth===`Bearer ${ADMIN_PASS}`) return next();
   res.status(401).json({error:"Unauthorized"});
 };
-
 app.post("/admin/login", (req,res)=>{
   if(req.body.password===ADMIN_PASS) res.json({success:true,token:ADMIN_PASS});
-  else res.status(401).json({error:"Wrong password"});
+  else res.status(401).json({error:"Wrong"});
 });
-
-app.get("/admin/db", adminAuth, async(req,res)=>{
-  res.json(await readDB());
-});
-
+app.get("/admin/db", adminAuth, async(req,res)=>{ res.json(await readDB()); });
 app.post("/admin/update-site", adminAuth, async(req,res)=>{
-  const db=await readDB();
-  db.site = Object.assign(db.site||{}, req.body);
-  await writeDB(db);
-  res.json({success:true});
+  const db=await readDB(); db.site=Object.assign(db.site||{},req.body); await writeDB(db); res.json({success:true});
 });
 
 app.listen(process.env.PORT || 3000, () => console.log("Server running..."));
