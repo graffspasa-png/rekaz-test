@@ -1165,6 +1165,26 @@ app.get("/gift-product-info", async (req, res) => {
 
 
 
+
+// ── /gift/save: Save gift order to DB (no Rekaz API) ──
+app.post("/gift/save", async (req, res) => {
+  try {
+    const { amount, fromName, fromPhone, toName, toPhone, message, showSender, priceId } = req.body;
+    const db = await readDB();
+    if (!db.giftOrders) db.giftOrders = [];
+    db.giftOrders.unshift({
+      ref: "GIFT-" + Date.now().toString(36).toUpperCase(),
+      amount, fromName, fromPhone, toName, toPhone,
+      message: message||"", showSender:!!showSender,
+      priceId: priceId||null,
+      createdAt: new Date().toISOString(),
+      status: "redirected_to_rekaz"
+    });
+    await writeDB(db);
+    res.json({ success: true });
+  } catch(e) { res.json({ success: false }); }
+});
+
 const PORT=process.env.PORT||3000;
 // Startup: preload DB from Supabase
 async function startServer(){
