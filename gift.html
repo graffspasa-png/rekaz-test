@@ -682,7 +682,8 @@ function goP3(){
 
 async function doBuy(){
   const btn=ge('b3');
-  btn.textContent='جاري...';btn.disabled=true;sh('e3',false);
+  if(btn){btn.textContent='جاري...';btn.disabled=true;}
+  sh('e3',false);
   const pid=GPRICES[String(S.amt)]||null;
   const payload={
     amount:S.amt, priceId:pid,
@@ -722,17 +723,16 @@ let otpTimer = null;
 let otpCountdown = 0;
 
 function goOtp(){
-  // Show OTP page
   const phone = '+966' + S.fp.replace(/^0/,'');
-  const el = g('otp-phone-display');
+  const el = ge('otp-phone-display');
   if(el) el.textContent = phone;
-  g('otp-send-section').style.display = 'block';
-  g('otp-verify-section').style.display = 'none';
+  ge('otp-send-section').style.display = 'block';
+  ge('otp-verify-section').style.display = 'none';
   go('potp');
 }
 
 async function sendOtpGift(){
-  const btn = g('otp-send-btn');
+  const btn = ge('otp-send-btn');
   btn.disabled = true;
   btn.textContent = 'جاري الإرسال...';
   const phone = '+966' + S.fp.replace(/^0/,'');
@@ -745,12 +745,11 @@ async function sendOtpGift(){
     });
     const d = await r.json();
     if(!r.ok || d.error) throw new Error(d.error||'فشل الإرسال');
-    // Show verify section
-    g('otp-send-section').style.display = 'none';
-    g('otp-verify-section').style.display = 'block';
-    g('otp-input').value = '';
-    g('otp-input').focus();
-    g('otp-err').style.display = 'none';
+    ge('otp-send-section').style.display = 'none';
+    ge('otp-verify-section').style.display = 'block';
+    ge('otp-input').value = '';
+    ge('otp-input').focus();
+    ge('otp-err').style.display = 'none';
   } catch(e) {
     btn.disabled = false;
     btn.textContent = 'إرسال رمز التحقق';
@@ -759,15 +758,15 @@ async function sendOtpGift(){
 }
 
 function otpInput(el){
-  g('otp-verify-btn').disabled = el.value.length < 4;
+  ge('otp-verify-btn').disabled = el.value.length < 4;
 }
 
 async function verifyOtpGift(){
-  const code = g('otp-input').value.trim();
+  const code = ge('otp-input').value.trim();
   const phone = '+966' + S.fp.replace(/^0/,'');
-  const btn = g('otp-verify-btn');
+  const btn = ge('otp-verify-btn');
   btn.disabled = true; btn.textContent = 'جاري التحقق...';
-  g('otp-err').style.display = 'none';
+  ge('otp-err').style.display = 'none';
   try {
     const r = await fetch(B+'/verify-otp',{
       method:'POST',
@@ -777,11 +776,10 @@ async function verifyOtpGift(){
     });
     const d = await r.json();
     if(!r.ok || d.error) throw new Error(d.error||'رمز خاطئ');
-    // OTP verified — now do purchase
     btn.textContent = 'تم التحقق ✓ جاري إنشاء الفاتورة...';
     await doBuy();
   } catch(e) {
-    const err = g('otp-err');
+    const err = ge('otp-err');
     err.textContent = e.message;
     err.style.display = 'block';
     btn.disabled = false;
