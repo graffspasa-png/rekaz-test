@@ -689,7 +689,7 @@ app.post("/gift/purchase", async (req, res) => {
       const toMobile   = toPhone.startsWith("+966")   ? toPhone   : "+966" + toPhone.replace(/^0/, "");
       const note = `Gift to: ${toName} (${toMobile})` + (message ? ` — "${message}"` : "");
 
-      // ── Find existing customer (same as booking flow) ──
+      // Find existing customer
       let customerId = null;
       try {
         const chk = await rekazFetch(`${REKAZ_API}/customers?mobileNumber=${encodeURIComponent(fromMobile)}`);
@@ -697,32 +697,59 @@ app.post("/gift/purchase", async (req, res) => {
           const cd = chk.json();
           if (cd.items && cd.items.length) {
             customerId = cd.items[0].id;
-            console.log("[Gift] Found customer:", customerId, "type:", cd.items[0].customerType);
+            console.log("[Gift] customer:", customerId);
           }
         }
-      } catch(e) { console.log("[Gift] customer lookup:", e.message); }
+      } catch(e) {}
 
-      // ── POST /orders (same structure as working booking) ──
-      const orderBody = {
-        items: [{ priceId: giftPriceId, quantity: 1 }],
-        invoiceNote: note,
-        branchId: BRANCH_ID,
-        ...(customerId ? { customerId } : { customerDetails: { name: fromName, mobileNumber: fromMobile, type: 1 } })
-      };
+      // Try different payloads for /reservations/bulk
+      // Gift products (type:3) — try without branchId first, then with
+      const payloads = [
+        // 1. Without branchId (Gift products may not need branch)
+        {
+          items: [{ priceId: giftPriceId, quantity: 1 }],
+          invoiceNote: note,
+          ...(customerId ? { customerId } : { customerDetails: { name: fromName, mobileNumber: fromMobile, type: 1 } })
+        },
+        // 2. With branchId
+        {
+          items: [{ priceId: giftPriceId, quantity: 1 }],
+          invoiceNote: note,
+          branchId: BRANCH_ID,
+          ...(customerId ? { customerId } : { customerDetails: { name: fromName, mobileNumber: fromMobile, type: 1 } })
+        },
+        // 3. customerType 0 without branchId
+        {
+          items: [{ priceId: giftPriceId, quantity: 1 }],
+          invoiceNote: note,
+          customerDetails: { name: fromName, mobileNumber: fromMobile, type: 0 }
+        },
+        // 4. customerType 0 with branchId
+        {
+          items: [{ priceId: giftPriceId, quantity: 1 }],
+          invoiceNote: note,
+          branchId: BRANCH_ID,
+          customerDetails: { name: fromName, mobileNumber: fromMobile, type: 0 }
+        }
+      ];
 
-      console.log("ORDER BODY:", JSON.stringify(orderBody, null, 2));
-
-      const r = await rekazFetch(`${REKAZ_API}/orders`, {
-        method: "POST", body: JSON.stringify(orderBody)
-      });
-      console.log("[Gift] POST /orders →", r.status, r.text.slice(0, 600));
-
-      if (r.ok) {
-        const d  = r.json();
-        invoiceId = d.invoiceId || d.orderId || d.id || null;
-        const pp  = d.paymentLink || d.payUrl || d.link || "";
-        payUrl    = pp ? (pp.startsWith("http") ? pp : `${REKAZ_BASE}${pp}`) : null;
-        console.log("[Gift] payUrl:", payUrl);
+      for (let i = 0; i < payloads.length; i++) {
+        if (payUrl) break;
+        const body = payloads[i];
+        console.log(`[Gift] attempt ${i+1}:`, JSON.stringify(body));
+        try {
+          const r = await rekazFetch(`${REKAZ_API}/reservations/bulk`, {
+            method: "POST", body: JSON.stringify(body)
+          });
+          console.log(`[Gift] attempt ${i+1} →`, r.status, r.text.slice(0, 400));
+          if (r.ok) {
+            const d  = r.json();
+            invoiceId = d.invoiceId || d.orderId || d.id || null;
+            const pp  = d.paymentLink || d.payUrl || d.link || "";
+            payUrl    = pp ? (pp.startsWith("http") ? pp : `${REKAZ_BASE}${pp}`) : null;
+            console.log("[Gift] SUCCESS → payUrl:", payUrl);
+          }
+        } catch(e) { console.log(`[Gift] attempt ${i+1} error:`, e.message); }
       }
     }
 
