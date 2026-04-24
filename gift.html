@@ -628,24 +628,34 @@ function goP3(){
   go('p3');
 }
 
-function doBuy(){
-  // ── Save gift data to localStorage before redirect ──
-  const giftData = {
-    senderName:   S.fn || '',
-    receiverName: S.tn || '',
-    senderPhone:  S.fp || '',
-    receiverPhone:S.tp || '',
-    message:      S.msg || '',
-    amount:       S.amt,
-    showSender:   S.showFrom,
-    createdAt:    new Date().toISOString()
+async function doBuy(){
+  const btn=ge('b3');
+  btn.textContent='جاري...';btn.disabled=true;sh('e3',false);
+  const pid=GPRICES[String(S.amt)]||null;
+  const payload={
+    amount:S.amt, priceId:pid,
+    fromName:S.fn, fromPhone:'+966'+S.fp.replace(/^0/,''),
+    toName:S.tn,   toPhone:'+966'+S.tp.replace(/^0/,''),
+    message:S.msg, showSender:S.showFrom
   };
-  try { localStorage.setItem('giftData', JSON.stringify(giftData)); } catch(e) {}
-  console.log('[Gift] Saved to localStorage:', giftData);
-
-  // ── Redirect to Rekaz gift card product ──
-  const REKAZ_GIFT_URL = 'https://graffspa.com/merchandise/ahda-gift-card';
-  window.location.href = REKAZ_GIFT_URL;
+  try{
+    const r=await fetch(B+'/gift/purchase',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(payload),
+      cache:'no-store'
+    });
+    const d=await r.json();
+    console.log('[Gift] response:',d);
+    if(!r.ok||d.error) throw new Error(d.error||'فشل الطلب');
+    if(d.payUrl){ ge('plink').href=d.payUrl; go('pp'); }
+    else onDone();
+  }catch(e){
+    sh('e3',true);
+    ge('e3').textContent=e.message||'حدث خطأ';
+    btn.textContent='إتمام الشراء ←';
+    btn.disabled=false;
+  }
 }
 
 function onDone(){
