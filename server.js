@@ -735,8 +735,18 @@ app.post("/gift/purchase", async (req, res) => {
             const d   = r.json();
             invoiceId = d.invoiceId || d.orderId || d.id || null;
             const pp  = d.paymentLink || d.payUrl || d.link || "";
-            payUrl    = pp ? (pp.startsWith("http") ? pp : `${REKAZ_BASE}${pp}`) : null;
-            console.log("[Gift] SUCCESS → payUrl:", payUrl);
+
+            // /subscriptions returns /orders/pay/CODE which doesn't work
+            // Use invoiceId with /invoices/ path instead
+            if (invoiceId) {
+              // Try multiple URL formats for subscription payment
+              payUrl = `${REKAZ_BASE}/invoices/${invoiceId}/pay`;
+            } else if (pp) {
+              // Replace /orders/pay/ with /invoices/pay/ for subscription invoices
+              const fixedPp = pp.replace("/orders/pay/", "/invoices/pay/");
+              payUrl = fixedPp.startsWith("http") ? fixedPp : `${REKAZ_BASE}${fixedPp}`;
+            }
+            console.log("[Gift] SUCCESS → invoiceId:", invoiceId, "payUrl:", payUrl);
           }
         } catch(e) { console.log("[Gift]", ep.split("/").pop(), "error:", e.message); }
       }
