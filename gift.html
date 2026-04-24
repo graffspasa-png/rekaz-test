@@ -658,6 +658,14 @@ async function doBuy(){
   }
 }
 
+function openPay(e){
+  e.preventDefault();
+  const url = ge('plink').href;
+  if(!url||url==='#'){notif('لا يوجد رابط دفع');return;}
+  // Try direct open
+  window.open(url,'_blank');
+}
+
 function onDone(){
   sv('z-amt',S.amt);sv('z-to',S.tn);sv('z-from',S.fn);
   sh('z-from-sec',S.showFrom&&!!S.fn);sh('z-msg',!!S.msg);if(S.msg)sv('z-msg','"'+S.msg+'"');
