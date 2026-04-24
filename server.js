@@ -672,7 +672,7 @@ app.post("/gift/purchase", async (req, res) => {
   try {
     const db = await readDB();
 
-    // ── priceIds من منتج "اهداء gift card" نوع Merchandise ──
+    // priceIds من منتج "اهداء gift card" (Merchandise type:2)
     const GIFT_PRICE_IDS = {
       "400":  "3a20cfaa-9a6b-b8c4-0d12-572f7b602de0",
       "500":  "3a20cfaa-9a76-6c8f-8034-676edb59d2a4",
@@ -691,7 +691,7 @@ app.post("/gift/purchase", async (req, res) => {
       const toMobile   = toPhone.startsWith("+966")   ? toPhone   : "+966" + toPhone.replace(/^0/, "");
       const note = `Gift to: ${toName} (${toMobile})` + (message ? ` — "${message}"` : "");
 
-      // Find or create customer
+      // Find customer
       let customerId = null;
       try {
         const chk = await rekazFetch(`${REKAZ_API}/customers?mobileNumber=${encodeURIComponent(fromMobile)}`);
@@ -699,17 +699,10 @@ app.post("/gift/purchase", async (req, res) => {
           const cd = chk.json();
           if (cd.items && cd.items.length) customerId = cd.items[0].id;
         }
-        if (!customerId) {
-          const cr = await rekazFetch(`${REKAZ_API}/customers`, {
-            method: "POST",
-            body: JSON.stringify({ name: fromName, mobileNumber: fromMobile, type: 1 })
-          });
-          if (cr.ok) { const crd = cr.json(); customerId = crd.id || null; }
-        }
         console.log("[Gift] customerId:", customerId);
-      } catch(e) { console.log("[Gift] customer:", e.message); }
+      } catch(e) {}
 
-      // ── POST /reservations/bulk — نفس طريقة الحجز ──
+      // Merchandise (type:2) uses /subscriptions
       const payload = {
         items: [{ priceId: giftPriceId, quantity: 1 }],
         invoiceNote: note,
@@ -718,32 +711,27 @@ app.post("/gift/purchase", async (req, res) => {
           ? { customerId }
           : { customerDetails: { name: fromName, mobileNumber: fromMobile, type: 1 } })
       };
-      console.log("[Gift] POST /reservations/bulk:", JSON.stringify(payload));
 
-      try {
-        const r = await rekazFetch(`${REKAZ_API}/reservations/bulk`, {
-          method: "POST", body: JSON.stringify(payload)
-        });
-        console.log("[Gift] /reservations/bulk →", r.status, r.text.slice(0, 400));
-        if (r.ok) {
-          const d   = r.json();
-          invoiceId = d.invoiceId || d.orderId || d.id || null;
-          const pp  = d.paymentLink || d.payUrl || d.link || "";
-          payUrl    = pp ? (pp.startsWith("http") ? pp : `${REKAZ_BASE}${pp}`) : null;
-          console.log("[Gift] SUCCESS → payUrl:", payUrl);
-        }
-      } catch(e) { console.log("[Gift] error:", e.message); }
+      console.log("[Gift] POST /subscriptions:", JSON.stringify(payload));
+      const r = await rekazFetch(`${REKAZ_API}/subscriptions`, {
+        method: "POST", body: JSON.stringify(payload)
+      });
+      console.log("[Gift] /subscriptions →", r.status, r.text.slice(0, 400));
+
+      if (r.ok) {
+        const d   = r.json();
+        invoiceId = d.invoiceId || d.id || null;
+        const pp  = d.paymentLink || d.payUrl || d.link || "";
+        // Use paymentLink exactly — it requires OTP on Rekaz side
+        payUrl    = pp ? (pp.startsWith("http") ? pp : `${REKAZ_BASE}${pp}`) : null;
+        console.log("[Gift] payUrl:", payUrl);
+      }
     }
 
     if (!db.giftOrders) db.giftOrders = [];
-    db.giftOrders.unshift({
-      ref: orderRef, invoiceId, amount, fromName, fromPhone,
-      toName, toPhone, message: message||"", showSender:!!showSender,
-      createdAt: new Date().toISOString(),
-      status: payUrl ? "pending_payment" : (giftPriceId ? "rekaz_failed" : "pending_review")
-    });
+    db.giftOrders.unshift({ ref:orderRef, invoiceId, amount, fromName, fromPhone, toName, toPhone, message:message||"", showSender:!!showSender, createdAt:new Date().toISOString(), status:payUrl?"pending_payment":(giftPriceId?"rekaz_failed":"pending_review") });
     await writeDB(db);
-    res.json({ success:true, orderRef, invoiceId, payUrl, giftCode: invoiceId||orderRef });
+    res.json({ success:true, orderRef, invoiceId, payUrl, giftCode:invoiceId||orderRef });
   } catch(e) {
     console.error("[Gift Purchase]", e.message);
     res.status(500).json({ error: e.message });
