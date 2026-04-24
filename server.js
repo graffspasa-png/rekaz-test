@@ -672,7 +672,7 @@ app.post("/gift/purchase", async (req, res) => {
   try {
     const db = await readDB();
 
-    // priceIds من منتج "اهداء gift card" (Merchandise type:2)
+    // priceIds من منتج "اهداء gift card" (Merchandise - product ID: 3a20cfa9-e729-1dc9-6243-a88338bf2043)
     const GIFT_PRICE_IDS = {
       "400":  "3a20cfaa-9a6b-b8c4-0d12-572f7b602de0",
       "500":  "3a20cfaa-9a76-6c8f-8034-676edb59d2a4",
@@ -691,7 +691,7 @@ app.post("/gift/purchase", async (req, res) => {
       const toMobile   = toPhone.startsWith("+966")   ? toPhone   : "+966" + toPhone.replace(/^0/, "");
       const note = `Gift to: ${toName} (${toMobile})` + (message ? ` — "${message}"` : "");
 
-      // Find customer
+      // Find existing customer
       let customerId = null;
       try {
         const chk = await rekazFetch(`${REKAZ_API}/customers?mobileNumber=${encodeURIComponent(fromMobile)}`);
@@ -702,7 +702,7 @@ app.post("/gift/purchase", async (req, res) => {
         console.log("[Gift] customerId:", customerId);
       } catch(e) {}
 
-      // Merchandise (type:2) uses /subscriptions
+      // Merchandise products use /subscriptions
       const payload = {
         items: [{ priceId: giftPriceId, quantity: 1 }],
         invoiceNote: note,
@@ -716,13 +716,13 @@ app.post("/gift/purchase", async (req, res) => {
       const r = await rekazFetch(`${REKAZ_API}/subscriptions`, {
         method: "POST", body: JSON.stringify(payload)
       });
-      console.log("[Gift] /subscriptions →", r.status, r.text.slice(0, 400));
+      const txt = r.text;
+      console.log("[Gift] →", r.status, txt.slice(0, 400));
 
       if (r.ok) {
         const d   = r.json();
         invoiceId = d.invoiceId || d.id || null;
         const pp  = d.paymentLink || d.payUrl || d.link || "";
-        // Use paymentLink exactly — it requires OTP on Rekaz side
         payUrl    = pp ? (pp.startsWith("http") ? pp : `${REKAZ_BASE}${pp}`) : null;
         console.log("[Gift] payUrl:", payUrl);
       }
