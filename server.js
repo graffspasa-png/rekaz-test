@@ -669,11 +669,8 @@ app.post("/gift/purchase", async (req, res) => {
   const { amount, fromName, fromPhone, toName, toPhone, message, showSender, priceId } = req.body;
   if (!amount || !fromName || !fromPhone || !toName || !toPhone)
     return res.status(400).json({ error: "جميع الحقول مطلوبة" });
-
   try {
     const db = await readDB();
-
-    // ── Confirmed priceIds from GET /api/public/products ──
     const GIFT_PRICE_IDS = {
       "400":  "3a20ab64-fb29-8449-e1ef-c92188e204ed",
       "500":  "3a20ab64-fb29-6a4b-6338-39f7599d1edd",
@@ -682,21 +679,17 @@ app.post("/gift/purchase", async (req, res) => {
     };
     const dbPrices    = db.pages?.gift?.rekazPrices || {};
     const giftPriceId = priceId || dbPrices[String(amount)] || GIFT_PRICE_IDS[String(amount)] || null;
-
-    const orderRef = "GIFT-" + Date.now().toString(36).toUpperCase();
-    let payUrl     = null;
-    let invoiceId  = null;
+    const orderRef    = "GIFT-" + Date.now().toString(36).toUpperCase();
+    let payUrl = null, invoiceId = null;
 
     console.log("[Gift] amount:", amount, "priceId:", giftPriceId);
 
-    if (!giftPriceId) {
-      console.log("[Gift] No priceId — saving as pending_review");
-    } else {
+    if (giftPriceId) {
       const fromMobile = fromPhone.startsWith("+966") ? fromPhone : "+966" + fromPhone.replace(/^0/, "");
       const toMobile   = toPhone.startsWith("+966")   ? toPhone   : "+966" + toPhone.replace(/^0/, "");
-      const note       = `Gift to: ${toName} (${toMobile})` + (message ? ` — "${message}"` : "");
+      const note = `Gift to: ${toName} (${toMobile})` + (message ? ` — "${message}"` : "");
 
-      // ── Step 1: Find or create customer to get customerId ──
+      // ── Find existing customer (same as booking flow) ──
       let customerId = null;
       try {
         const chk = await rekazFetch(`${REKAZ_API}/customers?mobileNumber=${encodeURIComponent(fromMobile)}`);
@@ -704,74 +697,39 @@ app.post("/gift/purchase", async (req, res) => {
           const cd = chk.json();
           if (cd.items && cd.items.length) {
             customerId = cd.items[0].id;
-            console.log("[Gift] Found customer:", customerId);
+            console.log("[Gift] Found customer:", customerId, "type:", cd.items[0].customerType);
           }
         }
-        if (!customerId) {
-          const cr = await rekazFetch(`${REKAZ_API}/customers`, {
-            method: "POST",
-            body: JSON.stringify({ name: fromName, mobileNumber: fromMobile, type: 0 })
-          });
-          if (cr.ok) {
-            const crd = cr.json();
-            customerId = crd.id || null;
-            console.log("[Gift] Created customer:", customerId);
-          } else {
-            console.log("[Gift] Customer create failed:", cr.status, cr.text.slice(0, 200));
-          }
-        }
-      } catch(e) { console.log("[Gift] Customer error:", e.message); }
+      } catch(e) { console.log("[Gift] customer lookup:", e.message); }
 
-      // ── Step 2: POST /api/public/orders (no subscriptions) ──
+      // ── POST /orders (same structure as working booking) ──
       const orderBody = {
         items: [{ priceId: giftPriceId, quantity: 1 }],
         invoiceNote: note,
-        branchId: BRANCH_ID
+        branchId: BRANCH_ID,
+        ...(customerId ? { customerId } : { customerDetails: { name: fromName, mobileNumber: fromMobile, type: 1 } })
       };
-      if (customerId) {
-        orderBody.customerId = customerId;
-      } else {
-        orderBody.customerDetails = { name: fromName, mobileNumber: fromMobile, type: 0 };
-      }
 
       console.log("ORDER BODY:", JSON.stringify(orderBody, null, 2));
 
-      try {
-        const r = await rekazFetch(`${REKAZ_API}/orders`, {
-          method: "POST",
-          body: JSON.stringify(orderBody)
-        });
-        const rawText = r.text;
-        console.log("[Gift] POST /orders → status:", r.status);
-        console.log("[Gift] POST /orders → response:", rawText.slice(0, 600));
+      const r = await rekazFetch(`${REKAZ_API}/orders`, {
+        method: "POST", body: JSON.stringify(orderBody)
+      });
+      console.log("[Gift] POST /orders →", r.status, r.text.slice(0, 600));
 
-        if (r.ok) {
-          const d   = r.json();
-          invoiceId = d.invoiceId || d.orderId || d.id || null;
-          const pp  = d.paymentLink || d.payUrl || d.link || "";
-          payUrl    = pp
-            ? (pp.startsWith("http") ? pp : `${REKAZ_BASE}${pp}`)
-            : (invoiceId ? `${REKAZ_BASE}/i/${invoiceId}` : null);
-          console.log("[Gift] Order created → invoiceId:", invoiceId, "payUrl:", payUrl);
-        } else {
-          console.log("[Gift] POST /orders FAILED → fix body above");
-        }
-      } catch(e) {
-        console.log("[Gift] POST /orders exception:", e.message);
+      if (r.ok) {
+        const d  = r.json();
+        invoiceId = d.invoiceId || d.orderId || d.id || null;
+        const pp  = d.paymentLink || d.payUrl || d.link || "";
+        payUrl    = pp ? (pp.startsWith("http") ? pp : `${REKAZ_BASE}${pp}`) : null;
+        console.log("[Gift] payUrl:", payUrl);
       }
     }
 
-    // ── Save to DB ──
     if (!db.giftOrders) db.giftOrders = [];
-    db.giftOrders.unshift({
-      ref: orderRef, invoiceId, amount, fromName, fromPhone,
-      toName, toPhone, message: message || "", showSender: !!showSender,
-      createdAt: new Date().toISOString(),
-      status: payUrl ? "pending_payment" : (giftPriceId ? "rekaz_failed" : "pending_review")
-    });
+    db.giftOrders.unshift({ ref: orderRef, invoiceId, amount, fromName, fromPhone, toName, toPhone, message: message||"", showSender:!!showSender, createdAt: new Date().toISOString(), status: payUrl?"pending_payment":(giftPriceId?"rekaz_failed":"pending_review") });
     await writeDB(db);
-
-    res.json({ success: true, orderRef, invoiceId, payUrl, giftCode: invoiceId || orderRef });
+    res.json({ success: true, orderRef, invoiceId, payUrl, giftCode: invoiceId||orderRef });
   } catch(e) {
     console.error("[Gift Purchase]", e.message);
     res.status(500).json({ error: e.message });
