@@ -671,11 +671,13 @@ app.post("/gift/purchase", async (req, res) => {
     return res.status(400).json({ error: "جميع الحقول مطلوبة" });
   try {
     const db = await readDB();
+
+    // ── priceIds من منتج "اهداء gift card" نوع Merchandise ──
     const GIFT_PRICE_IDS = {
-      "400":  "3a20ab64-fb29-8449-e1ef-c92188e204ed",
-      "500":  "3a20ab64-fb29-6a4b-6338-39f7599d1edd",
-      "700":  "3a20ab64-fb29-1904-97de-b77afcba741b",
-      "1000": "3a20ab64-fb29-e566-ee8c-b74c462a3d5f"
+      "400":  "3a20cfaa-9a6b-b8c4-0d12-572f7b602de0",
+      "500":  "3a20cfaa-9a76-6c8f-8034-676edb59d2a4",
+      "700":  "3a20cfaa-9a7c-0da7-bfba-07fb24f46c61",
+      "1000": "3a20cfaa-9a82-8321-e610-468349aa0146"
     };
     const dbPrices    = db.pages?.gift?.rekazPrices || {};
     const giftPriceId = priceId || dbPrices[String(amount)] || GIFT_PRICE_IDS[String(amount)] || null;
@@ -700,62 +702,48 @@ app.post("/gift/purchase", async (req, res) => {
         if (!customerId) {
           const cr = await rekazFetch(`${REKAZ_API}/customers`, {
             method: "POST",
-            body: JSON.stringify({ name: fromName, mobileNumber: fromMobile, type: 0 })
+            body: JSON.stringify({ name: fromName, mobileNumber: fromMobile, type: 1 })
           });
           if (cr.ok) { const crd = cr.json(); customerId = crd.id || null; }
         }
         console.log("[Gift] customerId:", customerId);
-      } catch(e) {}
+      } catch(e) { console.log("[Gift] customer:", e.message); }
 
-      const basePayload = {
+      // ── POST /reservations/bulk — نفس طريقة الحجز ──
+      const payload = {
         items: [{ priceId: giftPriceId, quantity: 1 }],
         invoiceNote: note,
         branchId: BRANCH_ID,
         ...(customerId
           ? { customerId }
-          : { customerDetails: { name: fromName, mobileNumber: fromMobile, type: 0 } })
+          : { customerDetails: { name: fromName, mobileNumber: fromMobile, type: 1 } })
       };
+      console.log("[Gift] POST /reservations/bulk:", JSON.stringify(payload));
 
-      // Try all known Rekaz endpoints for Merchandise/Gift products
-      const endpoints = [
-        `${REKAZ_API}/merchandise`,
-        `${REKAZ_API}/merchandise/orders`,
-        `${REKAZ_API}/subscriptions`,
-        `${REKAZ_API}/products/purchase`,
-        `${REKAZ_API}/checkout`,
-      ];
-
-      for (const ep of endpoints) {
-        if (payUrl) break;
-        try {
-          console.log("[Gift] trying:", ep);
-          const r = await rekazFetch(ep, { method: "POST", body: JSON.stringify(basePayload) });
-          console.log("[Gift]", ep.split("/").pop(), "→", r.status, r.text.slice(0, 300));
-          if (r.ok) {
-            const d   = r.json();
-            invoiceId = d.invoiceId || d.orderId || d.id || null;
-            const pp  = d.paymentLink || d.payUrl || d.link || "";
-
-            // /subscriptions returns /orders/pay/CODE which doesn't work
-            // Use invoiceId with /invoices/ path instead
-            if (invoiceId) {
-              // Try multiple URL formats for subscription payment
-              payUrl = `${REKAZ_BASE}/invoices/${invoiceId}/pay`;
-            } else if (pp) {
-              // Replace /orders/pay/ with /invoices/pay/ for subscription invoices
-              const fixedPp = pp.replace("/orders/pay/", "/invoices/pay/");
-              payUrl = fixedPp.startsWith("http") ? fixedPp : `${REKAZ_BASE}${fixedPp}`;
-            }
-            console.log("[Gift] SUCCESS → invoiceId:", invoiceId, "payUrl:", payUrl);
-          }
-        } catch(e) { console.log("[Gift]", ep.split("/").pop(), "error:", e.message); }
-      }
+      try {
+        const r = await rekazFetch(`${REKAZ_API}/reservations/bulk`, {
+          method: "POST", body: JSON.stringify(payload)
+        });
+        console.log("[Gift] /reservations/bulk →", r.status, r.text.slice(0, 400));
+        if (r.ok) {
+          const d   = r.json();
+          invoiceId = d.invoiceId || d.orderId || d.id || null;
+          const pp  = d.paymentLink || d.payUrl || d.link || "";
+          payUrl    = pp ? (pp.startsWith("http") ? pp : `${REKAZ_BASE}${pp}`) : null;
+          console.log("[Gift] SUCCESS → payUrl:", payUrl);
+        }
+      } catch(e) { console.log("[Gift] error:", e.message); }
     }
 
     if (!db.giftOrders) db.giftOrders = [];
-    db.giftOrders.unshift({ ref:orderRef, invoiceId, amount, fromName, fromPhone, toName, toPhone, message:message||"", showSender:!!showSender, createdAt:new Date().toISOString(), status:payUrl?"pending_payment":(giftPriceId?"rekaz_failed":"pending_review") });
+    db.giftOrders.unshift({
+      ref: orderRef, invoiceId, amount, fromName, fromPhone,
+      toName, toPhone, message: message||"", showSender:!!showSender,
+      createdAt: new Date().toISOString(),
+      status: payUrl ? "pending_payment" : (giftPriceId ? "rekaz_failed" : "pending_review")
+    });
     await writeDB(db);
-    res.json({ success:true, orderRef, invoiceId, payUrl, giftCode:invoiceId||orderRef });
+    res.json({ success:true, orderRef, invoiceId, payUrl, giftCode: invoiceId||orderRef });
   } catch(e) {
     console.error("[Gift Purchase]", e.message);
     res.status(500).json({ error: e.message });
