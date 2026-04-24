@@ -495,7 +495,11 @@ textarea.finp{resize:none;line-height:1.7}
       </div>
 
       <div id="otp-verify-section" style="display:none">
-        <p style="font-size:13px;color:rgba(255,255,255,.4);margin-bottom:12px">أدخل الرمز المُرسَل لجوالك</p>
+        <div id="otp-code-display" style="display:none;background:rgba(184,150,90,.12);border:1.5px solid rgba(184,150,90,.4);border-radius:10px;padding:16px;margin-bottom:16px;text-align:center">
+          <div style="font-size:11px;color:rgba(184,150,90,.7);margin-bottom:6px;letter-spacing:.1em">رمز التحقق</div>
+          <div style="font-size:36px;font-weight:700;color:#b8965a;letter-spacing:.3em;font-family:monospace"></div>
+        </div>
+        <p style="font-size:13px;color:rgba(255,255,255,.4);margin-bottom:12px">أدخل الرمز أدناه</p>
         <input type="tel" id="otp-input" class="otp-input" maxlength="6" placeholder="• • • • • •"
           inputmode="numeric" oninput="otpInput(this)">
         <div class="err" id="otp-err" style="display:none;text-align:center;margin-top:8px"></div>
@@ -734,7 +738,7 @@ function goOtp(){
 async function sendOtpGift(){
   const btn = ge('otp-send-btn');
   btn.disabled = true;
-  btn.textContent = 'جاري الإرسال...';
+  btn.textContent = 'جاري...';
   const phone = '+966' + S.fp.replace(/^0/,'');
   try {
     const r = await fetch(B+'/send-otp',{
@@ -745,11 +749,17 @@ async function sendOtpGift(){
     });
     const d = await r.json();
     if(!r.ok || d.error) throw new Error(d.error||'فشل الإرسال');
+    // Show OTP on screen directly (like booking page)
     ge('otp-send-section').style.display = 'none';
     ge('otp-verify-section').style.display = 'block';
     ge('otp-input').value = '';
     ge('otp-input').focus();
     ge('otp-err').style.display = 'none';
+    // Show the code on screen
+    if(d.debug_otp){
+      const codeEl = ge('otp-code-display');
+      if(codeEl){ codeEl.textContent = d.debug_otp; codeEl.style.display='block'; }
+    }
   } catch(e) {
     btn.disabled = false;
     btn.textContent = 'إرسال رمز التحقق';
@@ -771,7 +781,7 @@ async function verifyOtpGift(){
     const r = await fetch(B+'/verify-otp',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({phone, code}),
+      body:JSON.stringify({phone, otp:code}),
       cache:'no-store'
     });
     const d = await r.json();
