@@ -1186,26 +1186,6 @@ app.get("/gift-product-info", async (req, res) => {
 });
 
 
-// test-gift-purchase removed
-// app.post("/test-gift-purchase", async (req, res) => {
-  const { amount = 400, name = "Test User", phone = "+966500000001" } = req.body;
-  const priceId = "3a20ab64-fb29-8449-e1ef-c92188e204ed"; // 400 SAR
-  const results = {};
-  const payload = {
-    customerDetails: { name, mobileNumber: phone, type: 0 },
-    branchId: BRANCH_ID,
-    invoiceNote: "Test Gift Purchase",
-    items: [{ priceId, quantity: 1 }]
-  };
-
-  for (const ep of ["/subscriptions", "/orders", "/invoices", "/gift-cards"]) {
-    try {
-      const r = await rekazFetch(`${REKAZ_API}${ep}`, { method: "POST", body: JSON.stringify(payload) });
-      results[ep] = { status: r.status, body: r.text.slice(0, 500) };
-    } catch(e) { results[ep] = { error: e.message }; }
-  }
-  res.json(results);
-});
 
 const PORT=process.env.PORT||3000;
 // Startup: preload DB from Supabase
