@@ -628,34 +628,36 @@ function goP3(){
   go('p3');
 }
 
-async function doBuy(){
-  const btn=ge('b3');
-  btn.textContent='جاري...';btn.disabled=true;sh('e3',false);
-  const pid=GPRICES[String(S.amt)]||null;
-  const payload={
-    amount:S.amt, priceId:pid,
-    fromName:S.fn, fromPhone:'+966'+S.fp.replace(/^0/,''),
-    toName:S.tn,   toPhone:'+966'+S.tp.replace(/^0/,''),
-    message:S.msg, showSender:S.showFrom
+function doBuy(){
+  // حفظ بيانات الإهداء في localStorage
+  const giftData = {
+    senderName:   S.fn,
+    receiverName: S.tn,
+    senderPhone:  S.fp,
+    receiverPhone:S.tp,
+    message:      S.msg,
+    amount:       S.amt,
+    showSender:   S.showFrom,
+    createdAt:    new Date().toISOString()
   };
-  try{
-    const r=await fetch(B+'/gift/purchase',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify(payload),
-      cache:'no-store'
-    });
-    const d=await r.json();
-    console.log('[Gift] response:',d);
-    if(!r.ok||d.error) throw new Error(d.error||'فشل الطلب');
-    if(d.payUrl){ ge('plink').href=d.payUrl; go('pp'); }
-    else onDone();
-  }catch(e){
-    sh('e3',true);
-    ge('e3').textContent=e.message||'حدث خطأ';
-    btn.textContent='إتمام الشراء ←';
-    btn.disabled=false;
-  }
+  try { localStorage.setItem('giftData', JSON.stringify(giftData)); } catch(e) {}
+
+  // حفظ الطلب في السيرفر (للأدمن)
+  const pid = GPRICES[String(S.amt)] || null;
+  fetch(B+'/gift/save',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({
+      amount: S.amt, priceId: pid,
+      fromName: S.fn, fromPhone: '+966'+S.fp.replace(/^0/,''),
+      toName: S.tn, toPhone: '+966'+S.tp.replace(/^0/,''),
+      message: S.msg, showSender: S.showFrom
+    }),
+    cache:'no-store'
+  }).catch(()=>{});
+
+  // توجيه للدفع على ركاز مباشرة
+  window.location.href = 'https://graffspa.com/merchandise/ahda-gift-card';
 }
 
 function openPay(e){
