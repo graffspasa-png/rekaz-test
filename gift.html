@@ -453,7 +453,47 @@ textarea.finp{resize:none;line-height:1.7}
     <div style="font-size:13px;color:var(--muted);text-align:center;padding:0 0 16px;line-height:1.8">سيتم إرسال البطاقة عبر الواتساب فور إتمام الدفع</div>
     <div class="err" id="e3"></div>
   </div>
-  <div class="botbar"><button class="botbtn" id="b3" onclick="doBuy()">إتمام الشراء ←</button></div>
+  <div class="botbar"><button class="botbtn" id="b3" onclick="goOtp()">إتمام الشراء ←</button></div>
+</div>
+
+<!-- ════ POTP: OTP VERIFY ════ -->
+<div id="potp" class="pg">
+  <!-- steps -->
+  <div class="steps">
+    <div class="si dn"><div class="sdot dn">✓</div><span class="slbl">البطاقة</span></div>
+    <div class="sline"></div>
+    <div class="si dn"><div class="sdot dn">✓</div><span class="slbl">التفاصيل</span></div>
+    <div class="sline"></div>
+    <div class="si dn"><div class="sdot dn">✓</div><span class="slbl">المراجعة</span></div>
+    <div class="sline"></div>
+    <div class="si on"><div class="sdot on">4</div><span class="slbl">التحقق</span></div>
+  </div>
+  <div class="pg-body">
+    <div class="otp-wrap">
+      <div class="otp-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(184,150,90,.8)" stroke-width="1.5"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18" stroke-width="2" stroke-linecap="round"/></svg>
+      </div>
+      <h2 class="otp-title">التحقق من رقم الجوال</h2>
+      <p class="otp-sub">سيتم إرسال رمز التحقق إلى<br><strong id="otp-phone-display" style="color:#fff;direction:ltr"></strong></p>
+
+      <div id="otp-send-section">
+        <button class="otp-btn" id="otp-send-btn" onclick="sendOtpGift()">
+          إرسال رمز التحقق
+        </button>
+      </div>
+
+      <div id="otp-verify-section" style="display:none">
+        <p style="font-size:13px;color:rgba(255,255,255,.4);margin-bottom:12px">أدخل الرمز المُرسَل لجوالك</p>
+        <input type="tel" id="otp-input" class="otp-input" maxlength="6" placeholder="• • • • • •"
+          inputmode="numeric" oninput="otpInput(this)">
+        <div class="err" id="otp-err" style="display:none;text-align:center;margin-top:8px"></div>
+        <button class="otp-btn" id="otp-verify-btn" onclick="verifyOtpGift()" disabled>
+          تأكيد ومتابعة للدفع ←
+        </button>
+        <button class="pay-back" onclick="go('p3')" style="display:block;margin:8px auto 0">رجوع</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- ════ PP: PAYMENT ════ -->
@@ -663,6 +703,78 @@ function openPay(e){
   if(!url||url==='#'){notif('لا يوجد رابط دفع');return;}
   // Try direct open
   window.open(url,'_blank');
+}
+
+// ── OTP for Gift Purchase ──
+let otpTimer = null;
+let otpCountdown = 0;
+
+function goOtp(){
+  // Show OTP page
+  const phone = '+966' + S.fp.replace(/^0/,'');
+  const el = g('otp-phone-display');
+  if(el) el.textContent = phone;
+  g('otp-send-section').style.display = 'block';
+  g('otp-verify-section').style.display = 'none';
+  go('potp');
+}
+
+async function sendOtpGift(){
+  const btn = g('otp-send-btn');
+  btn.disabled = true;
+  btn.textContent = 'جاري الإرسال...';
+  const phone = '+966' + S.fp.replace(/^0/,'');
+  try {
+    const r = await fetch(B+'/send-otp',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({phone}),
+      cache:'no-store'
+    });
+    const d = await r.json();
+    if(!r.ok || d.error) throw new Error(d.error||'فشل الإرسال');
+    // Show verify section
+    g('otp-send-section').style.display = 'none';
+    g('otp-verify-section').style.display = 'block';
+    g('otp-input').value = '';
+    g('otp-input').focus();
+    g('otp-err').style.display = 'none';
+  } catch(e) {
+    btn.disabled = false;
+    btn.textContent = 'إرسال رمز التحقق';
+    notif(e.message || 'حدث خطأ');
+  }
+}
+
+function otpInput(el){
+  g('otp-verify-btn').disabled = el.value.length < 4;
+}
+
+async function verifyOtpGift(){
+  const code = g('otp-input').value.trim();
+  const phone = '+966' + S.fp.replace(/^0/,'');
+  const btn = g('otp-verify-btn');
+  btn.disabled = true; btn.textContent = 'جاري التحقق...';
+  g('otp-err').style.display = 'none';
+  try {
+    const r = await fetch(B+'/verify-otp',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({phone, code}),
+      cache:'no-store'
+    });
+    const d = await r.json();
+    if(!r.ok || d.error) throw new Error(d.error||'رمز خاطئ');
+    // OTP verified — now do purchase
+    btn.textContent = 'تم التحقق ✓ جاري إنشاء الفاتورة...';
+    await doBuy();
+  } catch(e) {
+    const err = g('otp-err');
+    err.textContent = e.message;
+    err.style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = 'تأكيد ومتابعة للدفع ←';
+  }
 }
 
 function onDone(){
