@@ -277,49 +277,69 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink2);color:#fff;directio
 
       <!-- GIFT -->
       <div class="panel" id="p-gift">
-        <div class="card"><div class="card-ttl">إعدادات بطاقة الإهداء</div>
-          <div class="gr2">
-            <div class="f"><label>العنوان</label><input type="text" id="gc-title"></div>
-            <div class="f"><label>العنوان الفرعي</label><input type="text" id="gc-subtitle"></div>
-          </div>
-          <div class="f"><label>المبالغ المتاحة (مفصولة بفاصلة)</label><input type="text" id="gc-amounts" placeholder="400,500,700,1000" style="direction:ltr;text-align:left"></div>
-          <div class="f" style="margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,.07)">
-            <label>ربط منتج Rekaz — Price ID للهدية (اختياري)</label>
-            <input type="text" id="gc-rekaz-price" placeholder="price_xxxxxxxx" style="direction:ltr;text-align:left">
-            <p style="font-size:10px;color:rgba(255,255,255,.3);margin-top:5px;line-height:1.7">
-              أدخل Price ID لأي مبلغ من بطاقة الإهداء. بما أن كل مبلغ له Price ID مختلف،
-              يمكنك إضافة كل المبالغ أدناه لربطها تلقائياً.
-            </p>
-            <div class="f" style="margin-top:8px">
-              <label>Price ID — 400 SAR</label>
-              <input type="text" id="gc-price-400" placeholder="price_id هنا" style="direction:ltr;text-align:left">
-            </div>
-            <div class="f">
-              <label>Price ID — 500 SAR</label>
-              <input type="text" id="gc-price-500" placeholder="price_id هنا" style="direction:ltr;text-align:left">
-            </div>
-            <div class="f">
-              <label>Price ID — 700 SAR</label>
-              <input type="text" id="gc-price-700" placeholder="price_id هنا" style="direction:ltr;text-align:left">
-            </div>
-            <div class="f">
-              <label>Price ID — 1000 SAR</label>
-              <input type="text" id="gc-price-1000" placeholder="price_id هنا" style="direction:ltr;text-align:left">
-            </div>
-          </div>
-          <div style="margin-top:8px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-            <button class="add-btn" style="margin:0;padding:6px 14px" onclick="loadRekazProdsForGift()">← جلب منتجات Rekaz</button>
-            <a href="/gift" target="_blank" style="font-size:11px;color:var(--gold);text-decoration:none;border:1px solid rgba(184,150,90,.3);padding:6px 14px">فتح صفحة الإهداء ↗</a>
-          </div>
-          <div id="rekaz-gift-list" style="display:none;margin-top:10px;max-height:220px;overflow-y:auto;border:1px solid rgba(255,255,255,.07);border-radius:4px"></div>
-        </div>
+
+        <!-- ── إعدادات المنتج ── -->
         <div class="card">
-          <div class="card-ttl">طلبات الإهداء الواردة <span id="gift-orders-count" style="color:var(--gold);font-size:11px;font-weight:400;margin-right:6px"></span></div>
+          <div class="card-ttl">ربط منتج الإهداء من ركاز</div>
+
+          <div class="f" style="margin-bottom:6px">
+            <label>المنتج المرتبط حالياً</label>
+            <div id="gift-product-status" style="padding:10px;background:rgba(255,255,255,.04);border-radius:6px;font-size:12px;color:rgba(255,255,255,.5)">
+              جاري التحميل...
+            </div>
+          </div>
+
+          <button class="add-btn" style="margin:0 0 16px;padding:8px 16px" onclick="loadRekazGiftProduct()">
+            ← جلب منتج الإهداء من ركاز
+          </button>
+
+          <div id="rekaz-gift-products" style="display:none;margin-bottom:16px"></div>
+
+          <div style="border-top:1px solid rgba(255,255,255,.07);padding-top:16px;margin-top:4px">
+            <label style="font-size:11px;color:rgba(255,255,255,.4);display:block;margin-bottom:12px">أو أدخل الـ Price IDs يدوياً</label>
+            <div class="gr2">
+              <div class="f">
+                <label>Price ID — 400 SAR</label>
+                <input type="text" id="gc-price-400" style="direction:ltr;font-size:12px" placeholder="3a20cfaa-...">
+              </div>
+              <div class="f">
+                <label>Price ID — 500 SAR</label>
+                <input type="text" id="gc-price-500" style="direction:ltr;font-size:12px" placeholder="3a20cfaa-...">
+              </div>
+              <div class="f">
+                <label>Price ID — 700 SAR</label>
+                <input type="text" id="gc-price-700" style="direction:ltr;font-size:12px" placeholder="3a20cfaa-...">
+              </div>
+              <div class="f">
+                <label>Price ID — 1000 SAR</label>
+                <input type="text" id="gc-price-1000" style="direction:ltr;font-size:12px" placeholder="3a20cfaa-...">
+              </div>
+            </div>
+          </div>
+
+          <div class="f">
+            <label>المبالغ المتاحة في الصفحة</label>
+            <input type="text" id="gc-amounts" placeholder="400,500,700,1000" style="direction:ltr">
+          </div>
+
+          <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+            <button class="add-btn" style="margin:0;padding:8px 16px" onclick="collectGift();saveDB()">حفظ الإعدادات ✓</button>
+            <a href="/gift" target="_blank" style="font-size:12px;color:var(--gold);text-decoration:none;border:1px solid rgba(184,150,90,.3);padding:8px 14px;border-radius:4px">فتح صفحة الإهداء ↗</a>
+          </div>
+        </div>
+
+        <!-- ── طلبات الإهداء ── -->
+        <div class="card">
+          <div class="card-ttl">
+            طلبات الإهداء الواردة
+            <span id="gift-orders-count" style="color:var(--gold);font-size:11px;font-weight:400;margin-right:8px"></span>
+          </div>
           <div id="gift-orders-list"><p style="font-size:11px;color:rgba(255,255,255,.3)">جاري التحميل...</p></div>
         </div>
+
       </div>
 
-      <!-- MEMBERSHIPS -->
+<!-- MEMBERSHIPS -->
       <div class="panel" id="p-memberships">
         <div class="card">
           <div class="card-ttl">باقات العضوية</div>
@@ -778,9 +798,7 @@ function collectLogo(){
 // ── GIFT ──
 function renderGift(){
   const gp=(DB.pages&&DB.pages.gift)||{};
-  setv('gc-title',gp.title||'بطاقة الإهداء');setv('gc-subtitle',gp.subtitle||'');
   setv('gc-amounts',(gp.amounts||[400,500,700,1000]).join(','));
-  setv('gc-rekaz-price',gp.rekazPriceId||'');
   var prices=gp.rekazPrices||{};
   setv('gc-price-400',prices['400']||'3a20ab64-fb29-8449-e1ef-c92188e204ed');
   setv('gc-price-500',prices['500']||'3a20ab64-fb29-6a4b-6338-39f7599d1edd');
@@ -789,10 +807,8 @@ function renderGift(){
 }
 function collectGift(){
   DB.pages=DB.pages||{};DB.pages.gift=DB.pages.gift||{};
-  DB.pages.gift.title=g('gc-title').value;DB.pages.gift.subtitle=g('gc-subtitle').value;
-  DB.pages.gift.amounts=(g('gc-amounts').value||'').split(',').map(x=>parseInt(x.trim())).filter(Boolean);
-  const rp=g('gc-rekaz-price');if(rp)DB.pages.gift.rekazPriceId=rp.value.trim();
-  DB.pages.gift.rekazPrices={};
+  DB.pages.gift.amounts=(g('gc-amounts').value||'400,500,700,1000').split(',').map(x=>parseInt(x.trim())).filter(Boolean);
+  DB.pages.gift.rekazPrices=DB.pages.gift.rekazPrices||{};
   ['400','500','700','1000'].forEach(function(amt){
     var el=g('gc-price-'+amt);
     if(el&&el.value.trim())DB.pages.gift.rekazPrices[amt]=el.value.trim();
@@ -1078,6 +1094,73 @@ function makeRekazList(prods, onClickFn){
     }
   });
   return html;
+}
+
+async function loadRekazGiftProduct(){
+  const el = g('rekaz-gift-products');
+  const status = g('gift-product-status');
+  el.style.display = 'block';
+  el.innerHTML = '<p style="font-size:11px;color:rgba(255,255,255,.4)">جاري الجلب...</p>';
+  try {
+    const data = await api('GET','/admin/rekaz-products');
+    const items = data.items || [];
+    // Filter Merchandise products (type:2)
+    const merch = items.filter(p => p.type === 2 || p.typeString === 'Merchandise');
+    if (!merch.length) {
+      el.innerHTML = '<p style="font-size:11px;color:var(--err)">لا توجد منتجات Merchandise</p>';
+      return;
+    }
+    el.innerHTML = merch.map(p => `
+      <div style="border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:12px;margin-bottom:8px;background:rgba(255,255,255,.03)">
+        <div style="font-size:13px;font-weight:600;margin-bottom:8px;color:#fff">${e(p.name)}</div>
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px">
+          ${(p.pricing||[]).map(pr => `
+            <div style="background:rgba(184,150,90,.08);border:1px solid rgba(184,150,90,.2);border-radius:4px;padding:8px;font-size:11px">
+              <div style="color:var(--gold);font-weight:700;margin-bottom:4px">${pr.amount} SAR</div>
+              <div style="color:rgba(255,255,255,.4);font-size:10px;direction:ltr;word-break:break-all">${e(pr.id)}</div>
+              <button onclick="assignGiftPrice('${pr.amount}','${pr.id}')" style="margin-top:6px;padding:3px 8px;background:var(--gold);border:none;color:#000;font-size:10px;cursor:pointer;border-radius:3px;font-weight:700">
+                ← ربط
+              </button>
+            </div>
+          `).join('')}
+        </div>
+        <button onclick="assignAllGiftPrices(${JSON.stringify(p.pricing||[])})" style="margin-top:8px;padding:6px 14px;background:rgba(184,150,90,.15);border:1px solid rgba(184,150,90,.3);color:var(--gold);font-size:11px;cursor:pointer;border-radius:4px;font-weight:600">
+          ← ربط جميع القيم تلقائياً
+        </button>
+      </div>
+    `).join('');
+
+    // Show current linked priceIds
+    const prices = DB.pages?.gift?.rekazPrices || {};
+    const linked = Object.keys(prices).length;
+    if (status) status.innerHTML = linked
+      ? `<span style="color:#4ade80">✓ مرتبط — ${linked} قيم</span><br>${Object.entries(prices).map(([k,v])=>`<span style="color:rgba(255,255,255,.3);font-size:10px">${k} SAR: ${v}</span>`).join('<br>')}`
+      : `<span style="color:rgba(255,255,255,.3)">غير مرتبط</span>`;
+  } catch(err) {
+    el.innerHTML = `<p style="font-size:11px;color:var(--err)">${err.message}</p>`;
+  }
+}
+
+function assignGiftPrice(amount, priceId) {
+  DB.pages = DB.pages || {}; DB.pages.gift = DB.pages.gift || {};
+  DB.pages.gift.rekazPrices = DB.pages.gift.rekazPrices || {};
+  DB.pages.gift.rekazPrices[String(amount)] = priceId;
+  const el = g('gc-price-'+amount);
+  if (el) el.value = priceId;
+  notif('تم ربط '+amount+' SAR ✓');
+}
+
+function assignAllGiftPrices(pricing) {
+  DB.pages = DB.pages || {}; DB.pages.gift = DB.pages.gift || {};
+  DB.pages.gift.rekazPrices = {};
+  pricing.forEach(pr => {
+    DB.pages.gift.rekazPrices[String(pr.amount)] = pr.id;
+    const el = g('gc-price-'+pr.amount);
+    if (el) el.value = pr.id;
+  });
+  saveDB();
+  notif('تم ربط جميع القيم وحفظها ✓');
+  loadRekazGiftProduct();
 }
 
 async function loadRekazProdsForGift(){
