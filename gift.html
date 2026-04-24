@@ -34,6 +34,7 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction
 
 /* ══ PAGES ══ */
 .pg{display:none;flex-direction:column;min-height:calc(100dvh - 54px)}
+.pg-body{flex:1;overflow-y:auto;padding:20px 16px 100px}
 .pg.on{display:flex}
 #p1,#p2,#p3,#pp,#pz{background:var(--cream)}
 
@@ -243,6 +244,17 @@ textarea.finp{resize:none;line-height:1.7}
 
 /* toast */
 #ntf{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--gold);border:1px solid rgba(184,150,90,.3);padding:12px 24px;font-size:14px;z-index:9999;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .3s;border-radius:8px;font-family:'Tajawal',sans-serif}
+
+/* ── OTP ── */
+.otp-wrap{max-width:360px;margin:0 auto;padding:40px 20px;text-align:center}
+.otp-icon{width:64px;height:64px;border-radius:50%;background:rgba(184,150,90,.1);border:1px solid rgba(184,150,90,.25);display:flex;align-items:center;justify-content:center;margin:0 auto 20px}
+.otp-title{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:300;color:#fff;margin-bottom:10px;letter-spacing:.04em}
+.otp-sub{font-size:14px;color:rgba(255,255,255,.45);margin-bottom:28px;line-height:1.7}
+.otp-btn{width:100%;padding:16px;background:rgba(184,150,90,.15);border:1.5px solid rgba(184,150,90,.4);color:#b8965a;font-family:'Tajawal',sans-serif;font-size:16px;font-weight:700;cursor:pointer;border-radius:8px;margin-bottom:12px;transition:all .15s}
+.otp-btn:hover:not(:disabled){background:rgba(184,150,90,.25)}
+.otp-btn:disabled{opacity:.35;pointer-events:none}
+.otp-input{width:100%;padding:18px;font-size:28px;text-align:center;letter-spacing:.3em;background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.15);color:#fff;font-family:monospace;border-radius:8px;margin-bottom:16px;outline:none}
+.otp-input:focus{border-color:rgba(184,150,90,.5)}
 </style>
 </head>
 <body>
