@@ -908,35 +908,54 @@ function collectMems(){
 }
 // النقطة 3: مزامنة من ركاز
 async function loadRekazMemProduct(){
-  const el=g('rekaz-mem-products'),status=g('mem-product-status');
+  var el=g('rekaz-mem-products'),status=g('mem-product-status');
   if(!el)return;
   el.style.display='block';
   el.innerHTML='<p style="font-size:11px;color:rgba(255,255,255,.4)">جاري الجلب...</p>';
   try{
-    const data=await api('GET','/admin/rekaz-products');
-    const items=data.items||[];
+    var data=await api('GET','/admin/rekaz-products');
+    var items=data.items||[];
     if(!items.length){el.innerHTML='<p style="font-size:11px;color:var(--err)">لا توجد منتجات</p>';return;}
-    el.innerHTML=items.map(function(p){
+    // بناء HTML مع data attributes بدل onclick inline (تجنب مشاكل الـ escape)
+    var html='';
+    items.forEach(function(p){
       var name=p.nameAr||p.name||'';
       var pricing=p.pricing||[];
+      var pid=encodeURIComponent(p.id);
+      var pname=encodeURIComponent(name);
+      html+='<div style="border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:10px;margin-bottom:6px;background:rgba(255,255,255,.03)">';
+      html+='<div style="font-size:13px;font-weight:600;color:#fff;margin-bottom:8px">'+e(name)+'</div>';
       if(!pricing.length){
-        return '<div style="border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:10px;margin-bottom:6px;background:rgba(255,255,255,.03)">'+
-          '<div style="font-size:13px;font-weight:600;color:#fff;margin-bottom:6px">'+e(name)+'</div>'+
-          '<button onclick="assignMemProduct(''+p.id+'',''+p.id+'',0,''+name.replace(/'/g,'\\'')+'')" style="padding:5px 12px;background:var(--gold);border:none;color:#000;font-size:11px;cursor:pointer;border-radius:3px;font-weight:700">← ربط</button>'+
-          '</div>';
+        html+='<button class="rmp-btn" data-pid="'+pid+'" data-prid="'+pid+'" data-amt="0" data-name="'+pname+'" style="padding:5px 12px;background:var(--gold);border:none;color:#000;font-size:11px;cursor:pointer;border-radius:3px;font-weight:700">← ربط</button>';
+      } else {
+        html+='<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px">';
+        pricing.forEach(function(pr){
+          html+='<div style="background:rgba(184,150,90,.08);border:1px solid rgba(184,150,90,.2);border-radius:4px;padding:8px">';
+          html+='<div style="color:var(--gold);font-weight:700;font-size:12px;margin-bottom:4px">'+(pr.amount||0)+' SAR</div>';
+          html+='<div style="font-size:10px;color:rgba(255,255,255,.4);direction:ltr;word-break:break-all">'+e(pr.id)+'</div>';
+          html+='<button class="rmp-btn" data-pid="'+pid+'" data-prid="'+encodeURIComponent(pr.id)+'" data-amt="'+(pr.amount||0)+'" data-name="'+pname+'" style="margin-top:6px;padding:3px 8px;background:var(--gold);border:none;color:#000;font-size:10px;cursor:pointer;border-radius:3px;font-weight:700">← ربط</button>';
+          html+='</div>';
+        });
+        html+='</div>';
       }
-      return '<div style="border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:10px;margin-bottom:6px;background:rgba(255,255,255,.03)">'+
-        '<div style="font-size:13px;font-weight:600;color:#fff;margin-bottom:8px">'+e(name)+'</div>'+
-        '<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px">'+
-        pricing.map(function(pr){
-          return '<div style="background:rgba(184,150,90,.08);border:1px solid rgba(184,150,90,.2);border-radius:4px;padding:8px">'+
-            '<div style="color:var(--gold);font-weight:700;font-size:12px;margin-bottom:4px">'+(pr.amount||0)+' SAR</div>'+
-            '<div style="font-size:10px;color:rgba(255,255,255,.4);direction:ltr;word-break:break-all">'+e(pr.id)+'</div>'+
-            '<button onclick="assignMemProduct(''+p.id+'',''+pr.id+'','+(pr.amount||0)+',''+name.replace(/'/g,'\\'')+'')" style="margin-top:6px;padding:3px 8px;background:var(--gold);border:none;color:#000;font-size:10px;cursor:pointer;border-radius:3px;font-weight:700">← ربط</button>'+
-            '</div>';
-        }).join('')+
-        '</div></div>';
-    }).join('');
+      html+='</div>';
+    });
+    el.innerHTML=html;
+    // ربط الأحداث عبر event delegation
+    el.querySelectorAll('.rmp-btn').forEach(function(btn){
+      btn.addEventListener('click',function(){
+        assignMemProduct(
+          decodeURIComponent(btn.dataset.pid),
+          decodeURIComponent(btn.dataset.prid),
+          parseInt(btn.dataset.amt)||0,
+          decodeURIComponent(btn.dataset.name)
+        );
+      });
+    });
+    if(status){
+      var mp=DB.pages&&DB.pages.memberships||{};
+      if(mp.priceId)status.innerHTML='<span style="color:#4ade80">✓ مرتبط</span> — '+(mp.planName||'')+' '+(mp.price?mp.price+' SAR':'');
+    }
   }catch(err){el.innerHTML='<p style="font-size:11px;color:var(--err)">'+err.message+'</p>';}
 }
 function assignMemProduct(productId,priceId,price,name){
@@ -1164,79 +1183,53 @@ function downloadGiftCard(i){
 }
 
 function buildGiftCardHTML(o){
+  const logo = o.logoText || 'GRAFF SPA';
   const tagEn = o.tagEn || 'Gift Card';
   const tagAr = o.tagAr || 'بطاقة الإهداء';
-  return `<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="UTF-8">
-<title>Gift Card — GRAFF SPA</title>
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;600&family=Cormorant+Garamond:ital,wght@0,300;0,400&display=swap" rel="stylesheet">
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-html,body{width:100%;height:100%;background:#1a1510}
-body{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:32px;font-family:'Tajawal',sans-serif;direction:rtl}
-.card{
-  width:min(640px,88vw);
-  aspect-ratio:1.586;
-  background:linear-gradient(160deg,#f8f3ea 0%,#f2ebe0 40%,#ede5d6 100%);
-  border-radius:12px;
-  position:relative;overflow:hidden;
-  box-shadow:0 24px 72px rgba(0,0,0,.5),0 0 0 1px rgba(138,98,32,.28)
-}
-svg.frm{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2}
-.cin{position:absolute;inset:0;padding:8% 8%;display:flex;flex-direction:column;justify-content:space-between;z-index:5}
-.ctop{display:flex;justify-content:space-between;align-items:flex-start}
-.clogo{font-family:'Cormorant Garamond',serif;font-size:clamp(15px,3.5vw,24px);font-weight:300;letter-spacing:.22em;color:rgba(20,15,8,.82)}
-.ctags{text-align:left;display:flex;flex-direction:column;align-items:flex-end;gap:2px}
-.cten{font-family:'Cormorant Garamond',serif;font-size:clamp(9px,2vw,13px);color:rgba(140,100,35,.78);letter-spacing:.08em}
-.ctar{font-family:'Tajawal',sans-serif;font-size:clamp(10px,2.1vw,14px);font-weight:600;color:rgba(140,100,35,.78);margin-top:1px}
-.cmid{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;text-align:center}
-.camt{font-family:'Cormorant Garamond',serif;font-size:clamp(52px,13vw,90px);font-weight:300;color:rgba(20,15,8,.86);letter-spacing:.01em;line-height:1}
-.csar{font-family:'Cormorant Garamond',serif;font-size:clamp(10px,2.1vw,14px);color:rgba(140,100,35,.7);letter-spacing:.36em}
-.cline{width:40px;height:1px;background:rgba(140,100,35,.28);margin:4px auto}
-.cmsg{font-family:'Cormorant Garamond',serif;font-size:clamp(10px,2.2vw,14px);color:rgba(20,15,8,.4);font-style:italic;letter-spacing:.02em}
-.cbot{display:flex;justify-content:space-between;align-items:flex-end}
-.clbl{font-family:'Cormorant Garamond',serif;font-size:clamp(7px,1.5vw,9px);letter-spacing:.32em;color:rgba(140,100,35,.65);text-transform:uppercase;margin-bottom:4px}
-.cname{font-family:'Cormorant Garamond',serif;font-size:clamp(15px,3.5vw,22px);font-weight:300;color:rgba(20,15,8,.65);letter-spacing:.05em}
-.cfrom{text-align:left}
-.cfname{font-family:'Cormorant Garamond',serif;font-size:clamp(13px,3vw,19px);font-weight:300;color:rgba(20,15,8,.48);letter-spacing:.05em}
-.pbtn{margin-top:28px;padding:15px 44px;background:#b8965a;color:#080807;border:none;font-family:'Tajawal',sans-serif;font-size:16px;font-weight:700;cursor:pointer;border-radius:8px}
-@media print{.pbtn{display:none}html,body{background:#f8f3ea}}
-</style>
-</head>
-<body>
-<div class="card">
-  <svg class="frm" viewBox="0 0 390 246" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <rect x="12" y="12" width="366" height="222" stroke="rgba(138,98,32,0.52)" stroke-width="1.2"/>
-  </svg>
-  <div class="cin">
-    <div class="ctop">
-      <div class="clogo">${logo}</div>
-      <div class="ctags"><div class="cten">${tagEn}</div><div class="ctar">${tagAr}</div></div>
-    </div>
-    <div class="cmid">
-      <div class="camt">${o.amount}</div>
-      <div class="csar">S A R</div>
-      <div class="cline"></div>
-      ${o.message ? `<div class="cmsg">"${o.message}"</div>` : ''}
-    </div>
-    <div class="cbot">
-      <div>
-        <div class="clbl">TO</div>
-        <div class="cname">${o.toName||'—'}</div>
-      </div>
-      ${o.showSender && o.fromName ? `<div class="cfrom"><div class="clbl" style="text-align:left">FROM</div><div class="cfname">${o.fromName}</div></div>` : ''}
-    </div>
-  </div>
-</div>
-
+  const fromHtml = (o.showSender && o.fromName)
+    ? '<div class="cfrom"><div class="clbl" style="text-align:left">FROM</div><div class="cfname">'+o.fromName+'</div></div>'
+    : '';
+  const msgHtml = o.message
+    ? '<div class="cmsg">&ldquo;'+o.message+'&rdquo;</div>'
+    : '';
+  return '<!DOCTYPE html>\n'+
+    '<html lang="ar" dir="rtl"><head>\n'+
+    '<meta charset="UTF-8">\n'+
+    '<title>Gift Card — GRAFF SPA</title>\n'+
+    '<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;600&family=Cormorant+Garamond:ital,wght@0,300;0,400&display=swap" rel="stylesheet">\n'+
+    '<style>\n'+
+    '*{margin:0;padding:0;box-sizing:border-box}\n'+
+    'html,body{width:100%;height:100%;background:#1a1510}\n'+
+    'body{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:32px;font-family:\'Tajawal\',sans-serif;direction:rtl}\n'+
+    '.card{width:min(640px,88vw);aspect-ratio:1.586;background:linear-gradient(160deg,#f8f3ea 0%,#f2ebe0 40%,#ede5d6 100%);border-radius:12px;position:relative;overflow:hidden;box-shadow:0 24px 72px rgba(0,0,0,.5),0 0 0 1px rgba(138,98,32,.28)}\n'+
+    'svg.frm{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2}\n'+
+    '.cin{position:absolute;inset:0;padding:8% 8%;display:flex;flex-direction:column;justify-content:space-between;z-index:5}\n'+
+    '.ctop{display:flex;justify-content:space-between;align-items:flex-start}\n'+
+    '.clogo{font-family:\'Cormorant Garamond\',serif;font-size:clamp(15px,3.5vw,24px);font-weight:300;letter-spacing:.22em;color:rgba(20,15,8,.82)}\n'+
+    '.ctags{text-align:left;display:flex;flex-direction:column;align-items:flex-end;gap:2px}\n'+
+    '.cten{font-family:\'Cormorant Garamond\',serif;font-size:clamp(9px,2vw,13px);color:rgba(140,100,35,.78);letter-spacing:.08em}\n'+
+    '.ctar{font-size:clamp(10px,2.1vw,14px);font-weight:600;color:rgba(140,100,35,.78);margin-top:1px}\n'+
+    '.cmid{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;text-align:center}\n'+
+    '.camt{font-family:\'Cormorant Garamond\',serif;font-size:clamp(52px,13vw,90px);font-weight:300;color:rgba(20,15,8,.86);line-height:1}\n'+
+    '.csar{font-family:\'Cormorant Garamond\',serif;font-size:clamp(10px,2.1vw,14px);color:rgba(140,100,35,.7);letter-spacing:.36em}\n'+
+    '.cline{width:40px;height:1px;background:rgba(140,100,35,.28);margin:4px auto}\n'+
+    '.cmsg{font-family:\'Cormorant Garamond\',serif;font-size:clamp(10px,2.2vw,14px);color:rgba(20,15,8,.4);font-style:italic}\n'+
+    '.cbot{display:flex;justify-content:space-between;align-items:flex-end}\n'+
+    '.clbl{font-family:\'Cormorant Garamond\',serif;font-size:clamp(7px,1.5vw,9px);letter-spacing:.32em;color:rgba(140,100,35,.65);text-transform:uppercase;margin-bottom:4px}\n'+
+    '.cname{font-family:\'Cormorant Garamond\',serif;font-size:clamp(15px,3.5vw,22px);font-weight:300;color:rgba(20,15,8,.65);letter-spacing:.05em}\n'+
+    '.cfrom{text-align:left}\n'+
+    '.cfname{font-family:\'Cormorant Garamond\',serif;font-size:clamp(13px,3vw,19px);font-weight:300;color:rgba(20,15,8,.48)}\n'+
+    '</style></head><body>\n'+
+    '<div class="card">\n'+
+    '<svg class="frm" viewBox="0 0 390 246" fill="none"><rect x="12" y="12" width="366" height="222" stroke="rgba(138,98,32,0.52)" stroke-width="1.2"/></svg>\n'+
+    '<div class="cin">\n'+
+    '<div class="ctop"><div class="clogo">'+logo+'</div><div class="ctags"><div class="cten">'+tagEn+'</div><div class="ctar">'+tagAr+'</div></div></div>\n'+
+    '<div class="cmid"><div class="camt">'+o.amount+'</div><div class="csar">S A R</div><div class="cline"></div>'+msgHtml+'</div>\n'+
+    '<div class="cbot"><div><div class="clbl">TO</div><div class="cname">'+(o.toName||'—')+'</div></div>'+fromHtml+'</div>\n'+
+    '</div></div>\n'+
+    '</body></html>';
 }
 
-
-
-
-// ── MEM ORDERS ──
 async function loadMemOrders(){
   var el=g('mem-orders-list'),cnt=g('mem-orders-count');
   if(!el)return;
@@ -1297,50 +1290,59 @@ function makeRekazList(prods, onClickFn){
 }
 
 async function loadRekazGiftProduct(){
-  const el = g('rekaz-gift-products');
-  const status = g('gift-product-status');
-  el.style.display = 'block';
-  el.innerHTML = '<p style="font-size:11px;color:rgba(255,255,255,.4)">جاري الجلب...</p>';
-  try {
-    const data = await api('GET','/admin/rekaz-products');
-    const items = data.items || [];
-    // Filter Merchandise products (type:2)
-    const merch = items.filter(p => p.type === 2 || p.typeString === 'Merchandise');
-    if (!merch.length) {
-      el.innerHTML = '<p style="font-size:11px;color:var(--err)">لا توجد منتجات Merchandise</p>';
-      return;
+  var el=g('rekaz-gift-products'),status=g('gift-product-status');
+  el.style.display='block';
+  el.innerHTML='<p style="font-size:11px;color:rgba(255,255,255,.4)">جاري الجلب...</p>';
+  try{
+    var data=await api('GET','/admin/rekaz-products');
+    var items=data.items||[];
+    var merch=items.filter(function(p){return p.type===2||p.typeString==='Merchandise'||true;});
+    if(!merch.length){el.innerHTML='<p style="font-size:11px;color:var(--err)">لا توجد منتجات</p>';return;}
+    var html='';
+    merch.forEach(function(p){
+      var pname=p.nameAr||p.name||'';
+      var pricing=p.pricing||[];
+      html+='<div style="border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:12px;margin-bottom:8px;background:rgba(255,255,255,.03)">';
+      html+='<div style="font-size:13px;font-weight:600;margin-bottom:8px;color:#fff">'+e(pname)+'</div>';
+      if(pricing.length){
+        html+='<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px">';
+        pricing.forEach(function(pr){
+          html+='<div style="background:rgba(184,150,90,.08);border:1px solid rgba(184,150,90,.2);border-radius:4px;padding:8px;font-size:11px">';
+          html+='<div style="color:var(--gold);font-weight:700;margin-bottom:4px">'+pr.amount+' SAR</div>';
+          html+='<div style="color:rgba(255,255,255,.4);font-size:10px;direction:ltr;word-break:break-all">'+e(pr.id)+'</div>';
+          html+='<button class="agp-btn" data-amt="'+pr.amount+'" data-prid="'+encodeURIComponent(pr.id)+'" style="margin-top:6px;padding:3px 8px;background:var(--gold);border:none;color:#000;font-size:10px;cursor:pointer;border-radius:3px;font-weight:700">← ربط</button>';
+          html+='</div>';
+        });
+        html+='</div>';
+      }
+      html+='<button class="agpa-btn" data-pricing="'+encodeURIComponent(JSON.stringify(pricing))+'" style="margin-top:8px;padding:6px 14px;background:rgba(184,150,90,.15);border:1px solid rgba(184,150,90,.3);color:var(--gold);font-size:11px;cursor:pointer;border-radius:4px;font-weight:600">← ربط جميع القيم تلقائياً</button>';
+      html+='</div>';
+    });
+    el.innerHTML=html;
+    // Event listeners بدل onclick inline
+    el.querySelectorAll('.agp-btn').forEach(function(btn){
+      btn.addEventListener('click',function(){
+        assignGiftPrice(btn.dataset.amt, decodeURIComponent(btn.dataset.prid));
+      });
+    });
+    el.querySelectorAll('.agpa-btn').forEach(function(btn){
+      btn.addEventListener('click',function(){
+        assignAllGiftPrices(JSON.parse(decodeURIComponent(btn.dataset.pricing)));
+      });
+    });
+    // Status
+    var prices=(DB.pages&&DB.pages.gift&&DB.pages.gift.rekazPrices)||{};
+    var linked=Object.keys(prices).length;
+    if(status){
+      if(linked){
+        var priceInfo=Object.entries(prices).map(function(kv){return '<span style="color:rgba(255,255,255,.3);font-size:10px">'+kv[0]+' SAR: '+kv[1]+'</span>';}).join('<br>');
+        status.innerHTML='<span style="color:#4ade80">✓ مرتبط — '+linked+' قيم</span><br>'+priceInfo;
+      } else {
+        status.innerHTML='<span style="color:rgba(255,255,255,.3)">غير مرتبط</span>';
+      }
     }
-    el.innerHTML = merch.map(p => `
-      <div style="border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:12px;margin-bottom:8px;background:rgba(255,255,255,.03)">
-        <div style="font-size:13px;font-weight:600;margin-bottom:8px;color:#fff">${e(p.name)}</div>
-        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px">
-          ${(p.pricing||[]).map(pr => `
-            <div style="background:rgba(184,150,90,.08);border:1px solid rgba(184,150,90,.2);border-radius:4px;padding:8px;font-size:11px">
-              <div style="color:var(--gold);font-weight:700;margin-bottom:4px">${pr.amount} SAR</div>
-              <div style="color:rgba(255,255,255,.4);font-size:10px;direction:ltr;word-break:break-all">${e(pr.id)}</div>
-              <button onclick="assignGiftPrice('${pr.amount}','${pr.id}')" style="margin-top:6px;padding:3px 8px;background:var(--gold);border:none;color:#000;font-size:10px;cursor:pointer;border-radius:3px;font-weight:700">
-                ← ربط
-              </button>
-            </div>
-          `).join('')}
-        </div>
-        <button onclick="assignAllGiftPrices(${JSON.stringify(p.pricing||[])})" style="margin-top:8px;padding:6px 14px;background:rgba(184,150,90,.15);border:1px solid rgba(184,150,90,.3);color:var(--gold);font-size:11px;cursor:pointer;border-radius:4px;font-weight:600">
-          ← ربط جميع القيم تلقائياً
-        </button>
-      </div>
-    `).join('');
-
-    // Show current linked priceIds
-    const prices = DB.pages?.gift?.rekazPrices || {};
-    const linked = Object.keys(prices).length;
-    if (status) status.innerHTML = linked
-      ? `<span style="color:#4ade80">✓ مرتبط — ${linked} قيم</span><br>${Object.entries(prices).map(([k,v])=>`<span style="color:rgba(255,255,255,.3);font-size:10px">${k} SAR: ${v}</span>`).join('<br>')}`
-      : `<span style="color:rgba(255,255,255,.3)">غير مرتبط</span>`;
-  } catch(err) {
-    el.innerHTML = `<p style="font-size:11px;color:var(--err)">${err.message}</p>`;
-  }
+  }catch(err){el.innerHTML='<p style="font-size:11px;color:var(--err)">'+err.message+'</p>';}
 }
-
 function assignGiftPrice(amount, priceId) {
   DB.pages = DB.pages || {}; DB.pages.gift = DB.pages.gift || {};
   DB.pages.gift.rekazPrices = DB.pages.gift.rekazPrices || {};
