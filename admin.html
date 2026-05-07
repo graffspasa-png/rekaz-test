@@ -189,9 +189,12 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink2);color:#fff;directio
       <!-- MENU -->
       <div class="panel" id="p-menu">
         <div class="card"><div class="card-ttl">الأقسام والخدمات</div>
-          <p style="font-size:11px;color:rgba(255,255,255,.4);margin-bottom:14px;line-height:1.7">كل قسم يمكن أن يحتوي على عدة <strong style="color:#fff">أقسام فرعية</strong>، وكل قسم فرعي يحتوي على خدمات محددة.</p>
+          <p style="font-size:11px;color:rgba(255,255,255,.4);margin-bottom:14px;line-height:1.7">كل قسم يمكن أن يحتوي على عدة <strong style="color:#fff">أقسام فرعية</strong>، وكل قسم فرعي يحتوي على خدمات محددة.<br><span style="color:rgba(184,150,90,.7)">⠿ اسحب الأقسام لإعادة الترتيب</span></p>
           <div id="cats-list"></div>
-          <button class="add-btn" onclick="openCatModal()">+ إضافة قسم رئيسي</button>
+          <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+            <button class="add-btn" style="margin:0" onclick="openCatModal()">+ إضافة قسم رئيسي</button>
+            <button class="add-btn" style="margin:0;padding:6px 14px;background:rgba(0,200,100,.08);border-color:rgba(0,200,100,.3);color:#4ade80" onclick="syncServicesWithRekaz()">↻ مزامنة مع ركاز</button>
+          </div>
         </div>
       </div>
 
@@ -278,42 +281,26 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink2);color:#fff;directio
       <!-- GIFT -->
       <div class="panel" id="p-gift">
 
-        <!-- ── إعدادات المنتج ── -->
+        <!-- ربط منتج الإهداء — النقطة 2 و 9 -->
         <div class="card">
           <div class="card-ttl">ربط منتج الإهداء من ركاز</div>
+          <p style="font-size:11px;color:rgba(255,255,255,.4);margin-bottom:14px;line-height:1.7">اختر المنتج من ركاز مباشرة — يعمل بدون مواعيد (priceId + quantity فقط)</p>
 
-          <div class="f" style="margin-bottom:6px">
+          <div class="f" style="margin-bottom:8px">
             <label>المنتج المرتبط حالياً</label>
-            <div id="gift-product-status" style="padding:10px;background:rgba(255,255,255,.04);border-radius:6px;font-size:12px;color:rgba(255,255,255,.5)">
-              جاري التحميل...
-            </div>
+            <div id="gift-product-status" style="padding:10px;background:rgba(255,255,255,.04);border-radius:6px;font-size:12px;color:rgba(255,255,255,.5)">جاري التحميل...</div>
           </div>
 
-          <button class="add-btn" style="margin:0 0 16px;padding:8px 16px" onclick="loadRekazGiftProduct()">
-            ← جلب منتج الإهداء من ركاز
-          </button>
+          <button class="add-btn" style="margin:0 0 14px;padding:8px 16px" onclick="loadRekazGiftProduct()">← جلب منتجات الإهداء من ركاز</button>
+          <div id="rekaz-gift-products" style="display:none;margin-bottom:14px"></div>
 
-          <div id="rekaz-gift-products" style="display:none;margin-bottom:16px"></div>
-
-          <div style="border-top:1px solid rgba(255,255,255,.07);padding-top:16px;margin-top:4px">
-            <label style="font-size:11px;color:rgba(255,255,255,.4);display:block;margin-bottom:12px">أو أدخل الـ Price IDs يدوياً</label>
+          <div style="border-top:1px solid rgba(255,255,255,.07);padding-top:14px">
+            <label style="font-size:11px;color:rgba(255,255,255,.4);display:block;margin-bottom:10px">Price IDs يدوياً (للقيم المتعددة)</label>
             <div class="gr2">
-              <div class="f">
-                <label>Price ID — 400 SAR</label>
-                <input type="text" id="gc-price-400" style="direction:ltr;font-size:12px" placeholder="3a20cfaa-...">
-              </div>
-              <div class="f">
-                <label>Price ID — 500 SAR</label>
-                <input type="text" id="gc-price-500" style="direction:ltr;font-size:12px" placeholder="3a20cfaa-...">
-              </div>
-              <div class="f">
-                <label>Price ID — 700 SAR</label>
-                <input type="text" id="gc-price-700" style="direction:ltr;font-size:12px" placeholder="3a20cfaa-...">
-              </div>
-              <div class="f">
-                <label>Price ID — 1000 SAR</label>
-                <input type="text" id="gc-price-1000" style="direction:ltr;font-size:12px" placeholder="3a20cfaa-...">
-              </div>
+              <div class="f"><label>Price ID — 400 SAR</label><input type="text" id="gc-price-400" style="direction:ltr;font-size:12px" placeholder="3a20cfaa-..."></div>
+              <div class="f"><label>Price ID — 500 SAR</label><input type="text" id="gc-price-500" style="direction:ltr;font-size:12px" placeholder="3a20cfaa-..."></div>
+              <div class="f"><label>Price ID — 700 SAR</label><input type="text" id="gc-price-700" style="direction:ltr;font-size:12px" placeholder="3a20cfaa-..."></div>
+              <div class="f"><label>Price ID — 1000 SAR</label><input type="text" id="gc-price-1000" style="direction:ltr;font-size:12px" placeholder="3a20cfaa-..."></div>
             </div>
           </div>
 
@@ -328,12 +315,9 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink2);color:#fff;directio
           </div>
         </div>
 
-        <!-- ── طلبات الإهداء ── -->
+        <!-- طلبات الإهداء -->
         <div class="card">
-          <div class="card-ttl">
-            طلبات الإهداء الواردة
-            <span id="gift-orders-count" style="color:var(--gold);font-size:11px;font-weight:400;margin-right:8px"></span>
-          </div>
+          <div class="card-ttl">طلبات الإهداء الواردة <span id="gift-orders-count" style="color:var(--gold);font-size:11px;font-weight:400;margin-right:8px"></span></div>
           <div id="gift-orders-list"><p style="font-size:11px;color:rgba(255,255,255,.3)">جاري التحميل...</p></div>
         </div>
 
@@ -341,17 +325,50 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink2);color:#fff;directio
 
 <!-- MEMBERSHIPS -->
       <div class="panel" id="p-memberships">
+        <!-- ربط منتج العضوية — النقطة 2 و 9 -->
         <div class="card">
-          <div class="card-ttl">باقات العضوية</div>
-          <p style="font-size:10px;color:rgba(255,255,255,.35);margin-bottom:12px;line-height:1.7">أضف Rekaz Price ID لكل باقة لتفعيل الدفع الفوري.</p>
-          <div id="mems-list"></div>
-          <div style="display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap">
-            <button class="add-btn" style="margin:0" onclick="addMem()">+ إضافة باقة</button>
-            <button class="add-btn" style="margin:0;padding:6px 14px" onclick="loadRekazProdsForMem()">← جلب منتجات Rekaz</button>
-            <a href="/membership" target="_blank" style="font-size:11px;color:var(--gold);text-decoration:none;border:1px solid rgba(184,150,90,.3);padding:6px 14px">فتح صفحة العضويات ↗</a>
+          <div class="card-ttl">ربط منتج العضوية من ركاز</div>
+          <p style="font-size:11px;color:rgba(255,255,255,.4);margin-bottom:14px;line-height:1.7">اربط منتج العضوية مباشرة من ركاز — يعمل كخدمة قابلة للشراء بدون مواعيد</p>
+
+          <div class="f" style="margin-bottom:8px">
+            <label>المنتج المرتبط حالياً</label>
+            <div id="mem-product-status" style="padding:10px;background:rgba(255,255,255,.04);border-radius:6px;font-size:12px;color:rgba(255,255,255,.5)">جاري التحميل...</div>
           </div>
-          <div id="rekaz-mem-list" style="display:none;margin-top:10px;max-height:220px;overflow-y:auto;border:1px solid rgba(255,255,255,.07);border-radius:4px"></div>
+
+          <button class="add-btn" style="margin:0 0 14px;padding:8px 16px" onclick="loadRekazMemProduct()">← جلب منتجات العضوية من ركاز</button>
+          <div id="rekaz-mem-products" style="display:none;margin-bottom:14px"></div>
+
+          <div style="border-top:1px solid rgba(255,255,255,.07);padding-top:14px">
+            <label style="font-size:11px;color:rgba(255,255,255,.4);display:block;margin-bottom:10px">أو أدخل يدوياً</label>
+            <div class="gr2">
+              <div class="f">
+                <label>Product ID</label>
+                <input type="text" id="mem-product-id" style="direction:ltr;font-size:12px" placeholder="product-uuid...">
+              </div>
+              <div class="f">
+                <label>Price ID</label>
+                <input type="text" id="mem-price-id" style="direction:ltr;font-size:12px" placeholder="price-uuid...">
+              </div>
+            </div>
+            <div class="gr2">
+              <div class="f">
+                <label>السعر (SAR)</label>
+                <input type="number" id="mem-price-amount" placeholder="10000">
+              </div>
+              <div class="f">
+                <label>اسم الخطة</label>
+                <input type="text" id="mem-plan-name" placeholder="Elite Membership">
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+            <button class="add-btn" style="margin:0;padding:8px 16px" onclick="collectMems();saveDB()">حفظ إعدادات العضوية ✓</button>
+            <a href="/membership" target="_blank" style="font-size:12px;color:var(--gold);text-decoration:none;border:1px solid rgba(184,150,90,.3);padding:8px 14px;border-radius:4px">فتح صفحة العضوية ↗</a>
+          </div>
         </div>
+
+        <!-- طلبات العضويات -->
         <div class="card">
           <div class="card-ttl">طلبات العضويات الواردة <span id="mem-orders-count" style="color:var(--gold);font-size:11px;font-weight:400;margin-right:6px"></span></div>
           <div id="mem-orders-list"><p style="font-size:11px;color:rgba(255,255,255,.3)">جاري التحميل...</p></div>
@@ -479,7 +496,7 @@ function show(id){
   if(g('tb-title'))g('tb-title').textContent=TITLES[id]||id;
   if(id==='policies')renderPolicies();
   if(id==='gift'){collectGift();loadGiftOrders();}
-  if(id==='memberships')loadMemOrders();
+  if(id==='memberships'){renderMems();loadMemOrders();}
 }
 function renderAll(){renderOverview();renderMenu();renderTexts();renderDesign();renderLogo();renderButtons();renderGift();renderMems();renderSocial();renderPayment();}
 
@@ -514,9 +531,49 @@ async function checkRekaz(){
     if(ok)g('sb-migrate-btn').textContent='✓ Supabase متصل ومفعّل';
   }catch(e){g('sbstatus').textContent='خطأ';}
 }
+
+
 async function loadRekazProds(){
   try{const d=await api('GET','/admin/rekaz-products');rekazProds=d.items||[];g('ov-rekaz').textContent=rekazProds.length+' خدمة';}
   catch(e){g('ov-rekaz').textContent='خطأ';}
+}
+
+// النقطة 3: مزامنة الخدمات مع Rekaz (تحديث الاسم/الوصف/المدة تلقائياً بدون إنشاء جديد)
+async function syncServicesWithRekaz(){
+  try{
+    const d=await api('GET','/admin/rekaz-products');
+    const rekazMap={};
+    (d.items||[]).forEach(function(p){
+      (p.pricing||[{id:p.id,amount:p.amount}]).forEach(function(pr){
+        rekazMap[pr.id]={
+          nameAr:p.nameAr||p.name||'',
+          nameEn:p.nameEn||p.name||'',
+          description:p.description||'',
+          duration:p.duration||p.durationMinutes||0,
+          productId:p.id
+        };
+      });
+    });
+    let updated=0;
+    (DB.services||[]).forEach(function(svc){
+      if(svc.rekazPriceId&&rekazMap[svc.rekazPriceId]){
+        const rk=rekazMap[svc.rekazPriceId];
+        // تحديث الاسم والوصف فقط إذا تغيرا
+        if(rk.nameAr&&svc.nameAr!==rk.nameAr){svc.nameAr=rk.nameAr;updated++;}
+        if(rk.nameEn&&svc.nameEn!==rk.nameEn){svc.nameEn=rk.nameEn;}
+        if(rk.description)svc.description=rk.description;
+        if(rk.duration)svc.duration=rk.duration;
+        if(rk.productId)svc.rekazProductId=rk.productId;
+      }
+    });
+    if(updated>0){
+      await api('PUT','/admin/db',DB);
+      renderMenu();
+      notif('تم مزامنة '+updated+' خدمة مع ركاز ✓');
+    }else{
+      notif('الخدمات محدّثة بالفعل ✓');
+    }
+  }catch(err){notif('خطأ في المزامنة: '+err.message);}
 }
 
 // ── TEXTS ──
@@ -706,9 +763,21 @@ async function saveCat(){
     });
   });
   await api('PUT',`/admin/categories/${editCatId}/services`,{priceIds:allPriceIds});
+  // النقطة 4: منع التكرار — تحديث بالـ priceId بدلاً من الاسم
   DB.services=DB.services.filter(s=>s.categoryId!==editCatId);
   allPriceIds.forEach((item,idx)=>{
-    DB.services.push({id:'srv_'+Date.now()+idx,rekazPriceId:item.rekazPriceId,rekazProductId:item.rekazProductId,categoryId:editCatId,nameAr:item.nameAr,order:idx+1,visible:true});
+    // البحث عن خدمة بنفس priceId (في أي قسم) لإعادة استخدام نفس الـ id
+    const existing=DB.services.find(s=>s.rekazPriceId===item.rekazPriceId);
+    const srvId=existing?existing.id:('srv_'+Date.now()+'_'+idx);
+    DB.services.push({
+      id:srvId,
+      rekazPriceId:item.rekazPriceId,
+      rekazProductId:item.rekazProductId,
+      categoryId:editCatId,
+      nameAr:item.nameAr,
+      order:idx+1,
+      visible:true
+    });
   });
   closeModal();renderMenu();
 }
@@ -817,38 +886,78 @@ function collectGift(){
 
 // ── MEMBERSHIPS ──
 function renderMems(){
-  const mems=(DB.pages&&DB.pages.memberships&&DB.pages.memberships.items)||[];
-  g('mems-list').innerHTML=mems.map((m,i)=>`
-    <div class="mem-edit">
-      <div class="mem-edit-ttl"><span>${e(m.name||'باقة')}</span>
-        <div style="display:flex;gap:8px;align-items:center">
-          <label style="font-size:10px;color:rgba(255,255,255,.4)">مميز</label>
-          <div class="tog ${m.featured?'on':''}" onclick="DB.pages.memberships.items[${i}].featured=!DB.pages.memberships.items[${i}].featured;this.classList.toggle('on')"></div>
-          <button class="lb del" onclick="delMem(${i})">×</button>
-        </div>
-      </div>
-      <div class="gr3">
-        <div class="f"><label>الاسم</label><input value="${e(m.name||'')}" onchange="DB.pages.memberships.items[${i}].name=this.value"></div>
-        <div class="f"><label>السعر SAR</label><input type="number" value="${m.price||0}" onchange="DB.pages.memberships.items[${i}].price=parseInt(this.value)||0"></div>
-        <div class="f"><label>عدد الزيارات</label><input type="number" value="${m.visits||12}" onchange="DB.pages.memberships.items[${i}].visits=parseInt(this.value)||12"></div>
-      </div>
-      <div class="f"><label>Rekaz Price ID (اختياري — للدفع الفوري)</label><input placeholder="price_xxx" style="direction:ltr;text-align:left" value="${e(m.rekazPriceId||'')}" onchange="DB.pages.memberships.items[${i}].rekazPriceId=this.value.trim()"></div>
-      <div class="f"><label>المميزات (كل سطر ميزة)</label>
-        <textarea onchange="DB.pages.memberships.items[${i}].features=this.value.split('\\\\n').filter(Boolean)">${e((m.features||[]).join('\\n'))}</textarea>
-      </div>
-    </div>`).join('');
+  const mp=(DB.pages&&DB.pages.memberships)||{};
+  const s_status=g('mem-product-status');
+  if(s_status){
+    const pid=mp.priceId||'';
+    if(pid)s_status.innerHTML='<span style="color:#4ade80">✓ مرتبط</span> — <span style="font-size:10px;color:rgba(255,255,255,.4)">'+(mp.planName||'')+(mp.price?' · '+mp.price+' SAR':'')+' · PriceID: '+pid.slice(0,18)+'...</span>';
+    else s_status.innerHTML='<span style="color:rgba(255,255,255,.3)">غير مرتبط</span>';
+  }
+  const pid_el=g('mem-price-id');if(pid_el)pid_el.value=mp.priceId||'';
+  const prd_el=g('mem-product-id');if(prd_el)prd_el.value=mp.productId||'';
+  const pamt_el=g('mem-price-amount');if(pamt_el)pamt_el.value=mp.price||'';
+  const pname_el=g('mem-plan-name');if(pname_el)pname_el.value=mp.planName||'';
 }
-function addMem(){
-  if(!DB.pages)DB.pages={};if(!DB.pages.memberships)DB.pages.memberships={items:[]};
-  if(!DB.pages.memberships.items)DB.pages.memberships.items=[];
-  DB.pages.memberships.items.push({name:'باقة جديدة',price:0,featured:false,visits:12,features:[]});
-  renderMems();
+// النقطة 2 و 9: collectMems
+function collectMems(){
+  DB.pages=DB.pages||{};DB.pages.memberships=DB.pages.memberships||{};
+  const pid_el=g('mem-price-id');if(pid_el&&pid_el.value.trim())DB.pages.memberships.priceId=pid_el.value.trim();
+  const prd_el=g('mem-product-id');if(prd_el&&prd_el.value.trim())DB.pages.memberships.productId=prd_el.value.trim();
+  const pamt_el=g('mem-price-amount');if(pamt_el&&pamt_el.value)DB.pages.memberships.price=parseInt(pamt_el.value)||0;
+  const pname_el=g('mem-plan-name');if(pname_el&&pname_el.value.trim())DB.pages.memberships.planName=pname_el.value.trim();
 }
-function delMem(i){DB.pages.memberships.items.splice(i,1);renderMems();}
-function collectMems(){}
+// النقطة 3: مزامنة من ركاز
+async function loadRekazMemProduct(){
+  const el=g('rekaz-mem-products'),status=g('mem-product-status');
+  if(!el)return;
+  el.style.display='block';
+  el.innerHTML='<p style="font-size:11px;color:rgba(255,255,255,.4)">جاري الجلب...</p>';
+  try{
+    const data=await api('GET','/admin/rekaz-products');
+    const items=data.items||[];
+    if(!items.length){el.innerHTML='<p style="font-size:11px;color:var(--err)">لا توجد منتجات</p>';return;}
+    el.innerHTML=items.map(function(p){
+      var name=p.nameAr||p.name||'';
+      var pricing=p.pricing||[];
+      if(!pricing.length){
+        return '<div style="border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:10px;margin-bottom:6px;background:rgba(255,255,255,.03)">'+
+          '<div style="font-size:13px;font-weight:600;color:#fff;margin-bottom:6px">'+e(name)+'</div>'+
+          '<button onclick="assignMemProduct(''+p.id+'',''+p.id+'',0,''+name.replace(/'/g,'\\'')+'')" style="padding:5px 12px;background:var(--gold);border:none;color:#000;font-size:11px;cursor:pointer;border-radius:3px;font-weight:700">← ربط</button>'+
+          '</div>';
+      }
+      return '<div style="border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:10px;margin-bottom:6px;background:rgba(255,255,255,.03)">'+
+        '<div style="font-size:13px;font-weight:600;color:#fff;margin-bottom:8px">'+e(name)+'</div>'+
+        '<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px">'+
+        pricing.map(function(pr){
+          return '<div style="background:rgba(184,150,90,.08);border:1px solid rgba(184,150,90,.2);border-radius:4px;padding:8px">'+
+            '<div style="color:var(--gold);font-weight:700;font-size:12px;margin-bottom:4px">'+(pr.amount||0)+' SAR</div>'+
+            '<div style="font-size:10px;color:rgba(255,255,255,.4);direction:ltr;word-break:break-all">'+e(pr.id)+'</div>'+
+            '<button onclick="assignMemProduct(''+p.id+'',''+pr.id+'','+(pr.amount||0)+',''+name.replace(/'/g,'\\'')+'')" style="margin-top:6px;padding:3px 8px;background:var(--gold);border:none;color:#000;font-size:10px;cursor:pointer;border-radius:3px;font-weight:700">← ربط</button>'+
+            '</div>';
+        }).join('')+
+        '</div></div>';
+    }).join('');
+  }catch(err){el.innerHTML='<p style="font-size:11px;color:var(--err)">'+err.message+'</p>';}
+}
+function assignMemProduct(productId,priceId,price,name){
+  DB.pages=DB.pages||{};DB.pages.memberships=DB.pages.memberships||{};
+  DB.pages.memberships.productId=productId;
+  DB.pages.memberships.priceId=priceId;
+  if(price)DB.pages.memberships.price=price;
+  if(name)DB.pages.memberships.planName=name;
+  const pid_el=g('mem-price-id');if(pid_el)pid_el.value=priceId;
+  const prd_el=g('mem-product-id');if(prd_el)prd_el.value=productId;
+  const pamt_el=g('mem-price-amount');if(pamt_el&&price)pamt_el.value=price;
+  const pname_el=g('mem-plan-name');if(pname_el&&name)pname_el.value=name;
+  saveDB();notif('تم ربط العضوية وحفظها ✓');renderMems();
+}
 
 // ── SOCIAL ──
 function renderSocial(){
+
+
+
+
   const s=DB.social||{};
   setv('s-ig',s.instagram_user||s.instagram?.replace('https://instagram.com/','').replace('https://www.instagram.com/','')||'');
   setv('s-tt',s.tiktok_user||s.tiktok?.replace('https://tiktok.com/@','').replace('https://www.tiktok.com/@','')||'');
@@ -977,22 +1086,84 @@ function previewGiftCard(i){
   var w=window.open('','_blank','width=750,height=560');
   w.document.write(buildGiftCardHTML(o));
   w.document.close();
+
 }
 
+// النقطة 7: تحميل PNG بدون PDF من لوحة التحكم
 function downloadGiftCard(i){
   var o=window._giftOrders&&window._giftOrders[i];
   if(!o)return;
-  // Open in new window and auto-print for saving
-  var w=window.open('','_blank','width=820,height=580');
-  var html=buildGiftCardHTML(o);
-  // Add auto-print on load
-  html=html.replace('</body>','<scr'+'ipt>window.onload=function(){setTimeout(()=>window.print(),800);}</scr'+'ipt></body>');
-  w.document.write(html);
-  w.document.close();
+  var W=1200,H=756;
+  var cv=document.createElement('canvas');cv.width=W;cv.height=H;
+  var x=cv.getContext('2d');
+  // النقطة 6: خلفية Cream (ليست بيضاء)
+  var bg=x.createLinearGradient(0,0,W,H);
+  bg.addColorStop(0,'#f8f3ea');bg.addColorStop(.4,'#f2ebe0');bg.addColorStop(1,'#ede5d6');
+  x.fillStyle=bg;x.fillRect(0,0,W,H);
+  var cg=x.createRadialGradient(W/2,H/2,0,W/2,H/2,W*.55);
+  cg.addColorStop(0,'rgba(248,245,236,.8)');cg.addColorStop(1,'transparent');
+  x.fillStyle=cg;x.fillRect(0,0,W,H);
+  // إطار ذهبي
+  x.strokeStyle='rgba(140,100,35,0.65)';x.lineWidth=2.5;x.strokeRect(24,24,W-48,H-48);
+  x.strokeStyle='rgba(155,115,48,0.22)';x.lineWidth=1.5;x.strokeRect(36,36,W-72,H-72);
+  // زوايا
+  x.strokeStyle='rgba(130,92,28,0.9)';x.lineWidth=5;x.lineCap='square';
+  [[24,24,124,24],[24,24,24,124],[W-24,24,W-124,24],[W-24,24,W-24,124],
+   [24,H-24,124,H-24],[24,H-24,24,H-124],[W-24,H-24,W-124,H-24],[W-24,H-24,W-24,H-124]
+  ].forEach(function(pts){x.beginPath();x.moveTo(pts[0],pts[1]);x.lineTo(pts[2],pts[3]);x.stroke();});
+  // شعار
+  x.textAlign='right';x.fillStyle='rgba(20,15,8,0.86)';
+  x.font='400 38px "Cormorant Garamond",Georgia,serif';x.letterSpacing='10px';
+  x.fillText(o.logoText||'GRAFF SPA',W-54,88);
+  // Tag
+  x.textAlign='left';x.fillStyle='rgba(140,100,35,0.88)';
+  x.font='400 26px "Cormorant Garamond",Georgia,serif';x.letterSpacing='3px';
+  x.fillText(o.tagEn||'Gift Card',54,78);
+  x.font='700 24px Tajawal,Arial';x.letterSpacing='0px';
+  x.fillText(o.tagAr||'بطاقة الإهداء',54,112);
+  // المبلغ
+  x.textAlign='center';x.fillStyle='rgba(20,15,8,0.88)';
+  x.font='300 160px "Cormorant Garamond",Georgia,serif';x.letterSpacing='6px';
+  x.fillText(String(o.amount||''),W/2,H/2+54);
+  x.font='400 28px "Cormorant Garamond",Georgia,serif';x.fillStyle='rgba(140,100,35,0.85)';
+  x.letterSpacing='18px';x.fillText('SAR',W/2,H/2+104);
+  // خط
+  x.strokeStyle='rgba(140,100,35,0.3)';x.lineWidth=1;
+  x.beginPath();x.moveTo(W/2-70,H/2+122);x.lineTo(W/2+70,H/2+122);x.stroke();
+  // الرسالة
+  if(o.message){
+    x.font='italic 300 30px "Cormorant Garamond",Georgia,serif';
+    x.fillStyle='rgba(20,15,8,0.4)';x.letterSpacing='0px';
+    x.fillText('"'+o.message+'"',W/2,H/2+162);
+  }
+  // TO
+  x.textAlign='right';x.fillStyle='rgba(140,100,35,0.82)';
+  x.font='400 18px "Cormorant Garamond",Georgia,serif';x.letterSpacing='6px';
+  x.fillText('TO',W-54,H-118);
+  x.font='700 34px Tajawal,Arial';x.fillStyle='rgba(20,15,8,0.88)';x.letterSpacing='0px';
+  x.fillText(o.toName||'—',W-54,H-72);
+  // FROM
+  if(o.showSender&&o.fromName){
+    x.textAlign='left';x.fillStyle='rgba(140,100,35,0.82)';
+    x.font='400 18px "Cormorant Garamond",Georgia,serif';x.letterSpacing='6px';
+    x.fillText('FROM',54,H-118);
+    x.font='600 28px Tajawal,Arial';x.fillStyle='rgba(20,15,8,0.56)';x.letterSpacing='0px';
+    x.fillText(o.fromName,54,H-72);
+  }
+  // URL
+  x.textAlign='center';x.fillStyle='rgba(20,15,8,0.2)';
+  x.font='300 20px "Cormorant Garamond",Georgia,serif';x.letterSpacing='8px';
+  x.fillText('WWW.GRAFFSPA.COM',W/2,H-30);
+  // PNG تحميل
+  cv.toBlob(function(b){
+    var u=URL.createObjectURL(b);
+    var a=document.createElement('a');a.href=u;
+    a.download='GRAFF-GiftCard-'+(o.ref||i)+'.png';a.click();
+    URL.revokeObjectURL(u);
+  },'image/png');
 }
 
 function buildGiftCardHTML(o){
-  const logo = o.logoText || 'GRAFF SPA';
   const tagEn = o.tagEn || 'Gift Card';
   const tagAr = o.tagAr || 'بطاقة الإهداء';
   return `<!DOCTYPE html>
@@ -1059,11 +1230,40 @@ svg.frm{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-i
     </div>
   </div>
 </div>
-<button class="pbtn" onclick="window.print()">طباعة / حفظ PDF ↓</button>
-</body></html>`;
+
 }
 
 
+
+
+// ── MEM ORDERS ──
+async function loadMemOrders(){
+  var el=g('mem-orders-list'),cnt=g('mem-orders-count');
+  if(!el)return;
+  try{
+    window._memOrders=await api('GET','/admin/membership-orders');
+    var orders=window._memOrders||[];
+    if(!orders.length){el.innerHTML='<p style="font-size:11px;color:rgba(255,255,255,.3);padding:8px 0">لا توجد طلبات بعد.</p>';return;}
+    if(cnt)cnt.textContent='('+orders.length+')';
+    var html='';
+    for(var i=0;i<orders.length;i++){
+      var o=orders[i];
+      html+='<div class="li" style="flex-wrap:wrap;gap:6px">';
+      html+='<div class="li-info">';
+      html+='<div class="li-name" style="font-size:12px">'+e(o.ref||'—')+' · '+e(o.name||'')+' ('+e(o.planName||'عضوية')+')</div>';
+      html+='<div class="li-sub">'+e(o.phone||'')+' · '+new Date(o.createdAt||Date.now()).toLocaleString('ar-SA')+'</div>';
+      html+='</div>';
+      html+='<select data-mi="'+i+'" onchange="updMemOrder(this)" style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#fff;font-family:Tajawal,sans-serif;font-size:10px;padding:4px 6px;outline:none;flex-shrink:0">';
+      html+='<option value="pending_payment"'+(o.status==='pending_payment'?' selected':'')+'>بانتظار الدفع</option>';
+      html+='<option value="paid"'+(o.status==='paid'?' selected':'')+'>مدفوع ✓</option>';
+      html+='<option value="active"'+(o.status==='active'?' selected':'')+'>نشط ✓</option>';
+      html+='<option value="cancelled"'+(o.status==='cancelled'?' selected':'')+'>ملغي</option>';
+      html+='</select>';
+      html+='</div>';
+    }
+    el.innerHTML=html;
+  }catch(err){if(el)el.innerHTML='<p style="font-size:11px;color:var(--red)">خطأ: '+err.message+'</p>';}
+}
 function updMemOrder(sel){
   var idx=parseInt(sel.dataset.mi);
   var o=window._memOrders&&window._memOrders[idx];
