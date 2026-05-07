@@ -501,6 +501,13 @@ function show(id){
 function renderAll(){renderOverview();renderMenu();renderTexts();renderDesign();renderLogo();renderButtons();renderGift();renderMems();renderSocial();renderPayment();}
 
 // ── SAVE ──
+// saveDB: حفظ فوري بدون UI (يُستخدم من أزرار الربط السريع)
+async function saveDB(){
+  try{
+    await api('PUT','/admin/db',DB);
+  }catch(e){notif('خطأ في الحفظ: '+e.message);}
+}
+
 async function saveAll(){
   const btn=g('sbtn');btn.disabled=true;btn.textContent='جاري الحفظ...';
   collectDesign();collectSocial();collectGift();collectMems();collectLogo();collectTexts();
@@ -538,42 +545,58 @@ async function loadRekazProds(){
   catch(e){g('ov-rekaz').textContent='خطأ';}
 }
 
-// النقطة 3: مزامنة الخدمات مع Rekaz (تحديث الاسم/الوصف/المدة تلقائياً بدون إنشاء جديد)
+
+
+// النقطة 3: مزامنة الخدمات مع Rekaz — تحديث الاسم/الوصف/المدة دائماً من ركاز
 async function syncServicesWithRekaz(){
+  const syncBtn = document.querySelector('[onclick="syncServicesWithRekaz()"]');
+  if(syncBtn){ syncBtn.textContent='↻ جاري المزامنة...'; syncBtn.disabled=true; }
   try{
-    const d=await api('GET','/admin/rekaz-products');
-    const rekazMap={};
+    const d = await api('GET','/admin/rekaz-products');
+    if(!d || !d.items) throw new Error('لا يوجد رد من ركاز');
+
+    // بناء خريطة: rekazPriceId → بيانات ركاز
+    const rekazMap = {};
     (d.items||[]).forEach(function(p){
-      (p.pricing||[{id:p.id,amount:p.amount}]).forEach(function(pr){
-        rekazMap[pr.id]={
-          nameAr:p.nameAr||p.name||'',
-          nameEn:p.nameEn||p.name||'',
-          description:p.description||'',
-          duration:p.duration||p.durationMinutes||0,
-          productId:p.id
+      const baseName = p.nameAr || p.name || '';
+      const pricing  = (p.pricing && p.pricing.length) ? p.pricing : [{id: p.id, amount: p.amount||0}];
+      pricing.forEach(function(pr){
+        if(!pr.id) return;
+        rekazMap[pr.id] = {
+          nameAr:    baseName,
+          nameEn:    p.nameEn || p.name || '',
+          description: p.description || p.descriptionAr || '',
+          duration:  pr.duration || p.duration || p.durationMinutes || 0,
+          productId: p.id,
+          amount:    pr.amount || 0
         };
       });
     });
-    let updated=0;
-    (DB.services||[]).forEach(function(svc){
-      if(svc.rekazPriceId&&rekazMap[svc.rekazPriceId]){
-        const rk=rekazMap[svc.rekazPriceId];
-        // تحديث الاسم والوصف فقط إذا تغيرا
-        if(rk.nameAr&&svc.nameAr!==rk.nameAr){svc.nameAr=rk.nameAr;updated++;}
-        if(rk.nameEn&&svc.nameEn!==rk.nameEn){svc.nameEn=rk.nameEn;}
-        if(rk.description)svc.description=rk.description;
-        if(rk.duration)svc.duration=rk.duration;
-        if(rk.productId)svc.rekazProductId=rk.productId;
-      }
+
+    let updated = 0;
+    const svcs = DB.services || [];
+
+    // تحديث كل خدمة موجودة من بيانات ركاز (دائماً — بغض النظر عن التغيير)
+    svcs.forEach(function(svc){
+      const rk = rekazMap[svc.rekazPriceId];
+      if(!rk) return;
+      svc.nameAr        = rk.nameAr;
+      svc.nameEn        = rk.nameEn;
+      if(rk.description) svc.description = rk.description;
+      if(rk.duration)    svc.duration    = rk.duration;
+      svc.rekazProductId = rk.productId;
+      updated++;
     });
-    if(updated>0){
-      await api('PUT','/admin/db',DB);
-      renderMenu();
-      notif('تم مزامنة '+updated+' خدمة مع ركاز ✓');
-    }else{
-      notif('الخدمات محدّثة بالفعل ✓');
-    }
-  }catch(err){notif('خطأ في المزامنة: '+err.message);}
+
+    // حفظ كل الخدمات المحدّثة في السيرفر
+    await api('PUT','/admin/db', DB);
+    renderMenu();
+    notif('تم مزامنة ' + updated + ' خدمة مع ركاز ✓');
+  } catch(err) {
+    notif('خطأ في المزامنة: ' + err.message);
+  } finally {
+    if(syncBtn){ syncBtn.textContent='↻ مزامنة مع ركاز'; syncBtn.disabled=false; }
+  }
 }
 
 // ── TEXTS ──
@@ -762,24 +785,37 @@ async function saveCat(){
       allPriceIds.push({rekazPriceId:pid,rekazProductId:d.productId||null,nameAr:d.nameAr||''});
     });
   });
-  await api('PUT',`/admin/categories/${editCatId}/services`,{priceIds:allPriceIds});
-  // النقطة 4: منع التكرار — تحديث بالـ priceId بدلاً من الاسم
-  DB.services=DB.services.filter(s=>s.categoryId!==editCatId);
-  allPriceIds.forEach((item,idx)=>{
-    // البحث عن خدمة بنفس priceId (في أي قسم) لإعادة استخدام نفس الـ id
-    const existing=DB.services.find(s=>s.rekazPriceId===item.rekazPriceId);
-    const srvId=existing?existing.id:('srv_'+Date.now()+'_'+idx);
+
+  // ── منع التكرار النهائي ──
+  // 1. احفظ snapshot لجميع الخدمات قبل حذف هذا القسم (للبحث بالـ priceId)
+  const priceIdToExistingId = {};
+  DB.services.forEach(function(s){
+    if(s.rekazPriceId) priceIdToExistingId[s.rekazPriceId] = s.id;
+  });
+
+  // 2. احذف خدمات هذا القسم فقط
+  DB.services = DB.services.filter(function(s){ return s.categoryId !== editCatId; });
+
+  // 3. أضف الخدمات الجديدة — إذا كان priceId موجوداً سابقاً أعد استخدام نفس الـ id
+  const ts = Date.now();
+  allPriceIds.forEach(function(item, idx){
+    const existingId = priceIdToExistingId[item.rekazPriceId];
     DB.services.push({
-      id:srvId,
-      rekazPriceId:item.rekazPriceId,
-      rekazProductId:item.rekazProductId,
-      categoryId:editCatId,
-      nameAr:item.nameAr,
-      order:idx+1,
-      visible:true
+      id:             existingId || ('srv_' + ts + '_' + idx),
+      rekazPriceId:   item.rekazPriceId,
+      rekazProductId: item.rekazProductId,
+      categoryId:     editCatId,
+      nameAr:         item.nameAr,
+      order:          idx + 1,
+      visible:        true
     });
   });
-  closeModal();renderMenu();
+
+  // 4. تحديث السيرفر
+  await api('PUT','/admin/categories/'+editCatId+'/services',{priceIds:allPriceIds});
+
+  closeModal();
+  renderMenu();
 }
 
 // ── BUTTONS ──
