@@ -525,55 +525,36 @@ textarea.finp{resize:none;line-height:1.7}
       الانتقال لبوابة الدفع ←
     </a>
     
-  </div>
+
+
+</div>
 </div>
 
 <!-- ════ PZ: SUCCESS ════ -->
-<div id="pz" class="pg">
+<div id="pz" class="pg" style="background:var(--cream)">
   <div class="suc-body">
     <div class="suc-ring">
       <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>
     </div>
-    <h2 class="suc-tit">تم الإهداء بنجاح</h2>
-    <p class="suc-sub" id="suc-msg">تم إرسال بطاقة الإهداء بنجاح</p>
-
-    <!-- Card same design on success -->
-    <div style="width:100%;max-width:380px;aspect-ratio:1.586;position:relative;border-radius:10px;overflow:hidden;margin-bottom:24px;background:linear-gradient(160deg,#f8f3ea,#f2ebe0 40%,#ede5d6);box-shadow:0 8px 32px rgba(0,0,0,.12),0 0 0 1px rgba(155,115,48,.28)">
-      <svg style="position:absolute;inset:0;width:100%;height:100%;z-index:2;pointer-events:none" viewBox="0 0 390 246" fill="none">
-        <rect x="12" y="12" width="366" height="222" stroke="rgba(138,98,32,0.52)" stroke-width="1.2"/>
-      </svg>
-      <div style="position:absolute;inset:0;padding:8% 8%;display:flex;flex-direction:column;justify-content:space-between;z-index:5">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start">
-          <div style="font-family:'Cormorant Garamond',serif;font-size:clamp(13px,3.2vw,20px);font-weight:400;letter-spacing:.2em;color:rgba(20,15,8,.85)">GRAFF SPA</div>
-          <div style="text-align:left">
-            <div style="font-family:'Cormorant Garamond',serif;font-size:clamp(9px,2.1vw,13px);color:rgba(155,115,48,.9)">Gift Card</div>
-            <div style="font-size:clamp(10px,2.3vw,14px);font-weight:700;color:rgba(155,115,48,.9);margin-top:2px">بطاقة الإهداء</div>
-          </div>
-        </div>
-        <div style="text-align:center">
-          <div style="display:flex;align-items:baseline;justify-content:center;gap:10px">
-            <div style="font-family:'Cormorant Garamond',serif;font-size:clamp(42px,10.5vw,68px);font-weight:300;color:rgba(20,15,8,.88);line-height:1" id="z-amt">—</div>
-            <div style="font-family:'Cormorant Garamond',serif;font-size:clamp(11px,2.5vw,16px);color:rgba(155,115,48,.85);letter-spacing:.25em">SAR</div>
-          </div>
-          <div style="font-family:'Cormorant Garamond',serif;font-size:clamp(11px,2.5vw,15px);color:rgba(20,15,8,.4);font-style:italic;margin-top:6px;display:none" id="z-msg"></div>
-        </div>
-        <div style="display:flex;justify-content:space-between;align-items:flex-end">
-          <div>
-            <div style="font-family:'Cormorant Garamond',serif;font-size:clamp(7px,1.6vw,10px);letter-spacing:.25em;color:rgba(155,115,48,.8);text-transform:uppercase;margin-bottom:5px">TO</div>
-            <div style="font-family:'Tajawal',sans-serif;font-size:clamp(14px,3.4vw,20px);font-weight:400;color:rgba(20,15,8,.78);letter-spacing:.04em" id="z-to">—</div>
-          </div>
-          <div style="display:none;text-align:left" id="z-from-sec">
-            <div style="font-family:'Cormorant Garamond',serif;font-size:clamp(7px,1.6vw,10px);letter-spacing:.25em;color:rgba(155,115,48,.8);text-transform:uppercase;margin-bottom:5px">FROM</div>
-            <div style="font-family:'Tajawal',sans-serif;font-size:clamp(12px,2.9vw,17px);font-weight:400;color:rgba(20,15,8,.58);letter-spacing:.04em" id="z-from">—</div>
-          </div>
-        </div>
+    <h2 class="suc-tit">تم الدفع بنجاح!</h2>
+    <p class="suc-sub" id="suc-msg">سيتم إرسال بطاقة الإهداء إلى جوال المستلم قريباً</p>
+    <div style="width:100%;max-width:380px;background:rgba(184,150,90,.08);border:1px solid rgba(184,150,90,.25);border-radius:12px;padding:24px;text-align:center;margin-bottom:20px">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.4" style="margin-bottom:12px"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18" stroke-width="2" stroke-linecap="round"/></svg>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:11px;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;margin-bottom:8px">سيتم الإرسال إلى</div>
+      <div style="font-size:16px;color:var(--text);font-weight:700;margin-bottom:4px" id="suc-to-name"></div>
+      <div style="font-size:14px;color:var(--muted);direction:ltr" id="suc-to-phone"></div>
+      <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--brd)">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:11px;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;margin-bottom:4px">قيمة البطاقة</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:300;color:var(--text)" id="suc-amount"></div>
+        <div style="font-size:12px;color:var(--muted)">ريال سعودي</div>
       </div>
     </div>
-
-    <!-- Download removed from success — admin sends card -->
+    <div style="font-size:13px;color:var(--muted);text-align:center;line-height:1.8;margin-bottom:20px;max-width:320px">
+      ستصل البطاقة خلال دقائق قليلة عبر الواتساب
+    </div>
     <button class="suc-share" onclick="shareCard()">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-      مشاركة البطاقة
+      مشاركة تفاصيل البطاقة
     </button>
     <button class="suc-new" onclick="resetAll()">إهداء بطاقة جديدة</button>
     <a href="javascript:history.go(-4)" class="suc-home">← العودة للرئيسية</a>
@@ -584,6 +565,7 @@ textarea.finp{resize:none;line-height:1.7}
 
 <script>
 const B='https://rekaz-test.onrender.com';
+// priceId map — loaded from server config, overridden by admin panel
 const GPRICES={'400':'3a20cfaa-9a6b-b8c4-0d12-572f7b602de0','500':'3a20cfaa-9a76-6c8f-8034-676edb59d2a4','700':'3a20cfaa-9a7c-0da7-bfba-07fb24f46c61','1000':'3a20cfaa-9a82-8321-e610-468349aa0146'};
 let S={amt:null,tn:'',tp:'',fn:'',fp:'',msg:'',showFrom:true,url:null,ref:null};
 
@@ -600,13 +582,16 @@ let S={amt:null,tn:'',tp:'',fn:'',fp:'',msg:'',showFrom:true,url:null,ref:null};
     if(t.textColor)R.style.setProperty('--text',t.textColor);
     if(t.mutedColor)R.style.setProperty('--muted',t.mutedColor);
     if(t.borderColor)R.style.setProperty('--brd',t.borderColor);
-    // Card texts
     if(tx.giftCardLogoLine1){document.querySelectorAll('#c-logo').forEach(e=>e.textContent=tx.giftCardLogoLine1);}
     if(tx.giftCardTagEn){document.querySelectorAll('#c-tag-en').forEach(e=>e.textContent=tx.giftCardTagEn);}
     if(tx.giftCardTagAr){document.querySelectorAll('#c-tag-ar').forEach(e=>e.textContent=tx.giftCardTagAr);}
     if(tx.giftSubtitle){const e=document.querySelector('.hsub');if(e)e.textContent=tx.giftSubtitle;}
     const gp=(cfg.pages&&cfg.pages.gift)||{};
+    // Override GPRICES from admin config (النقطة 2: تحكم من لوحة التحكم)
     if(gp.rekazPrices)Object.assign(GPRICES,gp.rekazPrices);
+    // Also support single productId/priceId for direct purchase (النقطة 1)
+    if(gp.productId)S._productId=gp.productId;
+    if(gp.priceId)S._singlePriceId=gp.priceId;
     renderAmts(gp.amounts||[400,500,700,1000]);
   }catch(e){renderAmts([400,500,700,1000]);}
 })();
@@ -627,11 +612,9 @@ function renderAmts(ams){
 function selAmt(el,amt){
   document.querySelectorAll('.amt-btn').forEach(b=>b.classList.remove('sel'));
   el.classList.add('sel');S.amt=amt;
-  // Update main card
   const ca=ge('c-amt');ca.textContent=amt;ca.classList.remove('ph');
   sh('c-sar',true);sh('c-line',true);
   ge('b1').disabled=false;
-  // Update p2 card
   sv('p2-amt',amt);sh('p2-sar',true);
 }
 
@@ -674,23 +657,25 @@ function goP3(){
   const tn=ge('tn').value.trim(),tp=ge('tp').value.trim(),fn=ge('fn').value.trim(),fp=ge('fp').value.trim();
   if(!tn||tp.length<9||!fn||fp.length<9){sh('e2',true);ge('e2').textContent='يرجى تعبئة جميع الحقول المطلوبة';return;}
   sh('e2',false);S.tn=tn;S.tp=tp;S.fn=fn;S.fp=fp;S.msg=ge('gm').value.trim();
-  // Fill p3 card
   sv('p3-amt',S.amt);
   sh('p3-msg',!!S.msg);if(S.msg)sv('p3-msg','"'+S.msg+'"');
   sv('p3-to',S.tn);sh('p3-from-sec',S.showFrom&&!!S.fn);sv('p3-from',S.fn);
-  // Fill summary
   sv('s-to',S.tn);sv('s-tp',S.tp);sv('s-fn',S.showFrom?S.fn:'(مخفي)');sv('s-amt',S.amt+' SAR');
   sh('s-msg-row',!!S.msg);sv('s-msg',S.msg);
   go('p3');
 }
 
+// النقطة 1: الإرسال بدون slots/from/to — فقط priceId + quantity
 async function doBuy(){
   const btn=ge('b3');
   if(btn){btn.textContent='جاري...';btn.disabled=true;}
   sh('e3',false);
-  const pid=GPRICES[String(S.amt)]||null;
+  // اختر priceId: من الخريطة أو من إعدادات المنتج المحدد من لوحة التحكم
+  const pid=GPRICES[String(S.amt)]||(S._singlePriceId||null);
   const payload={
-    amount:S.amt, priceId:pid,
+    amount:S.amt,
+    priceId:pid,
+    quantity:1,
     fromName:S.fn, fromPhone:'+966'+S.fp.replace(/^0/,''),
     toName:S.tn,   toPhone:'+966'+S.tp.replace(/^0/,''),
     message:S.msg, showSender:S.showFrom
@@ -718,7 +703,6 @@ function openPay(e){
   e.preventDefault();
   const url = ge('plink').href;
   if(!url||url==='#'){notif('لا يوجد رابط دفع');return;}
-  // Try direct open
   window.open(url,'_blank');
 }
 
@@ -749,16 +733,14 @@ async function sendOtpGift(){
     });
     const d = await r.json();
     if(!r.ok || d.error) throw new Error(d.error||'فشل الإرسال');
-    // Show OTP on screen directly (like booking page)
     ge('otp-send-section').style.display = 'none';
     ge('otp-verify-section').style.display = 'block';
     ge('otp-input').value = '';
     ge('otp-input').focus();
     ge('otp-err').style.display = 'none';
-    // Show the code on screen
     if(d.debug_otp){
       const codeEl = ge('otp-code-display');
-      if(codeEl){ codeEl.textContent = d.debug_otp; codeEl.style.display='block'; }
+      if(codeEl){ codeEl.querySelector('div:last-child').textContent = d.debug_otp; codeEl.style.display='block'; }
     }
   } catch(e) {
     btn.disabled = false;
@@ -797,11 +779,11 @@ async function verifyOtpGift(){
   }
 }
 
+// النقطة 8: بعد الدفع لا تظهر البطاقة — تظهر رسالة "سيتم الإرسال"
 function onDone(){
-  sv('z-amt',S.amt);sv('z-to',S.tn);sv('z-from',S.fn);
-  sh('z-from-sec',S.showFrom&&!!S.fn);sh('z-msg',!!S.msg);if(S.msg)sv('z-msg','"'+S.msg+'"');
-  ge('suc-msg').textContent='تم إرسال بطاقة الإهداء إلى '+S.tn+' بنجاح';
-  // Show download on p1
+  sv('suc-to-name', S.tn);
+  sv('suc-to-phone', S.tp);
+  sv('suc-amount', S.amt + ' SAR');
   go('pz');
 }
 
@@ -820,26 +802,26 @@ function resetAll(){
   sh('c-sep',false);sh('c-from-sec',false);
   ['tn','tp','fn','fp','gm'].forEach(id=>{const e=ge(id);if(e)e.value='';});
   ge('togf').classList.add('on');ge('b1').disabled=true;ge('b2').disabled=true;
-  sh('dl-wrap',false);go('p1');
+  go('p1');
 }
 
-// ══ CANVAS: build card image (returns canvas) ══
+// النقطة 7: تحميل PNG فقط (من لوحة التحكم للأدمن — إزالة PDF نهائياً)
 function buildCardCanvas(){
   const W=1200,H=756;
   const cv=document.createElement('canvas');cv.width=W;cv.height=H;
   const x=cv.getContext('2d');
-  // Background — cream/ivory
+  // خلفية Cream — ليست بيضاء (النقطة 6: إصلاح الخلفية)
   const bg=x.createLinearGradient(0,0,W,H);
   bg.addColorStop(0,'#f8f3ea');bg.addColorStop(.4,'#f2ebe0');bg.addColorStop(1,'#ede5d6');
   x.fillStyle=bg;x.fillRect(0,0,W,H);
-  // Subtle center radial
+  // تدرج مركزي خفيف
   const cg=x.createRadialGradient(W/2,H/2,0,W/2,H/2,W*.55);
   cg.addColorStop(0,'rgba(248,245,236,.8)');cg.addColorStop(1,'transparent');
   x.fillStyle=cg;x.fillRect(0,0,W,H);
-  // Gold border
+  // إطار ذهبي
   x.strokeStyle='rgba(140,100,35,0.65)';x.lineWidth=2.5;x.strokeRect(24,24,W-48,H-48);
   x.strokeStyle='rgba(155,115,48,0.22)';x.lineWidth=1.5;x.strokeRect(36,36,W-72,H-72);
-  // Corner L-shapes — square cap, prominent
+  // زوايا L
   x.strokeStyle='rgba(130,92,28,0.9)';x.lineWidth=5;x.lineCap='square';
   const CL=100;
   [[24,24,24+CL,24],[24,24,24,24+CL],
@@ -847,42 +829,40 @@ function buildCardCanvas(){
    [24,H-24,24+CL,H-24],[24,H-24,24,H-24-CL],
    [W-24,H-24,W-24-CL,H-24],[W-24,H-24,W-24,H-24-CL]
   ].forEach(([x1,y1,x2,y2])=>{x.beginPath();x.moveTo(x1,y1);x.lineTo(x2,y2);x.stroke();});
-  // Center dots
   x.fillStyle='rgba(140,100,35,0.75)';
   x.beginPath();x.arc(W/2,24,5,0,Math.PI*2);x.fill();
   x.beginPath();x.arc(W/2,H-24,5,0,Math.PI*2);x.fill();
-  // LOGO — top right
+  // شعار
   x.textAlign='right';x.direction='rtl';
   x.font='400 38px "Cormorant Garamond",Georgia,serif';x.fillStyle='rgba(20,15,8,0.86)';
   x.letterSpacing='10px';x.fillText('GRAFF SPA',W-54,88);
-  // TAG — top left
+  // TAG
   x.textAlign='left';x.letterSpacing='3px';
   x.font='400 26px "Cormorant Garamond",Georgia,serif';x.fillStyle='rgba(140,100,35,0.88)';
   x.fillText('Gift Card',54,78);
   x.letterSpacing='0px';x.font='700 24px Tajawal,Arial';x.fillStyle='rgba(140,100,35,0.88)';
   x.fillText('بطاقة الإهداء',54,112);
-  // AMOUNT — bold, centered, large
+  // المبلغ
   x.textAlign='center';x.letterSpacing='6px';
   x.font='300 160px "Cormorant Garamond",Georgia,serif';x.fillStyle='rgba(20,15,8,0.88)';
   x.fillText(S.amt,W/2,H/2+54);
   // SAR
   x.letterSpacing='18px';x.font='400 28px "Cormorant Garamond",Georgia,serif';
   x.fillStyle='rgba(140,100,35,0.85)';x.fillText('SAR',W/2,H/2+104);
-  // Divider line
+  // خط فاصل
   x.strokeStyle='rgba(140,100,35,0.3)';x.lineWidth=1;
   x.beginPath();x.moveTo(W/2-70,H/2+122);x.lineTo(W/2+70,H/2+122);x.stroke();
-  // Message
   if(S.msg){
     x.letterSpacing='0px';x.font='italic 300 30px "Cormorant Garamond",Georgia,serif';
     x.fillStyle='rgba(20,15,8,0.4)';x.fillText('"'+S.msg+'"',W/2,H/2+162);
   }
-  // TO — bottom right
+  // TO
   x.textAlign='right';x.letterSpacing='6px';
   x.font='400 18px "Cormorant Garamond",Georgia,serif';x.fillStyle='rgba(140,100,35,0.82)';
   x.fillText('TO',W-54,H-118);
   x.letterSpacing='0px';x.font='700 34px Tajawal,Arial';x.fillStyle='rgba(20,15,8,0.88)';
   x.fillText(S.tn,W-54,H-72);
-  // FROM — bottom left
+  // FROM
   if(S.showFrom&&S.fn){
     x.textAlign='left';x.letterSpacing='6px';
     x.font='400 18px "Cormorant Garamond",Georgia,serif';x.fillStyle='rgba(140,100,35,0.82)';
@@ -890,17 +870,21 @@ function buildCardCanvas(){
     x.letterSpacing='0px';x.font='600 28px Tajawal,Arial';x.fillStyle='rgba(20,15,8,0.56)';
     x.fillText(S.fn,54,H-72);
   }
-  // Website
   x.textAlign='center';x.letterSpacing='8px';
   x.font='300 20px "Cormorant Garamond",Georgia,serif';x.fillStyle='rgba(20,15,8,0.2)';
   x.fillText('WWW.GRAFFSPA.COM',W/2,H-30);
   return cv;
 }
 
-// ══ dlImg: purchase → save image → redirect to payment ══
-function dlImg(){
-  // Save gift data and redirect to Rekaz — same as doBuy
-  doBuy();
+// PNG فقط — بدون PDF (النقطة 7)
+function downloadCardPNG(){
+  const cv=buildCardCanvas();
+  cv.toBlob(b=>{
+    const u=URL.createObjectURL(b);
+    const a=document.createElement('a');
+    a.href=u;a.download='GRAFF-Gift-Card.png';a.click();
+    URL.revokeObjectURL(u);
+  },'image/png');
 }
 
 function notif(msg){
