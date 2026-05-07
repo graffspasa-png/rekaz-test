@@ -817,21 +817,26 @@ function buildSvcFromMenu(cats){
     var subSections=cat.subSections||[];
     if(subSections.length>0&&subSections.some(function(s){return s.name;})){
       var svcById={};
+      // النقطة 4: الفهرسة بـ id فريد — منع التكرار
       cat.services.forEach(function(svc){
-        // index by rekazPriceId (first option) and rekazProductId
-        svcById[svc.rekazProductId]=svc;
-        if(svc.rekazPriceId)svcById[svc.rekazPriceId]=svc;
-        (svc.options||[]).forEach(function(o){svcById[o.id]=svc;});
+        // نُفهرس بكل المفاتيح الممكنة لكن نحتفظ بمرجع واحد للخدمة
+        if(svc.rekazProductId) svcById[svc.rekazProductId]=svc;
+        if(svc.rekazPriceId)   svcById[svc.rekazPriceId]=svc;
+        if(svc.id)             svcById[svc.id]=svc;
+        (svc.options||[]).forEach(function(o){ if(o.id) svcById[o.id]=svc; });
       });
       subSections.forEach(function(sub){
         if(!sub.name&&(!sub.services||!sub.services.length))return;
         bodyH+=renderSubHeader(sub.name||'');
         bodyH+='<div class="sub-cards">';
+        // dedup بـ svc.id (المفتاح الحقيقي الفريد)
         var seen={};
         var subSvcs=(sub.services||[]).map(function(pid){return svcById[pid];}).filter(function(s){
-          if(!s)return false;
-          if(seen[s.rekazProductId])return false;
-          seen[s.rekazProductId]=true;return true;
+          if(!s) return false;
+          var key=s.id||s.rekazProductId||s.rekazPriceId;
+          if(seen[key]) return false;
+          seen[key]=true;
+          return true;
         });
         if(!subSvcs.length&&subSections.length===1)subSvcs=cat.services;
         subSvcs.forEach(function(svc){bodyH+=buildCard(svc);});
