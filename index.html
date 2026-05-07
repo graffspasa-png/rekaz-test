@@ -811,6 +811,30 @@ function renderSubHeader(rawName){
 function buildSvcFromMenu(cats){
   var tabsH='',bodyH='',first=true;
   cats.forEach(function(cat){
+    // ── dedup: إزالة التكرار من cat.services قبل أي عملية ──
+    // الأولوية: الخدمة التي لها nameAr غير فارغ
+    (function(){
+      var seenPriceId = {}, seenProductId = {}, clean = [];
+      (cat.services || []).forEach(function(svc){
+        var pid = svc.rekazPriceId || svc.id;
+        var prod = svc.rekazProductId;
+        // إذا سبق رؤية هذا priceId، تخطَّ
+        if(pid && seenPriceId[pid]) return;
+        // إذا سبق رؤية هذا productId وكان الأول بدون اسم، استبدله بهذا
+        if(prod && seenProductId[prod] !== undefined){
+          var prev = clean[seenProductId[prod]];
+          if(!prev.nameAr && svc.nameAr){
+            clean[seenProductId[prod]] = svc; // استبدال بالأفضل
+          }
+          return;
+        }
+        if(pid)  seenPriceId[pid]  = true;
+        if(prod) seenProductId[prod] = clean.length;
+        clean.push(svc);
+      });
+      cat.services = clean;
+    })();
+
     var cid='cat_'+cat.id.replace(/[^a-zA-Z0-9]/g,'');
     tabsH+='<button class="tab'+(first?' on':'')+'" data-cid="'+cid+'" onclick="swTab(this.dataset.cid,this)">'+esc(cat.nameAr)+'</button>';
     bodyH+='<div class="cpanel'+(first?' on':'')+'" id="'+cid+'">';
