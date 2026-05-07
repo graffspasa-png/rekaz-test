@@ -369,11 +369,12 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink);color:#fff;direction
 
 <script>
 const B='https://rekaz-test.onrender.com';
-async function fetchSafe(url,opts,tries){tries=tries||5;opts=opts||{};opts.cache='no-store';for(var i=0;i<tries;i++){try{var res=await fetch(url,opts);if(res.ok)return await res.json();}catch(e){}if(i<tries-1)await new Promise(function(r){setTimeout(r,800);});}throw new Error('FAIL');}
-const PID='3a20a42a-07d0-8197-2e26-e9cb52804ff4';
+// PID يُحمّل من لوحة التحكم (النقطة 2 و 9)
+let MEM_PRICE_ID='3a20a42a-07d0-8197-2e26-e9cb52804ff4';
+let MEM_PRODUCT_ID=null;
 let S={n:'',p:'',e:'',url:null,ref:null};
 
-// Load config
+// Load config — مزامنة الخدمات مع Rekaz (النقطة 3)
 (async()=>{
   try{
     const cfg=await fetchSafe(B+'/site');
@@ -384,12 +385,34 @@ let S={n:'',p:'',e:'',url:null,ref:null};
     if(t.bgLight)R.style.setProperty('--cream',t.bgLight);
     if(t.textColor)R.style.setProperty('--text',t.textColor);
     if(t.mutedColor)R.style.setProperty('--muted',t.mutedColor);
-    // Card texts
+    // Card texts — النقطة 3: مزامنة الاسم والوصف
     if(tx.memberCardLogoText)document.querySelectorAll('.clogo-el').forEach(e=>e.textContent=tx.memberCardLogoText);
     if(tx.memberCardTitleEn)document.querySelectorAll('.cten-el').forEach(e=>e.textContent=tx.memberCardTitleEn);
     if(tx.memberCardTitleAr)document.querySelectorAll('.ctar-el').forEach(e=>e.textContent=tx.memberCardTitleAr);
+    // النقطة 2 و 9: تحميل productId/priceId من لوحة التحكم
+    const mempages=(cfg.pages&&cfg.pages.memberships)||{};
+    if(mempages.priceId)MEM_PRICE_ID=mempages.priceId;
+    if(mempages.productId)MEM_PRODUCT_ID=mempages.productId;
+    // تحديث السعر إذا متوفر
+    if(mempages.price){
+      document.querySelectorAll('.pnum').forEach(e=>e.textContent=Number(mempages.price).toLocaleString('ar'));
+      document.querySelectorAll('.ctabtn').forEach(e=>e.textContent='اشتركي الآن — '+Number(mempages.price).toLocaleString('ar')+' SAR');
+    }
+    // تحديث اسم الخطة إذا متوفر
+    if(mempages.planName){
+      document.querySelectorAll('.pben').forEach(e=>e.textContent=mempages.planName);
+    }
   }catch(e){}
 })();
+
+async function fetchSafe(url,opts,tries){
+  tries=tries||5;opts=opts||{};opts.cache='no-store';
+  for(var i=0;i<tries;i++){
+    try{var res=await fetch(url,opts);if(res.ok)return await res.json();}catch(e){}
+    if(i<tries-1)await new Promise(function(r){setTimeout(r,800);});
+  }
+  throw new Error('FAIL');
+}
 
 function g(id){return document.getElementById(id);}
 
@@ -418,20 +441,19 @@ function goConf(){
   go('pc');
 }
 
+// النقطة 1: بدون slots/from/to — فقط priceId + quantity
 async function doBuy(){
   const btn=g('bc');btn.textContent='جاري...';btn.disabled=true;
   g('ec').style.display='none';
   try{
+    // payload بسيط: priceId + quantity فقط (بدون مواعيد)
     const body={
       name:S.n,
       phone:'+966'+S.p.replace(/^0/,''),
       email:S.e||undefined,
-      planName:'Elite Membership Privilege',
-      planIndex:0,
-      price:10000,
-      priceId:PID
+      priceId:MEM_PRICE_ID,
+      quantity:1
     };
-    // Retry up to 3 times
     let d=null;
     for(let attempt=0;attempt<3;attempt++){
       try{
@@ -450,7 +472,6 @@ async function doBuy(){
       }
     }
     if(!d)throw new Error('فشل الطلب');
-    console.log('[Mem] response:', d);
     S.url=d.payUrl;S.ref=d.orderRef||'—';
     if(S.url){g('plink').href=S.url;go('pp');}else onDone();
   }catch(e){
@@ -463,6 +484,13 @@ async function doBuy(){
 function onDone(){
   g('sc-name').textContent=S.n.toUpperCase();
   go('ps');
+}
+
+function notif(msg){
+  const el=document.getElementById('ntf');
+  if(!el)return;
+  el.textContent=msg;el.style.opacity='1';
+  clearTimeout(el._t);el._t=setTimeout(()=>el.style.opacity='0',2500);
 }
 </script>
 </body>
