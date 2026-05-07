@@ -665,37 +665,50 @@ function goP3(){
   go('p3');
 }
 
-// النقطة 1: الإرسال بدون slots/from/to — فقط priceId + quantity
-async function doBuy(){
-  const btn=ge('b3');
-  if(btn){btn.textContent='جاري...';btn.disabled=true;}
-  sh('e3',false);
-  // اختر priceId: من الخريطة أو من إعدادات المنتج المحدد من لوحة التحكم
-  const pid=GPRICES[String(S.amt)]||(S._singlePriceId||null);
-  const payload={
-    amount:S.amt,
-    priceId:pid,
-    quantity:1,
-    fromName:S.fn, fromPhone:'+966'+S.fp.replace(/^0/,''),
-    toName:S.tn,   toPhone:'+966'+S.tp.replace(/^0/,''),
-    message:S.msg, showSender:S.showFrom
+
+
+// النقطة 1: الإرسال بدون slots — priceId + quantity فقط
+// callerBtn: الزر الذي استدعى الدالة (اختياري — للاستخدام من p3 أو OTP)
+async function doBuy(callerBtn){
+  // إذا لم يُمرَّر callerBtn، ابحث عن b3
+  const btn = callerBtn || ge('b3');
+  if(btn){ btn.textContent='جاري...'; btn.disabled=true; }
+  const errEl = ge('e3');
+  if(errEl) errEl.style.display='none';
+
+  const pid = GPRICES[String(S.amt)] || S._singlePriceId || null;
+  const payload = {
+    amount:    S.amt,
+    priceId:   pid,
+    quantity:  1,
+    fromName:  S.fn,
+    fromPhone: '+966'+S.fp.replace(/^0/,''),
+    toName:    S.tn,
+    toPhone:   '+966'+S.tp.replace(/^0/,''),
+    message:   S.msg,
+    showSender:S.showFrom
   };
+
   try{
-    const r=await fetch(B+'/gift/purchase',{
+    const r = await fetch(B+'/gift/purchase',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify(payload),
       cache:'no-store'
     });
-    const d=await r.json();
-    if(!r.ok||d.error) throw new Error(d.error||'فشل الطلب');
-    if(d.payUrl){ ge('plink').href=d.payUrl; go('pp'); }
-    else onDone();
+    const d = await r.json();
+    if(!r.ok || d.error) throw new Error(d.error||'فشل الطلب');
+    if(d.payUrl){
+      ge('plink').href = d.payUrl;
+      go('pp');
+    } else {
+      onDone();
+    }
   }catch(e){
-    sh('e3',true);
-    ge('e3').textContent=e.message||'حدث خطأ';
-    btn.textContent='إتمام الشراء ←';
-    btn.disabled=false;
+    // عرض الخطأ في المكان المناسب
+    if(errEl){ errEl.textContent = e.message||'حدث خطأ'; errEl.style.display='block'; }
+    else notif(e.message||'حدث خطأ');
+    if(btn){ btn.textContent='إتمام الشراء ←'; btn.disabled=false; }
   }
 }
 
@@ -768,17 +781,16 @@ async function verifyOtpGift(){
     });
     const d = await r.json();
     if(!r.ok || d.error) throw new Error(d.error||'رمز خاطئ');
+    // تم التحقق — الآن أنشئ الفاتورة وابدأ الدفع
     btn.textContent = 'تم التحقق ✓ جاري إنشاء الفاتورة...';
-    await doBuy();
+    await doBuy(btn);
   } catch(e) {
-    const err = ge('otp-err');
-    err.textContent = e.message;
-    err.style.display = 'block';
+    const errEl = ge('otp-err');
+    if(errEl){ errEl.textContent = e.message; errEl.style.display = 'block'; }
     btn.disabled = false;
     btn.textContent = 'تأكيد ومتابعة للدفع ←';
   }
 }
-
 // النقطة 8: بعد الدفع لا تظهر البطاقة — تظهر رسالة "سيتم الإرسال"
 function onDone(){
   sv('suc-to-name', S.tn);
