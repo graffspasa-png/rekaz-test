@@ -14,29 +14,21 @@ body{font-family:'Tajawal',sans-serif;background:#080807;color:#fff;min-height:1
 h1{font-family:'Cormorant Garamond',serif;font-size:clamp(28px,7vw,44px);font-weight:300;letter-spacing:.06em;margin-bottom:8px;text-align:center}
 .sub{font-size:15px;color:rgba(255,255,255,.4);margin-bottom:32px;text-align:center;line-height:1.7}
 
-/* CARD */
-.card-wrap{width:min(480px,92vw);margin-bottom:28px}
-.gcard{width:100%;aspect-ratio:1.586;background:linear-gradient(160deg,#f8f3ea,#f2ebe0 40%,#ede5d6);border-radius:12px;position:relative;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.6)}
-svg.frm{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
-.cin{position:absolute;inset:0;padding:8% 8%;display:flex;flex-direction:column;justify-content:space-between}
-.ctop{display:flex;justify-content:space-between;align-items:flex-start}
-.clogo{font-family:'Cormorant Garamond',serif;font-size:clamp(13px,3.2vw,20px);font-weight:300;letter-spacing:.22em;color:rgba(20,15,8,.82)}
-.ctags{text-align:left;display:flex;flex-direction:column;align-items:flex-end;gap:2px}
-.cten{font-family:'Cormorant Garamond',serif;font-size:clamp(8.5px,2vw,12px);color:rgba(138,98,32,.78);letter-spacing:.08em}
-.ctar{font-family:'Tajawal',sans-serif;font-size:clamp(9px,2.1vw,13px);font-weight:600;color:rgba(138,98,32,.78)}
-.cmid{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
-.camt{font-family:'Cormorant Garamond',serif;font-size:clamp(50px,13vw,86px);font-weight:300;color:rgba(20,15,8,.88);line-height:1}
-.csar{font-family:'Cormorant Garamond',serif;font-size:clamp(9px,2.1vw,13px);color:rgba(138,98,32,.8);letter-spacing:.36em}
-.cline{width:40px;height:1px;background:rgba(138,98,32,.28);margin:4px auto}
-.cmsg{font-family:'Cormorant Garamond',serif;font-size:clamp(9px,2.1vw,13px);color:rgba(20,15,8,.4);font-style:italic;text-align:center;letter-spacing:.02em;padding:0 6%}
-.cbot{display:flex;justify-content:space-between;align-items:flex-end}
-.clbl{font-family:'Cormorant Garamond',serif;font-size:clamp(7px,1.6vw,9.5px);letter-spacing:.32em;color:rgba(138,98,32,.82);text-transform:uppercase;margin-bottom:4px}
-.cname{font-family:'Cormorant Garamond',serif;font-size:clamp(14px,3.3vw,21px);font-weight:400;color:rgba(20,15,8,.78);letter-spacing:.04em}
-.cfrom{text-align:left}
-.cfname{font-family:'Cormorant Garamond',serif;font-size:clamp(12px,2.9vw,18px);font-weight:400;color:rgba(20,15,8,.58);letter-spacing:.04em}
+/* رسالة الإرسال — بدون عرض البطاقة (النقطة 8) */
+.send-card{width:min(420px,92vw);background:rgba(184,150,90,.07);border:1px solid rgba(184,150,90,.2);border-radius:16px;padding:28px 24px;text-align:center;margin-bottom:28px}
+.send-icon{width:56px;height:56px;border-radius:50%;background:rgba(184,150,90,.12);border:1px solid rgba(184,150,90,.3);display:flex;align-items:center;justify-content:center;margin:0 auto 16px}
+.send-label{font-family:'Cormorant Garamond',serif;font-size:11px;letter-spacing:.2em;color:rgba(184,150,90,.7);text-transform:uppercase;margin-bottom:6px}
+.send-name{font-size:18px;font-weight:700;color:#fff;margin-bottom:4px}
+.send-phone{font-size:14px;color:rgba(255,255,255,.5);direction:ltr;margin-bottom:16px}
+.send-divider{border:none;border-top:1px solid rgba(184,150,90,.15);margin:16px 0}
+.send-amt-label{font-family:'Cormorant Garamond',serif;font-size:11px;letter-spacing:.2em;color:rgba(184,150,90,.7);text-transform:uppercase;margin-bottom:4px}
+.send-amt{font-family:'Cormorant Garamond',serif;font-size:40px;font-weight:300;color:#fff}
+.send-sar{font-size:13px;color:rgba(255,255,255,.4);margin-top:2px}
+.send-note{font-size:13px;color:rgba(255,255,255,.4);line-height:1.8;margin-top:16px}
 
 /* Buttons */
 .btns{display:flex;flex-direction:column;gap:10px;width:min(360px,92vw)}
+/* النقطة 7: زر PNG فقط — بدون PDF */
 .dl-btn{padding:15px;background:rgba(184,150,90,.12);border:1.5px solid rgba(184,150,90,.35);color:#b8965a;font-family:'Tajawal',sans-serif;font-size:15px;font-weight:600;cursor:pointer;border-radius:8px;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .15s}
 .dl-btn:hover{background:rgba(184,150,90,.2)}
 .home-btn{padding:14px;background:#111;border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.6);font-family:'Tajawal',sans-serif;font-size:14px;cursor:pointer;border-radius:8px;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .15s}
@@ -52,47 +44,30 @@ svg.frm{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
   <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>
 </div>
 
-<h1 id="htitle">شكراً لك!</h1>
-<p class="sub" id="hsub">تم الدفع بنجاح — بطاقة الإهداء جاهزة</p>
+<h1 id="htitle">تم الدفع بنجاح!</h1>
+<!-- النقطة 8: لا تظهر البطاقة — تظهر رسالة الإرسال -->
+<p class="sub">سيتم إرسال بطاقة الإهداء إلى جوال المستلم قريباً</p>
 
-<!-- GIFT CARD -->
-<div class="card-wrap" id="card-wrap" style="display:none">
-  <div class="gcard">
-    <svg class="frm" viewBox="0 0 390 246" fill="none">
-      <rect x="12" y="12" width="366" height="222" stroke="rgba(138,98,32,0.52)" stroke-width="1.2"/>
-    </svg>
-    <div class="cin">
-      <div class="ctop">
-        <div class="clogo">GRAFF SPA</div>
-        <div class="ctags">
-          <div class="cten">Gift Card</div>
-          <div class="ctar">بطاقة الإهداء</div>
-        </div>
-      </div>
-      <div class="cmid">
-        <div class="camt" id="c-amt">—</div>
-        <div class="csar">S A R</div>
-        <div class="cline"></div>
-        <div class="cmsg" id="c-msg" style="display:none"></div>
-      </div>
-      <div class="cbot">
-        <div>
-          <div class="clbl">TO</div>
-          <div class="cname" id="c-to">—</div>
-        </div>
-        <div class="cfrom" id="c-from-wrap" style="display:none">
-          <div class="clbl" style="text-align:left">FROM</div>
-          <div class="cfname" id="c-from">—</div>
-        </div>
-      </div>
-    </div>
+<!-- بطاقة تفاصيل المستلم — بدون عرض الكارت نفسه -->
+<div class="send-card" id="send-card" style="display:none">
+  <div class="send-icon">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(184,150,90,.8)" stroke-width="1.5"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18" stroke-width="2.5" stroke-linecap="round"/></svg>
   </div>
+  <div class="send-label">سيتم الإرسال إلى</div>
+  <div class="send-name" id="send-name">—</div>
+  <div class="send-phone" id="send-phone">—</div>
+  <hr class="send-divider">
+  <div class="send-amt-label">قيمة البطاقة</div>
+  <div class="send-amt" id="send-amt">—</div>
+  <div class="send-sar">ريال سعودي</div>
+  <div class="send-note">ستصل البطاقة خلال دقائق قليلة عبر الواتساب ✓</div>
 </div>
 
 <div class="btns">
-  <button class="dl-btn" id="dl-btn" onclick="downloadCard()" style="display:none">
+  <!-- النقطة 7: PNG فقط بدون PDF -->
+  <button class="dl-btn" id="dl-btn" onclick="downloadCardPNG()" style="display:none">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-    تحميل بطاقة الإهداء PNG
+    تحميل نسخة البطاقة PNG
   </button>
   <a class="home-btn" href="https://graffspasa-png.github.io/rekaz-test">
     العودة للرئيسية ←
@@ -105,7 +80,6 @@ svg.frm{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 </p>
 
 <script>
-// Read giftData from localStorage
 let D = null;
 try {
   const raw = localStorage.getItem('giftData');
@@ -113,101 +87,111 @@ try {
 } catch(e) {}
 
 if (D && D.amount) {
-  // Show card
-  document.getElementById('card-wrap').style.display = 'block';
+  // النقطة 8: لا تعرض البطاقة — فقط تفاصيل المستلم
+  document.getElementById('send-card').style.display = 'block';
   document.getElementById('dl-btn').style.display = 'flex';
-
-  // Populate card
-  document.getElementById('c-amt').textContent = D.amount;
-  document.getElementById('c-to').textContent  = D.receiverName || '—';
-
-  if (D.message) {
-    const msgEl = document.getElementById('c-msg');
-    msgEl.textContent = '"' + D.message + '"';
-    msgEl.style.display = 'block';
-  }
-  if (D.showSender && D.senderName) {
-    document.getElementById('c-from').textContent = D.senderName;
-    document.getElementById('c-from-wrap').style.display = 'block';
-  }
-
-  // Update header
-  document.getElementById('htitle').textContent = 'شكراً ' + (D.receiverName ? 'لك ' + D.receiverName : 'لك') + '!';
-  document.getElementById('hsub').textContent = 'تم الدفع بنجاح — بطاقة إهداء بقيمة ' + D.amount + ' ريال';
-
-  // Clear after reading (optional — keep for re-download)
-  // localStorage.removeItem('giftData');
+  document.getElementById('send-name').textContent = D.receiverName || '—';
+  document.getElementById('send-phone').textContent = D.receiverPhone || '';
+  document.getElementById('send-amt').textContent = D.amount;
+  document.getElementById('htitle').textContent = 'تم الدفع بنجاح!';
 } else {
   document.getElementById('no-data').style.display = 'block';
 }
 
-// Download card as PNG
-function downloadCard() {
+// النقطة 7: PNG فقط — بدون PDF
+// النقطة 6: خلفية Cream صحيحة (ليست بيضاء)
+function downloadCardPNG() {
+  if (!D) return;
   const W = 1200, H = 756;
   const cv = document.createElement('canvas');
   cv.width = W; cv.height = H;
   const x = cv.getContext('2d');
 
-  // Background
-  const bg = x.createLinearGradient(0,0,W,H);
-  bg.addColorStop(0,'#f8f3ea'); bg.addColorStop(.4,'#f2ebe0'); bg.addColorStop(1,'#ede5d6');
-  x.fillStyle = bg; x.fillRect(0,0,W,H);
+  // خلفية Cream — ليست بيضاء (النقطة 6)
+  const bg = x.createLinearGradient(0, 0, W, H);
+  bg.addColorStop(0, '#f8f3ea');
+  bg.addColorStop(0.4, '#f2ebe0');
+  bg.addColorStop(1, '#ede5d6');
+  x.fillStyle = bg;
+  x.fillRect(0, 0, W, H);
 
-  // Border
-  x.strokeStyle = 'rgba(138,98,32,0.52)'; x.lineWidth = 2.5;
-  x.strokeRect(24,24,W-48,H-48);
+  // تدرج مركزي
+  const cg = x.createRadialGradient(W/2, H/2, 0, W/2, H/2, W*0.55);
+  cg.addColorStop(0, 'rgba(248,245,236,.8)');
+  cg.addColorStop(1, 'transparent');
+  x.fillStyle = cg;
+  x.fillRect(0, 0, W, H);
 
-  // Logo
-  x.textAlign = 'right'; x.fillStyle = 'rgba(20,15,8,.82)';
-  x.font = '300 38px "Cormorant Garamond",Georgia,serif';
-  x.letterSpacing = '8px'; x.fillText('GRAFF SPA', W-54, 88);
+  // إطار خارجي
+  x.strokeStyle = 'rgba(140,100,35,0.65)'; x.lineWidth = 2.5;
+  x.strokeRect(24, 24, W-48, H-48);
+  x.strokeStyle = 'rgba(155,115,48,0.22)'; x.lineWidth = 1.5;
+  x.strokeRect(36, 36, W-72, H-72);
 
-  // Tags
-  x.textAlign = 'left'; x.fillStyle = 'rgba(138,98,32,.78)';
-  x.font = '400 24px "Cormorant Garamond",Georgia,serif';
-  x.letterSpacing = '3px'; x.fillText('Gift Card', 54, 78);
-  x.font = '600 22px Tajawal,Arial'; x.letterSpacing = '0px';
+  // زوايا L
+  x.strokeStyle = 'rgba(130,92,28,0.9)'; x.lineWidth = 5; x.lineCap = 'square';
+  const CL = 100;
+  [[24,24,24+CL,24],[24,24,24,24+CL],[W-24,24,W-24-CL,24],[W-24,24,W-24,24+CL],
+   [24,H-24,24+CL,H-24],[24,H-24,24,H-24-CL],[W-24,H-24,W-24-CL,H-24],[W-24,H-24,W-24,H-24-CL]
+  ].forEach(([x1,y1,x2,y2]) => { x.beginPath(); x.moveTo(x1,y1); x.lineTo(x2,y2); x.stroke(); });
+
+  // شعار
+  x.textAlign = 'right'; x.direction = 'rtl';
+  x.font = '400 38px "Cormorant Garamond",Georgia,serif';
+  x.fillStyle = 'rgba(20,15,8,0.86)'; x.letterSpacing = '10px';
+  x.fillText('GRAFF SPA', W-54, 88);
+
+  // TAG
+  x.textAlign = 'left'; x.letterSpacing = '3px';
+  x.font = '400 26px "Cormorant Garamond",Georgia,serif';
+  x.fillStyle = 'rgba(140,100,35,0.88)';
+  x.fillText('Gift Card', 54, 78);
+  x.font = '700 24px Tajawal,Arial'; x.letterSpacing = '0px';
   x.fillText('بطاقة الإهداء', 54, 112);
 
-  // Amount
-  x.textAlign = 'center'; x.fillStyle = 'rgba(20,15,8,.88)';
+  // المبلغ
+  x.textAlign = 'center'; x.fillStyle = 'rgba(20,15,8,0.88)';
   x.font = '300 160px "Cormorant Garamond",Georgia,serif';
-  x.letterSpacing = '6px'; x.fillText(String(D.amount), W/2, H/2+50);
+  x.letterSpacing = '6px';
+  x.fillText(String(D.amount), W/2, H/2 + 54);
 
   // SAR
   x.font = '400 28px "Cormorant Garamond",Georgia,serif';
-  x.fillStyle = 'rgba(138,98,32,.8)'; x.letterSpacing = '16px';
-  x.fillText('SAR', W/2, H/2+98);
+  x.fillStyle = 'rgba(140,100,35,0.85)'; x.letterSpacing = '18px';
+  x.fillText('SAR', W/2, H/2 + 104);
 
-  // Line
-  x.strokeStyle = 'rgba(138,98,32,.28)'; x.lineWidth = 1;
-  x.beginPath(); x.moveTo(W/2-60,H/2+116); x.lineTo(W/2+60,H/2+116); x.stroke();
+  // خط
+  x.strokeStyle = 'rgba(140,100,35,0.3)'; x.lineWidth = 1;
+  x.beginPath(); x.moveTo(W/2-70, H/2+122); x.lineTo(W/2+70, H/2+122); x.stroke();
 
-  // Message
   if (D.message) {
-    x.font = 'italic 300 28px "Cormorant Garamond",Georgia,serif';
-    x.fillStyle = 'rgba(20,15,8,.38)'; x.letterSpacing = '0px';
-    x.fillText('"'+D.message+'"', W/2, H/2+156);
+    x.font = 'italic 300 30px "Cormorant Garamond",Georgia,serif';
+    x.fillStyle = 'rgba(20,15,8,0.4)'; x.letterSpacing = '0px';
+    x.fillText('"' + D.message + '"', W/2, H/2 + 162);
   }
 
   // TO
-  x.textAlign = 'right'; x.fillStyle = 'rgba(138,98,32,.82)';
+  x.textAlign = 'right'; x.fillStyle = 'rgba(140,100,35,0.82)';
   x.font = '400 18px "Cormorant Garamond",Georgia,serif'; x.letterSpacing = '6px';
-  x.fillText('TO', W-54, H-108);
-  x.font = '400 32px "Cormorant Garamond",Georgia,serif'; x.letterSpacing = '2px';
-  x.fillStyle = 'rgba(20,15,8,.78)';
-  x.fillText(D.receiverName||'—', W-54, H-68);
+  x.fillText('TO', W-54, H-118);
+  x.font = '700 34px Tajawal,Arial'; x.fillStyle = 'rgba(20,15,8,0.88)'; x.letterSpacing = '0px';
+  x.fillText(D.receiverName || '—', W-54, H-72);
 
   // FROM
   if (D.showSender && D.senderName) {
-    x.textAlign = 'left'; x.fillStyle = 'rgba(138,98,32,.82)';
+    x.textAlign = 'left'; x.fillStyle = 'rgba(140,100,35,0.82)';
     x.font = '400 18px "Cormorant Garamond",Georgia,serif'; x.letterSpacing = '6px';
-    x.fillText('FROM', 54, H-108);
-    x.font = '400 26px "Cormorant Garamond",Georgia,serif'; x.letterSpacing = '2px';
-    x.fillStyle = 'rgba(20,15,8,.58)';
-    x.fillText(D.senderName, 54, H-68);
+    x.fillText('FROM', 54, H-118);
+    x.font = '600 28px Tajawal,Arial'; x.fillStyle = 'rgba(20,15,8,0.56)'; x.letterSpacing = '0px';
+    x.fillText(D.senderName, 54, H-72);
   }
 
+  // URL
+  x.textAlign = 'center'; x.fillStyle = 'rgba(20,15,8,0.2)';
+  x.font = '300 20px "Cormorant Garamond",Georgia,serif'; x.letterSpacing = '8px';
+  x.fillText('WWW.GRAFFSPA.COM', W/2, H-30);
+
+  // تحميل PNG فقط
   cv.toBlob(b => {
     const u = URL.createObjectURL(b);
     const a = document.createElement('a');
