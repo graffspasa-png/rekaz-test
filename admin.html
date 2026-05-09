@@ -71,9 +71,20 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink2);color:#fff;directio
 .tog.on{background:var(--gold)}
 .tog::after{content:'';width:17px;height:17px;background:#fff;border-radius:50%;position:absolute;top:2px;right:2px;transition:right .2s;box-shadow:0 1px 3px rgba(0,0,0,.3)}
 .tog.on::after{right:19px}
-.li{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);padding:11px 12px;display:flex;align-items:center;gap:9px;margin-bottom:7px}
-.dh{color:rgba(255,255,255,.2);font-size:16px;cursor:grab;flex-shrink:0;user-select:none}
+
+.li{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);padding:11px 12px;display:flex;align-items:center;gap:9px;margin-bottom:7px;transition:background .15s}
+.li.drag-over{background:rgba(184,150,90,.12);border-color:rgba(184,150,90,.4)}
 .li-info{flex:1;min-width:0}
+.dh{color:rgba(255,255,255,.18);font-size:16px;cursor:grab;flex-shrink:0;user-select:none;line-height:1}
+.sort-btns{display:flex;flex-direction:column;gap:2px;flex-shrink:0}
+.sort-btn{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.5);width:22px;height:18px;cursor:pointer;font-size:10px;display:flex;align-items:center;justify-content:center;border-radius:3px;transition:all .12s;padding:0;line-height:1}
+.sort-btn:hover:not(:disabled){background:rgba(184,150,90,.2);border-color:rgba(184,150,90,.4);color:var(--gold)}
+.sort-btn:disabled{opacity:.2;cursor:default}
+.sub-sort-btns{display:flex;gap:4px;align-items:center;flex-shrink:0}
+.sub-sort-btn{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.5);padding:2px 7px;cursor:pointer;font-size:11px;border-radius:3px;transition:all .12s;line-height:1.4}
+.sub-sort-btn:hover:not(:disabled){background:rgba(184,150,90,.2);border-color:rgba(184,150,90,.4);color:var(--gold)}
+.sub-sort-btn:disabled{opacity:.2;cursor:default}
+
 .li-name{font-size:13px;color:#fff;margin-bottom:2px}
 .li-sub{font-size:10px;color:rgba(255,255,255,.32);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .li-acts{display:flex;gap:5px;align-items:center;flex-shrink:0}
@@ -97,12 +108,19 @@ body{font-family:'Tajawal',sans-serif;background:var(--ink2);color:#fff;directio
 .btn-p:hover{background:var(--gold2)}
 .btn-s{padding:9px 16px;background:transparent;border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.55);font-family:'Tajawal',sans-serif;font-size:11px;cursor:pointer}
 /* Sub-section editor */
+
+
+/* Rekaz picker */
+
 .sub-editor{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);padding:14px;margin-bottom:9px}
 .sub-editor-ttl{font-size:11px;color:rgba(255,255,255,.55);margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
-/* Rekaz picker */
-.rp-search{width:100%;padding:8px 11px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#fff;font-family:'Tajawal',sans-serif;font-size:12px;outline:none;margin-bottom:7px}
-.rp-list{max-height:240px;overflow-y:auto;border:1px solid rgba(255,255,255,.08)}
+.sub-name-inp{background:transparent;border:none;border-bottom:1px solid rgba(255,255,255,.15);color:#fff;font-family:Tajawal,sans-serif;font-size:13px;padding:3px 0;flex:1;outline:none}
+.sub-svc-lbl{font-size:10px;color:rgba(255,255,255,.35);margin-bottom:7px}
+.sub-cnt{font-size:10px;color:rgba(255,255,255,.3);margin-top:5px}
+.rp-search{width:100%;padding:8px 11px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#fff;font-family:Tajawal,sans-serif;font-size:12px;outline:none;margin-bottom:7px}
 .rp-item{display:flex;align-items:center;padding:8px 10px;border-bottom:1px solid rgba(255,255,255,.04);cursor:pointer;gap:8px}
+.rp-list{max-height:240px;overflow-y:auto;border:1px solid rgba(255,255,255,.08)}
+
 .rp-item:last-child{border:none}
 .rp-item:hover{background:rgba(255,255,255,.04)}
 .rp-item.sel{background:rgba(184,150,90,.08)}
@@ -644,37 +662,82 @@ function collectTexts(){
   document.querySelectorAll('.text-inp').forEach(inp=>{DB.texts[inp.dataset.key]=inp.value;});
 }
 
+
+
 // ── MENU ──
 function renderMenu(){
-  const cats=(DB.categories||[]).sort((a,b)=>a.order-b.order);
-  if(!cats.length){g('cats-list').innerHTML='<div style="font-size:12px;color:rgba(255,255,255,.3);padding:8px 0">لا توجد أقسام بعد.</div>';return;}
-  g('cats-list').innerHTML=cats.map((cat,i)=>{
-    const svcs=(DB.services||[]).filter(s=>s.categoryId===cat.id);
-    const subCount=(cat.subSections||[]).length;
-    const svcSummary=svcs.length?svcs.map(s=>s.nameAr||s.rekazPriceId).slice(0,4).join('، ')+(svcs.length>4?'...':''):'لا توجد خدمات';
-    return `<div class="li" draggable="true" data-id="${cat.id}" ondragstart="drs(event,'${cat.id}')" ondragover="ev.preventDefault&&ev.preventDefault()" ondrop="drp(event,'${cat.id}')">
-      <span class="dh">⠿</span>
-      <div class="li-info">
-        <div class="li-name">${e(cat.nameAr)} <span style="color:rgba(255,255,255,.3);font-size:11px">/ ${e(cat.nameEn||'')}</span></div>
-        <div class="li-sub">${subCount} قسم فرعي · ${svcs.length} خدمة — ${e(svcSummary)}</div>
-      </div>
-      <div class="li-acts">
-        <div class="tog ${cat.visible!==false?'on':''}" onclick="togCat('${cat.id}')"></div>
-        <button class="lb" onclick="openCatModal('${cat.id}')">تعديل</button>
-        <button class="lb del" onclick="delCat('${cat.id}')">حذف</button>
-      </div></div>`;
-  }).join('');
+  var cats = (DB.categories||[]).slice().sort(function(a,b){return (a.order||0)-(b.order||0);});
+  var el = g('cats-list');
+  if(!cats.length){
+    el.innerHTML='<div style="font-size:12px;color:rgba(255,255,255,.3);padding:8px 0">لا توجد أقسام بعد.</div>';
+    return;
+  }
+  var total = cats.length;
+  var html  = '';
+  cats.forEach(function(cat, i){
+    var svcs     = (DB.services||[]).filter(function(s){return s.categoryId===cat.id;});
+    var subCount = (cat.subSections||[]).length;
+    var summary  = svcs.length
+      ? svcs.map(function(s){return s.nameAr||'—';}).slice(0,4).join('، ')+(svcs.length>4?'...':'')
+      : 'لا توجد خدمات';
+    var first = (i===0), last = (i===total-1);
+    html +=
+      '<div class="li" data-cid="'+cat.id+'">' +
+        '<div class="sort-btns">' +
+          '<button class="sort-btn cat-up"  data-cid="'+cat.id+'" title="تحريك لأعلى"  '+(first?'disabled':'')+'>▲</button>' +
+          '<button class="sort-btn cat-dn"  data-cid="'+cat.id+'" title="تحريك لأسفل" '+(last ?'disabled':'')+'>▼</button>' +
+        '</div>' +
+        '<div class="li-info">' +
+          '<div class="li-name">'+e(cat.nameAr)+'<span style="color:rgba(255,255,255,.3);font-size:11px;margin-right:6px">'+e(cat.nameEn||'')+'</span></div>' +
+          '<div class="li-sub">'+subCount+' قسم فرعي · '+svcs.length+' خدمة — '+e(summary)+'</div>' +
+        '</div>' +
+        '<div class="li-acts">' +
+          '<div class="tog '+(cat.visible!==false?'on':'')+'" data-cid="'+cat.id+'" onclick="togCat(this.dataset.cid)"></div>' +
+          '<button class="lb" data-cid="'+cat.id+'" onclick="openCatModal(this.dataset.cid)">تعديل</button>' +
+          '<button class="lb del" data-cid="'+cat.id+'" onclick="delCat(this.dataset.cid)">حذف</button>' +
+        '</div>' +
+      '</div>';
+  });
+  el.innerHTML = html;
+
+  // ربط أزرار الترتيب بـ event listeners (بدل inline onclick)
+  el.querySelectorAll('.cat-up').forEach(function(btn){
+    btn.addEventListener('click', function(){ moveCat(btn.dataset.cid, -1); });
+  });
+  el.querySelectorAll('.cat-dn').forEach(function(btn){
+    btn.addEventListener('click', function(){ moveCat(btn.dataset.cid,  1); });
+  });
+
   renderOverview();
 }
-let dragId=null;
-function drs(ev,id){dragId=id;}
-function drp(ev,id){
-  ev.preventDefault();if(!dragId||dragId===id)return;
-  const cats=DB.categories;const fi=cats.findIndex(c=>c.id===dragId);const ti=cats.findIndex(c=>c.id===id);
-  const [m]=cats.splice(fi,1);cats.splice(ti,0,m);cats.forEach((c,i)=>c.order=i+1);
-  dragId=null;renderMenu();api('PUT','/admin/categories-order',{order:cats.map(c=>c.id)});
+
+// تحريك قسم رئيسي أعلى (-1) أو أسفل (+1)
+function moveCat(id, dir){
+  var cats = (DB.categories||[]).slice().sort(function(a,b){return (a.order||0)-(b.order||0);});
+  var idx  = cats.findIndex(function(c){return c.id===id;});
+  var nxt  = idx + dir;
+  if(nxt < 0 || nxt >= cats.length) return;
+  // تبديل قيم order
+  var tmp        = cats[idx].order;
+  cats[idx].order = cats[nxt].order;
+  cats[nxt].order = tmp;
+  // تأكد من أن order فريد
+  cats.forEach(function(c,i){ c.order = i+1; });
+  renderMenu();
+  // حفظ الترتيب في السيرفر
+  var sorted = cats.slice().sort(function(a,b){return (a.order||0)-(b.order||0);});
+  api('PUT','/admin/categories-order',{order: sorted.map(function(c){return c.id;})});
+  saveDB();
+  notif('تم حفظ الترتيب ✓');
 }
-function togCat(id){const cat=DB.categories.find(c=>c.id===id);if(cat)cat.visible=!(cat.visible!==false);renderMenu();}
+
+function togCat(id){
+  var cat = DB.categories.find(function(c){return c.id===id;});
+  if(cat){ cat.visible = !(cat.visible!==false); renderMenu(); }
+}
+
+function togCat(id){var cat=DB.categories.find(function(c){return c.id===id;});if(cat){cat.visible=!(cat.visible!==false);renderMenu();}}
+
 function delCat(id){
   if(!confirm('سيتم حذف القسم وجميع خدماته. متأكدة؟'))return;
   DB.categories=DB.categories.filter(c=>c.id!==id);
@@ -697,25 +760,74 @@ function closeModal(){g('cat-modal').classList.remove('on');editCatId=null;}
 
 // ── SUB SECTIONS ──
 function renderSubSections(){
-  g('sub-sections-editor').innerHTML=subSections.map((sub,si)=>{
-    const linkedIds=sub.services||[];
-    return `<div class="sub-editor">
-      <div class="sub-editor-ttl">
-        <input style="background:transparent;border:none;border-bottom:1px solid rgba(255,255,255,.15);color:#fff;font-family:'Tajawal',sans-serif;font-size:13px;padding:3px 0;width:70%" 
-          placeholder="اسم القسم الفرعي (مثال: MANICURE · مناكير)" 
-          value="${esc(sub.name||'')}" 
-          oninput="subSections[${si}].name=this.value">
-        ${subSections.length>1?`<button class="lb del" onclick="removeSub(${si})">حذف القسم الفرعي</button>`:''}
-      </div>
-      <div style="font-size:10px;color:rgba(255,255,255,.35);margin-bottom:7px">اختاري الخدمات لهذا القسم الفرعي:</div>
-      <input class="rp-search" placeholder="بحث..." oninput="filterSub(${si},this.value)" style="margin-bottom:6px">
-      <div class="rp-list" id="sub-list-${si}">
-        ${renderSubPicker(si,linkedIds,'')}
-      </div>
-      <div style="font-size:10px;color:rgba(255,255,255,.3);margin-top:5px" id="sub-count-${si}">${linkedIds.length} خدمة مختارة</div>
-    </div>`;
-  }).join('');
+  var total  = subSections.length;
+  var editor = g('sub-sections-editor');
+  var frag   = '';
+  subSections.forEach(function(sub, si){
+    var linkedIds = sub.services || [];
+    var first = (si===0), last = (si===total-1);
+    // بناء HTML بدون single quotes في الـ attribute values
+    var upDis  = first ? ' disabled' : '';
+    var dnDis  = last  ? ' disabled' : '';
+    var delBtn = total>1
+      ? '<button class="lb del" data-si="'+si+'" onclick="removeSub(+this.dataset.si)">حذف</button>'
+      : '';
+    var subCount = linkedIds.length;
+    frag +=
+      '<div class="sub-editor" data-si="'+si+'">'
+      +'<div class="sub-editor-ttl" style="display:flex;align-items:center;gap:8px;margin-bottom:10px">'
+        +'<div class="sort-btns">'
+          +'<button class="sort-btn sub-up" data-si="'+si+'" title="تحريك لأعلى"'+upDis+'>▲</button>'
+          +'<button class="sort-btn sub-dn" data-si="'+si+'" title="تحريك لأسفل"'+dnDis+'>▼</button>'
+        +'</div>'
+        +'<input class="sub-name-inp" data-si="'+si+'" placeholder="اسم القسم الفرعي" value="'+esc(sub.name||'')+'">'
+        +delBtn
+      +'</div>'
+      +'<div class="sub-svc-lbl">اختاري الخدمات لهذا القسم الفرعي:</div>'
+      +'<input class="rp-search sub-srch" data-si="'+si+'" placeholder="بحث..." style="margin-bottom:6px">'
+      +'<div class="rp-list" id="sub-list-'+si+'">'
+        +renderSubPicker(si, linkedIds, '')
+      +'</div>'
+      +'<div class="sub-cnt" id="sub-count-'+si+'">'+subCount+' خدمة مختارة</div>'
+    +'</div>';
+  });
+  editor.innerHTML = frag;
+
+  // ربط الأحداث (بدل inline onclick — آمن من مشاكل الـ quotes)
+  editor.querySelectorAll('.sub-name-inp').forEach(function(inp){
+    inp.addEventListener('input', function(){ subSections[+inp.dataset.si].name = inp.value; });
+  });
+  editor.querySelectorAll('.sub-srch').forEach(function(inp){
+    inp.addEventListener('input', function(){ filterSub(+inp.dataset.si, inp.value); });
+  });
+  editor.querySelectorAll('.sub-up').forEach(function(btn){
+    btn.addEventListener('click', function(){ moveSub(+btn.dataset.si, -1); });
+  });
+  editor.querySelectorAll('.sub-dn').forEach(function(btn){
+    btn.addEventListener('click', function(){ moveSub(+btn.dataset.si,  1); });
+  });
 }
+
+// تحريك قسم فرعي
+function moveSub(si, dir){
+  var ni = si + dir;
+  if(ni < 0 || ni >= subSections.length) return;
+  var tmp         = subSections[si];
+  subSections[si] = subSections[ni];
+  subSections[ni] = tmp;
+  renderSubSections();
+}
+
+function addSubSection(){
+  subSections.push({name:'',services:[],serviceDetails:{}});
+  renderSubSections();
+}
+
+function removeSub(si){
+  subSections.splice(si, 1);
+  renderSubSections();
+}
+
 function renderSubPicker(si,selectedIds,q){
   const prods=q?rekazProds.filter(p=>((p.nameAr||p.name||'')+(p.nameEn||'')).toLowerCase().includes(q.toLowerCase())):rekazProds;
   if(!prods.length)return '<div style="padding:12px;text-align:center;font-size:11px;color:rgba(255,255,255,.3)">لا توجد نتائج</div>';
@@ -755,14 +867,6 @@ function togSubItem(si,priceId,productId,name,el){
   subSections[si].serviceDetails=subSections[si].serviceDetails||{};
   subSections[si].serviceDetails[priceId]={priceId,productId,nameAr:name};
   const cnt=g('sub-count-'+si);if(cnt)cnt.textContent=svc.length+' خدمة مختارة';
-}
-function addSubSection(){
-  subSections.push({name:'',services:[],serviceDetails:{}});
-  renderSubSections();
-}
-function removeSub(si){
-  subSections.splice(si,1);
-  renderSubSections();
 }
 
 async function saveCat(){
