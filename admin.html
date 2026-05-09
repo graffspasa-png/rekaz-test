@@ -712,31 +712,31 @@ function renderMenu(){
 }
 
 // تحريك قسم رئيسي أعلى (-1) أو أسفل (+1)
+
+
+// تحريك قسم رئيسي — يعمل مباشرة على DB.categories (بالمرجع)
 function moveCat(id, dir){
-  var cats = (DB.categories||[]).slice().sort(function(a,b){return (a.order||0)-(b.order||0);});
-  var idx  = cats.findIndex(function(c){return c.id===id;});
-  var nxt  = idx + dir;
-  if(nxt < 0 || nxt >= cats.length) return;
-  // تبديل قيم order
-  var tmp        = cats[idx].order;
-  cats[idx].order = cats[nxt].order;
-  cats[nxt].order = tmp;
-  // تأكد من أن order فريد
-  cats.forEach(function(c,i){ c.order = i+1; });
+  // ترتيب المصفوفة حسب order الحالي
+  DB.categories.sort(function(a,b){ return (a.order||0)-(b.order||0); });
+  var idx = DB.categories.findIndex(function(c){ return c.id === id; });
+  var nxt = idx + dir;
+  if(nxt < 0 || nxt >= DB.categories.length) return;
+  // تبديل الـ order بين العنصرين مباشرة في DB
+  var tmp = DB.categories[idx].order;
+  DB.categories[idx].order = DB.categories[nxt].order;
+  DB.categories[nxt].order = tmp;
+  // إعادة رسم فوري
   renderMenu();
-  // حفظ الترتيب في السيرفر
-  var sorted = cats.slice().sort(function(a,b){return (a.order||0)-(b.order||0);});
-  api('PUT','/admin/categories-order',{order: sorted.map(function(c){return c.id;})});
+  // حفظ في DB (الوحيد الموثوق)
   saveDB();
   notif('تم حفظ الترتيب ✓');
 }
 
 function togCat(id){
   var cat = DB.categories.find(function(c){return c.id===id;});
-  if(cat){ cat.visible = !(cat.visible!==false); renderMenu(); }
+  if(cat){ cat.visible = !(cat.visible!==false); renderMenu(); saveDB(); }
 }
 
-function togCat(id){var cat=DB.categories.find(function(c){return c.id===id;});if(cat){cat.visible=!(cat.visible!==false);renderMenu();}}
 
 function delCat(id){
   if(!confirm('سيتم حذف القسم وجميع خدماته. متأكدة؟'))return;
@@ -867,14 +867,22 @@ function togSubItem(si,priceId,productId,name,el){
   subSections[si].serviceDetails=subSections[si].serviceDetails||{};
   subSections[si].serviceDetails[priceId]={priceId,productId,nameAr:name};
   const cnt=g('sub-count-'+si);if(cnt)cnt.textContent=svc.length+' خدمة مختارة';
+
 }
 
 async function saveCat(){
-  const ar=g('cm-ar').value.trim();if(!ar){alert('أدخلي اسم القسم');return;}
-  const payload={nameAr:ar,nameEn:g('cm-en').value.trim(),subSections};
+  const ar = g('cm-ar').value.trim();
+  if(!ar){ alert('أدخلي اسم القسم'); return; }
+
+  // إضافة order صريح لكل قسم فرعي حسب ترتيبه الحالي في المصفوفة
+  subSections.forEach(function(sub, i){ sub.order = i + 1; });
+
+  const payload = { nameAr: ar, nameEn: g('cm-en').value.trim(), subSections: subSections };
+
   if(!editCatId){
-    payload.order=DB.categories.length+1;
-    const cat=await api('POST','/admin/categories',payload);
+    payload.order = DB.categories.length + 1;
+    const cat = await api('POST','/admin/categories', payload);
+    DB.categories.push(cat); editCatId = cat.id;
     DB.categories.push(cat);editCatId=cat.id;
   }else{
     await api('PUT','/admin/categories/'+editCatId,payload);
