@@ -808,9 +808,13 @@ function renderSubHeader(rawName){
   return h;
 }
 
+
 function buildSvcFromMenu(cats){
-  var tabsH='',bodyH='',first=true;
+  // ترتيب الأقسام الرئيسية حسب order قبل أي شيء
+  cats = cats.slice().sort(function(a,b){ return (a.order||0)-(b.order||0); });
+  var tabsH='', bodyH='', first=true;
   cats.forEach(function(cat){
+
     // ── dedup: إزالة التكرار من cat.services قبل أي عملية ──
     // الأولوية: الخدمة التي لها nameAr غير فارغ
     (function(){
@@ -838,46 +842,50 @@ function buildSvcFromMenu(cats){
     var cid='cat_'+cat.id.replace(/[^a-zA-Z0-9]/g,'');
     tabsH+='<button class="tab'+(first?' on':'')+'" data-cid="'+cid+'" onclick="swTab(this.dataset.cid,this)">'+esc(cat.nameAr)+'</button>';
     bodyH+='<div class="cpanel'+(first?' on':'')+'" id="'+cid+'">';
-    var subSections=cat.subSections||[];
-    if(subSections.length>0&&subSections.some(function(s){return s.name;})){
-      var svcById={};
-      // النقطة 4: الفهرسة بـ id فريد — منع التكرار
-      cat.services.forEach(function(svc){
-        // نُفهرس بكل المفاتيح الممكنة لكن نحتفظ بمرجع واحد للخدمة
-        if(svc.rekazProductId) svcById[svc.rekazProductId]=svc;
-        if(svc.rekazPriceId)   svcById[svc.rekazPriceId]=svc;
-        if(svc.id)             svcById[svc.id]=svc;
-        (svc.options||[]).forEach(function(o){ if(o.id) svcById[o.id]=svc; });
-      });
+
+    // ترتيب cat.subSections حسب الـ order الصريح قبل العرض
+    var subSections = (cat.subSections||[]).slice().sort(function(a,b){
+      return (a.order||0) - (b.order||0);
+    });
+
+    // بناء body القسم — الأقسام الفرعية أو مباشر
+    var svcById = {};
+    cat.services.forEach(function(svc){
+      if(svc.rekazProductId) svcById[svc.rekazProductId] = svc;
+      if(svc.rekazPriceId)   svcById[svc.rekazPriceId]   = svc;
+      if(svc.id)             svcById[svc.id]             = svc;
+      (svc.options||[]).forEach(function(o){ if(o.id) svcById[o.id] = svc; });
+    });
+
+    if(subSections.length > 0 && subSections.some(function(s){ return s.name; })){
       subSections.forEach(function(sub){
-        if(!sub.name&&(!sub.services||!sub.services.length))return;
-        bodyH+=renderSubHeader(sub.name||'');
-        bodyH+='<div class="sub-cards">';
-        // dedup بـ svc.id (المفتاح الحقيقي الفريد)
-        var seen={};
-        var subSvcs=(sub.services||[]).map(function(pid){return svcById[pid];}).filter(function(s){
-          if(!s) return false;
-          var key=s.id||s.rekazProductId||s.rekazPriceId;
+        if(!sub.name && (!sub.services||!sub.services.length)) return;
+        bodyH += renderSubHeader(sub.name||'');
+        bodyH += '<div class="sub-cards">';
+        var seen = {};
+        var subSvcs = (sub.services||[]).map(function(pid){ return svcById[pid]; }).filter(function(sv){
+          if(!sv) return false;
+          var key = sv.id || sv.rekazProductId || sv.rekazPriceId;
           if(seen[key]) return false;
-          seen[key]=true;
+          seen[key] = true;
           return true;
         });
-        if(!subSvcs.length&&subSections.length===1)subSvcs=cat.services;
-        subSvcs.forEach(function(svc){bodyH+=buildCard(svc);});
-        bodyH+='</div>';
+        if(!subSvcs.length && subSections.length===1) subSvcs = cat.services;
+        subSvcs.forEach(function(svc){ bodyH += buildCard(svc); });
+        bodyH += '</div>';
       });
     } else if(cat.subLabel){
-      bodyH+=renderSubHeader(cat.subLabel);
-      bodyH+='<div class="sub-cards">';
-      cat.services.forEach(function(svc){bodyH+=buildCard(svc);});
-      bodyH+='</div>';
+      bodyH += renderSubHeader(cat.subLabel);
+      bodyH += '<div class="sub-cards">';
+      cat.services.forEach(function(svc){ bodyH += buildCard(svc); });
+      bodyH += '</div>';
     } else {
-      bodyH+='<div class="sub-cards" style="padding-top:10px">';
-      cat.services.forEach(function(svc){bodyH+=buildCard(svc);});
-      bodyH+='</div>';
+      bodyH += '<div class="sub-cards" style="padding-top:10px">';
+      cat.services.forEach(function(svc){ bodyH += buildCard(svc); });
+      bodyH += '</div>';
     }
-    bodyH+='</div>';
-    first=false;
+    bodyH += '</div>';
+    first = false;
   });
   document.getElementById('tabs').innerHTML=tabsH;
   document.getElementById('svcbody').innerHTML=bodyH;
